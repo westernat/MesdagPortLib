@@ -1,0 +1,13 @@
+{
+  "itemGroup.portlib": "Example Mod Tab",
+  "block.portlib.example_block": "Example Block",
+  "item.portlib.example_item": "Example Item",
+
+  "portlib.configuration.title": "PortLib Configs",
+  "portlib.configuration.section.portlib.common.toml": "PortLib Configs",
+  "portlib.configuration.section.portlib.common.toml.title": "PortLib Configs",
+  "portlib.configuration.items": "Item List",
+  "portlib.configuration.logDirtBlock": "Log Dirt Block",
+  "portlib.configuration.magicNumberIntroduction": "Magic Number Text",
+  "portlib.configuration.magicNumber": "Magic Number"
+}
