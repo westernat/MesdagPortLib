@@ -246,10 +246,12 @@ public class PortItemStack {
         FoodProperties food = iStack.portlib$getFood(living);
         if (food == null) {
             CompoundTag data = stack.getTagElement(PortFoodProperties.KEY);
-            if (data != null) {
+            if (data == null) {
+                food = stack.getFoodProperties(living);
+            } else {
                 food = PortFoodProperties.load(data);
-                iStack.portlib$setFood(food, false);
             }
+            iStack.portlib$setFood(food, false);
         }
         return food;
     }

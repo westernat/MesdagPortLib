@@ -5,9 +5,7 @@
     "mixins": [
         "AbstractArrowAccessor",
         "AbstractArrowMixin",
-        "FoodPropertiesAccessor",
         "FoodPropertiesMixin",
-        "IForgeItemStackMixin",
         "ItemEntityMixin",
         "ItemMixin",
         "ItemStackMixin",

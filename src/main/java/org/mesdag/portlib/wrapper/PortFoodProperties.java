@@ -11,7 +11,6 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortFoodProperties;
-import org.mesdag.portlib.diff.mixin.FoodPropertiesAccessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +61,7 @@ public class PortFoodProperties {
             data.put("using_converts_to", stack.save(new CompoundTag()));
         }
         ListTag listTag = new ListTag();
-        for (Pair<Supplier<MobEffectInstance>, Float> effect : ((FoodPropertiesAccessor) food).getEffects()) {
+        for (Pair<Supplier<MobEffectInstance>, Float> effect : IPortFoodProperties.of(food).portlib$getEffects()) {
             CompoundTag tag1 = new CompoundTag();
             CompoundTag tag = effect.getFirst().get().save(new CompoundTag());
             tag1.put("effect", tag);
@@ -84,7 +83,7 @@ public class PortFoodProperties {
     }
 
     public List<PortPossibleEffect> effects(FoodProperties food) {
-        return Lists.transform(((FoodPropertiesAccessor) food).getEffects(), pair -> new PortPossibleEffect(pair.getFirst(), pair.getSecond()));
+        return Lists.transform(IPortFoodProperties.of(food).portlib$getEffects(), pair -> new PortPossibleEffect(pair.getFirst(), pair.getSecond()));
     }
 
     public record PortPossibleEffect(Supplier<MobEffectInstance> effectSupplier, float probability) {
