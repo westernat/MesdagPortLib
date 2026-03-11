@@ -1,0 +1,313 @@
+package org.mesdag.portlib.wrapper;
+
+import com.google.common.collect.ImmutableList;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.IPortItemStack;
+
+import java.util.List;
+
+@SuppressWarnings("all")
+public class PortItemStack {
+    public static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy) {
+        if (orDefault) {
+            CompoundTag data = stack.getOrCreateTagElement("portlib:custom_data");
+            return copy ? data.copy() : data;
+        }
+        CompoundTag data = stack.getTagElement("portlib:custom_data");
+        return data == null ? null : copy ? data.copy() : data;
+    }
+
+    public static void setCustomData(ItemStack stack, CompoundTag tag) {
+        stack.getOrCreateTag().put("portlib:custom_data", tag.copy());
+    }
+
+    public static boolean getUnbreakable(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.getBoolean("Unbreakable");
+    }
+
+    public static @Nullable Component getCustomName(ItemStack stack) {
+        CompoundTag display = stack.getTagElement("display");
+        if (display != null && display.contains("Name", Tag.TAG_STRING)) {
+            try {
+                Component name = Component.Serializer.fromJson(display.getString("Name"));
+                if (name != null) {
+                    return name;
+                }
+                display.remove("Name");
+            } catch (Exception exception) {
+                display.remove("Name");
+            }
+        }
+        return null;
+    }
+
+    public static Component getItemName(ItemStack stack) {
+        return stack.getItem().getName(stack);
+    }
+
+    public static List<Component> getLore(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("display", Tag.TAG_COMPOUND)) {
+            CompoundTag display = tag.getCompound("display");
+            if (display.getTagType("Lore") == Tag.TAG_LIST) {
+                ListTag lore = display.getList("Lore", Tag.TAG_STRING);
+                ImmutableList.Builder<Component> builder = ImmutableList.builder();
+                for (int i = 0; i < lore.size(); ++i) {
+                    String s = lore.getString(i);
+                    try {
+                        MutableComponent mutablecomponent1 = Component.Serializer.fromJson(s);
+                        if (mutablecomponent1 != null) {
+                            builder.add(ComponentUtils.mergeStyles(mutablecomponent1, ItemStack.LORE_STYLE));
+                        }
+                    } catch (Exception exception) {
+                        display.remove("Lore");
+                    }
+                }
+                return builder.build();
+            }
+        }
+        return List.of();
+    }
+
+    public static int getEnchantmentLevel(ItemStack stack, EnchantmentHolder enchantment) {
+        return stack.getEnchantmentLevel(enchantment.value());
+    }
+
+    public static boolean getCanPlaceOn(ItemStack stack, BlockInWorld block) {
+        return stack.hasAdventureModePlaceTagForBlock(PortEnvironment.registryAccess().registryOrThrow(Registries.BLOCK), block);
+    }
+
+    public static boolean getCanBreak(ItemStack stack, BlockInWorld block) {
+        return stack.hasAdventureModeBreakTagForBlock(PortEnvironment.registryAccess().registryOrThrow(Registries.BLOCK), block);
+    }
+
+    public static int getCustomModelData(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        return tag == null ? 0 : tag.getInt("portlib:custom_model_data");
+    }
+
+    private static boolean getTooltipPart(ItemStack stack, ItemStack.TooltipPart part) {
+        return ItemStack.shouldShowInTooltip(stack.getHideFlags(), part);
+    }
+
+    private static void setTooltipPart(ItemStack stack, ItemStack.TooltipPart part, boolean should) {
+        if (should) {
+            stack.hideTooltipPart(part);
+        } else {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                tag.putInt("HideFlags", tag.getInt("HideFlags") & ~part.getMask());
+            }
+        }
+    }
+
+    public static boolean getHideEnchantmentsTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS);
+    }
+
+    public static void setHideEnchantmentsTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS, hide);
+    }
+
+    public static boolean getHideAttributeModifiersTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS);
+    }
+
+    public static void setHideAttributeModifiersTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS, hide);
+    }
+
+    public static boolean getHideUnbreakableTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE);
+    }
+
+    public static void setHideUnbreakableTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE, hide);
+    }
+
+    public static boolean getHideCanBreakTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY);
+    }
+
+    public static void setHideCanBreakTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY, hide);
+    }
+
+    public static boolean getHideCanPlaceOnTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE);
+    }
+
+    public static void setHideCanPlaceOnTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE, hide);
+    }
+
+    public static boolean getHideAdditionalTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL);
+    }
+
+    public static void setHideAdditionalTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL, hide);
+    }
+
+    public static boolean getHideDyeTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.DYE);
+    }
+
+    public static void setHideDyeTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.DYE, hide);
+    }
+
+    public static boolean getHideTrimTooltip(ItemStack stack) {
+        return getTooltipPart(stack, ItemStack.TooltipPart.UPGRADES);
+    }
+
+    public static void setHideTrimTooltip(ItemStack stack, boolean hide) {
+        setTooltipPart(stack, ItemStack.TooltipPart.UPGRADES, hide);
+    }
+
+    private static final int ALL_HIDE_MASK = 1 << ItemStack.TooltipPart.values().length;
+
+    public static boolean getHideTooltip(ItemStack stack) {
+        return (stack.getHideFlags() & ALL_HIDE_MASK) == ALL_HIDE_MASK;
+    }
+
+    public static void setHideTooltip(ItemStack stack, boolean hide) {
+        if (hide) {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt("HideFlags", tag.getInt("HideFlags") | ALL_HIDE_MASK);
+        } else {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                tag.putInt("HideFlags", tag.getInt("HideFlags") & ~ALL_HIDE_MASK);
+            }
+        }
+    }
+
+    public static int getRepaireCost(ItemStack stack) {
+        return stack.getBaseRepairCost();
+    }
+
+    public static void setRepairCost(ItemStack stack, int cost) {
+        stack.setRepairCost(cost);
+    }
+
+    private static boolean getUnit(ItemStack stack, String key) {
+        return stack.getTagElement(key) != null;
+    }
+
+    private static void setUnit(ItemStack stack, String key, boolean has) {
+        if (has) {
+            stack.getOrCreateTagElement(key);
+        } else {
+            stack.removeTagKey(key);
+        }
+    }
+
+    public static boolean getCreativeSlotLock(ItemStack stack) {
+        return getUnit(stack, "CustomCreativeLock");
+    }
+
+    public static void setCreativeSlotLock(ItemStack stack, boolean lock) {
+        setUnit(stack, "CustomCreativeLock", lock);
+    }
+
+    public static boolean getEnchantmentGlintOverride(ItemStack stack) {
+        return getUnit(stack, "portlib:enchantment_glint_override");
+    }
+
+    public static void setEnchantmentGlintOverride(ItemStack stack, boolean override) {
+        setUnit(stack, "portlib:enchantment_glint_override", override);
+    }
+
+    // todo AbstractArrow类
+    public static boolean getIntangibleProjectile(ItemStack stack) {
+        return getUnit(stack, "portlib:intangible_projectile");
+    }
+
+    public static void setIntangibleProjectile(ItemStack stack, boolean intangible) {
+        setUnit(stack, "portlib:intangible_projectile", intangible);
+    }
+
+    public static @Nullable FoodProperties getFood(ItemStack stack, @Nullable LivingEntity living) {
+        IPortItemStack iStack = IPortItemStack.of(stack);
+        FoodProperties food = iStack.portlib$getFood(living);
+        if (food == null) {
+            CompoundTag data = stack.getTagElement(PortFoodProperties.KEY);
+            if (data != null) {
+                food = PortFoodProperties.load(data);
+                iStack.portlib$setFood(food, false);
+            }
+        }
+        return food;
+    }
+
+    public static void setFood(ItemStack stack, @Nullable FoodProperties food) {
+        IPortItemStack.of(stack).portlib$setFood(food, true);
+    }
+
+    public static boolean getFireResistant(ItemStack stack) {
+        return getUnit(stack, "portlib:fire_resistant");
+    }
+
+    public static void setFireResistant(ItemStack stack, boolean resistant) {
+        setUnit(stack, "portlib:fire_resistant", resistant);
+    }
+
+    // todo 功能
+    public static @Nullable PortTool getTool(ItemStack stack) {
+        IPortItemStack iStack = IPortItemStack.of(stack);
+        PortTool tool = iStack.portlib$getTool();
+        if (tool == null) {
+            CompoundTag data = stack.getTagElement(PortFoodProperties.KEY);
+            if (data != null) {
+                tool = PortTool.load(data);
+                iStack.portlib$setTool(tool, false);
+            }
+        }
+        return tool;
+    }
+
+    public static void setTool(ItemStack stack, @Nullable PortTool tool) {
+        IPortItemStack.of(stack).portlib$setTool(tool, true);
+    }
+
+    // todo getStoredEnchantments
+
+    /// rgb
+    public static int getDyedColor(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("display", Tag.TAG_COMPOUND)) {
+            CompoundTag display = tag.getCompound("display");
+            if (display.contains("color", Tag.TAG_ANY_NUMERIC)) {
+                return display.getInt("color");
+            }
+        }
+        return -1;
+    }
+
+    /// rgba
+    public static int getMapColor(ItemStack stack) {
+        return MapItem.getColor(stack);
+    }
+
+    public static @Nullable Integer getMapId(ItemStack stack) {
+        return MapItem.getMapId(stack);
+    }
+
+    // todo getMapDecortions MapItemSavedData#L201
+
+
+}

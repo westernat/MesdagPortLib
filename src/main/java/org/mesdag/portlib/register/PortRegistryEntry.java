@@ -5,16 +5,16 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
-import org.mesdag.portlib.Identifier;
+import org.mesdag.portlib.wrapper.PortIdentifier;
 
-@SuppressWarnings("unused")
-public final class RegistryEntry<T, R extends Registry<T>> implements Supplier<T> {
+@SuppressWarnings("all")
+public final class PortRegistryEntry<T, R extends Registry<T>> implements Supplier<T> {
     final ResourceKey<R> registryKey;
-    final Identifier identifier;
+    final PortIdentifier identifier;
     private final RegistryObject<T> object;
     final Supplier<T> valueSupplier;
 
-    public RegistryEntry(ResourceKey<R> registryKey, Identifier identifier, Supplier<T> valueSupplier) {
+    public PortRegistryEntry(ResourceKey<R> registryKey, PortIdentifier identifier, Supplier<T> valueSupplier) {
         this.registryKey = registryKey;
         this.identifier = identifier;
         this.object = RegistryObject.create(identifier, RegistryManager.ACTIVE.getRegistry(registryKey));
@@ -26,7 +26,7 @@ public final class RegistryEntry<T, R extends Registry<T>> implements Supplier<T
         return object.get();
     }
 
-    public Identifier getId() {
+    public PortIdentifier getId() {
         return identifier;
     }
 }

@@ -8,32 +8,32 @@ import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
-public class EventHandler {
+@SuppressWarnings("all")
+public class PortEventHandler {
     public static <E extends Event> void addListener(Consumer<E> consumer) {
         getBus(consumer).unwrap().addListener(consumer);
     }
 
-    public static <E extends Event> void addListener(Priority priority, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortPriority priority, Consumer<E> consumer) {
         getBus(consumer).unwrap().addListener(priority.unwrap(), consumer);
     }
 
-    public static <E extends Event> void addListener(Priority priority, boolean receiveCancelled, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
         getBus(consumer).unwrap().addListener(priority.unwrap(), receiveCancelled, consumer);
     }
 
-    public static <E extends Event> void addListener(Priority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
         getBus(clazz).unwrap().addListener(priority.unwrap(), receiveCancelled, clazz, consumer);
     }
 
-    private static <E extends Event> EventBus getBus(Consumer<E> consumer) {
+    private static <E extends Event> PortBus getBus(Consumer<E> consumer) {
         Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
         // addListener时会自动检查
         return getBus(clazz);
     }
 
-    private static EventBus getBus(Class<?> clazz) {
-        return clazz.isAssignableFrom(IModBusEvent.class) ? EventBus.MOD : EventBus.GAME;
+    private static PortBus getBus(Class<?> clazz) {
+        return clazz.isAssignableFrom(IModBusEvent.class) ? PortBus.MOD : PortBus.GAME;
     }
 
     public static <E extends Event> void postEvent(E event) {

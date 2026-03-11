@@ -3,7 +3,8 @@ package org.mesdag.portlib.event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 
-public enum EventBus {
+@SuppressWarnings("all")
+public enum PortBus {
     MOD {
         @Override
         IEventBus unwrap() {

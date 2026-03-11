@@ -3,14 +3,15 @@ package org.mesdag.portlib.network;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.Identifier;
+import org.mesdag.portlib.wrapper.PortIdentifier;
 
-public interface IPacket {
+@SuppressWarnings("all")
+public interface IPortPacket {
     void handle(Context context);
 
-    Identifier identifier();
+    PortIdentifier identifier();
 
-    interface C2S extends IPacket {
+    interface C2S extends IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player instanceof ServerPlayer player) {
@@ -21,7 +22,7 @@ public interface IPacket {
         void work(ServerPlayer player);
     }
 
-    interface S2C extends IPacket {
+    interface S2C extends IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player != null) {

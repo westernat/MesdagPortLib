@@ -127,6 +127,7 @@ mixin {
 
 dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:0.5.3"))
 }
 
 jar {

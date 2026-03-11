@@ -1,0 +1,22 @@
+{
+    "required": true,
+    "package": "org.mesdag.portlib.diff.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "AbstractArrowAccessor",
+        "AbstractArrowMixin",
+        "FoodPropertiesAccessor",
+        "FoodPropertiesMixin",
+        "IForgeItemStackMixin",
+        "ItemEntityMixin",
+        "ItemMixin",
+        "ItemStackMixin",
+        "PlayerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+  }
+}
