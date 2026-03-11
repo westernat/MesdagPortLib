@@ -1,36 +1,24 @@
 package org.mesdag.portlib;
 
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
-import org.mesdag.portlib.network.NetworkHandler;
-import org.mesdag.portlib.register.RegisterHandler;
+import org.mesdag.portlib.network.PortNetworkHandler;
+import org.mesdag.portlib.register.PortRegisterHandler;
+import org.mesdag.portlib.wrapper.PortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
 @Mod(PortLib.MODID)
 public class PortLib {
     public static final String MODID = "portlib";
     public static final Logger LOGGER = LoggerFactory.getLogger("PortLib");
 
     public PortLib() {
-        RegisterHandler.init();
-        NetworkHandler.init();
+        PortRegisterHandler.init();
+        PortNetworkHandler.init();
     }
 
-    public static Identifier identifier(String namespace, String path) {
-        return new Identifier(namespace, path);
-    }
-
-    public static boolean isPhysicalClient() {
-        return FMLEnvironment.dist.isClient();
-    }
-
-    public static boolean isPhysicalServer() {
-        return FMLEnvironment.dist.isDedicatedServer();
-    }
-
-    public static boolean isDeveloper() {
-        return !FMLEnvironment.production;
+    public static PortIdentifier identifier(String path) {
+        return PortIdentifier.fromNamespaceAndPath(MODID, path);
     }
 }

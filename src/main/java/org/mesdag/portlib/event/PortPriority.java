@@ -3,7 +3,8 @@ package org.mesdag.portlib.event;
 
 import net.neoforged.bus.api.EventPriority;
 
-public enum Priority {
+@SuppressWarnings("all")
+public enum PortPriority {
     HIGHEST,
     HIGH,
     NORMAL,

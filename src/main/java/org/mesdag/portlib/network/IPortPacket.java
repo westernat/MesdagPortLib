@@ -4,19 +4,20 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.Identifier;
+import org.mesdag.portlib.wrapper.PortIdentifier;
 
-public interface IPacket extends CustomPacketPayload {
+@SuppressWarnings("all")
+public interface IPortPacket extends CustomPacketPayload {
     void handle(Context context);
 
-    Identifier identifier();
+    PortIdentifier identifier();
 
     @Override
     default Type<? extends CustomPacketPayload> type() {
-        return NetworkHandler.createType(identifier());
+        return PortNetworkHandler.createType(identifier());
     }
 
-    interface C2S extends IPacket {
+    interface C2S extends IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player instanceof ServerPlayer player) {
@@ -27,7 +28,7 @@ public interface IPacket extends CustomPacketPayload {
         void work(ServerPlayer player);
     }
 
-    interface S2C extends IPacket {
+    interface S2C extends IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player != null) {

@@ -19,83 +19,81 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.Identifier;
-import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.event.EventHandler;
-import org.mesdag.portlib.event.Priority;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.wrapper.PortIdentifier;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-@SuppressWarnings("unused")
-public class NetworkHandler {
-    private static final List<NetworkHandler> handlers = new ArrayList<>();
-    private static final Map<Identifier, CustomPacketPayload.Type<?>> types = new HashMap<>();
+@SuppressWarnings("all")
+public class PortNetworkHandler {
+    private static final List<PortNetworkHandler> handlers = new ArrayList<>();
+    private static final Map<PortIdentifier, CustomPacketPayload.Type<?>> types = new HashMap<>();
 
     private final String namespace;
     private final String version;
     private EnumMap<PacketDirection, List<Payload<?, ?>>> payloads = new EnumMap<>(PacketDirection.class);
 
-    public NetworkHandler(String namespace, String version) {
+    public PortNetworkHandler(String namespace, String version) {
         this.namespace = namespace;
         this.version = version;
         handlers.add(this);
     }
 
-    public <P extends IPacket.S2C, B extends ByteBuf> void registerInGameS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler) {
+    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerInGameS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.PLAY_TO_CLIENT);
     }
 
-    public <P extends IPacket.C2S, B extends ByteBuf> void registerInGameC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler) {
+    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerInGameC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.PLAY_TO_SERVER);
     }
 
-    public <P extends IPacket.S2C, B extends ByteBuf> void registerLoginS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler) {
+    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerLoginS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.LOGIN_TO_CLIENT);
     }
 
-    public <P extends IPacket.C2S, B extends ByteBuf> void registerLoginC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler) {
+    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerLoginC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.LOGIN_TO_SERVER);
     }
 
-    private <P extends IPacket, B extends ByteBuf> void register(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler, PacketDirection direction) {
-        payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(PortLib.identifier(namespace, path), codec, handler));
+    private <P extends IPortPacket, B extends ByteBuf> void register(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler, PacketDirection direction) {
+        payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(PortIdentifier.fromNamespaceAndPath(namespace, path), codec, handler));
     }
 
-    @SuppressWarnings("unchecked")
-    static <P extends IPacket> CustomPacketPayload.Type<P> createType(Identifier identifier) {
+    static <P extends IPortPacket> CustomPacketPayload.Type<P> createType(PortIdentifier identifier) {
         return (CustomPacketPayload.Type<P>) types.computeIfAbsent(identifier, CustomPacketPayload.Type::new);
     }
 
-    public void sendToServer(IPacket.C2S packet, IPacket.C2S... packets) {
+    public void sendToServer(IPortPacket.C2S packet, IPortPacket.C2S... packets) {
         PacketDistributor.sendToServer(packet, packets);
     }
 
-    public void sendToPlayer(ServerPlayer player, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayer(ServerPlayer player, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayer(player, packet, packets);
     }
 
-    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayersInDimension(getLevel(dimension), packet, packets);
     }
 
-    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayersNear(getLevel(dimension), excluded, x, y, z, radius, packet, packets);
     }
 
-    public void sendToAllPlayers(IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToAllPlayers(IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToAllPlayers(packet, packets);
     }
 
-    public void sendToPlayersTrackingEntity(Entity entity, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayersTrackingEntity(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayersTrackingEntity(entity, packet, packets);
     }
 
-    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, packet, packets);
     }
 
-    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPacket.S2C packet, IPacket.S2C... packets) {
+    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
         PacketDistributor.sendToPlayersTrackingChunk(level, pos, packet, packets);
     }
 
@@ -105,8 +103,8 @@ public class NetworkHandler {
 
     @ApiStatus.Internal
     public static void init() {
-        EventHandler.addListener(Priority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
-            for (NetworkHandler handler : handlers) {
+        PortEventHandler.addListener(PortPriority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
+            for (PortNetworkHandler handler : handlers) {
                 PayloadRegistrar registrar = event.registrar(handler.version);
                 for (Map.Entry<PacketDirection, List<Payload<?, ?>>> entry : handler.payloads.entrySet()) {
                     for (Payload<?, ?> payload : entry.getValue()) {
@@ -123,11 +121,11 @@ public class NetworkHandler {
         });
     }
 
-    public static <P extends IPacket, B extends ByteBuf> PacketCodec<P, B> toPacketCodec(StreamCodec<B, P> codec) {
+    public static <P extends IPortPacket, B extends ByteBuf> PacketCodec<P, B> toPacketCodec(StreamCodec<B, P> codec) {
         return new PacketStreamCodec<>(codec);
     }
 
-    public interface PacketCodec<P extends IPacket, B extends ByteBuf> {
+    public interface PacketCodec<P extends IPortPacket, B extends ByteBuf> {
         void encode(P packet, B buffer);
 
         P decode(B buffer);
@@ -140,13 +138,12 @@ public class NetworkHandler {
         LOGIN_TO_CLIENT
     }
 
-    @SuppressWarnings("unchecked")
-    record Payload<P extends IPacket, B extends ByteBuf>(Identifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPacket.Context> handler) {
+    record Payload<P extends IPortPacket, B extends ByteBuf>(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
         void accept(TriConsumer<CustomPacketPayload.Type<P>, StreamCodec<? super FriendlyByteBuf, P>, IPayloadHandler<P>> consumer) {
-            consumer.accept(createType(identifier), (StreamCodec<? super FriendlyByteBuf, P>) toStreamCodec(codec), (p, c) -> handler.accept(p, new IPacket.Context(c.player())));
+            consumer.accept(createType(identifier), (StreamCodec<? super FriendlyByteBuf, P>) toStreamCodec(codec), (p, c) -> handler.accept(p, new IPortPacket.Context(c.player())));
         }
 
-        static <P extends IPacket, B extends ByteBuf> StreamCodec<B, P> toStreamCodec(PacketCodec<P, B> codec) {
+        static <P extends IPortPacket, B extends ByteBuf> StreamCodec<B, P> toStreamCodec(PacketCodec<P, B> codec) {
             if (codec instanceof PacketStreamCodec<P, B>(StreamCodec<B, P> streamCodec)) {
                 return streamCodec;
             }
@@ -164,7 +161,7 @@ public class NetworkHandler {
         }
     }
 
-    record PacketStreamCodec<P extends IPacket, B extends ByteBuf>(StreamCodec<B, P> codec) implements PacketCodec<P, B> {
+    record PacketStreamCodec<P extends IPortPacket, B extends ByteBuf>(StreamCodec<B, P> codec) implements PacketCodec<P, B> {
         @Override
         public void encode(P packet, B buffer) {
             codec.encode(buffer, packet);

@@ -6,7 +6,8 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
 import org.mesdag.portlib.PortLib;
 
-public enum EventBus {
+@SuppressWarnings("all")
+public enum PortBus {
     MOD {
         @Override
         IEventBus unwrap() {
