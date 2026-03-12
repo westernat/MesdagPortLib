@@ -8,6 +8,7 @@ import org.mesdag.portlib.diff.Diff;
 
 import java.util.stream.Stream;
 
+@SuppressWarnings("all")
 public record PortBundleContents(ItemStack bundleStack) {
     public PortBundleContents {
         if (bundleStack.isEmpty()) {
@@ -46,5 +47,10 @@ public record PortBundleContents(ItemStack bundleStack) {
 
     public boolean isEmpty() {
         return unwrap().isEmpty();
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == bundleStack) return;
+        stack.set(DataComponents.BUNDLE_CONTENTS, bundleStack.get(DataComponents.BUNDLE_CONTENTS));
     }
 }

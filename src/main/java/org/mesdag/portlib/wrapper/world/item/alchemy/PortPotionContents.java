@@ -74,4 +74,9 @@ public record PortPotionContents(ItemStack potionStack) {
     public List<MobEffectInstance> customEffects() {
         return unwrap().customEffects();
     }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == potionStack) return;
+        stack.set(DataComponents.POTION_CONTENTS, potionStack.get(DataComponents.POTION_CONTENTS));
+    }
 }

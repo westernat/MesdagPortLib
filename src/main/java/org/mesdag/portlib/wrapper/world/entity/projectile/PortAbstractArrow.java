@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.entity.projectile;
 
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;

@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.item;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -17,9 +17,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
-import org.mesdag.portlib.wrapper.world.item.component.PortBundleContents;
-import org.mesdag.portlib.wrapper.world.item.component.PortChargedProjectiles;
-import org.mesdag.portlib.wrapper.world.item.component.PortMapPostProcessing;
+import org.mesdag.portlib.wrapper.world.item.component.*;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
@@ -169,7 +167,7 @@ public class PortItemStack {
 
     public static boolean getShowDyeTooltip(ItemStack stack) {
         DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
-        return color == null || !color.showInTooltip();
+        return color == null || color.showInTooltip();
     }
 
     public static void setShowDyeTooltip(ItemStack stack, boolean show) {
@@ -270,21 +268,38 @@ public class PortItemStack {
         return null;
     }
 
-    /// rgb
-    public static int getDyedColor(ItemStack stack) {
-        DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
-        if (color == null) return -1;
-        return color.rgb();
+    public static void setStoredEnchantments(ItemStack stack, PortItemEnchantments value) {
+        value.applyTo(stack);
     }
 
-    /// rgba
+    /// rgb
+    public static int getDyedColor(ItemStack stack) {
+        return DyedItemColor.getOrDefault(stack, -1);
+    }
+
+    public static void setDyedColor(ItemStack stack, int rgb) {
+        DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
+        if (color != null) {
+            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(rgb, color.showInTooltip()));
+        }
+    }
+
+    /// argb
     public static int getMapColor(ItemStack stack) {
         return FastColor.ARGB32.opaque(stack.getOrDefault(DataComponents.MAP_COLOR, MapItemColor.DEFAULT).rgb());
+    }
+
+    public static void setMapColor(ItemStack stack, int argb) {
+        stack.set(DataComponents.MAP_COLOR, new MapItemColor(argb & 0x00FFFFFF));
     }
 
     public static @Nullable Integer getMapId(ItemStack stack) {
         MapId mapId = stack.get(DataComponents.MAP_ID);
         return mapId == null ? null : mapId.id();
+    }
+
+    public static void setMapId(ItemStack stack, int mapId) {
+        stack.set(DataComponents.MAP_ID, new MapId(mapId));
     }
 
     public static @Nullable PortMapPostProcessing getMapPostProcessing(ItemStack stack) {
@@ -293,15 +308,39 @@ public class PortItemStack {
         return PortMapPostProcessing.wrap(processing);
     }
 
+    public static void setMapPostProcessing(ItemStack stack, PortMapPostProcessing value) {
+        stack.set(DataComponents.MAP_POST_PROCESSING, value.unwrap());
+    }
+
     public static PortChargedProjectiles getChargedProjectiles(ItemStack stack) {
         return new PortChargedProjectiles(stack);
+    }
+
+    public static void setChargedProjectiles(ItemStack stack, PortChargedProjectiles value) {
+        value.applyTo(stack);
     }
 
     public static PortBundleContents getBundleContents(ItemStack stack) {
         return new PortBundleContents(stack);
     }
 
+    public static void setBundleContents(ItemStack stack, PortBundleContents value) {
+        value.applyTo(stack);
+    }
+
     public static PortPotionContents getPotionContents(ItemStack stack) {
         return new PortPotionContents(stack);
+    }
+
+    public static void setPotionContents(ItemStack stack, PortPotionContents value) {
+        value.applyTo(stack);
+    }
+
+    public static PortSuspiciousStewEffects getSuspiciousStewEffects(ItemStack stack) {
+        return new PortSuspiciousStewEffects(stack);
+    }
+
+    public static void setSuspiciousStewEffects(ItemStack stack, PortSuspiciousStewEffects value) {
+        value.applyTo(stack);
     }
 }

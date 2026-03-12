@@ -8,7 +8,14 @@ import org.mesdag.portlib.diff.Diff;
 
 import java.util.List;
 
+@SuppressWarnings("all")
 public record PortChargedProjectiles(ItemStack crossbowStack) {
+    public PortChargedProjectiles {
+        if (crossbowStack.isEmpty()) {
+            throw new IllegalArgumentException("CrossbowStack cannot be empty!");
+        }
+    }
+
     @Diff
     public ChargedProjectiles unwrap() {
         return crossbowStack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
@@ -24,5 +31,10 @@ public record PortChargedProjectiles(ItemStack crossbowStack) {
 
     public boolean isEmpty() {
         return unwrap().isEmpty();
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == crossbowStack) return;
+        stack.set(DataComponents.CHARGED_PROJECTILES, crossbowStack.get(DataComponents.CHARGED_PROJECTILES));
     }
 }

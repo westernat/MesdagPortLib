@@ -9,7 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.util.TransformSet;
-import org.mesdag.portlib.wrapper.PortItemStack;
+import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
 import java.util.Set;
 
@@ -53,6 +53,11 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
 
     public boolean isEmpty() {
         return unwrap().isEmpty();
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == enchantedStack) return;
+        stack.set(getType(stack), enchantedStack.get(getType(enchantedStack)));
     }
 
     public static boolean shouldGetStoredEnchantments(ItemStack stack) {
