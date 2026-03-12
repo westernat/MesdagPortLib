@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("all")
 public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damagePerBlock) {
     @Diff
-    public static PortTool of(Tool tool) {
-        return new PortTool(Lists.transform(tool.rules(), PortRule::of), tool.defaultMiningSpeed(), tool.damagePerBlock());
+    public static PortTool wrap(Tool tool) {
+        return new PortTool(Lists.transform(tool.rules(), PortRule::wrap), tool.defaultMiningSpeed(), tool.damagePerBlock());
     }
 
     @Diff
@@ -47,7 +47,7 @@ public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damag
 
     public record PortRule(HolderSet<Block> blocks, Optional<Float> speed, Optional<Boolean> correctForDrops) {
         @Diff
-        public static PortRule of(Tool.Rule rule) {
+        public static PortRule wrap(Tool.Rule rule) {
             return new PortRule(rule.blocks(), rule.speed(), rule.correctForDrops());
         }
 

@@ -21,12 +21,12 @@ public class PortFoodProperties {
     }
 
     public List<PortPossibleEffect> effects(FoodProperties food) {
-        return Lists.transform(food.effects(), PortPossibleEffect::of);
+        return Lists.transform(food.effects(), PortPossibleEffect::wrap);
     }
 
     public record PortPossibleEffect(Supplier<MobEffectInstance> effectSupplier, float probability) {
         @Diff
-        public static PortPossibleEffect of(FoodProperties.PossibleEffect effect) {
+        public static PortPossibleEffect wrap(FoodProperties.PossibleEffect effect) {
             return new PortPossibleEffect(effect.effectSupplier(), effect.probability());
         }
 

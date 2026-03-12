@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.item.alchemy;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
@@ -6,26 +6,29 @@ import net.minecraft.core.HolderOwner;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.alchemy.Potion;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.core.PortHolder;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @SuppressWarnings("all")
-public class EnchantmentHolder implements Holder<Enchantment> {
-    private final Holder<Enchantment> delegate;
+public class PotionHolder implements PortHolder<Potion> {
+    private final Holder<Potion> delegate;
 
-    private EnchantmentHolder(Holder<Enchantment> value) {
-        this.delegate = value;
+    private PotionHolder(Holder<Potion> holder) {
+        this.delegate = holder;
     }
 
-    public static EnchantmentHolder of(Holder<Enchantment> value) {
-        return new EnchantmentHolder(value);
+    @Diff
+    public static PotionHolder wrap(Holder<Potion> holder) {
+        return new PotionHolder(holder);
     }
 
     @Override
-    public Enchantment value() {
+    public Potion value() {
         return delegate.value();
     }
 
@@ -40,37 +43,37 @@ public class EnchantmentHolder implements Holder<Enchantment> {
     }
 
     @Override
-    public boolean is(ResourceKey<Enchantment> resourceKey) {
+    public boolean is(ResourceKey<Potion> resourceKey) {
         return delegate.is(resourceKey);
     }
 
     @Override
-    public boolean is(Predicate<ResourceKey<Enchantment>> predicate) {
+    public boolean is(Predicate<ResourceKey<Potion>> predicate) {
         return delegate.is(predicate);
     }
 
     @Override
-    public boolean is(TagKey<Enchantment> tagKey) {
+    public boolean is(TagKey<Potion> tagKey) {
         return delegate.is(tagKey);
     }
 
     @Override
-    public boolean is(Holder<Enchantment> holder) {
-        return holder.is(holder);
+    public boolean is(Holder<Potion> holder) {
+        return delegate.is(holder);
     }
 
     @Override
-    public Stream<TagKey<Enchantment>> tags() {
+    public Stream<TagKey<Potion>> tags() {
         return delegate.tags();
     }
 
     @Override
-    public Either<ResourceKey<Enchantment>, Enchantment> unwrap() {
+    public Either<ResourceKey<Potion>, Potion> unwrap() {
         return delegate.unwrap();
     }
 
     @Override
-    public Optional<ResourceKey<Enchantment>> unwrapKey() {
+    public Optional<ResourceKey<Potion>> unwrapKey() {
         return delegate.unwrapKey();
     }
 
@@ -80,7 +83,7 @@ public class EnchantmentHolder implements Holder<Enchantment> {
     }
 
     @Override
-    public boolean canSerializeIn(HolderOwner<Enchantment> owner) {
+    public boolean canSerializeIn(HolderOwner<Potion> owner) {
         return delegate.canSerializeIn(owner);
     }
 }

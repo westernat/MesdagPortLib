@@ -16,6 +16,11 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
+import org.mesdag.portlib.wrapper.world.item.component.PortBundleContents;
+import org.mesdag.portlib.wrapper.world.item.component.PortChargedProjectiles;
+import org.mesdag.portlib.wrapper.world.item.component.PortMapPostProcessing;
+import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
 
@@ -51,8 +56,11 @@ public class PortItemStack {
         return stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).styledLines();
     }
 
-    public static int getEnchantmentLevel(ItemStack stack, EnchantmentHolder enchantment) {
-        return stack.getEnchantmentLevel(enchantment);
+    public static @Nullable PortItemEnchantments getEnchantments(ItemStack stack) {
+        if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
+            return null;
+        }
+        return new PortItemEnchantments(stack);
     }
 
     public static boolean getCanPlaceOn(ItemStack stack, BlockInWorld block) {
@@ -88,6 +96,18 @@ public class PortItemStack {
         ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
         if (enchantments != null) {
             stack.set(DataComponents.ENCHANTMENTS, enchantments.withTooltip(!hide));
+        }
+    }
+
+    public static boolean getHideStoredEnchantmentsTooltip(ItemStack stack) {
+        ItemEnchantments enchantments = stack.get(DataComponents.STORED_ENCHANTMENTS);
+        return enchantments == null || !enchantments.showInTooltip;
+    }
+
+    public static void setHideStoredEnchantmentsTooltip(ItemStack stack, boolean hide) {
+        ItemEnchantments enchantments = stack.get(DataComponents.STORED_ENCHANTMENTS);
+        if (enchantments != null) {
+            stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.withTooltip(!hide));
         }
     }
 
@@ -234,13 +254,20 @@ public class PortItemStack {
     public static @Nullable PortTool getTool(ItemStack stack) {
         Tool tool = stack.get(DataComponents.TOOL);
         if (tool != null) {
-            return PortTool.of(tool);
+            return PortTool.wrap(tool);
         }
         return null;
     }
 
     public static void setTool(ItemStack stack, @Nullable PortTool tool) {
         stack.set(DataComponents.TOOL, tool == null ? null : tool.unwrap());
+    }
+
+    public static @Nullable PortItemEnchantments getStoredEnchantments(ItemStack stack) {
+        if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
+            return new PortItemEnchantments(stack);
+        }
+        return null;
     }
 
     /// rgb
@@ -258,5 +285,23 @@ public class PortItemStack {
     public static @Nullable Integer getMapId(ItemStack stack) {
         MapId mapId = stack.get(DataComponents.MAP_ID);
         return mapId == null ? null : mapId.id();
+    }
+
+    public static @Nullable PortMapPostProcessing getMapPostProcessing(ItemStack stack) {
+        MapPostProcessing processing = stack.get(DataComponents.MAP_POST_PROCESSING);
+        if (processing == null) return null;
+        return PortMapPostProcessing.wrap(processing);
+    }
+
+    public static PortChargedProjectiles getChargedProjectiles(ItemStack stack) {
+        return new PortChargedProjectiles(stack);
+    }
+
+    public static PortBundleContents getBundleContents(ItemStack stack) {
+        return new PortBundleContents(stack);
+    }
+
+    public static PortPotionContents getPotionContents(ItemStack stack) {
+        return new PortPotionContents(stack);
     }
 }
