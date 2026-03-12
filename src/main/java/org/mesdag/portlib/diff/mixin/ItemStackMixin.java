@@ -1,10 +1,12 @@
 package org.mesdag.portlib.diff.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
@@ -77,8 +79,15 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "getTooltipLines", at = @At("HEAD"), cancellable = true)
     private void hideTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir) {
-        if (!isAdvanced.isCreative() && PortItemStack.getHideTooltip(portlib$self())) {
+        if (!isAdvanced.isCreative() && !PortItemStack.getShowTooltip(portlib$self())) {
             cir.setReturnValue(List.of());
+        }
+    }
+
+    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shouldShowInTooltip(ILnet/minecraft/world/item/ItemStack$TooltipPart;)Z", ordinal = 2))
+    private void hideStoredEnchantmentsTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local(name = "list") List<Component> list) {
+        if (PortItemStack.getShowStoredEnchantmentsTooltip(portlib$self())) {
+            ItemStack.appendEnchantmentNames(list, EnchantedBookItem.getEnchantments(portlib$self()));
         }
     }
 

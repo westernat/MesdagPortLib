@@ -107,119 +107,118 @@ public class PortItemStack {
         return tag == null ? 0 : tag.getInt("portlib:custom_model_data");
     }
 
-    private static boolean getTooltipPart(ItemStack stack, ItemStack.TooltipPart part) {
+    private static boolean getShowTooltipPart(ItemStack stack, ItemStack.TooltipPart part) {
         return ItemStack.shouldShowInTooltip(stack.getHideFlags(), part);
     }
 
-    private static void setTooltipPart(ItemStack stack, ItemStack.TooltipPart part, boolean should) {
-        if (should) {
-            stack.hideTooltipPart(part);
-        } else {
+    private static void setShowTooltipPart(ItemStack stack, ItemStack.TooltipPart part, boolean show) {
+        if (show) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
                 tag.putInt("HideFlags", tag.getInt("HideFlags") & ~part.getMask());
             }
+        } else {
+            stack.hideTooltipPart(part);
         }
     }
 
-    public static boolean getHideEnchantmentsTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS);
+    public static boolean getShowEnchantmentsTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS);
     }
 
     private static final int HIDE_STORED_ENCHANTMENTS_MASK = 1 << ItemStack.TooltipPart.values().length;
 
-    public static void setHideEnchantmentsTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS, hide);
+    public static void setShowEnchantmentsTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS, show);
     }
 
-    // todo
-    public static boolean getHideStoredEnchantmentsTooltip(ItemStack stack) {
-        return (stack.getHideFlags() & HIDE_STORED_ENCHANTMENTS_MASK) != 0;
+    public static boolean getShowStoredEnchantmentsTooltip(ItemStack stack) {
+        return (stack.getHideFlags() & HIDE_STORED_ENCHANTMENTS_MASK) == 0;
     }
 
-    public static void setHideStoredEnchantmentsTooltip(ItemStack stack, boolean hide) {
-        if (hide) {
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_STORED_ENCHANTMENTS_MASK);
-        } else {
+    public static void setShowStoredEnchantmentsTooltip(ItemStack stack, boolean show) {
+        if (show) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
                 tag.putInt("HideFlags", tag.getInt("HideFlags") & ~HIDE_STORED_ENCHANTMENTS_MASK);
             }
+        } else {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_STORED_ENCHANTMENTS_MASK);
         }
     }
 
-    public static boolean getHideAttributeModifiersTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS);
+    public static boolean getShowAttributeModifiersTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS);
     }
 
-    public static void setHideAttributeModifiersTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS, hide);
+    public static void setShowAttributeModifiersTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.MODIFIERS, show);
     }
 
-    public static boolean getHideUnbreakableTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE);
+    public static boolean getShowUnbreakableTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE);
     }
 
-    public static void setHideUnbreakableTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE, hide);
+    public static void setShowUnbreakableTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.UNBREAKABLE, show);
     }
 
-    public static boolean getHideCanBreakTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY);
+    public static boolean getShowCanBreakTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY);
     }
 
-    public static void setHideCanBreakTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY, hide);
+    public static void setShowCanBreakTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.CAN_DESTROY, show);
     }
 
-    public static boolean getHideCanPlaceOnTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE);
+    public static boolean getShowCanPlaceOnTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE);
     }
 
-    public static void setHideCanPlaceOnTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE, hide);
+    public static void setShowCanPlaceOnTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.CAN_PLACE, show);
     }
 
-    public static boolean getHideAdditionalTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL);
+    public static boolean getShowAdditionalTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL);
     }
 
-    public static void setHideAdditionalTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL, hide);
+    public static void setShowAdditionalTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.ADDITIONAL, show);
     }
 
-    public static boolean getHideDyeTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.DYE);
+    public static boolean getShowDyeTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.DYE);
     }
 
-    public static void setHideDyeTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.DYE, hide);
+    public static void setShowDyeTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.DYE, show);
     }
 
-    public static boolean getHideTrimTooltip(ItemStack stack) {
-        return getTooltipPart(stack, ItemStack.TooltipPart.UPGRADES);
+    public static boolean getShowTrimTooltip(ItemStack stack) {
+        return getShowTooltipPart(stack, ItemStack.TooltipPart.UPGRADES);
     }
 
-    public static void setHideTrimTooltip(ItemStack stack, boolean hide) {
-        setTooltipPart(stack, ItemStack.TooltipPart.UPGRADES, hide);
+    public static void setShowTrimTooltip(ItemStack stack, boolean show) {
+        setShowTooltipPart(stack, ItemStack.TooltipPart.UPGRADES, show);
     }
 
     private static final int HIDE_ALL_MASK = HIDE_STORED_ENCHANTMENTS_MASK << 1;
 
-    public static boolean getHideTooltip(ItemStack stack) {
-        return (stack.getHideFlags() & HIDE_ALL_MASK) != 0;
+    public static boolean getShowTooltip(ItemStack stack) {
+        return (stack.getHideFlags() & HIDE_ALL_MASK) == 0;
     }
 
-    public static void setHideTooltip(ItemStack stack, boolean hide) {
-        if (hide) {
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_ALL_MASK);
-        } else {
+    public static void setShowTooltip(ItemStack stack, boolean show) {
+        if (show) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
                 tag.putInt("HideFlags", tag.getInt("HideFlags") & ~HIDE_ALL_MASK);
             }
+        } else {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_ALL_MASK);
         }
     }
 

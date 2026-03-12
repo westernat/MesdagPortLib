@@ -39,8 +39,10 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
     }
 
     public PortItemEnchantments withTooltip(boolean showInTooltip) {
-        if (!shouldGetStoredEnchantments(enchantedStack)) {
-            PortItemStack.setHideEnchantmentsTooltip(enchantedStack, !showInTooltip);
+        if (shouldGetStoredEnchantments(enchantedStack)) {
+            PortItemStack.setShowStoredEnchantmentsTooltip(enchantedStack, showInTooltip);
+        } else {
+            PortItemStack.setShowEnchantmentsTooltip(enchantedStack, showInTooltip);
         }
         return this;
     }
