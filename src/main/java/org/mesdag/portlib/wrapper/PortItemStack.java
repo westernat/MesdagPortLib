@@ -87,116 +87,116 @@ public class PortItemStack {
         }
     }
 
-    public static boolean getHideEnchantmentsTooltip(ItemStack stack) {
+    public static boolean getShowEnchantmentsTooltip(ItemStack stack) {
         ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
-        return enchantments == null || !enchantments.showInTooltip;
+        return enchantments == null || enchantments.showInTooltip;
     }
 
-    public static void setHideEnchantmentsTooltip(ItemStack stack, boolean hide) {
+    public static void setShowEnchantmentsTooltip(ItemStack stack, boolean show) {
         ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
         if (enchantments != null) {
-            stack.set(DataComponents.ENCHANTMENTS, enchantments.withTooltip(!hide));
+            stack.set(DataComponents.ENCHANTMENTS, enchantments.withTooltip(show));
         }
     }
 
-    public static boolean getHideStoredEnchantmentsTooltip(ItemStack stack) {
+    public static boolean getShowStoredEnchantmentsTooltip(ItemStack stack) {
         ItemEnchantments enchantments = stack.get(DataComponents.STORED_ENCHANTMENTS);
-        return enchantments == null || !enchantments.showInTooltip;
+        return enchantments == null || enchantments.showInTooltip;
     }
 
-    public static void setHideStoredEnchantmentsTooltip(ItemStack stack, boolean hide) {
+    public static void setShowStoredEnchantmentsTooltip(ItemStack stack, boolean show) {
         ItemEnchantments enchantments = stack.get(DataComponents.STORED_ENCHANTMENTS);
         if (enchantments != null) {
-            stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.withTooltip(!hide));
+            stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.withTooltip(show));
         }
     }
 
-    public static boolean getHideAttributeModifiersTooltip(ItemStack stack) {
+    public static boolean getShowAttributeModifiersTooltip(ItemStack stack) {
         ItemAttributeModifiers modifiers = stack.get(DataComponents.ATTRIBUTE_MODIFIERS);
-        return modifiers == null || !modifiers.showInTooltip();
+        return modifiers == null || modifiers.showInTooltip();
     }
 
-    public static void setHideAttributeModifiersTooltip(ItemStack stack, boolean hide) {
+    public static void setShowAttributeModifiersTooltip(ItemStack stack, boolean show) {
         ItemAttributeModifiers modifiers = stack.get(DataComponents.ATTRIBUTE_MODIFIERS);
         if (modifiers != null) {
-            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.withTooltip(!hide));
+            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.withTooltip(show));
         }
     }
 
-    public static boolean getHideUnbreakableTooltip(ItemStack stack) {
+    public static boolean getShowUnbreakableTooltip(ItemStack stack) {
         Unbreakable unbreakable = stack.get(DataComponents.UNBREAKABLE);
-        return unbreakable == null || !unbreakable.showInTooltip();
+        return unbreakable == null || unbreakable.showInTooltip();
     }
 
-    public static void setHideUnbreakableTooltip(ItemStack stack, boolean hide) {
+    public static void setShowUnbreakableTooltip(ItemStack stack, boolean show) {
         Unbreakable unbreakable = stack.get(DataComponents.UNBREAKABLE);
         if (unbreakable != null) {
-            stack.set(DataComponents.UNBREAKABLE, unbreakable.withTooltip(!hide));
+            stack.set(DataComponents.UNBREAKABLE, unbreakable.withTooltip(show));
         }
     }
 
-    public static boolean getHideCanBreakTooltip(ItemStack stack) {
+    public static boolean getShowCanBreakTooltip(ItemStack stack) {
         AdventureModePredicate predicate = stack.get(DataComponents.CAN_BREAK);
-        return predicate == null || !predicate.showInTooltip();
+        return predicate == null || predicate.showInTooltip();
     }
 
-    public static void setHideCanBreakTooltip(ItemStack stack, boolean hide) {
+    public static void setShowCanBreakTooltip(ItemStack stack, boolean show) {
         AdventureModePredicate predicate = stack.get(DataComponents.CAN_BREAK);
         if (predicate != null) {
-            stack.set(DataComponents.CAN_BREAK, predicate.withTooltip(!hide));
+            stack.set(DataComponents.CAN_BREAK, predicate.withTooltip(show));
         }
     }
 
-    public static boolean getHideCanPlaceOnTooltip(ItemStack stack) {
+    public static boolean getShowCanPlaceOnTooltip(ItemStack stack) {
         AdventureModePredicate predicate = stack.get(DataComponents.CAN_PLACE_ON);
-        return predicate == null || !predicate.showInTooltip();
+        return predicate == null || predicate.showInTooltip();
     }
 
-    public static void setHideCanPlaceOnTooltip(ItemStack stack, boolean hide) {
+    public static void setShowCanPlaceOnTooltip(ItemStack stack, boolean show) {
         AdventureModePredicate predicate = stack.get(DataComponents.CAN_PLACE_ON);
         if (predicate != null) {
-            stack.set(DataComponents.CAN_PLACE_ON, predicate.withTooltip(!hide));
+            stack.set(DataComponents.CAN_PLACE_ON, predicate.withTooltip(show));
         }
     }
 
-    public static boolean getHideAdditionalTooltip(ItemStack stack) {
-        return getUnit(stack, DataComponents.HIDE_ADDITIONAL_TOOLTIP);
+    public static boolean getShowAdditionalTooltip(ItemStack stack) {
+        return !getUnit(stack, DataComponents.HIDE_ADDITIONAL_TOOLTIP);
     }
 
-    public static void setHideAdditionalTooltip(ItemStack stack, boolean hide) {
-        setUnit(stack, DataComponents.HIDE_ADDITIONAL_TOOLTIP, hide);
+    public static void setShowAdditionalTooltip(ItemStack stack, boolean show) {
+        setUnit(stack, DataComponents.HIDE_ADDITIONAL_TOOLTIP, !show);
     }
 
-    public static boolean getHideDyeTooltip(ItemStack stack) {
+    public static boolean getShowDyeTooltip(ItemStack stack) {
         DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
         return color == null || !color.showInTooltip();
     }
 
-    public static void setHideDyeTooltip(ItemStack stack, boolean hide) {
+    public static void setShowDyeTooltip(ItemStack stack, boolean show) {
         DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
         if (color != null) {
-            stack.set(DataComponents.DYED_COLOR, color.withTooltip(!hide));
+            stack.set(DataComponents.DYED_COLOR, color.withTooltip(show));
         }
     }
 
-    public static boolean getHideTrimTooltip(ItemStack stack) {
+    public static boolean getShowTrimTooltip(ItemStack stack) {
         ArmorTrim trim = stack.get(DataComponents.TRIM);
-        return trim == null || !trim.showInTooltip;
+        return trim == null || trim.showInTooltip;
     }
 
-    public static void setHideTrimTooltip(ItemStack stack, boolean hide) {
+    public static void setShowTrimTooltip(ItemStack stack, boolean show) {
         ArmorTrim trim = stack.get(DataComponents.TRIM);
         if (trim != null) {
-            stack.set(DataComponents.TRIM, trim.withTooltip(!hide));
+            stack.set(DataComponents.TRIM, trim.withTooltip(show));
         }
     }
 
-    public static boolean getHideTooltip(ItemStack stack) {
-        return getUnit(stack, DataComponents.HIDE_TOOLTIP);
+    public static boolean getShowTooltip(ItemStack stack) {
+        return !getUnit(stack, DataComponents.HIDE_TOOLTIP);
     }
 
-    public static void setHideTooltip(ItemStack stack, boolean hide) {
-        setUnit(stack, DataComponents.HIDE_TOOLTIP, hide);
+    public static void setShowTooltip(ItemStack stack, boolean show) {
+        setUnit(stack, DataComponents.HIDE_TOOLTIP, !show);
     }
 
     public static int getRepaireCost(ItemStack stack) {
