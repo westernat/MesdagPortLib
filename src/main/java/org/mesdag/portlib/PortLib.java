@@ -1,7 +1,9 @@
 package org.mesdag.portlib;
 
 import net.minecraftforge.fml.common.Mod;
-import org.mesdag.portlib.register.PortRegisterHandler;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.mesdag.portlib.diff.PortRegistries;
+import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.wrapper.PortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,11 @@ public class PortLib {
 
     public PortLib() {
         PortRegisterHandler.init();
+        PortRegistries.init(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     public static PortIdentifier asResource(String path) {
+
         return PortIdentifier.fromNamespaceAndPath(MODID, path);
     }
 }

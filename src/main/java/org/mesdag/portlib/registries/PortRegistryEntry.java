@@ -1,23 +1,18 @@
-package org.mesdag.portlib.register;
+package org.mesdag.portlib.registries;
 
 import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.wrapper.PortIdentifier;
 
 @SuppressWarnings("all")
 public final class PortRegistryEntry<T, R extends Registry<T>> implements Supplier<T> {
-    final ResourceKey<R> registryKey;
     final PortIdentifier identifier;
-    private final RegistryObject<T> object;
+    RegistryObject<T> object;
     final Supplier<T> valueSupplier;
 
-    public PortRegistryEntry(ResourceKey<R> registryKey, PortIdentifier identifier, Supplier<T> valueSupplier) {
-        this.registryKey = registryKey;
+    public PortRegistryEntry(PortIdentifier identifier, Supplier<T> valueSupplier) {
         this.identifier = identifier;
-        this.object = RegistryObject.create(identifier, RegistryManager.ACTIVE.getRegistry(registryKey));
         this.valueSupplier = valueSupplier;
     }
 
