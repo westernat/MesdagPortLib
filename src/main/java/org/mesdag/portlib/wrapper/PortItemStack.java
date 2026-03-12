@@ -15,6 +15,11 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
+import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
+import org.mesdag.portlib.wrapper.world.item.component.PortBundleContents;
+import org.mesdag.portlib.wrapper.world.item.component.PortChargedProjectiles;
+import org.mesdag.portlib.wrapper.world.item.component.PortMapPostProcessing;
+import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
 
@@ -82,8 +87,11 @@ public class PortItemStack {
         return List.of();
     }
 
-    public static int getEnchantmentLevel(ItemStack stack, EnchantmentHolder enchantment) {
-        return stack.getEnchantmentLevel(enchantment.value());
+    public static @Nullable PortItemEnchantments getEnchantments(ItemStack stack) {
+        if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
+            return null;
+        }
+        return new PortItemEnchantments(stack);
     }
 
     public static boolean getCanPlaceOn(ItemStack stack, BlockInWorld block) {
@@ -118,8 +126,27 @@ public class PortItemStack {
         return getTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS);
     }
 
+    private static final int HIDE_STORED_ENCHANTMENTS_MASK = 1 << ItemStack.TooltipPart.values().length;
+
     public static void setHideEnchantmentsTooltip(ItemStack stack, boolean hide) {
         setTooltipPart(stack, ItemStack.TooltipPart.ENCHANTMENTS, hide);
+    }
+
+    // todo
+    public static boolean getHideStoredEnchantmentsTooltip(ItemStack stack) {
+        return (stack.getHideFlags() & HIDE_STORED_ENCHANTMENTS_MASK) != 0;
+    }
+
+    public static void setHideStoredEnchantmentsTooltip(ItemStack stack, boolean hide) {
+        if (hide) {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_STORED_ENCHANTMENTS_MASK);
+        } else {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                tag.putInt("HideFlags", tag.getInt("HideFlags") & ~HIDE_STORED_ENCHANTMENTS_MASK);
+            }
+        }
     }
 
     public static boolean getHideAttributeModifiersTooltip(ItemStack stack) {
@@ -178,20 +205,20 @@ public class PortItemStack {
         setTooltipPart(stack, ItemStack.TooltipPart.UPGRADES, hide);
     }
 
-    private static final int ALL_HIDE_MASK = 1 << ItemStack.TooltipPart.values().length;
+    private static final int HIDE_ALL_MASK = HIDE_STORED_ENCHANTMENTS_MASK << 1;
 
     public static boolean getHideTooltip(ItemStack stack) {
-        return (stack.getHideFlags() & ALL_HIDE_MASK) == ALL_HIDE_MASK;
+        return (stack.getHideFlags() & HIDE_ALL_MASK) != 0;
     }
 
     public static void setHideTooltip(ItemStack stack, boolean hide) {
         if (hide) {
             CompoundTag tag = stack.getOrCreateTag();
-            tag.putInt("HideFlags", tag.getInt("HideFlags") | ALL_HIDE_MASK);
+            tag.putInt("HideFlags", tag.getInt("HideFlags") | HIDE_ALL_MASK);
         } else {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
-                tag.putInt("HideFlags", tag.getInt("HideFlags") & ~ALL_HIDE_MASK);
+                tag.putInt("HideFlags", tag.getInt("HideFlags") & ~HIDE_ALL_MASK);
             }
         }
     }
@@ -286,7 +313,12 @@ public class PortItemStack {
         IPortItemStack.of(stack).portlib$setTool(tool, true);
     }
 
-    // todo getStoredEnchantments
+    public static PortItemEnchantments getStoredEnchantments(ItemStack stack) {
+        if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
+            return new PortItemEnchantments(stack);
+        }
+        return null;
+    }
 
     /// rgb
     public static int getDyedColor(ItemStack stack) {
@@ -311,5 +343,26 @@ public class PortItemStack {
 
     // todo getMapDecortions MapItemSavedData#L201
 
+    public static @Nullable PortMapPostProcessing getMapPostProcessing(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null) return null;
+        if (tag.contains(MapItem.MAP_SCALE_TAG, Tag.TAG_ANY_NUMERIC)) {
+            return PortMapPostProcessing.SCALE;
+        } else if (tag.contains(MapItem.MAP_LOCK_TAG, Tag.TAG_BYTE) && tag.getBoolean(MapItem.MAP_LOCK_TAG)) {
+            return PortMapPostProcessing.LOCK;
+        }
+        return null;
+    }
 
+    public static PortChargedProjectiles getChargedProjectiles(ItemStack stack) {
+        return new PortChargedProjectiles(stack);
+    }
+
+    public static PortBundleContents getBundleContents(ItemStack stack) {
+        return new PortBundleContents(stack);
+    }
+
+    public static PortPotionContents getPotionContents(ItemStack stack) {
+        return new PortPotionContents(stack);
+    }
 }
