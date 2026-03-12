@@ -1,5 +1,6 @@
 package org.mesdag.portlib.wrapper.world.item;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -9,10 +10,13 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.AdventureModePredicate;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.*;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
@@ -24,17 +28,22 @@ import java.util.List;
 
 @SuppressWarnings("all")
 public class PortItemStack {
-    public static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy) {
-        if (orDefault) {
-            CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            return copy ? data.copyTag() : data.getUnsafe();
-        }
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data == null ? null : copy ? data.copyTag() : data.getUnsafe();
+    private static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy, DataComponentType<CustomData> type) {
+        CustomData data = orDefault ? stack.getOrDefault(type, CustomData.EMPTY) : stack.get(type);
+        if (data == null) return null;
+        return copy ? data.copyTag() : data.getUnsafe();
     }
 
-    public static void setCustomData(ItemStack stack, CompoundTag tag) {
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+    private static void setCustomData(ItemStack stack, CompoundTag data, DataComponentType<CustomData> type) {
+        stack.set(type, CustomData.of(data));
+    }
+
+    public static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy) {
+        return getCustomData(stack, orDefault, copy, DataComponents.CUSTOM_DATA);
+    }
+
+    public static void setCustomData(ItemStack stack, CompoundTag data) {
+        setCustomData(stack, data, DataComponents.CUSTOM_DATA);
     }
 
     public static boolean getUnbreakable(ItemStack stack) {
@@ -342,5 +351,52 @@ public class PortItemStack {
 
     public static void setSuspiciousStewEffects(ItemStack stack, PortSuspiciousStewEffects value) {
         value.applyTo(stack);
+    }
+
+    public static @Nullable ArmorTrim getTrim(ItemStack stack) {
+        return stack.get(DataComponents.TRIM);
+    }
+
+    public static void setTrim(ItemStack stack, ArmorTrim value) {
+        stack.set(DataComponents.TRIM, value);
+    }
+
+    public static PortDebugStickState getDebugStickState(ItemStack stack) {
+        return new PortDebugStickState(stack);
+    }
+
+    public static void setDebugStickState(ItemStack stack, PortDebugStickState value) {
+        value.applyTo(stack);
+    }
+
+    public static @Nullable CompoundTag getEntityData(ItemStack stack, boolean orDefault, boolean copy) {
+        return getCustomData(stack, orDefault, copy, DataComponents.ENTITY_DATA);
+    }
+
+    public static void setEntityData(ItemStack stack, CompoundTag data) {
+        setCustomData(stack, data, DataComponents.ENTITY_DATA);
+    }
+
+    public static @Nullable CompoundTag getBucketEntityData(ItemStack stack, boolean orDefault, boolean copy) {
+        return getCustomData(stack, orDefault, copy, DataComponents.BUCKET_ENTITY_DATA);
+    }
+
+    public static void setBucketEntityData(ItemStack stack, CompoundTag data) {
+        setCustomData(stack, data, DataComponents.BUCKET_ENTITY_DATA);
+    }
+
+    public static @Nullable CompoundTag getBlockEntityData(ItemStack stack, boolean copy) {
+        CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (data == null) return null;
+        return copy ? data.copyTag() : data.getUnsafe();
+    }
+
+    public static void setBlockEntityData(ItemStack stack, BlockEntityType<?> type, CompoundTag data) {
+        BlockItem.setBlockEntityData(stack, type, data);
+    }
+
+    public static @Nullable InstrumentHolder getInstrument(ItemStack stack) {
+        Holder<Instrument> value = stack.get(DataComponents.INSTRUMENT);
+        return value == null ? null : InstrumentHolder.wrap(value);
     }
 }
