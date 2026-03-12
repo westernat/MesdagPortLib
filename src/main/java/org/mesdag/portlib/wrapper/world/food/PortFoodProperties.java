@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.food;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;

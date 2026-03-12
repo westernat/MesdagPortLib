@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.entity.projectile;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -8,6 +8,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAbstractArrow;
 import org.mesdag.portlib.diff.mixin.AbstractArrowAccessor;
+import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
 public class PortAbstractArrow {
     public static void setup(

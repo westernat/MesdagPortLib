@@ -1,11 +1,14 @@
 package org.mesdag.portlib.wrapper.world.item.component;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BundleItem;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.math.Fraction;
 
 import java.util.stream.Stream;
 
+@SuppressWarnings("all")
 public record PortBundleContents(ItemStack bundleStack) {
     public PortBundleContents {
         if (bundleStack.isEmpty()) {
@@ -18,7 +21,7 @@ public record PortBundleContents(ItemStack bundleStack) {
     }
 
     public Stream<ItemStack> itemCopyStream() {
-        return items().map(ItemStack::copy);
+        return items();
     }
 
     public Stream<ItemStack> items() {
@@ -26,7 +29,7 @@ public record PortBundleContents(ItemStack bundleStack) {
     }
 
     public Iterable<ItemStack> itemsCopy() {
-        return items().map(ItemStack::copy).toList();
+        return items().toList();
     }
 
     public int size() {
@@ -39,5 +42,13 @@ public record PortBundleContents(ItemStack bundleStack) {
 
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == bundleStack) return;
+        CompoundTag tag = bundleStack.getTag();
+        if (tag != null && tag.contains("Items", Tag.TAG_LIST)) {
+            stack.getOrCreateTag().put("Items", tag.getList("Items", Tag.TAG_COMPOUND));
+        }
     }
 }

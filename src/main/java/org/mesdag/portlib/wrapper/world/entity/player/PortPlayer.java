@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.entity.player;
 
 import net.minecraft.world.entity.player.Player;
 

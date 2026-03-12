@@ -1,13 +1,14 @@
 package org.mesdag.portlib.wrapper.world.item.alchemy;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.PortUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,11 +50,7 @@ public record PortPotionContents(ItemStack potionStack) {
     }
 
     public PortPotionContents withEffectAdded(MobEffectInstance effect) {
-        List<MobEffectInstance> list = customEffects();
-        Collection<MobEffectInstance> customEffects = ImmutableList
-                .<MobEffectInstance>builderWithExpectedSize(list.size() + 1)
-                .addAll(list).add(effect).build();
-        PotionUtils.setCustomEffects(potionStack, customEffects);
+        PotionUtils.setCustomEffects(potionStack, PortUtil.copyAndAdd(customEffects(), effect));
         return this;
     }
 
@@ -79,5 +76,15 @@ public record PortPotionContents(ItemStack potionStack) {
 
     public List<MobEffectInstance> customEffects() {
         return PotionUtils.getCustomEffects(potionStack);
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == potionStack) return;
+        PotionUtils.setPotion(stack, PotionUtils.getPotion(potionStack));
+        PotionUtils.setCustomEffects(stack, PotionUtils.getCustomEffects(potionStack));
+        CompoundTag tag = potionStack.getTag();
+        if (tag != null && tag.contains(PotionUtils.TAG_CUSTOM_POTION_COLOR, CompoundTag.TAG_ANY_NUMERIC)) {
+            stack.getOrCreateTag().putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, tag.getInt(PotionUtils.TAG_CUSTOM_POTION_COLOR));
+        }
     }
 }

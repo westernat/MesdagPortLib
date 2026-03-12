@@ -5,7 +5,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
-import org.mesdag.portlib.wrapper.PortTool;
+import org.mesdag.portlib.wrapper.world.item.component.PortTool;
 
 @Diff
 public interface IPortItemStack extends PortSelfGetter<ItemStack> {

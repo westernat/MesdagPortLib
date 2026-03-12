@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.world.item;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.registries.Registries;
@@ -15,10 +15,10 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
+import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
-import org.mesdag.portlib.wrapper.world.item.component.PortBundleContents;
-import org.mesdag.portlib.wrapper.world.item.component.PortChargedProjectiles;
-import org.mesdag.portlib.wrapper.world.item.component.PortMapPostProcessing;
+import org.mesdag.portlib.wrapper.world.item.component.*;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
@@ -312,11 +312,15 @@ public class PortItemStack {
         IPortItemStack.of(stack).portlib$setTool(tool, true);
     }
 
-    public static PortItemEnchantments getStoredEnchantments(ItemStack stack) {
+    public static @Nullable PortItemEnchantments getStoredEnchantments(ItemStack stack) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
             return new PortItemEnchantments(stack);
         }
         return null;
+    }
+
+    public static void setStoredEnchantments(ItemStack stack, PortItemEnchantments value) {
+        value.applyTo(stack);
     }
 
     /// rgb
@@ -331,13 +335,25 @@ public class PortItemStack {
         return -1;
     }
 
-    /// rgba
+    public static void setDyedColor(ItemStack stack, int rgb) {
+        stack.getOrCreateTagElement("display").putInt("color", rgb);
+    }
+
+    /// argb
     public static int getMapColor(ItemStack stack) {
         return MapItem.getColor(stack);
     }
 
+    public static void setMapColor(ItemStack stack, int argb) {
+        stack.getOrCreateTagElement("display").putInt("MapColor", argb);
+    }
+
     public static @Nullable Integer getMapId(ItemStack stack) {
         return MapItem.getMapId(stack);
+    }
+
+    public static void setMapId(ItemStack stack, int mapId) {
+        stack.getOrCreateTag().putInt("map", mapId);
     }
 
     // todo getMapDecortions MapItemSavedData#L201
@@ -353,15 +369,43 @@ public class PortItemStack {
         return null;
     }
 
+    public static void setMapPostProcessing(ItemStack stack, PortMapPostProcessing value) {
+        CompoundTag tag = stack.getOrCreateTag();
+        switch (value) {
+            case LOCK -> tag.putBoolean(MapItem.MAP_LOCK_TAG, true);
+            case SCALE -> tag.putInt(MapItem.MAP_SCALE_TAG, 1);
+        }
+    }
+
     public static PortChargedProjectiles getChargedProjectiles(ItemStack stack) {
         return new PortChargedProjectiles(stack);
+    }
+
+    public static void setChargedProjectiles(ItemStack stack, PortChargedProjectiles value) {
+        value.applyTo(stack);
     }
 
     public static PortBundleContents getBundleContents(ItemStack stack) {
         return new PortBundleContents(stack);
     }
 
+    public static void setBundleContents(ItemStack stack, PortBundleContents value) {
+        value.applyTo(stack);
+    }
+
     public static PortPotionContents getPotionContents(ItemStack stack) {
         return new PortPotionContents(stack);
+    }
+
+    public static void setPotionContents(ItemStack stack, PortPotionContents value) {
+        value.applyTo(stack);
+    }
+
+    public static PortSuspiciousStewEffects getSuspiciousStewEffects(ItemStack stack) {
+        return new PortSuspiciousStewEffects(stack);
+    }
+
+    public static void setSuspiciousStewEffects(ItemStack stack, PortSuspiciousStewEffects value) {
+        value.applyTo(stack);
     }
 }

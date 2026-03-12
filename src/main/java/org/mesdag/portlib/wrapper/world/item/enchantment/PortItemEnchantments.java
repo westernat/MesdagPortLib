@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.AbstractObject2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.mesdag.portlib.util.TransformSet;
-import org.mesdag.portlib.wrapper.PortItemStack;
+import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
 import java.util.Set;
 
@@ -61,6 +62,27 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
 
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    public void applyTo(ItemStack stack) {
+        if (stack == enchantedStack) return;
+        if (shouldGetStoredEnchantments(stack)) {
+            CompoundTag tag = enchantedStack.getTag();
+            if (tag != null && tag.contains(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, Tag.TAG_LIST)) {
+                stack.getOrCreateTag().put(
+                        EnchantedBookItem.TAG_STORED_ENCHANTMENTS,
+                        tag.getList(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, Tag.TAG_COMPOUND).copy()
+                );
+            }
+        } else {
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains(ItemStack.TAG_ENCH, Tag.TAG_LIST)) {
+                stack.getOrCreateTag().put(
+                        ItemStack.TAG_ENCH,
+                        tag.getList(ItemStack.TAG_ENCH, Tag.TAG_COMPOUND).copy()
+                );
+            }
+        }
     }
 
     public static boolean shouldGetStoredEnchantments(ItemStack stack) {
