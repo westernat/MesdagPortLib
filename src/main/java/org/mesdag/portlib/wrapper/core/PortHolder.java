@@ -87,4 +87,8 @@ public interface PortHolder<T> extends Holder<T> {
     default boolean canSerializeIn(HolderOwner<T> owner) {
         return delegate().canSerializeIn(owner);
     }
+
+    default String getRegisteredName() {
+        return unwrapKey().map(key -> key.location().toString()).orElse("[unregistered]");
+    }
 }

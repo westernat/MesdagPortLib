@@ -1,6 +1,7 @@
 package org.mesdag.portlib.wrapper.world.item;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -8,10 +9,15 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
@@ -25,17 +31,22 @@ import java.util.List;
 
 @SuppressWarnings("all")
 public class PortItemStack {
-    public static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy) {
-        if (orDefault) {
-            CompoundTag data = stack.getOrCreateTagElement("portlib:custom_data");
-            return copy ? data.copy() : data;
-        }
-        CompoundTag data = stack.getTagElement("portlib:custom_data");
-        return data == null ? null : copy ? data.copy() : data;
+    private static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy, String key) {
+        CompoundTag data = orDefault ? stack.getOrCreateTagElement(key) : stack.getTagElement(key);
+        if (key == null) return null;
+        return copy ? data.copy() : data;
     }
 
-    public static void setCustomData(ItemStack stack, CompoundTag tag) {
-        stack.getOrCreateTag().put("portlib:custom_data", tag.copy());
+    private static void setCustomData(ItemStack stack, CompoundTag data, String key) {
+        stack.getOrCreateTag().put(key, data.copy());
+    }
+
+    public static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy) {
+        return getCustomData(stack, orDefault, copy, "portlib:custom_data");
+    }
+
+    public static void setCustomData(ItemStack stack, CompoundTag data) {
+        setCustomData(stack, data, "portlib:custom_data");
     }
 
     public static boolean getUnbreakable(ItemStack stack) {
@@ -407,5 +418,64 @@ public class PortItemStack {
 
     public static void setSuspiciousStewEffects(ItemStack stack, PortSuspiciousStewEffects value) {
         value.applyTo(stack);
+    }
+
+    // todo getWritableBookContent
+    // todo getWrittenBookContent
+
+    public static @Nullable ArmorTrim getTrim(ItemStack stack) {
+        return ArmorTrim.getTrim(PortEnvironment.registryAccess(), stack).orElse(null);
+    }
+
+    public static void setTrim(ItemStack stack, ArmorTrim value) {
+        ArmorTrim.setTrim(PortEnvironment.registryAccess(), stack, value);
+    }
+
+    public static PortDebugStickState getDebugStickState(ItemStack stack) {
+        return new PortDebugStickState(stack);
+    }
+
+    public static void setDebugStickState(ItemStack stack, PortDebugStickState value) {
+        value.applyTo(stack);
+    }
+
+    public static @Nullable CompoundTag getEntityData(ItemStack stack, boolean orDefault, boolean copy) {
+        return getCustomData(stack, orDefault, copy, "EntityTag");
+    }
+
+    public static void setEntityData(ItemStack stack, CompoundTag data) {
+        setCustomData(stack, data, "EntityTag");
+    }
+
+    public static @Nullable CompoundTag getBucketEntityData(ItemStack stack, boolean orDefault, boolean copy) {
+        CompoundTag data = orDefault ? stack.getOrCreateTag() : stack.getTag();
+        if (data == null) return null;
+        return copy ? data.copy() : data;
+    }
+
+    public static void setBucketEntityData(ItemStack stack, CompoundTag data) {
+        stack.setTag(data.copy());
+    }
+
+    public static @Nullable CompoundTag getBlockEntityData(ItemStack stack, boolean copy) {
+        CompoundTag data = BlockItem.getBlockEntityData(stack);
+        if (data == null) return null;
+        return copy ? data.copy() : data;
+    }
+
+    public static void setBlockEntityData(ItemStack stack, BlockEntityType<?> type, CompoundTag data) {
+        BlockItem.setBlockEntityData(stack, type, data);
+    }
+
+    public static @Nullable InstrumentHolder getInstrument(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("instrument", 8)) {
+            ResourceLocation id = ResourceLocation.tryParse(tag.getString("instrument"));
+            if (id != null) {
+                return BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, id))
+                        .map(InstrumentHolder::wrap).orElse(null);
+            }
+        }
+        return null;
     }
 }
