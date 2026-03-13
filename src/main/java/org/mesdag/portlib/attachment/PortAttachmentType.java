@@ -4,7 +4,7 @@ import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.util.Var;
+import org.mesdag.portlib.util.VarOrInline;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 
 import java.util.function.Function;
@@ -17,22 +17,22 @@ public class PortAttachmentType<T> {
         this.delegate = delegate;
     }
 
-    @Var
+    @VarOrInline
     public static <T> AttachmentType.Builder<T> builder(Supplier<T> defaultValueSupplier) {
         return AttachmentType.builder(defaultValueSupplier);
     }
 
-    @Var
+    @VarOrInline
     public static <T> AttachmentType.Builder<T> builder(Function<IAttachmentHolder, T> defaultValueConstructor) {
         return AttachmentType.builder(defaultValueConstructor);
     }
 
-    @Var
+    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> AttachmentType.Builder<T> serializable(Supplier<T> defaultValueSupplier) {
         return AttachmentType.serializable(defaultValueSupplier);
     }
 
-    @Var
+    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> AttachmentType.Builder<T> serializable(Function<IAttachmentHolder, T> defaultValueConstructor) {
         return AttachmentType.serializable(defaultValueConstructor);
     }
