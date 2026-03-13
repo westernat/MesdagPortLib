@@ -5,6 +5,7 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.IdMap;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import org.mesdag.portlib.diff.PortRegistryManager;
 import org.mesdag.portlib.wrapper.core.PortIdMap;
@@ -18,6 +19,18 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 public interface PortByteBufCodecs {
+    PortStreamCodec<FriendlyByteBuf, byte[]> UNBOUNDED_BYTE_ARRAY = new PortStreamCodec<>() {
+        @Override
+        public byte[] decode(FriendlyByteBuf buf) {
+            return buf.readByteArray();
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buf, byte[] data) {
+            buf.writeByteArray(data);
+        }
+    };
+
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(
             final ResourceKey<? extends Registry<T>> registryKey, final Function<Registry<T>, IdMap<R>> idGetter
     ) {
@@ -46,8 +59,8 @@ public interface PortByteBufCodecs {
         return registry(registryKey, registry -> registry);
     }
 
-    static <B extends ByteBuf, V> PortStreamCodec.CodecOperation<B, V, List<V>> list() {
-        return p_320272_ -> collection(ArrayList::new, p_320272_);
+    static <B extends ByteBuf, V> PortStreamCodec.PortCodecOperation<B, V, List<V>> list() {
+        return codec -> collection(ArrayList::new, codec);
     }
 
     static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec<B, C> collection(IntFunction<C> factory, PortStreamCodec<? super B, V> codec) {
@@ -74,23 +87,23 @@ public interface PortByteBufCodecs {
     static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec<B, C> collection(
             final IntFunction<C> factory, final PortStreamCodec<? super B, V> codec, final int maxSize
     ) {
-        return new PortStreamCodec<B, C>() {
-            public C decode(B p_324220_) {
-                int i = readCount(p_324220_, maxSize);
+        return new PortStreamCodec<>() {
+            public C decode(B buffer) {
+                int i = readCount(buffer, maxSize);
                 C c = factory.apply(Math.min(i, 65536));
 
                 for (int j = 0; j < i; j++) {
-                    c.add(codec.decode(p_324220_));
+                    c.add(codec.decode(buffer));
                 }
 
                 return c;
             }
 
-            public void encode(B p_323874_, C p_340813_) {
-                writeCount(p_323874_, p_340813_.size(), maxSize);
+            public void encode(B buffer, C value) {
+                writeCount(buffer, value.size(), maxSize);
 
-                for (V v : p_340813_) {
-                    codec.encode(p_323874_, v);
+                for (V v : value) {
+                    codec.encode(buffer, v);
                 }
             }
         };

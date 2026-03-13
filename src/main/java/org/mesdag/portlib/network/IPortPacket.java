@@ -3,7 +3,7 @@ package org.mesdag.portlib.network;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 @SuppressWarnings("all")
 public interface IPortPacket {

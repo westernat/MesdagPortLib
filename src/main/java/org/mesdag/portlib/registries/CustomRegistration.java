@@ -72,4 +72,8 @@ public class CustomRegistration<T> extends Registration<T> {
     public boolean containsValue(T value) {
         return registry.get().containsValue(value);
     }
+
+    public ResourceKey<? extends Registry<T>> key() {
+        return registryKey;
+    }
 }

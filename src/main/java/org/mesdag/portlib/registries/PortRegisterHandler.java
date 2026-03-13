@@ -4,6 +4,7 @@ import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.registries.RegisterEvent;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
 
@@ -24,6 +25,7 @@ public class PortRegisterHandler {
         return new CustomRegistration<>(namespace, registryKey, consumer);
     }
 
+    @Diff
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();

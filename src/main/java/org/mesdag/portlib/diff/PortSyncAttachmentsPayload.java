@@ -10,9 +10,10 @@ import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.network.IPortPacket;
+import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.PortIdentifier;
 import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.List;
 
@@ -21,27 +22,17 @@ public record PortSyncAttachmentsPayload(
         Target target,
         List<PortAttachmentType<?>> types,
         byte[] syncPayload
-) implements IPortPacket {
+) implements IPortPacket.S2C {
     public static final PortIdentifier IDENTIFIER = PortLib.asResource("sync_attachments");
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncAttachmentsPayload> STREAM_CODEC = new PortStreamCodec<>() {
-//        private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<PortAttachmentType<?>>> TYPES_CODEC = PortByteBufCodecs.registry()
-
-        @Override
-        public void encode(PortRegistryFriendlyByteBuf buffer, PortSyncAttachmentsPayload value) {
-            Target.STREAM_CODEC.encode(buffer, value.target);
-
-        }
-
-        @Override
-        public PortSyncAttachmentsPayload decode(PortRegistryFriendlyByteBuf buffer) {
-            return null;
-        }
-    };
+    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncAttachmentsPayload> STREAM_CODEC = PortStreamCodec.composite(
+            Target.STREAM_CODEC, PortSyncAttachmentsPayload::target,
+            PortByteBufCodecs.registry(PortAttachmentSync.SYNCED_ATTACHMENT_TYPES.key()).apply(PortByteBufCodecs.list()), PortSyncAttachmentsPayload::types,
+            PortByteBufCodecs.UNBOUNDED_BYTE_ARRAY, PortSyncAttachmentsPayload::syncPayload,
+            PortSyncAttachmentsPayload::new
+    );
 
     @Override
-    public void handle(Context context) {
-        Player player = context.player();
-        if (player == null) return;
+    public void work(Player player) {
         RegistryAccess registryAccess = player.level().registryAccess();
         if (target instanceof BlockEntityTarget t) {
             var blockEntity = player.level().getBlockEntity(t.pos);
@@ -58,7 +49,7 @@ public record PortSyncAttachmentsPayload(
                 PortAttachmentSync.receiveSyncedDataAttachments(PortAttachmentHolder.of(chunk), registryAccess, types, syncPayload);
             }
         } else if (target instanceof EntityTarget t) {
-            var entity = context.player().level().getEntity(t.entity);
+            var entity = player.level().getEntity(t.entity);
             if (entity == null) {
                 PortLib.LOGGER.warn("Received synced attachments from unknown entity");
             } else {

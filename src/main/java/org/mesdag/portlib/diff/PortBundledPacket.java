@@ -5,9 +5,10 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Diff
@@ -55,5 +56,27 @@ public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPor
     @Override
     public PortIdentifier identifier() {
         return IDENTIFIER;
+    }
+
+    public static IPortPacket makePacket(IPortPacket packet, IPortPacket... packets) {
+        if (packets.length > 0) {
+            LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
+            LinkedHashMap<String, IPortPacket> value = new LinkedHashMap<>();
+            value.put(packet.identifier().getPath(), packet);
+            map.put(packet.identifier().getNamespace(), value);
+            for (IPortPacket iPacket : packets) {
+                map.computeIfAbsent(iPacket.identifier().getNamespace(), s -> new LinkedHashMap<>()).put(iPacket.identifier().getPath(), iPacket);
+            }
+            return new PortBundledPacket(map);
+        }
+        return packet;
+    }
+
+    public static IPortPacket makePacket(List<IPortPacket> packets) {
+        LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
+        for (IPortPacket iPacket : packets) {
+            map.computeIfAbsent(iPacket.identifier().getNamespace(), s -> new LinkedHashMap<>()).put(iPacket.identifier().getPath(), iPacket);
+        }
+        return new PortBundledPacket(map);
     }
 }

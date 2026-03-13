@@ -1,8 +1,8 @@
 package org.mesdag.portlib.network;
 
-import io.netty.buffer.ByteBuf;
 import net.jodah.typetools.TypeResolver;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,10 +19,10 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -50,19 +50,19 @@ public class PortNetworkHandler {
         }, null);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> s2c(p, s, handler), PacketDirection.PLAY_TO_CLIENT);
+    public <P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), PacketDirection.PLAY_TO_CLIENT);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> c2s(p, s, handler), PacketDirection.PLAY_TO_SERVER);
+    public <P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), PacketDirection.PLAY_TO_SERVER);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> s2c(p, s, handler), PacketDirection.LOGIN_TO_CLIENT);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> c2s(p, s, handler), PacketDirection.LOGIN_TO_SERVER);
     }
 
@@ -78,66 +78,52 @@ public class PortNetworkHandler {
         s.get().setPacketHandled(true);
     }
 
-    private <B extends ByteBuf, P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PacketDirection direction) {
+    private <P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PacketDirection direction) {
         Class<?>[] classes = TypeResolver.resolveRawArguments(BiConsumer.class, handler.getClass());
         Class<?> packetClass = classes[0];
         if (packetClass != TypeResolver.Unknown.class) {
             channel.registerMessage(
                     packetId++, (Class<P>) packetClass,
-                    (p, b) -> codec.encode((B) b, p), b -> codec.decode((B) b),
+                    (p, b) -> codec.encode((FriendlyByteBuf) b, p), b -> codec.decode((FriendlyByteBuf) b),
                     handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
             codecMap.put(identifier, codec);
         }
     }
 
     public void sendToServer(IPortPacket.C2S packet, IPortPacket.C2S... packets) {
-        channel.sendToServer(makePacket(packet, packets));
+        channel.sendToServer(PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayer(ServerPlayer player, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.PLAYER.with(() -> player), makePacket(packet, packets));
+    public void sendToPlayer(ServerPlayer player, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.PLAYER.with(() -> player), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.DIMENSION.with(() -> dimension), makePacket(packet, packets));
+    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.DIMENSION.with(() -> dimension), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(excluded, x, y, z, radius, dimension)), makePacket(packet, packets));
+    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(excluded, x, y, z, radius, dimension)), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToAllPlayers(IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.ALL.noArg(), makePacket(packet, packets));
+    public void sendToAllPlayers(IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.ALL.noArg(), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayersTrackingEntity(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), makePacket(packet, packets));
+    public void sendToPlayersTrackingEntity(Entity entity, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), makePacket(packet, packets));
+    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), PortBundledPacket.makePacket(packet, packets));
     }
 
-    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
-        channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(pos.x, pos.z)), makePacket(packet, packets));
-    }
-
-    private static IPortPacket makePacket(IPortPacket packet, IPortPacket... packets) {
-        if (packets.length > 0) {
-            LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
-            LinkedHashMap<String, IPortPacket> value = new LinkedHashMap<>();
-            value.put(packet.identifier().getPath(), packet);
-            map.put(packet.identifier().getNamespace(), value);
-            for (IPortPacket iPacket : packets) {
-                map.computeIfAbsent(iPacket.identifier().getNamespace(), s -> new LinkedHashMap<>()).put(iPacket.identifier().getPath(), iPacket);
-            }
-            return new PortBundledPacket(map);
-        }
-        return packet;
+    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket packet, IPortPacket... packets) {
+        channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(pos.x, pos.z)), PortBundledPacket.makePacket(packet, packets));
     }
 
     @Diff
-    public static <B extends ByteBuf, P extends IPortPacket> PortStreamCodec<? super B, P> getPacketCodec(PortIdentifier identifier) {
+    public static <P extends IPortPacket> PortStreamCodec<? super FriendlyByteBuf, P> getPacketCodec(PortIdentifier identifier) {
         PortStreamCodec codec = codecMap.get(identifier);
         if (codec == null) {
             throw new IllegalStateException("Packet not registered: " + identifier);

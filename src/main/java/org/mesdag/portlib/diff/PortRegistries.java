@@ -8,16 +8,17 @@ import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 import org.mesdag.portlib.registries.CustomRegistration;
-import org.mesdag.portlib.registries.PortModifyRegistriesEvent;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 
 @Diff
 public class PortRegistries {
     public static final CustomRegistration<PortAttachmentType<?>> ATTACHMENT_TYPES = PortRegisterHandler.custom(PortLib.MODID, Keys.ATTACHMENT_TYPES, maker -> {});
 
+    @Diff
     public static void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (RegisterCapabilitiesEvent event) -> PortEventHandler.postEvent(new PortModifyRegistriesEvent()));
+        PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
         PortEventHandler.addListener(PortPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
     }
 

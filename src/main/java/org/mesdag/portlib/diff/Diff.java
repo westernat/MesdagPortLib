@@ -4,7 +4,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.*;
 
-/// 标记为加载器间的不同代码，以防止public代码被误用
+/// 标记为加载器间的不同代码，以防止使用该lib的开发者误用
 @Documented
 @ApiStatus.Internal
 @Inherited

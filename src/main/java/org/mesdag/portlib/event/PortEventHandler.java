@@ -5,8 +5,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @SuppressWarnings("all")
 public class PortEventHandler {
@@ -26,6 +28,11 @@ public class PortEventHandler {
         getBus(clazz).unwrap().addListener(priority.unwrap(), receiveCancelled, clazz, consumer);
     }
 
+    @ApiStatus.Internal
+    public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
+        addListener(PortPriority.LOWEST, receiveCancelled, from, to::apply);
+    }
+
     private static <E extends Event> PortBus getBus(Consumer<E> consumer) {
         Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
         // addListener时会自动检查
@@ -33,7 +40,7 @@ public class PortEventHandler {
     }
 
     private static PortBus getBus(Class<?> clazz) {
-        return clazz.isAssignableFrom(IModBusEvent.class) ? PortBus.MOD : PortBus.GAME;
+        return IModBusEvent.class.isAssignableFrom(clazz) ? PortBus.MOD : PortBus.GAME;
     }
 
     public static <E extends Event> void postEvent(E event) {

@@ -4,7 +4,6 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,13 +15,18 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.PortBundledPacket;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.PortSyncAttachmentsPayload;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.level.PortChunkWatchEvent;
+import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortConnectionType;
 import org.mesdag.portlib.registries.CustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.wrapper.server.level.PortChunkMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +51,26 @@ public final class PortAttachmentSync {
             SYNCED_ATTACHMENT_TYPES.register(key.location(), value);
         }
     };
+
+    @Diff
+    public static void init() {
+        PortEventHandler.addListener((PortChunkWatchEvent.Sent event) -> {
+            List<IPortPacket> packets = new ArrayList<>();
+            var chunkPayload = syncInitialAttachments(PortAttachmentHolder.of(event.getChunk()), event.getPlayer());
+            if (chunkPayload != null) {
+                packets.add(chunkPayload);
+            }
+            for (var blockEntity : event.getChunk().getBlockEntities().values()) {
+                var blockEntityPayload = syncInitialAttachments(PortAttachmentHolder.of(blockEntity), event.getPlayer());
+                if (blockEntityPayload != null) {
+                    packets.add(blockEntityPayload);
+                }
+            }
+            if (!packets.isEmpty()) {
+                PortLib.NETWORK_HANDLER.sendToPlayer(event.getPlayer(), PortBundledPacket.makePacket(packets));
+            }
+        });
+    }
 
     private static PortSyncAttachmentsPayload.Target syncTarget(PortAttachmentHolder holder) {
         if (holder instanceof BlockEntity blockEntity) {
@@ -84,7 +108,7 @@ public final class PortAttachmentSync {
         var packet = new PortSyncAttachmentsPayload(syncTarget(holder), List.of(type), data);
         for (var player : players) {
             if (type.syncHandler.sendToPlayer(holder.getExposedHolder(), player)) {
-                player.connection.send(packet);
+                PortLib.NETWORK_HANDLER.sendToPlayer(player, packet);
             }
         }
     }
@@ -96,7 +120,7 @@ public final class PortAttachmentSync {
         syncUpdate(PortAttachmentHolder.of(blockEntity), type, serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(blockEntity.getBlockPos()), false));
     }
 
-    public static void syncChunkUpdate(LevelChunk chunk, AttachmentHolder.AsField holder, PortAttachmentType<?> type) {
+    public static void syncChunkUpdate(LevelChunk chunk, PortAttachmentType<?> type) {
         if (type.syncHandler == null || !(chunk.getLevel() instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -107,7 +131,7 @@ public final class PortAttachmentSync {
         if (type.syncHandler == null || !(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        var players = serverLevel.getChunkSource().chunkMap.getPlayersWatching(entity);
+        var players = PortChunkMap.getPlayersWatching(serverLevel.getChunkSource().chunkMap, entity);
         if (entity instanceof ServerPlayer serverPlayer) {
             // Players do not track themselves
             var newPlayers = new ArrayList<ServerPlayer>(players.size() + 1);
@@ -125,27 +149,24 @@ public final class PortAttachmentSync {
         syncUpdate(PortAttachmentHolder.of(level), type, level.players());
     }
 
-    /**
-     * Constructs a payload to sync all syncable attachments to a player, if any.
-     */
     @Nullable
     private static PortSyncAttachmentsPayload syncInitialAttachments(PortAttachmentHolder holder, ServerPlayer to) {
-        if (holder.attachments == null) {
+        if (holder.portlib$attachments() == null) {
             return null;
         }
         boolean anySyncableAttachment = false;
-        for (var attachment : holder.attachments.keySet()) {
+        for (var attachment : holder.portlib$attachments().keySet()) {
             anySyncableAttachment = anySyncableAttachment | attachment.syncHandler != null;
         }
         if (!anySyncableAttachment) {
             return null;
         }
         List<PortAttachmentType<?>> syncedTypes = new ArrayList<>();
-        var data = FriendlyByteBufUtil.writeCustomData(buf -> {
-            for (var entry : holder.attachments.entrySet()) {
+        var data = writeCustomData(buf -> {
+            for (var entry : holder.portlib$attachments().entrySet()) {
                 PortAttachmentType<?> type = entry.getKey();
                 @SuppressWarnings("unchecked")
-                var syncHandler = (AttachmentSyncHandler<Object>) type.syncHandler;
+                var syncHandler = (PortAttachmentSyncHandler<Object>) type.syncHandler;
                 if (syncHandler != null) {
                     int indexBefore = buf.writerIndex();
                     buf.writeBoolean(true);
@@ -159,58 +180,28 @@ public final class PortAttachmentSync {
                     }
                 }
             }
-        }, to.registryAccess());
-        return new SyncAttachmentsPayload(syncTarget(holder), syncedTypes, data);
+        }, to.level().registryAccess());
+        return new PortSyncAttachmentsPayload(syncTarget(holder), syncedTypes, data);
     }
 
-    /**
-     * Handles initial syncing of block entity and chunk attachments.
-     */
-    @SubscribeEvent
-    public static void onChunkSent(ChunkWatchEvent.Sent event) {
-        List<Packet<? super ClientGamePacketListener>> packets = new ArrayList<>();
-        var chunkPayload = syncInitialAttachments(event.getChunk().getAttachmentHolder(), event.getPlayer());
-        if (chunkPayload != null) {
-            packets.add(chunkPayload.toVanillaClientbound());
-        }
-        for (var blockEntity : event.getChunk().getBlockEntities().values()) {
-            var blockEntityPayload = syncInitialAttachments(blockEntity, event.getPlayer());
-            if (blockEntityPayload != null) {
-                packets.add(blockEntityPayload.toVanillaClientbound());
-            }
-        }
-        if (!packets.isEmpty()) {
-            event.getPlayer().connection.send(new ClientboundBundlePacket(packets));
-        }
-    }
-
-    /**
-     * Handles initial syncing of entity attachments, except for a player's own attachments.
-     */
     public static void syncInitialEntityAttachments(Entity entity, ServerPlayer to, Consumer<Packet<? super ClientGamePacketListener>> packetConsumer) {
-        var packet = syncInitialAttachments(entity, to);
+        var packet = syncInitialAttachments(PortAttachmentHolder.of(entity), to);
         if (packet != null) {
-            packetConsumer.accept(packet.toVanillaClientbound());
+            PortLib.NETWORK_HANDLER.sendToPlayer(to, packet);
         }
     }
 
-    /**
-     * Handles initial syncing of a player's own attachments.
-     */
     public static void syncInitialPlayerAttachments(ServerPlayer player) {
-        var packet = syncInitialAttachments(player, player);
+        var packet = syncInitialAttachments(PortAttachmentHolder.of(player), player);
         if (packet != null) {
-            player.connection.send(packet.toVanillaClientbound());
+            PortLib.NETWORK_HANDLER.sendToPlayer(player, packet);
         }
     }
 
-    /**
-     * Handles initial syncing of level attachments. Needs to be called for login, respawn and teleports.
-     */
     public static void syncInitialLevelAttachments(ServerLevel level, ServerPlayer to) {
-        var packet = syncInitialAttachments(level, to);
+        var packet = syncInitialAttachments(PortAttachmentHolder.of(level), to);
         if (packet != null) {
-            to.connection.send(packet.toVanillaClientbound());
+            PortLib.NETWORK_HANDLER.sendToPlayer(to, packet);
         }
     }
 
@@ -221,14 +212,14 @@ public final class PortAttachmentSync {
                 @SuppressWarnings("unchecked")
                 var syncHandler = (PortAttachmentSyncHandler<Object>) type.syncHandler;
                 if (syncHandler == null) {
-                    throw new IllegalArgumentException("Received synced attachment type without a sync handler registered: " + NeoForgeRegistries.ATTACHMENT_TYPES.getKey(type));
+                    throw new IllegalArgumentException("Received synced attachment type without a sync handler registered: " + PortRegistries.ATTACHMENT_TYPES.getKey(type));
                 }
-                var previousValue = holder.attachments == null ? null : holder.attachments.get(type);
+                var previousValue = holder.portlib$attachments() == null ? null : holder.portlib$attachments().get(type);
                 boolean hasAttachment = buf.readBoolean();
                 var result = hasAttachment ? syncHandler.read(holder.getExposedHolder(), buf, previousValue) : null;
                 if (result == null) {
-                    if (holder.attachments != null) {
-                        holder.attachments.remove(type);
+                    if (holder.portlib$attachments() != null) {
+                        holder.portlib$attachments().remove(type);
                     }
                 } else {
                     holder.getAttachmentMap().put(type, result);
