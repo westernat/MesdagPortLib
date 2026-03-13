@@ -11,7 +11,7 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.*;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.util.Protected;
-import org.mesdag.portlib.util.Var;
+import org.mesdag.portlib.util.VarOrInline;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
@@ -55,22 +55,22 @@ public class PortAttachmentType<T> {
         };
     }
 
-    @Var
+    @VarOrInline
     public static <T> PortBuilder<T> builder(Supplier<T> defaultValueSupplier) {
         return builder(holder -> defaultValueSupplier.get());
     }
 
-    @Var
+    @VarOrInline
     public static <T> PortBuilder<T> builder(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return new PortBuilder<>(defaultValueConstructor);
     }
 
-    @Var
+    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Supplier<T> defaultValueSupplier) {
         return serializable(holder -> defaultValueSupplier.get());
     }
 
-    @Var
+    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return builder(defaultValueConstructor).serialize(new IPortAttachmentSerializer<S, T>() {
             @Override

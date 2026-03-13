@@ -140,7 +140,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
         return tag;
     }
 
-    @Protected
+    @Protected(onlyInClass = true)
     @Final
     default void deserializeAttachments(PortRegistryAccess provider, CompoundTag tag) {
         for (var key : tag.getAllKeys()) {
