@@ -1,13 +1,25 @@
 package org.mesdag.portlib.wrapper;
 
 import net.minecraft.ResourceLocationException;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.Diff;
 
 @SuppressWarnings("all")
 public class PortIdentifier extends ResourceLocation {
+    private @Nullable CustomPacketPayload.Type<?> type;
+
     private PortIdentifier(String namespace, String path) {
         super(namespace, path);
+    }
+
+    @Diff
+    public <T extends CustomPacketPayload> CustomPacketPayload.Type<T> getType() {
+        if (type == null) {
+            this.type = new CustomPacketPayload.Type<>(this);
+        }
+        return (CustomPacketPayload.Type<T>) type;
     }
 
     public static PortIdentifier fromNamespaceAndPath(String namespace, String path) {

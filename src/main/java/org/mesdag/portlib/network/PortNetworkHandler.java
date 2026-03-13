@@ -16,9 +16,8 @@ import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.function.TriConsumer;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
 import org.mesdag.portlib.wrapper.PortIdentifier;
@@ -29,7 +28,6 @@ import java.util.function.BiConsumer;
 @SuppressWarnings("all")
 public class PortNetworkHandler {
     private static final List<PortNetworkHandler> handlers = new ArrayList<>();
-    private static final Map<PortIdentifier, CustomPacketPayload.Type<?>> types = new HashMap<>();
 
     private final String namespace;
     private final String version;
@@ -41,28 +39,24 @@ public class PortNetworkHandler {
         handlers.add(this);
     }
 
-    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerInGameS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.PLAY_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerInGameC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.PLAY_TO_SERVER);
     }
 
-    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerLoginS2C(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.LOGIN_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerLoginC2S(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(path, codec, handler, PacketDirection.LOGIN_TO_SERVER);
     }
 
-    private <P extends IPortPacket, B extends ByteBuf> void register(String path, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler, PacketDirection direction) {
+    private <B extends ByteBuf, P extends IPortPacket> void register(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler, PacketDirection direction) {
         payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(PortIdentifier.fromNamespaceAndPath(namespace, path), codec, handler));
-    }
-
-    static <P extends IPortPacket> CustomPacketPayload.Type<P> createType(PortIdentifier identifier) {
-        return (CustomPacketPayload.Type<P>) types.computeIfAbsent(identifier, CustomPacketPayload.Type::new);
     }
 
     public void sendToServer(IPortPacket.C2S packet, IPortPacket.C2S... packets) {
@@ -101,7 +95,7 @@ public class PortNetworkHandler {
         return Objects.requireNonNull(Objects.requireNonNull(ServerLifecycleHooks.getCurrentServer(), "Cannot send clientbound payloads on the client").getLevel(dimension), "Cannot get level '" + dimension.location() + "'");
     }
 
-    @ApiStatus.Internal
+    @Diff
     public static void init() {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
             for (PortNetworkHandler handler : handlers) {
@@ -121,49 +115,36 @@ public class PortNetworkHandler {
         });
     }
 
-    public static <P extends IPortPacket, B extends ByteBuf> PacketCodec<P, B> toPacketCodec(StreamCodec<B, P> codec) {
+    public static <B extends ByteBuf, P extends IPortPacket> PortStreamCodec<B, P> toPacketCodec(StreamCodec<B, P> codec) {
         return new PacketStreamCodec<>(codec);
     }
 
-    public interface PacketCodec<P extends IPortPacket, B extends ByteBuf> {
-        void encode(P packet, B buffer);
-
-        P decode(B buffer);
-    }
-
-    public enum PacketDirection {
-        PLAY_TO_SERVER,
-        PLAY_TO_CLIENT,
-        LOGIN_TO_SERVER,
-        LOGIN_TO_CLIENT
-    }
-
-    record Payload<P extends IPortPacket, B extends ByteBuf>(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        void accept(TriConsumer<CustomPacketPayload.Type<P>, StreamCodec<? super FriendlyByteBuf, P>, IPayloadHandler<P>> consumer) {
-            consumer.accept(createType(identifier), (StreamCodec<? super FriendlyByteBuf, P>) toStreamCodec(codec), (p, c) -> handler.accept(p, new IPortPacket.Context(c.player())));
+    private record Payload<B extends ByteBuf, P extends IPortPacket>(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        private void accept(TriConsumer<CustomPacketPayload.Type<P>, StreamCodec<? super FriendlyByteBuf, P>, IPayloadHandler<P>> consumer) {
+            consumer.accept(identifier.getType(), (StreamCodec<? super FriendlyByteBuf, P>) toStreamCodec(codec), (p, c) -> handler.accept(p, new IPortPacket.Context(c.player())));
         }
 
-        static <P extends IPortPacket, B extends ByteBuf> StreamCodec<B, P> toStreamCodec(PacketCodec<P, B> codec) {
-            if (codec instanceof PacketStreamCodec<P, B>(StreamCodec<B, P> streamCodec)) {
+        private static <B extends ByteBuf, P extends IPortPacket> StreamCodec<? super B, P> toStreamCodec(PortStreamCodec<? super B, P> codec) {
+            if (codec instanceof PacketStreamCodec<? super B, P>(StreamCodec<? super B, P> streamCodec)) {
                 return streamCodec;
             }
             return new StreamCodec<>() {
                 @Override
-                public @NotNull P decode(@NotNull B buffer) {
+                public P decode(B buffer) {
                     return codec.decode(buffer);
                 }
 
                 @Override
-                public void encode(@NotNull B buffer, @NotNull P value) {
-                    codec.encode(value, buffer);
+                public void encode(B buffer, P value) {
+                    codec.encode(buffer, value);
                 }
             };
         }
     }
 
-    record PacketStreamCodec<P extends IPortPacket, B extends ByteBuf>(StreamCodec<B, P> codec) implements PacketCodec<P, B> {
+    private record PacketStreamCodec<B extends ByteBuf, P extends IPortPacket>(StreamCodec<B, P> codec) implements PortStreamCodec<B, P> {
         @Override
-        public void encode(P packet, B buffer) {
+        public void encode(B buffer, P packet) {
             codec.encode(buffer, packet);
         }
 

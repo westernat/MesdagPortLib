@@ -14,7 +14,7 @@ public interface IPortPacket extends CustomPacketPayload {
 
     @Override
     default Type<? extends CustomPacketPayload> type() {
-        return PortNetworkHandler.createType(identifier());
+        return identifier().getType();
     }
 
     interface C2S extends IPortPacket {
