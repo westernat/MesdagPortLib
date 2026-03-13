@@ -27,8 +27,10 @@ public class PortAttachmentType<T> {
     public final Function<IPortAttachmentHolder, T> defaultValueSupplier;
     @Protected
     public final @Nullable IPortAttachmentSerializer<?, T> serializer;
-    final boolean copyOnDeath;
-    final IPortAttachmentCopyHandler<T> copyHandler;
+    @Protected
+    public final boolean copyOnDeath;
+    @Protected
+    public final IPortAttachmentCopyHandler<T> copyHandler;
     @Protected
     public @Nullable PortAttachmentSyncHandler<T> syncHandler;
 

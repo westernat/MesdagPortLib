@@ -14,6 +14,7 @@
         "ItemEntityMixin",
         "ItemMixin",
         "ItemStackMixin",
+        "LevelChunkMixin",
         "LevelMixin",
         "PlayerMixin",
         "ServerLevelMixin"
