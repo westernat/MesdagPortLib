@@ -1,7 +1,7 @@
 package org.mesdag.portlib.diff.mixin;
 
 import net.minecraft.server.level.ServerLevel;
-import org.mesdag.portlib.attachment.PortLevelAttachmentsSavedData;
+import org.mesdag.portlib.diff.PortLevelAttachmentsSavedData;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

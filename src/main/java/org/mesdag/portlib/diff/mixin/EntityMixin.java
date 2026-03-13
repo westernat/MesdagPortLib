@@ -5,9 +5,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
-import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.PortAttachmentSync;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements PortAttachmentHolder, PortSelfGetter<Entity> {
+public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGetter<Entity> {
     @Shadow
     private Level level;
     @Unique
@@ -41,7 +41,7 @@ public abstract class EntityMixin implements PortAttachmentHolder, PortSelfGette
     @Final
     @Override
     public <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
-        return PortAttachmentHolder.super.setData(type, data);
+        return CPortAttachmentHolder.super.setData(type, data);
     }
 
     @Final

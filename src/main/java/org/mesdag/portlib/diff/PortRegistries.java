@@ -4,7 +4,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;

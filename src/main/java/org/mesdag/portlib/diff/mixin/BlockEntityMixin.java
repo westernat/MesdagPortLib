@@ -5,9 +5,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
-import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.PortAttachmentSync;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements PortAttachmentHolder, PortSelfGetter<BlockEntity> {
+public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSelfGetter<BlockEntity> {
     @Shadow
     @javax.annotation.Nullable
     protected Level level;
@@ -46,13 +46,13 @@ public abstract class BlockEntityMixin implements PortAttachmentHolder, PortSelf
     @Override
     public <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
         setChanged();
-        return PortAttachmentHolder.super.setData(type, data);
+        return CPortAttachmentHolder.super.setData(type, data);
     }
 
     @Override
     public <T> @Nullable T removeData(PortAttachmentType<T> type) {
         setChanged();
-        return PortAttachmentHolder.super.removeData(type);
+        return CPortAttachmentHolder.super.removeData(type);
     }
 
     @Override

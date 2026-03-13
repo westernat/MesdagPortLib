@@ -1,8 +1,8 @@
 package org.mesdag.portlib;
 
 import net.minecraftforge.fml.common.Mod;
-import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.PortAttachmentSync;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.PortSyncAttachmentsPayload;
 import org.mesdag.portlib.event.PortEventHooks;

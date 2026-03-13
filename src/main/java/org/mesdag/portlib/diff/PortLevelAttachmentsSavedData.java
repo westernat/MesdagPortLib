@@ -1,14 +1,13 @@
-package org.mesdag.portlib.attachment;
+package org.mesdag.portlib.diff;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.Objects;
 
-@ApiStatus.Internal
+@Diff
 public class PortLevelAttachmentsSavedData extends SavedData {
     private static final String NAME = "portlib_data_attachments";
 
@@ -28,12 +27,12 @@ public class PortLevelAttachmentsSavedData extends SavedData {
 
     public PortLevelAttachmentsSavedData(ServerLevel level, CompoundTag tag) {
         this.level = level;
-        PortAttachmentHolder.of(level).deserializeAttachments(new PortRegistryAccess(level.registryAccess()), tag);
+        CPortAttachmentHolder.of(level).deserializeAttachments(new PortRegistryAccess(level.registryAccess()), tag);
     }
 
     @Override
     public CompoundTag save(CompoundTag tag) {
-        return Objects.requireNonNullElseGet(PortAttachmentHolder.of(level).serializeAttachments(new PortRegistryAccess(level.registryAccess())), CompoundTag::new);
+        return Objects.requireNonNullElseGet(CPortAttachmentHolder.of(level).serializeAttachments(new PortRegistryAccess(level.registryAccess())), CompoundTag::new);
     }
 
     @Override

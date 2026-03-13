@@ -1,10 +1,12 @@
-package org.mesdag.portlib.attachment;
+package org.mesdag.portlib.diff;
 
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.attachment.PortAttachmentType;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Diff
 public interface IPortAttachmentHolder {
     boolean hasAttachments();
 

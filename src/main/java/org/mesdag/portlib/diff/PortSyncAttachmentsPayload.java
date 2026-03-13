@@ -6,8 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
-import org.mesdag.portlib.attachment.PortAttachmentSync;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
@@ -39,24 +37,24 @@ public record PortSyncAttachmentsPayload(
             if (blockEntity == null) {
                 PortLib.LOGGER.warn("Received synced attachments from unknown block entity");
             } else {
-                PortAttachmentSync.receiveSyncedDataAttachments(PortAttachmentHolder.of(blockEntity), registryAccess, types, syncPayload);
+                PortAttachmentSync.receiveSyncedDataAttachments(CPortAttachmentHolder.of(blockEntity), registryAccess, types, syncPayload);
             }
         } else if (target instanceof ChunkTarget t) {
             var chunk = player.level().getChunk(t.pos.x, t.pos.z, ChunkStatus.FULL, false);
             if (chunk == null) {
                 PortLib.LOGGER.warn("Received synced attachments from unknown chunk");
             } else {
-                PortAttachmentSync.receiveSyncedDataAttachments(PortAttachmentHolder.of(chunk), registryAccess, types, syncPayload);
+                PortAttachmentSync.receiveSyncedDataAttachments(CPortAttachmentHolder.of(chunk), registryAccess, types, syncPayload);
             }
         } else if (target instanceof EntityTarget t) {
             var entity = player.level().getEntity(t.entity);
             if (entity == null) {
                 PortLib.LOGGER.warn("Received synced attachments from unknown entity");
             } else {
-                PortAttachmentSync.receiveSyncedDataAttachments(PortAttachmentHolder.of(entity), registryAccess, types, syncPayload);
+                PortAttachmentSync.receiveSyncedDataAttachments(CPortAttachmentHolder.of(entity), registryAccess, types, syncPayload);
             }
         } else if (target instanceof LevelTarget) {
-            PortAttachmentSync.receiveSyncedDataAttachments(PortAttachmentHolder.of(player.level()), registryAccess, types, syncPayload);
+            PortAttachmentSync.receiveSyncedDataAttachments(CPortAttachmentHolder.of(player.level()), registryAccess, types, syncPayload);
         }
     }
 
