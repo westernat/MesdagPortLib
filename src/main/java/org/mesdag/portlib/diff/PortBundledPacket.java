@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortIdentifier;
 
 import java.util.LinkedHashMap;
@@ -13,9 +14,9 @@ import java.util.Map;
 @SuppressWarnings("all")
 public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map) implements IPortPacket {
     public static final PortIdentifier IDENTIFIER = PortLib.asResource("bundled");
-    public static final PortNetworkHandler.PacketCodec<PortBundledPacket, FriendlyByteBuf> PACKET_CODEC = new PortNetworkHandler.PacketCodec<>() {
+    public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC = new PortStreamCodec<>() {
         @Override
-        public void encode(PortBundledPacket packet, FriendlyByteBuf buffer) {
+        public void encode(FriendlyByteBuf buffer, PortBundledPacket packet) {
             buffer.writeVarInt(packet.map.size());
             for (Map.Entry<String, LinkedHashMap<String, IPortPacket>> namespace : packet.map.entrySet()) {
                 buffer.writeUtf(namespace.getKey());
@@ -23,7 +24,7 @@ public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPor
                 for (Map.Entry<String, IPortPacket> path : namespace.getValue().entrySet()) {
                     PortIdentifier identifier = PortIdentifier.fromNamespaceAndPath(namespace.getKey(), path.getKey());
                     buffer.writeUtf(path.getKey());
-                    PortNetworkHandler.getPacketCodec(identifier).encode(path.getValue(), buffer);
+                    PortNetworkHandler.getPacketCodec(identifier).encode(buffer, path.getValue());
                 }
             }
         }

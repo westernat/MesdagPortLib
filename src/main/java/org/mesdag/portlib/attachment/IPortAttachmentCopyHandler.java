@@ -1,4 +1,8 @@
 package org.mesdag.portlib.attachment;
 
-public interface IPortAttachmentCopyHandler {
+import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
+
+public interface IPortAttachmentCopyHandler<T> {
+    @Nullable T copy(T attachment, IPortAttachmentHolder holder, PortRegistryAccess provider);
 }

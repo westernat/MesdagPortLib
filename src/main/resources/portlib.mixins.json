@@ -5,10 +5,14 @@
     "mixins": [
         "AbstractArrowAccessor",
         "AbstractArrowMixin",
+        "BlockEntityMixin",
+        "ChunkAccessMixin",
+        "EntityMixin",
         "FoodPropertiesMixin",
         "ItemEntityMixin",
         "ItemMixin",
         "ItemStackMixin",
+        "LevelMixin",
         "PlayerMixin"
     ],
     "injectors": {

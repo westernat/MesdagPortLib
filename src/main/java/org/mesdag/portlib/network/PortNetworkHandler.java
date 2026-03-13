@@ -11,7 +11,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -19,6 +18,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortIdentifier;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("all")
 public class PortNetworkHandler {
     private final SimpleChannel channel;
-    private static final Map<PortIdentifier, PacketCodec<?, ?>> codecMap = new HashMap<>();
+    private static final Map<PortIdentifier, PortStreamCodec<?, ?>> codecMap = new HashMap<>();
     private int packetId;
 
     public PortNetworkHandler(String namespace, String version) {
@@ -50,19 +50,19 @@ public class PortNetworkHandler {
         }, null);
     }
 
-    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerInGameS2C(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> s2c(p, s, handler), PacketDirection.PLAY_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerInGameC2S(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> c2s(p, s, handler), PacketDirection.PLAY_TO_SERVER);
     }
 
-    public <P extends IPortPacket.S2C, B extends ByteBuf> void registerLoginS2C(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> s2c(p, s, handler), PacketDirection.LOGIN_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S, B extends ByteBuf> void registerLoginC2S(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> c2s(p, s, handler), PacketDirection.LOGIN_TO_SERVER);
     }
 
@@ -78,13 +78,13 @@ public class PortNetworkHandler {
         s.get().setPacketHandled(true);
     }
 
-    private <P extends IPortPacket, B extends ByteBuf> void register(PortIdentifier identifier, PacketCodec<P, ? super B> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PacketDirection direction) {
+    private <B extends ByteBuf, P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PacketDirection direction) {
         Class<?>[] classes = TypeResolver.resolveRawArguments(BiConsumer.class, handler.getClass());
         Class<?> packetClass = classes[0];
         if (packetClass != TypeResolver.Unknown.class) {
             channel.registerMessage(
                     packetId++, (Class<P>) packetClass,
-                    (p, b) -> codec.encode(p, (B) b), b -> codec.decode((B) b),
+                    (p, b) -> codec.encode((B) b, p), b -> codec.decode((B) b),
                     handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
             codecMap.put(identifier, codec);
         }
@@ -137,33 +137,11 @@ public class PortNetworkHandler {
     }
 
     @Diff
-    public static PacketCodec getPacketCodec(PortIdentifier identifier) {
-        PacketCodec codec = codecMap.get(identifier);
+    public static <B extends ByteBuf, P extends IPortPacket> PortStreamCodec<? super B, P> getPacketCodec(PortIdentifier identifier) {
+        PortStreamCodec codec = codecMap.get(identifier);
         if (codec == null) {
             throw new IllegalStateException("Packet not registered: " + identifier);
         }
         return codec;
-    }
-
-    public interface PacketCodec<P extends IPortPacket, B extends ByteBuf> {
-        void encode(P packet, B buffer);
-
-        P decode(B buffer);
-    }
-
-    public enum PacketDirection {
-        PLAY_TO_SERVER,
-        PLAY_TO_CLIENT,
-        LOGIN_TO_SERVER,
-        LOGIN_TO_CLIENT;
-
-        NetworkDirection unwrap() {
-            return switch (this) {
-                case PLAY_TO_SERVER -> NetworkDirection.PLAY_TO_SERVER;
-                case PLAY_TO_CLIENT -> NetworkDirection.PLAY_TO_CLIENT;
-                case LOGIN_TO_SERVER -> NetworkDirection.LOGIN_TO_SERVER;
-                case LOGIN_TO_CLIENT -> NetworkDirection.LOGIN_TO_CLIENT;
-            };
-        }
     }
 }
