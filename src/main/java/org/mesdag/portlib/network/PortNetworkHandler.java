@@ -20,7 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -59,35 +60,35 @@ public class PortNetworkHandler {
         payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(PortIdentifier.fromNamespaceAndPath(namespace, path), codec, handler));
     }
 
-    public void sendToServer(IPortPacket.C2S packet, IPortPacket.C2S... packets) {
+    public void sendToServer(IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToServer(packet, packets);
     }
 
-    public void sendToPlayer(ServerPlayer player, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayer(ServerPlayer player, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayer(player, packet, packets);
     }
 
-    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayersInDimension(getLevel(dimension), packet, packets);
     }
 
-    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayersNear(getLevel(dimension), excluded, x, y, z, radius, packet, packets);
     }
 
-    public void sendToAllPlayers(IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToAllPlayers(IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToAllPlayers(packet, packets);
     }
 
-    public void sendToPlayersTrackingEntity(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayersTrackingEntity(Entity entity, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayersTrackingEntity(entity, packet, packets);
     }
 
-    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, packet, packets);
     }
 
-    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket.S2C packet, IPortPacket.S2C... packets) {
+    public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket packet, IPortPacket... packets) {
         PacketDistributor.sendToPlayersTrackingChunk(level, pos, packet, packets);
     }
 
@@ -115,42 +116,9 @@ public class PortNetworkHandler {
         });
     }
 
-    public static <B extends ByteBuf, P extends IPortPacket> PortStreamCodec<B, P> toPacketCodec(StreamCodec<B, P> codec) {
-        return new PacketStreamCodec<>(codec);
-    }
-
     private record Payload<B extends ByteBuf, P extends IPortPacket>(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         private void accept(TriConsumer<CustomPacketPayload.Type<P>, StreamCodec<? super FriendlyByteBuf, P>, IPayloadHandler<P>> consumer) {
-            consumer.accept(identifier.getType(), (StreamCodec<? super FriendlyByteBuf, P>) toStreamCodec(codec), (p, c) -> handler.accept(p, new IPortPacket.Context(c.player())));
-        }
-
-        private static <B extends ByteBuf, P extends IPortPacket> StreamCodec<? super B, P> toStreamCodec(PortStreamCodec<? super B, P> codec) {
-            if (codec instanceof PacketStreamCodec<? super B, P>(StreamCodec<? super B, P> streamCodec)) {
-                return streamCodec;
-            }
-            return new StreamCodec<>() {
-                @Override
-                public P decode(B buffer) {
-                    return codec.decode(buffer);
-                }
-
-                @Override
-                public void encode(B buffer, P value) {
-                    codec.encode(buffer, value);
-                }
-            };
-        }
-    }
-
-    private record PacketStreamCodec<B extends ByteBuf, P extends IPortPacket>(StreamCodec<B, P> codec) implements PortStreamCodec<B, P> {
-        @Override
-        public void encode(B buffer, P packet) {
-            codec.encode(buffer, packet);
-        }
-
-        @Override
-        public P decode(B buffer) {
-            return codec.decode(buffer);
+            consumer.accept(identifier.getType(), (StreamCodec<? super FriendlyByteBuf, P>) codec.unwrap(), (p, c) -> handler.accept(p, new IPortPacket.Context(c.player())));
         }
     }
 }

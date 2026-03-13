@@ -3,7 +3,7 @@ package org.mesdag.portlib;
 import net.neoforged.fml.common.Mod;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortRegisterHandler;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -5,8 +5,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ public class PortRegisterHandler {
         return new CustomRegistration<>(namespace, registryKey, consumer);
     }
 
+    @Diff
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();

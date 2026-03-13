@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.mesdag.portlib.wrapper.PortIdentifier;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
