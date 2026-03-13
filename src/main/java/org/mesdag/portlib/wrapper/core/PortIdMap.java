@@ -7,8 +7,7 @@ public class PortIdMap {
         int i = idMap.getId(value);
         if (i == -1) {
             throw new IllegalArgumentException("Can't find id for '" + value + "' in map " + idMap);
-        } else {
-            return i;
         }
+        return i;
     }
 }

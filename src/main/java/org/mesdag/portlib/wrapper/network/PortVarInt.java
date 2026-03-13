@@ -3,11 +3,6 @@ package org.mesdag.portlib.wrapper.network;
 import io.netty.buffer.ByteBuf;
 
 public class PortVarInt {
-    private static final int MAX_VARINT_SIZE = 5;
-    private static final int DATA_BITS_MASK = 127;
-    private static final int CONTINUATION_BIT_MASK = 128;
-    private static final int DATA_BITS_PER_BYTE = 7;
-
     public static int getByteSize(int data) {
         for (int i = 1; i < 5; i++) {
             if ((data & -1 << i * 7) == 0) {
