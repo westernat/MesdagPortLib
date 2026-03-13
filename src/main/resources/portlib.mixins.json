@@ -8,13 +8,15 @@
         "BlockEntityMixin",
         "ChunkAccessMixin",
         "ChunkMapMixin",
+        "ChunkSerializerMixin",
         "EntityMixin",
         "FoodPropertiesMixin",
         "ItemEntityMixin",
         "ItemMixin",
         "ItemStackMixin",
         "LevelMixin",
-        "PlayerMixin"
+        "PlayerMixin",
+        "ServerLevelMixin"
     ],
     "injectors": {
         "defaultRequire": 1
