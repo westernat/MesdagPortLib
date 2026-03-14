@@ -7,7 +7,6 @@ import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.registries.callback.PortBakeCallback;
 import org.mesdag.portlib.registries.callback.PortClearCallback;
 import org.mesdag.portlib.registries.callback.PortRegistryCallback;
-import org.mesdag.portlib.wrapper.core.PortRegistry;
 
 @SuppressWarnings("all")
 public class PortRegistryMaker<T> {
@@ -24,15 +23,7 @@ public class PortRegistryMaker<T> {
     }
 
     public PortRegistryMaker<T> callback(PortRegistryCallback<T> inst) {
-        if (inst instanceof PortAddCallback<T> callback) {
-            builder.onAdd((registry, id, key, value) -> callback.onAdd(PortRegistry.wrap(registry), id, key, value));
-        }
-        if (inst instanceof PortBakeCallback<T> callback) {
-            builder.onBake(registry -> callback.onBake(PortRegistry.wrap(registry)));
-        }
-        if (inst instanceof PortClearCallback<T> callback) {
-            builder.onClear((registry, full) -> callback.onClear(PortRegistry.wrap(registry)));
-        }
+        builder.callback(inst.unwrap());
         return this;
     }
 

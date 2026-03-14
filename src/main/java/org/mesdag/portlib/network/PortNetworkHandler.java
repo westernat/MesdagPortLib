@@ -32,7 +32,7 @@ public class PortNetworkHandler {
 
     private final String namespace;
     private final String version;
-    private EnumMap<PacketDirection, List<Payload<?, ?>>> payloads = new EnumMap<>(PacketDirection.class);
+    private EnumMap<PortNetworkDirection, List<Payload<?, ?>>> payloads = new EnumMap<>(PortNetworkDirection.class);
 
     public PortNetworkHandler(String namespace, String version) {
         this.namespace = namespace;
@@ -41,22 +41,22 @@ public class PortNetworkHandler {
     }
 
     public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(path, codec, handler, PacketDirection.PLAY_TO_CLIENT);
+        register(path, codec, handler, PortNetworkDirection.PLAY_TO_CLIENT);
     }
 
     public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(path, codec, handler, PacketDirection.PLAY_TO_SERVER);
+        register(path, codec, handler, PortNetworkDirection.PLAY_TO_SERVER);
     }
 
     public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(path, codec, handler, PacketDirection.LOGIN_TO_CLIENT);
+        register(path, codec, handler, PortNetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(path, codec, handler, PacketDirection.LOGIN_TO_SERVER);
+        register(path, codec, handler, PortNetworkDirection.LOGIN_TO_SERVER);
     }
 
-    private <B extends ByteBuf, P extends IPortPacket> void register(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler, PacketDirection direction) {
+    private <B extends ByteBuf, P extends IPortPacket> void register(String path, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler, PortNetworkDirection direction) {
         payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(PortIdentifier.fromNamespaceAndPath(namespace, path), codec, handler));
     }
 
@@ -101,7 +101,7 @@ public class PortNetworkHandler {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
             for (PortNetworkHandler handler : handlers) {
                 PayloadRegistrar registrar = event.registrar(handler.version);
-                for (Map.Entry<PacketDirection, List<Payload<?, ?>>> entry : handler.payloads.entrySet()) {
+                for (Map.Entry<PortNetworkDirection, List<Payload<?, ?>>> entry : handler.payloads.entrySet()) {
                     for (Payload<?, ?> payload : entry.getValue()) {
                         switch (entry.getKey()) {
                             case PLAY_TO_SERVER -> payload.accept(registrar::playToServer);

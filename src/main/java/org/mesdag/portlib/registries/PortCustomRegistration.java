@@ -12,11 +12,11 @@ import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class CustomRegistration<T> extends Registration<T> {
+public class PortCustomRegistration<T> extends PortRegistration<T> {
     final PortRegistryMaker<T> maker;
     final Registry<T> registry;
 
-    CustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
+    PortCustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
         super(namespace, registryKey);
         DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
         this.maker = new PortRegistryMaker<>();
@@ -69,9 +69,5 @@ public class CustomRegistration<T> extends Registration<T> {
 
     public boolean containsValue(T value) {
         return registry.containsValue(value);
-    }
-
-    public ResourceKey<? extends Registry<T>> key() {
-        return registryKey;
     }
 }

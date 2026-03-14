@@ -1,8 +1,10 @@
 package org.mesdag.portlib;
 
 import net.neoforged.fml.common.Mod;
+import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortRegisterHandler;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +18,12 @@ public class PortLib {
     public PortLib() {
         PortRegisterHandler.init();
         PortNetworkHandler.init();
+        if (PortEnvironment.isDeveloper()) {
+            TestAttachment.test();
+        }
     }
 
-    public static PortIdentifier identifier(String path) {
+    public static PortIdentifier asResource(String path) {
         return PortIdentifier.fromNamespaceAndPath(MODID, path);
     }
 }

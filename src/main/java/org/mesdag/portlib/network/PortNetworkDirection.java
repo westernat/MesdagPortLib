@@ -1,6 +1,6 @@
 package org.mesdag.portlib.network;
 
-public enum PacketDirection {
+public enum PortNetworkDirection {
     PLAY_TO_SERVER,
     PLAY_TO_CLIENT,
     LOGIN_TO_SERVER,

@@ -19,12 +19,16 @@ import java.util.function.Consumer;
 public class PortRegisterHandler {
     static final Map<ResourceKey<? extends Registry<?>>, List<PortRegistryEntry<?>>> registrations = new IdentityHashMap<>();
 
-    public static <T, R extends Registry<T>> Registration<T> registration(String namespace, ResourceKey<R> registryKey) {
-        return new Registration<>(namespace, registryKey);
+    public static <T, R extends Registry<T>> PortRegistration<T> create(String namespace, ResourceKey<R> registryKey) {
+        return new PortRegistration<>(namespace, registryKey);
     }
 
-    public static <T, R extends Registry<T>> CustomRegistration<T> custom(String namespace, ResourceKey<R> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
-        return new CustomRegistration<>(namespace, registryKey, consumer);
+    public static <T, R extends Registry<T>> PortCustomRegistration<T> custom(String namespace, ResourceKey<R> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
+        return new PortCustomRegistration<>(namespace, registryKey, consumer);
+    }
+
+    public static PortAttachmentRegistration attachment(String namespace) {
+        return new PortAttachmentRegistration(namespace);
     }
 
     @Diff

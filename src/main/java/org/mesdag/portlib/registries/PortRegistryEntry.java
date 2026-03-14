@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 @SuppressWarnings("all")
-public final class PortRegistryEntry<T> implements Supplier<T> {
+public class PortRegistryEntry<T> implements Supplier<T> {
     final PortIdentifier identifier;
     DeferredHolder<T, ? extends T> object;
     final Supplier<T> valueSupplier;

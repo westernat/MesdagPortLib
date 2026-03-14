@@ -1,5 +1,6 @@
 package org.mesdag.portlib.wrapper.core;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +19,10 @@ public class PortRegistryAccess implements RegistryAccess {
 
     public PortRegistryAccess(RegistryAccess delegate) {
         this.delegate = delegate;
+    }
+
+    public PortRegistryAccess(HolderLookup.Provider provider) {
+        this.delegate = provider instanceof RegistryAccess registryAccess ? registryAccess : PortEnvironment.registryAccess();
     }
 
     @Override

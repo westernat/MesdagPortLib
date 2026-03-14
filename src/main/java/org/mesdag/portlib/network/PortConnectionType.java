@@ -14,4 +14,12 @@ public enum PortConnectionType {
             case VANILLA -> ConnectionType.OTHER;
         };
     }
+
+    @Diff
+    public static PortConnectionType wrap(ConnectionType connectionType) {
+        if (connectionType == ConnectionType.NEOFORGE) {
+            return MODDED;
+        }
+        return VANILLA;
+    }
 }
