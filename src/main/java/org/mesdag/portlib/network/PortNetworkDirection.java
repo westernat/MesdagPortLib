@@ -1,13 +1,15 @@
 package org.mesdag.portlib.network;
 
 import net.minecraftforge.network.NetworkDirection;
+import org.mesdag.portlib.diff.Diff;
 
-public enum PacketDirection {
+public enum PortNetworkDirection {
     PLAY_TO_SERVER,
     PLAY_TO_CLIENT,
     LOGIN_TO_SERVER,
     LOGIN_TO_CLIENT;
 
+    @Diff
     NetworkDirection unwrap() {
         return switch (this) {
             case PLAY_TO_SERVER -> NetworkDirection.PLAY_TO_SERVER;

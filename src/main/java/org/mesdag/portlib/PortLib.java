@@ -1,13 +1,12 @@
 package org.mesdag.portlib;
 
 import net.minecraftforge.fml.common.Mod;
-import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.PortAttachmentSync;
-import org.mesdag.portlib.diff.PortRegistries;
-import org.mesdag.portlib.diff.PortSyncAttachmentsPayload;
+import org.mesdag.portlib.diff.*;
+import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortRegisterHandler;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,10 @@ public class PortLib {
         PortRegistries.init();
         PortAttachmentSync.init();
         PortEventHooks.init();
+        PortAttachmentInternals.init();
+        if (PortEnvironment.isDeveloper()) {
+            TestAttachment.test();
+        }
         NETWORK_HANDLER.registerInGameS2C(
                 PortSyncAttachmentsPayload.IDENTIFIER,
                 PortSyncAttachmentsPayload.STREAM_CODEC,

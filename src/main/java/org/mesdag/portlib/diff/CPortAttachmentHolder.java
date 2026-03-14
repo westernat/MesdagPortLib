@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
+import org.mesdag.portlib.attachment.IPortAttachmentHolder;
+import org.mesdag.portlib.attachment.IPortAttachmentSerializer;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.util.Private;

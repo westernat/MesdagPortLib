@@ -51,19 +51,19 @@ public class PortNetworkHandler {
     }
 
     public <P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), PacketDirection.PLAY_TO_CLIENT);
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), PortNetworkDirection.PLAY_TO_CLIENT);
     }
 
     public <P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), PacketDirection.PLAY_TO_SERVER);
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), PortNetworkDirection.PLAY_TO_SERVER);
     }
 
     public <P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> s2c(p, s, handler), PacketDirection.LOGIN_TO_CLIENT);
+        register(identifier, codec, (p, s) -> s2c(p, s, handler), PortNetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public <P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> c2s(p, s, handler), PacketDirection.LOGIN_TO_SERVER);
+        register(identifier, codec, (p, s) -> c2s(p, s, handler), PortNetworkDirection.LOGIN_TO_SERVER);
     }
 
     private static <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
@@ -78,7 +78,7 @@ public class PortNetworkHandler {
         s.get().setPacketHandled(true);
     }
 
-    private <P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PacketDirection direction) {
+    private <P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, @Nullable PortNetworkDirection direction) {
         Class<?>[] classes = TypeResolver.resolveRawArguments(BiConsumer.class, handler.getClass());
         Class<?> packetClass = classes[0];
         if (packetClass != TypeResolver.Unknown.class) {

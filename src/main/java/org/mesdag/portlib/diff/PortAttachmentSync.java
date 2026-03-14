@@ -14,12 +14,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
+import org.mesdag.portlib.attachment.PortAttachmentSyncHandler;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortConnectionType;
-import org.mesdag.portlib.registries.CustomRegistration;
+import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
@@ -31,7 +32,7 @@ import java.util.function.Consumer;
 
 @Diff
 public final class PortAttachmentSync {
-    public static final CustomRegistration<PortAttachmentType<?>> SYNCED_ATTACHMENT_TYPES = PortRegisterHandler.custom(
+    public static final PortCustomRegistration<PortAttachmentType<?>> SYNCED_ATTACHMENT_TYPES = PortRegisterHandler.custom(
             PortLib.MODID,
             ResourceKey.createRegistryKey(PortLib.asResource("synced_attachment_types")),
             maker -> maker.sync(true).onAdd((owner, id, key, value) -> {

@@ -9,12 +9,12 @@ import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Registration<T> {
+public class PortRegistration<T> {
     final String namespace;
     final ResourceKey<? extends Registry<T>> registryKey;
     final List<PortRegistryEntry<?>> entries;
 
-    Registration(String namespace, ResourceKey<? extends Registry<T>> registryKey) {
+    PortRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey) {
         this.namespace = namespace;
         this.registryKey = registryKey;
         this.entries = new ArrayList<>();
@@ -26,5 +26,9 @@ public class Registration<T> {
         entry.object = RegistryObject.create(entry.identifier, registryKey, namespace);
         entries.add(entry);
         return entry;
+    }
+
+    public ResourceKey<? extends Registry<T>> key() {
+        return registryKey;
     }
 }

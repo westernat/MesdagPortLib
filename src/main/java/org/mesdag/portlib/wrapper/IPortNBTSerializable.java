@@ -5,11 +5,17 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public interface IPortNBTSerializable<T extends Tag> extends INBTSerializable<T> {
-    default T serializeNBT(PortRegistryAccess provider) {
-        return serializeNBT();
+    T serializeNBT(PortRegistryAccess provider);
+
+    void deserializeNBT(PortRegistryAccess provider, T nbt);
+
+    @Override
+    default T serializeNBT() {
+        return serializeNBT(new PortRegistryAccess());
     }
 
-    default void deserializeNBT(PortRegistryAccess provider, T nbt) {
-        deserializeNBT(nbt);
+    @Override
+    default void deserializeNBT(T nbt) {
+        deserializeNBT(new PortRegistryAccess(), nbt);
     }
 }

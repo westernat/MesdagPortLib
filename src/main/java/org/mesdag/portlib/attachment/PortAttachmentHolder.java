@@ -7,6 +7,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import org.mesdag.portlib.diff.CPortAttachmentHolder;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class PortAttachmentHolder {
     private final CPortAttachmentHolder delegate;
@@ -23,7 +24,15 @@ public class PortAttachmentHolder {
         return delegate.hasData(type);
     }
 
+    public <T> boolean hasData(Supplier<PortAttachmentType<T>> type) {
+        return delegate.hasData(type);
+    }
+
     public <T> T getData(PortAttachmentType<T> type) {
+        return delegate.getData(type);
+    }
+
+    public <T> T getData(Supplier<PortAttachmentType<T>> type) {
         return delegate.getData(type);
     }
 
@@ -31,11 +40,23 @@ public class PortAttachmentHolder {
         return delegate.getExistingDataOrNull(type);
     }
 
+    public <T> @Nullable T getExistingDataOrNull(Supplier<PortAttachmentType<T>> type) {
+        return delegate.getExistingDataOrNull(type.get());
+    }
+
     public <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
         return delegate.setData(type, data);
     }
 
+    public <T> @Nullable T setData(Supplier<PortAttachmentType<T>> type, T data) {
+        return delegate.setData(type, data);
+    }
+
     public <T> @Nullable T removeData(PortAttachmentType<T> type) {
+        return delegate.removeData(type);
+    }
+
+    public <T> @Nullable T removeData(Supplier<PortAttachmentType<T>> type) {
         return delegate.removeData(type);
     }
 

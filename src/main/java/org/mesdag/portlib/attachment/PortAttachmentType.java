@@ -8,10 +8,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.diff.*;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.util.Protected;
-import org.mesdag.portlib.util.VarOrInline;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
@@ -57,22 +55,18 @@ public class PortAttachmentType<T> {
         };
     }
 
-    @VarOrInline
     public static <T> PortBuilder<T> builder(Supplier<T> defaultValueSupplier) {
         return builder(holder -> defaultValueSupplier.get());
     }
 
-    @VarOrInline
     public static <T> PortBuilder<T> builder(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return new PortBuilder<>(defaultValueConstructor);
     }
 
-    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Supplier<T> defaultValueSupplier) {
         return serializable(holder -> defaultValueSupplier.get());
     }
 
-    @VarOrInline
     public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return builder(defaultValueConstructor).serialize(new IPortAttachmentSerializer<S, T>() {
             @Override
@@ -90,7 +84,6 @@ public class PortAttachmentType<T> {
         });
     }
 
-    @Diff
     public static class PortBuilder<T> {
         private final Function<IPortAttachmentHolder, T> defaultValueSupplier;
         @Nullable

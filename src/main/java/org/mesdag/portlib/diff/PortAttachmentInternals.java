@@ -3,6 +3,7 @@ package org.mesdag.portlib.diff;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import org.mesdag.portlib.attachment.IPortAttachmentCopyHandler;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;

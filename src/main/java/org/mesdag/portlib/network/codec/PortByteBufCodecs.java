@@ -30,6 +30,15 @@ public interface PortByteBufCodecs {
             buf.writeByteArray(data);
         }
     };
+    PortStreamCodec<ByteBuf, Boolean> BOOL = new PortStreamCodec<>() {
+        public Boolean decode(ByteBuf buffer) {
+            return buffer.readBoolean();
+        }
+
+        public void encode(ByteBuf buffer, Boolean value) {
+            buffer.writeBoolean(value);
+        }
+    };
 
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(
             final ResourceKey<? extends Registry<T>> registryKey, final Function<Registry<T>, IdMap<R>> idGetter
