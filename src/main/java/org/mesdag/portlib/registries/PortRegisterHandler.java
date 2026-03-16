@@ -31,6 +31,10 @@ public class PortRegisterHandler {
         return new PortAttachmentRegistration(namespace);
     }
 
+    public static PortDataComponentRegistration dataComponent(String namespace) {
+        return new PortDataComponentRegistration(namespace);
+    }
+
     @Diff
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
@@ -40,6 +44,7 @@ public class PortRegisterHandler {
             for (PortRegistryEntry<?> entry : entries) {
                 event.register((ResourceKey<R>) registryKey, entry.identifier, (Supplier<T>) entry.valueSupplier.get());
                 entry.get(); // bind
+                entry.valueSupplier = null;
             }
         });
         PortEventHandler.addListener((ModifyRegistriesEvent event) -> {

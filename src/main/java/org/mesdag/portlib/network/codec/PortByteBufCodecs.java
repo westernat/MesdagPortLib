@@ -15,6 +15,9 @@ import java.util.function.IntFunction;
 public interface PortByteBufCodecs {
     PortStreamCodec<FriendlyByteBuf, byte[]> UNBOUNDED_BYTE_ARRAY = PortStreamCodec.wrap(NeoForgeStreamCodecs.UNBOUNDED_BYTE_ARRAY);
     PortStreamCodec<ByteBuf, Boolean> BOOL = PortStreamCodec.wrap(ByteBufCodecs.BOOL);
+    PortStreamCodec<ByteBuf, Byte> BYTE = PortStreamCodec.wrap(ByteBufCodecs.BYTE);
+    PortStreamCodec<ByteBuf, Integer> INT = PortStreamCodec.wrap(ByteBufCodecs.INT);
+    PortStreamCodec<ByteBuf, Integer> VAR_INT = PortStreamCodec.wrap(ByteBufCodecs.VAR_INT);
 
     static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, T> registry(ResourceKey<? extends Registry<T>> registryKey) {
         return (PortStreamCodec) PortStreamCodec.wrap(ByteBufCodecs.registry(registryKey));

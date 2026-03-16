@@ -9,7 +9,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.event.PortBus;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 @SuppressWarnings("unchecked")
 public class PortAttachmentRegistration extends PortRegistration<PortAttachmentType<?>> {
@@ -26,15 +25,10 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
     public PortRegistryEntry<PortAttachmentType<?>> register(String name, Supplier<PortAttachmentType<?>> valueSupplier) {
         Supplier<PortAttachmentType<?>> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, () -> memoize.get().unwrap());
-        return new PortRegistryEntry<>(PortIdentifier.fromNamespaceAndPath(namespace, name), memoize) {
-            @Override
-            public PortAttachmentType<?> get() {
-                return valueSupplier.get(); // == memoize.get()
-            }
-        };
+        return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
 
-    public <T> PortRegistryEntry<PortAttachmentType<T>> registerTyped(String name, Supplier<PortAttachmentType<T>> valueSupplier) {
-        return (PortRegistryEntry<PortAttachmentType<T>>) (PortRegistryEntry<?>) register(name, (Supplier<PortAttachmentType<?>>) (Supplier<?>) valueSupplier);
+    public <T> PortRegistryEntry<PortAttachmentType<T>> registerTyped(String name, Supplier<PortAttachmentType.PortBuilder<T>> valueSupplier) {
+        return (PortRegistryEntry<PortAttachmentType<T>>) (PortRegistryEntry<?>) register(name, () -> valueSupplier.get().build());
     }
 }

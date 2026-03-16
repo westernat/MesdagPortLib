@@ -60,19 +60,19 @@ public class PortAttachmentHolder {
         return delegate.removeData(type.get().unwrap());
     }
 
-    public static PortAttachmentHolder wrap(BlockEntity o) {
+    public static PortAttachmentHolder of(BlockEntity o) {
         return new PortAttachmentHolder(o);
     }
 
-    public static PortAttachmentHolder wrap(Entity o) {
+    public static PortAttachmentHolder of(Entity o) {
         return new PortAttachmentHolder(o);
     }
 
-    public static PortAttachmentHolder wrap(Level o) {
+    public static PortAttachmentHolder of(Level o) {
         return new PortAttachmentHolder(o);
     }
 
-    public static PortAttachmentHolder wrap(ChunkAccess o) {
+    public static PortAttachmentHolder of(ChunkAccess o) {
         return new PortAttachmentHolder(o.getAttachmentHolder());
     }
 }
