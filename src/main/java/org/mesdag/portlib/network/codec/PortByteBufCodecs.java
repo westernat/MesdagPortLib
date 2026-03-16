@@ -39,6 +39,33 @@ public interface PortByteBufCodecs {
             buffer.writeBoolean(value);
         }
     };
+    PortStreamCodec<ByteBuf, Byte> BYTE = new PortStreamCodec<>() {
+        public Byte decode(ByteBuf buffer) {
+            return buffer.readByte();
+        }
+
+        public void encode(ByteBuf buffer, Byte value) {
+            buffer.writeByte(value);
+        }
+    };
+    PortStreamCodec<ByteBuf, Integer> INT = new PortStreamCodec<>() {
+        public Integer decode(ByteBuf buffer) {
+            return buffer.readInt();
+        }
+
+        public void encode(ByteBuf buffer, Integer value) {
+            buffer.writeInt(value);
+        }
+    };
+    PortStreamCodec<ByteBuf, Integer> VAR_INT = new PortStreamCodec<>() {
+        public Integer decode(ByteBuf buffer) {
+            return PortVarInt.read(buffer);
+        }
+
+        public void encode(ByteBuf buffer, Integer value) {
+            PortVarInt.write(buffer, value);
+        }
+    };
 
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(
             final ResourceKey<? extends Registry<T>> registryKey, final Function<Registry<T>, IdMap<R>> idGetter

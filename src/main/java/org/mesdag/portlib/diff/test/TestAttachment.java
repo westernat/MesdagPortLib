@@ -5,22 +5,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
-import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.registries.PortAttachmentRegistration;
-import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
-
-import java.util.function.Supplier;
 
 @Diff
 public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
@@ -42,6 +32,10 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
 
     public boolean z() {
         return z;
+    }
+
+    public void setStack(ItemStack stack) {
+        this.stack = stack;
     }
 
     @Override
@@ -72,21 +66,5 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
         this.str = nbt.getString("str");
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ItemStack.CODEC.parse(ops, nbt.get("stack")).result().ifPresent(result -> this.stack = result);
-    }
-
-    public static void test() {
-        PortAttachmentRegistration attachment = PortRegisterHandler.attachment(PortLib.MODID);
-        Supplier<PortAttachmentType<TestAttachment>> test = attachment.registerTyped("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(STREAM_CODEC).copyOnDeath().build());
-
-        PortEventHandler.addListener((PlayerInteractEvent.EntityInteract event) -> {
-            if (!event.getItemStack().isEmpty()) {
-                if (!event.getLevel().isClientSide) {
-                    PortAttachmentHolder holder = PortAttachmentHolder.wrap(event.getTarget());
-                    TestAttachment data = holder.getData(test);
-                    data.stack = event.getItemStack();
-                }
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
-        });
     }
 }

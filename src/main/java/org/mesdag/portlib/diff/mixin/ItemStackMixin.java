@@ -7,18 +7,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
+import org.mesdag.portlib.diff.PortPatchedDataComponentMap;
+import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
@@ -32,10 +37,22 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Nullable
     public abstract CompoundTag getTag();
 
+    @Shadow
+    @Final
+    @Deprecated
+    @javax.annotation.Nullable
+    private Item item;
     @Unique
     private @Nullable FoodProperties portlib$food;
     @Unique
     private @Nullable PortTool portlib$tool;
+    @Unique
+    private final PortPatchedDataComponentMap portlib$patch = new PortPatchedDataComponentMap(item);
+
+    @Override
+    public PortPatchedDataComponentMap portlib$patch() {
+        return portlib$patch;
+    }
 
     @Override
     public @Nullable FoodProperties portlib$getFood(@Nullable LivingEntity living) {
@@ -96,5 +113,15 @@ public abstract class ItemStackMixin implements IPortItemStack {
         if (PortItemStack.getEnchantmentGlintOverride(portlib$self())) {
             cir.setReturnValue(true);
         }
+    }
+
+    @Inject(method = "save", at = @At("HEAD"))
+    private void save(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
+        compoundTag.put(DATA_COMPONENTS, portlib$patch.serializeNBT(new PortRegistryAccess()));
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    private void load(CompoundTag compoundTag, CallbackInfo ci) {
+        portlib$patch.deserializeNBT(new PortRegistryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
     }
 }

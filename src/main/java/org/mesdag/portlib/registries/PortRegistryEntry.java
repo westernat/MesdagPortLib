@@ -8,7 +8,7 @@ import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 public class PortRegistryEntry<T> implements Supplier<T> {
     final PortIdentifier identifier;
     RegistryObject<T> object;
-    final Supplier<T> valueSupplier;
+    Supplier<T> valueSupplier;
 
     public PortRegistryEntry(PortIdentifier identifier, Supplier<T> valueSupplier) {
         this.identifier = identifier;
@@ -22,5 +22,16 @@ public class PortRegistryEntry<T> implements Supplier<T> {
 
     public PortIdentifier getId() {
         return identifier;
+    }
+
+    static class Memoized<T> extends PortRegistryEntry<T> {
+        public Memoized(String namespace, String name, Supplier<T> valueSupplier) {
+            super(PortIdentifier.fromNamespaceAndPath(namespace, name), valueSupplier);
+        }
+
+        @Override
+        public T get() {
+            return valueSupplier.get();
+        }
     }
 }

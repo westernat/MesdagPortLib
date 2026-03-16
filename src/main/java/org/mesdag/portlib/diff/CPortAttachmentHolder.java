@@ -130,8 +130,9 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
                 try {
                     Tag serialized = ((IPortAttachmentSerializer<?, Object>) type.serializer).write(entry.getValue(), provider);
                     if (serialized != null) {
-                        if (tag == null)
+                        if (tag == null) {
                             tag = new CompoundTag();
+                        }
                         tag.put(key.toString(), serialized);
                     }
                 } catch (Exception exception) {

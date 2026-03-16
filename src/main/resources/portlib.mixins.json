@@ -13,6 +13,7 @@
         "FoodPropertiesMixin",
         "ItemEntityMixin",
         "ItemMixin",
+        "ItemMixin$PropertiesMixin",
         "ItemStackMixin",
         "LevelChunkMixin",
         "LevelMixin",

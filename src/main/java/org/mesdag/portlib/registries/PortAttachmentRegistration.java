@@ -7,7 +7,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.event.PortBus;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 @SuppressWarnings("unchecked")
 public class PortAttachmentRegistration extends PortRegistration<PortAttachmentType<?>> {
@@ -24,19 +23,14 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
     public PortRegistryEntry<PortAttachmentType<?>> register(String name, Supplier<PortAttachmentType<?>> valueSupplier) {
         Supplier<PortAttachmentType<?>> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, memoize);
-        return new PortRegistryEntry<>(PortIdentifier.fromNamespaceAndPath(namespace, name), memoize) {
-            @Override
-            public PortAttachmentType<?> get() {
-                return valueSupplier.get(); // == memoize.get()
-            }
-        };
+        return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
 
-    public <T> PortRegistryEntry<PortAttachmentType<T>> registerTyped(String name, Supplier<PortAttachmentType<T>> valueSupplier) {
-        return (PortRegistryEntry<PortAttachmentType<T>>) (PortRegistryEntry<?>) register(name, cast(valueSupplier));
+    public <T> PortRegistryEntry<PortAttachmentType<T>> registerTyped(String name, Supplier<PortAttachmentType.PortBuilder<T>> valueSupplier) {
+        return (PortRegistryEntry<PortAttachmentType<T>>) (PortRegistryEntry<?>) register(name, () -> cast(valueSupplier).get().build());
     }
 
-    private static <T> Supplier<PortAttachmentType<?>> cast(Supplier<T> supplier) {
-        return (Supplier<PortAttachmentType<?>>) supplier;
+    private static <T> Supplier<PortAttachmentType.PortBuilder<?>> cast(Supplier<T> supplier) {
+        return (Supplier<PortAttachmentType.PortBuilder<?>>) supplier;
     }
 }
