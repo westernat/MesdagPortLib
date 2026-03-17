@@ -25,7 +25,6 @@ public class PortPatchedDataComponentMap {
     private final PortDataComponentMap prototype;
     private final Map<PortDataComponentType<?>, Optional<?>> patch = new IdentityHashMap<>();
 
-    @Diff
     public PortPatchedDataComponentMap(@Nullable Item item) {
         this.prototype = item == null ? PortDataComponentMap.EMPTY : IPortItem.of(item);
     }
@@ -88,7 +87,6 @@ public class PortPatchedDataComponentMap {
         return has(type.get());
     }
 
-    @Diff
     public CompoundTag serializeNBT(PortRegistryAccess provider) {
         CompoundTag tag = new CompoundTag();
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
@@ -105,7 +103,6 @@ public class PortPatchedDataComponentMap {
         return tag;
     }
 
-    @Diff
     public void deserializeNBT(PortRegistryAccess provider, CompoundTag tag) {
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         for (var key : tag.getAllKeys()) {
@@ -127,5 +124,9 @@ public class PortPatchedDataComponentMap {
                 PortLib.LOGGER.error("Failed to deserialize data component {}. Skipping.", key, exception);
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return patch.isEmpty();
     }
 }

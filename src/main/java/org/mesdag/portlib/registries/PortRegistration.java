@@ -7,9 +7,12 @@ import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PortRegistration<T> {
+    static final Map<ResourceKey<? extends Registry<?>>, List<PortRegistryEntry<?>>> registrations = new IdentityHashMap<>();
     final String namespace;
     final ResourceKey<? extends Registry<T>> registryKey;
     final List<PortRegistryEntry<?>> entries;
@@ -18,7 +21,7 @@ public class PortRegistration<T> {
         this.namespace = namespace;
         this.registryKey = registryKey;
         this.entries = new ArrayList<>();
-        PortRegisterHandler.registrations.put(registryKey, entries);
+        registrations.put(registryKey, entries);
     }
 
     public PortRegistryEntry<T> register(String name, Supplier<T> valueSupplier) {

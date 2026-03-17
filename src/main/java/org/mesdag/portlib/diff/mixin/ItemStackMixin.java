@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -117,11 +118,14 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "save", at = @At("HEAD"))
     private void save(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
+        if (portlib$patch.isEmpty()) return;
         compoundTag.put(DATA_COMPONENTS, portlib$patch.serializeNBT(new PortRegistryAccess()));
     }
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
     private void load(CompoundTag compoundTag, CallbackInfo ci) {
-        portlib$patch.deserializeNBT(new PortRegistryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
+        if (compoundTag.contains(DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
+            portlib$patch.deserializeNBT(new PortRegistryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
+        }
     }
 }

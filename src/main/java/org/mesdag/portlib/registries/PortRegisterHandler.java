@@ -8,15 +8,11 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortPriority;
 
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 @SuppressWarnings("all")
 public class PortRegisterHandler {
-    static final Map<ResourceKey<? extends Registry<?>>, List<PortRegistryEntry<?>>> registrations = new IdentityHashMap<>();
-
     public static <T> PortRegistration<T> create(String namespace, ResourceKey<? extends Registry<T>> registryKey) {
         return new PortRegistration<>(namespace, registryKey);
     }
@@ -37,7 +33,7 @@ public class PortRegisterHandler {
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            List<PortRegistryEntry<?>> entries = registrations.get(registryKey);
+            List<PortRegistryEntry<?>> entries = PortRegistration.registrations.get(registryKey);
             if (entries == null) return;
             for (PortRegistryEntry<?> entry : entries) {
                 event.register((ResourceKey<R>) registryKey, entry.identifier, (Supplier<T>) entry.valueSupplier.get());

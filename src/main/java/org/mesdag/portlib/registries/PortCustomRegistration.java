@@ -5,17 +5,20 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.event.PortBus;
 import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class PortCustomRegistration<T> extends PortRegistration<T> {
     final PortRegistryMaker<T> maker;
     final java.util.function.Supplier<IForgeRegistry<T>> registry;
+    private boolean registriesLoaded = false;
 
     PortCustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
         super(namespace, registryKey);
@@ -23,6 +26,7 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
         this.maker = new PortRegistryMaker<>();
         this.registry = register.makeRegistry(() -> {
             consumer.accept(maker);
+            maker.onBake(owner -> registriesLoaded = true);
             return maker.make();
         });
         register.register(PortBus.MOD.unwrap());
@@ -33,7 +37,15 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
     }
 
     public void register(ResourceLocation key, T value) {
-        registry.get().register(key, value);
+        if (registriesLoaded) {
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "The object %s (name %s) is being added too late.", value, key));
+        }
+        if (registry.get() instanceof ForgeRegistry<T> registry) {
+            boolean locked = registry.isLocked();
+            if (locked) registry.unfreeze();
+            registry.register(key, value);
+            if (locked) registry.freeze();
+        }
     }
 
     public @Nullable ResourceLocation getKey(T value) {

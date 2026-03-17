@@ -30,7 +30,7 @@ public class PortEventHandler {
 
     @ApiStatus.Internal
     public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
-        addListener(PortPriority.LOWEST, receiveCancelled, from, to::apply);
+        addListener(PortPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
     }
 
     private static <E extends Event> PortBus getBus(Consumer<E> consumer) {

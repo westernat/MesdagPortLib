@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("all")
 public class PortIdentifier extends ResourceLocation {
+    @SuppressWarnings("removal")
     private PortIdentifier(String namespace, String path) {
         super(namespace, path);
     }

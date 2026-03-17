@@ -2,7 +2,6 @@ package org.mesdag.portlib.diff;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
@@ -18,7 +17,6 @@ public class PortRegistries {
     public static final PortCustomRegistration<PortDataComponentType<?>> DATA_COMPONENTS = PortRegisterHandler.custom(PortLib.MODID, Keys.DATA_COMPONENTS, maker -> {});
 
     public static void init() {
-        PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
         PortEventHandler.addListener(PortPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
     }
 
