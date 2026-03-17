@@ -11,6 +11,7 @@ import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortAttachmentRegistration;
 import org.mesdag.portlib.registries.PortDataComponentRegistration;
@@ -31,6 +32,7 @@ public class PortLib {
     public PortLib() {
         PortRegisterHandler.init();
         PortNetworkHandler.init();
+        PortEventHooks.init();
         if (PortEnvironment.isDeveloper()) {
             PortAttachmentRegistration attachment = PortRegisterHandler.attachment(PortLib.MODID);
             Supplier<PortAttachmentType<TestAttachment>> testAttachment = attachment.registerTyped("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
