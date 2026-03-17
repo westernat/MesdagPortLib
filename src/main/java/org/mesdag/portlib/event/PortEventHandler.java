@@ -5,42 +5,33 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @SuppressWarnings("all")
 public class PortEventHandler {
     public static <E extends Event> void addListener(Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(consumer);
+        PortEventHooks.wrapEvent(PortEventPriority.NORMAL, false, getEventClass(consumer), consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(priority.unwrap(), consumer);
+    public static <E extends Event> void addListener(PortEventPriority priority, Consumer<E> consumer) {
+        PortEventHooks.wrapEvent(priority, false, getEventClass(consumer), consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(priority.unwrap(), receiveCancelled, consumer);
+    public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
+        PortEventHooks.wrapEvent(priority, receiveCancelled, getEventClass(consumer), consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
-        getBus(clazz).unwrap().addListener(priority.unwrap(), receiveCancelled, clazz, consumer);
+    public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
+        PortEventHooks.wrapEvent(priority, receiveCancelled, clazz, consumer);
     }
 
-    @ApiStatus.Internal
-    public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
-        addListener(PortPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
-    }
-
-    private static <E extends Event> PortBus getBus(Consumer<E> consumer) {
+    private static <E extends Event> Class<E> getEventClass(Consumer<E> consumer) {
         Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        // addListener时会自动检查
-        return getBus(clazz);
-    }
-
-    private static PortBus getBus(Class<?> clazz) {
-        return IModBusEvent.class.isAssignableFrom(clazz) ? PortBus.MOD : PortBus.GAME;
+        if (Event.class.isAssignableFrom(clazz)) {
+            return (Class<E>) clazz;
+        }
+        throw new IllegalArgumentException();
     }
 
     public static <E extends Event> void postEvent(E event) {

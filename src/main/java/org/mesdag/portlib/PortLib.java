@@ -3,7 +3,6 @@ package org.mesdag.portlib;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentHolder;
@@ -12,6 +11,7 @@ import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.event.entity.player.PortPlayerInteractEvent;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortAttachmentRegistration;
 import org.mesdag.portlib.registries.PortDataComponentRegistration;
@@ -40,7 +40,7 @@ public class PortLib {
             PortDataComponentRegistration dataComponent = PortRegisterHandler.dataComponent(MODID);
             Supplier<PortDataComponentType<TestComponent>> testDataComponent = dataComponent.registerTyped("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
 
-            PortEventHandler.addListener((PlayerInteractEvent.EntityInteract event) -> {
+            PortEventHandler.addListener((PortPlayerInteractEvent.PortEntityInteract event) -> {
                 ItemStack stack = event.getItemStack();
                 if (!stack.isEmpty()) {
                     if (!event.getLevel().isClientSide) {

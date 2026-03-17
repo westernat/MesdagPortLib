@@ -28,4 +28,13 @@ public enum PortTriState {
             case FALSE -> TriState.FALSE;
         };
     }
+
+    @Diff
+    public static PortTriState wrap(TriState state) {
+        return switch (state) {
+            case TRUE -> TRUE;
+            case DEFAULT -> DEFAULT;
+            case FALSE -> FALSE;
+        };
+    }
 }

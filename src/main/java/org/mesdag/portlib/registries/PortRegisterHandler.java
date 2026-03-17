@@ -3,12 +3,10 @@ package org.mesdag.portlib.registries;
 import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortPriority;
-import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
+import org.mesdag.portlib.event.PortEventPriority;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -37,7 +35,7 @@ public class PortRegisterHandler {
 
     @Diff
     public static <T, R extends Registry<T>> void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
             List<PortRegistryEntry<?>> entries = registrations.get(registryKey);
             if (entries == null) return;
@@ -46,9 +44,6 @@ public class PortRegisterHandler {
                 entry.get(); // bind
                 entry.valueSupplier = null;
             }
-        });
-        PortEventHandler.addListener((ModifyRegistriesEvent event) -> {
-            PortEventHandler.postEvent(new PortModifyRegistriesEvent(event));
         });
     }
 }

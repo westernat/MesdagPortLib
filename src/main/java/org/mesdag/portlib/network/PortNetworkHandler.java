@@ -19,7 +19,7 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.PortEventPriority;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
@@ -98,7 +98,7 @@ public class PortNetworkHandler {
 
     @Diff
     public static void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterPayloadHandlersEvent event) -> {
             for (PortNetworkHandler handler : handlers) {
                 PayloadRegistrar registrar = event.registrar(handler.version);
                 for (Map.Entry<PortNetworkDirection, List<Payload<?, ?>>> entry : handler.payloads.entrySet()) {
