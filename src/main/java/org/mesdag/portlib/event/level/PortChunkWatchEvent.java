@@ -3,28 +3,23 @@ package org.mesdag.portlib.event.level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
-import net.neoforged.neoforge.event.level.ChunkWatchEvent;
+import net.minecraft.world.level.chunk.LevelChunk;
+import org.mesdag.portlib.event.PortEvent;
 
-public abstract class PortChunkWatchEvent extends ChunkWatchEvent {
-    public PortChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel level) {
-        super(player, pos, level);
+public abstract class PortChunkWatchEvent extends PortEvent {
+    public abstract ServerPlayer getPlayer();
+
+    public abstract ChunkPos getPos();
+
+    public abstract ServerLevel getLevel();
+
+    public abstract static class PortWatch extends PortChunkWatchEvent {
+        public abstract LevelChunk getChunk();
     }
 
-    public static class Watch extends ChunkWatchEvent.Watch {
-        public Watch(Watch event) {
-            super(event.getPlayer(), event.getChunk(), event.getLevel());
-        }
+    public abstract static class PortSent extends PortChunkWatchEvent {
+        public abstract LevelChunk getChunk();
     }
 
-    public static class Sent extends ChunkWatchEvent.Sent {
-        public Sent(Sent event) {
-            super(event.getPlayer(), event.getChunk(), event.getLevel());
-        }
-    }
-
-    public static class UnWatch extends ChunkWatchEvent.UnWatch {
-        public UnWatch(UnWatch event) {
-            super(event.getPlayer(), event.getPos(), event.getLevel());
-        }
-    }
+    public abstract static class PortUnWatch extends PortChunkWatchEvent {}
 }

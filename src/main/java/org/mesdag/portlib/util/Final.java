@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /// 标记该方法不能Override
 @Documented
-@ApiStatus.Internal
+@ApiStatus.NonExtendable
 @Inherited
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
