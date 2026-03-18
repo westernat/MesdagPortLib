@@ -109,7 +109,7 @@ public class PortItemStack {
     public static void setEnchantments(ItemStack stack, PortItemEnchantments value) {
         CompoundTag tag = stack.getTag();
         if (tag != null && tag.contains(ItemStack.TAG_ENCH, Tag.TAG_LIST)) {
-            stack.getOrCreateTag().put(ItemStack.TAG_ENCH, value.getEnchants().copy());
+            stack.getOrCreateTag().put(ItemStack.TAG_ENCH, value.getListTag().copy());
         }
         setShowEnchantmentsTooltip(stack, value.showInTooltip);
     }
@@ -342,7 +342,7 @@ public class PortItemStack {
     public static void setStoredEnchantments(ItemStack stack, PortItemEnchantments value) {
         CompoundTag tag = stack.getTag();
         if (tag != null && tag.contains(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, Tag.TAG_LIST)) {
-            stack.getOrCreateTag().put(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, value.getEnchants().copy());
+            stack.getOrCreateTag().put(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, value.getListTag().copy());
         }
         setShowStoredEnchantmentsTooltip(stack, value.showInTooltip);
     }

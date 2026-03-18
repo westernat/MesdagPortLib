@@ -2,15 +2,11 @@ package org.mesdag.portlib.wrapper.world.item.enchantment;
 
 import it.unimi.dsi.fastutil.objects.AbstractObject2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.util.PortSets;
 
@@ -20,80 +16,64 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("all")
 public class PortItemEnchantments {
-    private final ListTag enchants;
+    private final ListTag listTag;
     public final boolean showInTooltip;
+    private Map<Enchantment, Integer> enchants;
 
     @Diff
-    public PortItemEnchantments(ListTag enchants, boolean showInTooltip) {
-        this.enchants = enchants;
+    public PortItemEnchantments(ListTag listTag, boolean showInTooltip) {
+        this.listTag = listTag;
         this.showInTooltip = showInTooltip;
     }
 
     @Diff
-    public ListTag getEnchants() {
+    public ListTag getListTag() {
+        return listTag;
+    }
+
+    private Map<Enchantment, Integer> getEnchants() {
+        if (enchants == null) {
+            this.enchants = EnchantmentHelper.deserializeEnchantments(listTag);
+        }
         return enchants;
     }
 
     public int getLevel(EnchantmentHolder enchantment) {
-        ResourceLocation targetId = EnchantmentHelper.getEnchantmentId(enchantment.value());
-
-        for (int i = 0; i < enchants.size(); ++i) {
-            CompoundTag tag = enchants.getCompound(i);
-            ResourceLocation id = EnchantmentHelper.getEnchantmentId(tag);
-            if (id != null && id.equals(targetId)) {
-                return EnchantmentHelper.getEnchantmentLevel(tag);
-            }
-        }
-
-        return 0;
+        return getEnchants().getOrDefault(enchantment.value(), 0);
     }
 
     public PortItemEnchantments withTooltip(boolean showInTooltip) {
-        return new PortItemEnchantments(enchants, showInTooltip);
+        return new PortItemEnchantments(listTag, showInTooltip);
     }
 
     public Set<EnchantmentHolder> keySet() {
-        return PortSets.immutableTransform(EnchantmentHelper.deserializeEnchantments(enchants).keySet(), EnchantmentHolder::wrap);
+        return PortSets.immutableTransform(getEnchants().keySet(), EnchantmentHolder::wrap);
     }
 
     public Set<Object2IntMap.Entry<EnchantmentHolder>> entrySet() {
-        return PortSets.immutableTransform(EnchantmentHelper.deserializeEnchantments(enchants).entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getValue()));
+        return PortSets.immutableTransform(getEnchants().entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getValue()));
     }
 
     public int size() {
-        return enchants.size();
+        return getEnchants().size();
     }
 
     public boolean isEmpty() {
-        return enchants.isEmpty();
+        return getEnchants().isEmpty();
     }
 
     public static boolean shouldGetStoredEnchantments(ItemStack stack) {
         return stack.is(Items.ENCHANTED_BOOK);
     }
 
-    private static ListTag getEnchantmentTags(ItemStack stack) {
-        if (shouldGetStoredEnchantments(stack)) {
-            return EnchantedBookItem.getEnchantments(stack);
-        }
-        return stack.getEnchantmentTags();
-    }
-
-    private static int getSize(ItemStack stack) {
-        return getEnchantmentTags(stack).stream().filter(tag -> {
-            ResourceLocation id = EnchantmentHelper.getEnchantmentId((CompoundTag) tag);
-            return ForgeRegistries.ENCHANTMENTS.containsKey(id);
-        }).mapToInt(t -> 1).sum();
-    }
-
     public static class PortMutable {
         private final ListTag listTag;
-        private Map<Enchantment, Integer> enchants;
         private final boolean showInTooltip;
+        private Map<Enchantment, Integer> enchants;
 
         @Diff
         public PortMutable(PortItemEnchantments immutable) {
-            this.listTag = immutable.enchants;
+            this.listTag = immutable.listTag;
             this.showInTooltip = immutable.showInTooltip;
         }
 
