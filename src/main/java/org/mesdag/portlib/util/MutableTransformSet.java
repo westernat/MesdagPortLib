@@ -13,10 +13,12 @@ public class MutableTransformSet<F, T> extends AbstractSet<T> {
     private final Function<? super T, ? extends F> fromFunction;
     private final Runnable onDirty;
 
-    public MutableTransformSet(Set<F> fromSet,
-                               Function<? super F, ? extends T> toFunction,
-                               Function<? super T, ? extends F> fromFunction,
-                               Runnable onDirty) {
+    MutableTransformSet(
+            Set<F> fromSet,
+            Function<? super F, ? extends T> toFunction,
+            Function<? super T, ? extends F> fromFunction,
+            Runnable onDirty
+    ) {
         this.fromSet = fromSet;
         this.toFunction = toFunction;
         this.fromFunction = fromFunction;

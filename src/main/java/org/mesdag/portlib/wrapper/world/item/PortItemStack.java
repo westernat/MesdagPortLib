@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.armortrim.ArmorTrim;
@@ -102,7 +103,15 @@ public class PortItemStack {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
             return null;
         }
-        return new PortItemEnchantments(stack);
+        return new PortItemEnchantments(stack.getEnchantmentTags(), getShowEnchantmentsTooltip(stack));
+    }
+
+    public static void setEnchantments(ItemStack stack, PortItemEnchantments value) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains(ItemStack.TAG_ENCH, Tag.TAG_LIST)) {
+            stack.getOrCreateTag().put(ItemStack.TAG_ENCH, value.getEnchants().copy());
+        }
+        setShowEnchantmentsTooltip(stack, value.showInTooltip);
     }
 
     public static boolean getCanPlaceOn(ItemStack stack, BlockInWorld block) {
@@ -325,13 +334,17 @@ public class PortItemStack {
 
     public static @Nullable PortItemEnchantments getStoredEnchantments(ItemStack stack) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
-            return new PortItemEnchantments(stack);
+            return new PortItemEnchantments(EnchantedBookItem.getEnchantments(stack), getShowStoredEnchantmentsTooltip(stack));
         }
         return null;
     }
 
     public static void setStoredEnchantments(ItemStack stack, PortItemEnchantments value) {
-        value.applyTo(stack);
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, Tag.TAG_LIST)) {
+            stack.getOrCreateTag().put(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, value.getEnchants().copy());
+        }
+        setShowStoredEnchantmentsTooltip(stack, value.showInTooltip);
     }
 
     /// rgb

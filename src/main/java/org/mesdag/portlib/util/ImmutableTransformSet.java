@@ -13,7 +13,7 @@ public class ImmutableTransformSet<F, T> extends AbstractSet<T> {
     private final Set<F> fromSet;
     private final Function<? super F, ? extends T> function;
 
-    public ImmutableTransformSet(Set<F> fromSet, Function<? super F, ? extends T> function) {
+    ImmutableTransformSet(Set<F> fromSet, Function<? super F, ? extends T> function) {
         this.fromSet = fromSet;
         this.function = function;
     }
