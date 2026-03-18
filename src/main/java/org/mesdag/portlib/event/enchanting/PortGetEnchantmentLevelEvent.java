@@ -25,8 +25,8 @@ public class PortGetEnchantmentLevelEvent extends PortEvent {
         return e.getStack();
     }
 
-    public PortItemEnchantments.Mutable getEnchantments() {
-        return new PortItemEnchantments.Mutable(e.getEnchantments());
+    public PortItemEnchantments.PortMutable getEnchantments() {
+        return new PortItemEnchantments.PortMutable(e.getEnchantments());
     }
 
     public @Nullable EnchantmentHolder getTargetEnchant() {

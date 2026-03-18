@@ -67,7 +67,11 @@ public class PortItemStack {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
             return null;
         }
-        return new PortItemEnchantments(stack);
+        return new PortItemEnchantments(stack.get(DataComponents.ENCHANTMENTS));
+    }
+
+    public static void setEnchantments(ItemStack stack, PortItemEnchantments value) {
+        stack.set(DataComponents.ENCHANTMENTS, value.unwrap());
     }
 
     public static boolean getCanPlaceOn(ItemStack stack, BlockInWorld block) {
@@ -272,13 +276,13 @@ public class PortItemStack {
 
     public static @Nullable PortItemEnchantments getStoredEnchantments(ItemStack stack) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
-            return new PortItemEnchantments(stack);
+            return new PortItemEnchantments(stack.get(DataComponents.STORED_ENCHANTMENTS));
         }
         return null;
     }
 
     public static void setStoredEnchantments(ItemStack stack, PortItemEnchantments value) {
-        value.applyTo(stack);
+        stack.set(DataComponents.STORED_ENCHANTMENTS, value.unwrap());
     }
 
     /// rgb

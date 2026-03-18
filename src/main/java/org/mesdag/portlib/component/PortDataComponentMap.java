@@ -5,7 +5,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.util.ImmutableTransformSet;
+import org.mesdag.portlib.util.PortSets;
 
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public interface PortDataComponentMap {
 
         @Override
         public Set<PortDataComponentType<?>> keySet() {
-            return new ImmutableTransformSet<>(delegate.keySet(), PortDataComponentType::wrap);
+            return PortSets.mutableTransform(delegate.keySet(), PortDataComponentType::wrap, PortDataComponentType::unwrap);
         }
 
         @Override

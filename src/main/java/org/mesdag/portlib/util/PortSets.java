@@ -9,7 +9,7 @@ public class PortSets {
     /// @param fromSet    底层原始集合
     /// @param toFunction 正向转换函数 (F -> T)
     /// @return 不可修改的转换视图
-    public static <F, T> Set<T> transform(Set<F> fromSet, Function<? super F, ? extends T> toFunction) {
+    public static <F, T> Set<T> immutableTransform(Set<F> fromSet, Function<? super F, ? extends T> toFunction) {
         return new ImmutableTransformSet<>(fromSet, toFunction);
     }
 
@@ -21,8 +21,7 @@ public class PortSets {
     /// @param fromFunction 反向转换函数 (T -> F)，用于实现 O(1) 的 contains 和 remove
     /// @return 可修改的转换视图
     public static <F, T> Set<T> mutableTransform(Set<F> fromSet, Function<? super F, ? extends T> toFunction, Function<? super T, ? extends F> fromFunction) {
-        return new MutableTransformSet<>(fromSet, toFunction, fromFunction, () -> {
-        });
+        return new MutableTransformSet<>(fromSet, toFunction, fromFunction, () -> {});
     }
 
     /// 创建一个支持修改并带有副作用回调的转换 Set。
