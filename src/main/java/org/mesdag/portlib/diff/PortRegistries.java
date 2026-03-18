@@ -6,7 +6,7 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.PortEventPriority;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
@@ -17,7 +17,7 @@ public class PortRegistries {
     public static final PortCustomRegistration<PortDataComponentType<?>> DATA_COMPONENTS = PortRegisterHandler.custom(PortLib.MODID, Keys.DATA_COMPONENTS, maker -> {});
 
     public static void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
     }
 
     public static final class Keys {

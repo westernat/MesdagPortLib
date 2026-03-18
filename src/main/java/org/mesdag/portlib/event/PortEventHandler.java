@@ -16,21 +16,21 @@ public class PortEventHandler {
         getBus(consumer).unwrap().addListener(consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortEventPriority priority, Consumer<E> consumer) {
         getBus(consumer).unwrap().addListener(priority.unwrap(), consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
         getBus(consumer).unwrap().addListener(priority.unwrap(), receiveCancelled, consumer);
     }
 
-    public static <E extends Event> void addListener(PortPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
+    public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
         getBus(clazz).unwrap().addListener(priority.unwrap(), receiveCancelled, clazz, consumer);
     }
 
     @ApiStatus.Internal
     public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
-        addListener(PortPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
+        addListener(PortEventPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
     }
 
     private static <E extends Event> PortBus getBus(Consumer<E> consumer) {

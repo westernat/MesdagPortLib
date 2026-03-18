@@ -3,7 +3,7 @@ package org.mesdag.portlib.event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 @SuppressWarnings("all")
-public enum PortPriority {
+public enum PortEventPriority {
     HIGHEST,
     HIGH,
     NORMAL,

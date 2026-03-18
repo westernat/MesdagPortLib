@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.registries.RegisterEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.PortEventPriority;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,7 +31,7 @@ public class PortRegisterHandler {
 
     @Diff
     public static <T, R extends Registry<T>> void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (RegisterEvent event) -> {
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
             List<PortRegistryEntry<?>> entries = PortRegistration.registrations.get(registryKey);
             if (entries == null) return;

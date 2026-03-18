@@ -6,7 +6,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.mesdag.portlib.attachment.IPortAttachmentCopyHandler;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortPriority;
+import org.mesdag.portlib.event.PortEventPriority;
 import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
@@ -43,8 +43,8 @@ public final class PortAttachmentInternals {
     }
 
     public static void init() {
-        PortEventHandler.addListener(PortPriority.LOWEST, (PlayerEvent.Clone event) -> IPortEntityExtension.copyAttachmentsFrom(event.getEntity(), event.getOriginal(), event.isWasDeath()));
-        PortEventHandler.addListener(PortPriority.LOWEST, (LivingConversionEvent.Post event) -> IPortEntityExtension.copyAttachmentsFrom(event.getOutcome(), event.getEntity(), true));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> IPortEntityExtension.copyAttachmentsFrom(event.getEntity(), event.getOriginal(), event.isWasDeath()));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> IPortEntityExtension.copyAttachmentsFrom(event.getOutcome(), event.getEntity(), true));
     }
 
     private PortAttachmentInternals() {}
