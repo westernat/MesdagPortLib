@@ -1,14 +1,14 @@
 package org.mesdag.portlib.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 
-@Unmodifiable
+@UnmodifiableView
 public class ImmutableTransformSet<F, T> extends AbstractSet<T> {
     private final Set<F> fromSet;
     private final Function<? super F, ? extends T> function;

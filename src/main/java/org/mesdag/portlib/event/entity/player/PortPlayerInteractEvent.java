@@ -18,11 +18,11 @@ import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.PortLogicalSide;
 import org.mesdag.portlib.wrapper.common.util.PortTriState;
 
-public abstract class PortPlayerInteractEvent extends PortPlayerEvent {
-    private final PlayerInteractEvent e;
+public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> extends PortPlayerEvent {
+    protected final E e;
 
     @Diff
-    public PortPlayerInteractEvent(PlayerInteractEvent e) {
+    public PortPlayerInteractEvent(E e) {
         this.e = e;
     }
 
@@ -55,173 +55,122 @@ public abstract class PortPlayerInteractEvent extends PortPlayerEvent {
         return PortLogicalSide.wrap(e.getSide());
     }
 
-    public abstract static class PortEntityInteractSpecific extends PortPlayerInteractEvent implements IPortCancellableEvent {
+    public static class PortEntityInteractSpecific extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteractSpecific> implements IPortCancellableEvent {
         @Diff
-        public PortEntityInteractSpecific(PlayerInteractEvent e) {
+        public PortEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific e) {
             super(e);
         }
 
-        public abstract Vec3 getLocalPos();
+        public Vec3 getLocalPos() {
+            return e.getLocalPos();
+        }
 
-        public abstract Entity getTarget();
+        public Entity getTarget() {
+            return e.getTarget();
+        }
 
-        public abstract InteractionResult getCancellationResult();
+        public InteractionResult getCancellationResult() {
+            return e.getCancellationResult();
+        }
 
-        public abstract void setCancellationResult(InteractionResult result);
+        public void setCancellationResult(InteractionResult result) {
+            e.setCancellationResult(result);
+        }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.EntityInteractSpecific.class, PortEntityInteractSpecific.class, e -> new PortEntityInteractSpecific(e) {
-                @Override
-                public Vec3 getLocalPos() {
-                    return e.getLocalPos();
-                }
+            PortEventHooks.register(PlayerInteractEvent.EntityInteractSpecific.class, PortEntityInteractSpecific.class, PortEntityInteractSpecific::new);
+        }
+    }
+    public static class PortEntityInteract extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteract> implements IPortCancellableEvent {
+        @Diff
+        public PortEntityInteract(PlayerInteractEvent.EntityInteract e) {
+            super(e);
+        }
 
-                @Override
-                public Entity getTarget() {
-                    return e.getTarget();
-                }
+        public Entity getTarget() {
+            return e.getTarget();
+        }
 
-                @Override
-                public InteractionResult getCancellationResult() {
-                    return e.getCancellationResult();
-                }
+        public InteractionResult getCancellationResult() {
+            return e.getCancellationResult();
+        }
 
-                @Override
-                public void setCancellationResult(InteractionResult result) {
-                    e.setCancellationResult(result);
-                }
-            });
+        public void setCancellationResult(InteractionResult result) {
+            e.setCancellationResult(result);
+        }
+
+        static {
+            PortEventHooks.register(PlayerInteractEvent.EntityInteract.class, PortEntityInteract.class, PortEntityInteract::new);
         }
     }
 
-    public abstract static class PortEntityInteract extends PortPlayerInteractEvent implements IPortCancellableEvent {
+    public static class PortRightClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickBlock> implements IPortCancellableEvent {
         @Diff
-        public PortEntityInteract(PlayerInteractEvent e) {
+        public PortRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
             super(e);
         }
 
-        public abstract Entity getTarget();
-
-        public abstract InteractionResult getCancellationResult();
-
-        public abstract void setCancellationResult(InteractionResult result);
-
-        static {
-            PortEventHooks.register(PlayerInteractEvent.EntityInteract.class, PortEntityInteract.class, e -> new PortEntityInteract(e) {
-                @Override
-                public Entity getTarget() {
-                    return e.getTarget();
-                }
-
-                @Override
-                public InteractionResult getCancellationResult() {
-                    return e.getCancellationResult();
-                }
-
-                @Override
-                public void setCancellationResult(InteractionResult result) {
-                    e.setCancellationResult(result);
-                }
-            });
-        }
-    }
-
-    public abstract static class PortRightClickBlock extends PortPlayerInteractEvent implements IPortCancellableEvent {
-        @Diff
-        public PortRightClickBlock(PlayerInteractEvent e) {
-            super(e);
+        public PortTriState getUseBlock() {
+            return PortTriState.wrap(e.getUseBlock());
         }
 
-        public abstract PortTriState getUseBlock();
+        public PortTriState getUseItem() {
+            return PortTriState.wrap(e.getUseItem());
+        }
 
-        public abstract PortTriState getUseItem();
+        public BlockHitResult getHitVec() {
+            return e.getHitVec();
+        }
 
-        public abstract BlockHitResult getHitVec();
+        public void setUseBlock(PortTriState triggerBlock) {
+            e.setUseBlock(triggerBlock.unwrap());
+        }
 
-        public abstract void setUseBlock(PortTriState triggerBlock);
-
-        public abstract void setUseItem(PortTriState triggerItem);
+        public void setUseItem(PortTriState triggerItem) {
+            e.setUseItem(triggerItem.unwrap());
+        }
 
         @Override
-        public abstract void setCanceled(boolean canceled);
+        public void setCanceled(boolean canceled) {
+            IPortCancellableEvent.super.setCanceled(canceled);
+            e.setCanceled(canceled);
+        }
 
-        public abstract InteractionResult getCancellationResult();
+        public InteractionResult getCancellationResult() {
+            return e.getCancellationResult();
+        }
 
-        public abstract void setCancellationResult(InteractionResult result);
+        public void setCancellationResult(InteractionResult result) {
+            e.setCancellationResult(result);
+        }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.RightClickBlock.class, PortRightClickBlock.class, e -> new PortRightClickBlock(e) {
-                @Override
-                public PortTriState getUseBlock() {
-                    return PortTriState.wrap(e.getUseBlock());
-                }
-
-                @Override
-                public PortTriState getUseItem() {
-                    return PortTriState.wrap(e.getUseBlock());
-                }
-
-                @Override
-                public BlockHitResult getHitVec() {
-                    return e.getHitVec();
-                }
-
-                @Override
-                public void setUseBlock(PortTriState triggerBlock) {
-                    e.setUseBlock(triggerBlock.unwrap());
-                }
-
-                @Override
-                public void setUseItem(PortTriState triggerItem) {
-                    e.setUseItem(triggerItem.unwrap());
-                }
-
-                @Override
-                public void setCanceled(boolean canceled) {
-                    e.setCanceled(canceled);
-                }
-
-                @Override
-                public InteractionResult getCancellationResult() {
-                    return e.getCancellationResult();
-                }
-
-                @Override
-                public void setCancellationResult(InteractionResult result) {
-                    e.setCancellationResult(result);
-                }
-            });
+            PortEventHooks.register(PlayerInteractEvent.RightClickBlock.class, PortRightClickBlock.class, PortRightClickBlock::new);
         }
     }
 
-    public abstract static class PortRightClickItem extends PortPlayerInteractEvent implements IPortCancellableEvent {
+    public static class PortRightClickItem extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickItem> implements IPortCancellableEvent {
         @Diff
-        public PortRightClickItem(PlayerInteractEvent e) {
+        public PortRightClickItem(PlayerInteractEvent.RightClickItem e) {
             super(e);
         }
 
-        public abstract InteractionResult getCancellationResult();
+        public InteractionResult getCancellationResult() {
+            return e.getCancellationResult();
+        }
 
-        public abstract void setCancellationResult(InteractionResult result);
+        public void setCancellationResult(InteractionResult result) {
+            e.setCancellationResult(result);
+        }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.RightClickItem.class, PortRightClickItem.class, e -> new PortRightClickItem(e) {
-                @Override
-                public InteractionResult getCancellationResult() {
-                    return e.getCancellationResult();
-                }
-
-                @Override
-                public void setCancellationResult(InteractionResult result) {
-                    e.setCancellationResult(result);
-                }
-            });
+            PortEventHooks.register(PlayerInteractEvent.RightClickItem.class, PortRightClickItem.class, PortRightClickItem::new);
         }
     }
 
-    public static class PortRightClickEmpty extends PortPlayerInteractEvent {
+    public static class PortRightClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickEmpty> implements IPortCancellableEvent {
         @Diff
-        public PortRightClickEmpty(PlayerInteractEvent e) {
+        public PortRightClickEmpty(PlayerInteractEvent.RightClickEmpty e) {
             super(e);
         }
 
@@ -230,24 +179,37 @@ public abstract class PortPlayerInteractEvent extends PortPlayerEvent {
         }
     }
 
-    public abstract static class PortLeftClickBlock extends PortPlayerInteractEvent implements IPortCancellableEvent {
+    public static class PortLeftClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickBlock> implements IPortCancellableEvent {
         @Diff
-        public PortLeftClickBlock(PlayerInteractEvent e) {
+        public PortLeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
             super(e);
         }
 
-        public abstract PortTriState getUseBlock();
+        public PortTriState getUseBlock() {
+            return PortTriState.wrap(e.getUseBlock());
+        }
 
-        public abstract PortTriState getUseItem();
+        public PortTriState getUseItem() {
+            return PortTriState.wrap(e.getUseItem());
+        }
 
-        public abstract PortAction getAction();
+        public PortAction getAction() {
+            return PortAction.wrap(e.getAction());
+        }
 
-        public abstract void setUseBlock(PortTriState triggerBlock);
+        public void setUseBlock(PortTriState triggerBlock) {
+            e.setUseBlock(triggerBlock.unwrap());
+        }
 
-        public abstract void setUseItem(PortTriState triggerItem);
+        public void setUseItem(PortTriState triggerItem) {
+            e.setUseItem(triggerItem.unwrap());
+        }
 
         @Override
-        public abstract void setCanceled(boolean canceled);
+        public void setCanceled(boolean canceled) {
+            IPortCancellableEvent.super.setCanceled(canceled);
+            e.setCanceled(canceled);
+        }
 
         public enum PortAction {
             START,
@@ -277,43 +239,13 @@ public abstract class PortPlayerInteractEvent extends PortPlayerEvent {
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.LeftClickBlock.class, PortLeftClickBlock.class, e -> new PortLeftClickBlock(e) {
-                @Override
-                public PortTriState getUseBlock() {
-                    return PortTriState.wrap(e.getUseBlock());
-                }
-
-                @Override
-                public PortTriState getUseItem() {
-                    return PortTriState.wrap(e.getUseItem());
-                }
-
-                @Override
-                public PortAction getAction() {
-                    return PortAction.wrap(e.getAction());
-                }
-
-                @Override
-                public void setUseBlock(PortTriState triggerBlock) {
-                    e.setUseBlock(triggerBlock.unwrap());
-                }
-
-                @Override
-                public void setUseItem(PortTriState triggerItem) {
-                    e.setUseItem(triggerItem.unwrap());
-                }
-
-                @Override
-                public void setCanceled(boolean canceled) {
-                    e.setCanceled(canceled);
-                }
-            });
+            PortEventHooks.register(PlayerInteractEvent.LeftClickBlock.class, PortLeftClickBlock.class, PortLeftClickBlock::new);
         }
     }
 
-    public static class PortLeftClickEmpty extends PortPlayerInteractEvent {
+    public static class PortLeftClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickEmpty> implements IPortCancellableEvent {
         @Diff
-        public PortLeftClickEmpty(PlayerInteractEvent e) {
+        public PortLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty e) {
             super(e);
         }
 
