@@ -33,6 +33,10 @@ public class PortRegisterHandler {
         return new PortDataComponentRegistration(namespace);
     }
 
+    public static PortArmorMaterialRegistration armorMaterial(String namespace) {
+        return new PortArmorMaterialRegistration(namespace);
+    }
+
     @Diff
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
@@ -40,7 +44,11 @@ public class PortRegisterHandler {
             List<PortRegistryEntry<?>> entries = registrations.get(registryKey);
             if (entries == null) return;
             for (PortRegistryEntry<?> entry : entries) {
-                event.register((ResourceKey<R>) registryKey, entry.identifier, (Supplier<T>) entry.valueSupplier.get());
+                event.register(
+                    (ResourceKey<R>) registryKey,
+                    entry.identifier,
+                    (Supplier<T>) entry.valueSupplier
+                );
                 entry.get(); // bind
                 entry.valueSupplier = null;
             }

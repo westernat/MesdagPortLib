@@ -1,7 +1,9 @@
 package org.mesdag.portlib.registries;
 
 import com.google.common.base.Supplier;
+import net.minecraft.core.Holder;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 @SuppressWarnings("all")
@@ -13,6 +15,11 @@ public class PortRegistryEntry<T> implements Supplier<T> {
     public PortRegistryEntry(PortIdentifier identifier, Supplier<T> valueSupplier) {
         this.identifier = identifier;
         this.valueSupplier = valueSupplier;
+    }
+
+    @Diff
+    public Holder<T> asHolder() {
+        return (Holder<T>) this.object;
     }
 
     @Override
@@ -32,6 +39,12 @@ public class PortRegistryEntry<T> implements Supplier<T> {
         @Override
         public T get() {
             return valueSupplier.get();
+        }
+
+        @Diff
+        @Override
+        public Holder<T> asHolder() {
+            return Holder.direct(this.get());
         }
     }
 }
