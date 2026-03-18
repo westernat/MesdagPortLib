@@ -25,5 +25,8 @@
     },
     "overwrites": {
         "requireAnnotations": true
-  }
+    },
+    "client": [
+        "ClientPacketListenerMixin"
+    ]
 }
