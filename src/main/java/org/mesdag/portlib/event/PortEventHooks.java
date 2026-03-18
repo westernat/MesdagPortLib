@@ -2,6 +2,7 @@ package org.mesdag.portlib.event;
 
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
+import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 
 import java.util.HashMap;
@@ -24,17 +25,24 @@ public class PortEventHooks {
     @SuppressWarnings("unchecked")
     static <F extends Event, T extends PortEvent> void wrapEvent(PortEventPriority priority, boolean receiveCancelled, Class<F> from, Consumer<F> consumer) {
         if (PortEvent.class.isAssignableFrom(from)) {
-            try {
-                Class.forName(from.getName(), true, from.getClassLoader()); // init
-                from = (Class<F>) rawGetter.get(from);
-                if (from != null) {
-                    Function<F, T> function = (Function<F, T>) wrappers.get(from);
-                    if (function != null) {
-                        PortBus bus = IModBusEvent.class.isAssignableFrom(from) ? PortBus.MOD : PortBus.GAME;
-                        bus.unwrap().addListener(priority.unwrap(), receiveCancelled, from, f -> consumer.accept((F) function.apply(f)));
-                    }
+            Class<F> trueFrom = (Class<F>) rawGetter.get(from);
+            if (trueFrom == null) {
+                try {
+                    Class.forName(from.getName(), true, from.getClassLoader()); // cinit
+                    trueFrom = (Class<F>) rawGetter.get(from);
+                } catch (Exception ignored) {}
+            }
+            if (trueFrom == null) {
+                PortLib.LOGGER.warn("Failed to find wrapped class for {}", from);
+            } else {
+                Function<F, T> function = (Function<F, T>) wrappers.get(trueFrom);
+                if (function == null) {
+                    PortLib.LOGGER.warn("Failed to find wrapper function for {}", trueFrom);
+                } else {
+                    PortBus bus = IModBusEvent.class.isAssignableFrom(trueFrom) ? PortBus.MOD : PortBus.GAME;
+                    bus.unwrap().addListener(priority.unwrap(), receiveCancelled, trueFrom, f -> consumer.accept((F) function.apply(f)));
                 }
-            } catch (Exception ignored) {}
+            }
         } else {
             PortBus bus = IModBusEvent.class.isAssignableFrom(from) ? PortBus.MOD : PortBus.GAME;
             bus.unwrap().addListener(priority.unwrap(), receiveCancelled, from, consumer);
