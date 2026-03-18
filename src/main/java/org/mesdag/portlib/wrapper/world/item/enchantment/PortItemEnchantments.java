@@ -8,13 +8,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.util.TransformSet;
+import org.mesdag.portlib.util.ImmutableTransformSet;
+import org.mesdag.portlib.util.PortSets;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 @SuppressWarnings("all")
 public record PortItemEnchantments(ItemStack enchantedStack) {
+
     @Diff
     public ItemEnchantments unwrap() {
         return enchantedStack.getOrDefault(getType(enchantedStack), ItemEnchantments.EMPTY);
@@ -40,11 +43,11 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
     }
 
     public Set<EnchantmentHolder> keySet() {
-        return new TransformSet<>(unwrap().keySet(), EnchantmentHolder::wrap);
+        return new ImmutableTransformSet<>(unwrap().keySet(), EnchantmentHolder::wrap);
     }
 
     public Set<Object2IntMap.Entry<EnchantmentHolder>> entrySet() {
-        return new TransformSet<>(unwrap().entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getIntValue()));
+        return new ImmutableTransformSet<>(unwrap().entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getIntValue()));
     }
 
     public int size() {
@@ -67,5 +70,37 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
     @Diff
     public static DataComponentType<ItemEnchantments> getType(ItemStack stack) {
         return shouldGetStoredEnchantments(stack) ? DataComponents.STORED_ENCHANTMENTS : DataComponents.ENCHANTMENTS;
+    }
+
+    public static class Mutable {
+        private final ItemEnchantments.Mutable internal;
+
+        public Mutable(ItemEnchantments.Mutable internal) {
+            this.internal = internal;
+        }
+
+        public void set(EnchantmentHolder enchantment, int level) {
+            internal.set(enchantment.delegate(), level);
+        }
+
+        public void upgrade(EnchantmentHolder enchantment, int level) {
+            internal.upgrade(enchantment.delegate(), level);
+        }
+
+        public void removeIf(Predicate<EnchantmentHolder> predicate) {
+            internal.removeIf(holder -> predicate.test(EnchantmentHolder.wrap(holder)));
+        }
+
+        public int getLevel(EnchantmentHolder enchantment) {
+            return internal.getLevel(enchantment.delegate());
+        }
+
+        public Set<EnchantmentHolder> keySet() {
+            return PortSets.mutableTransform(internal.keySet(), EnchantmentHolder::wrap, EnchantmentHolder::delegate);
+        }
+
+        public ItemEnchantments toImmutable() {
+            return internal.toImmutable();
+        }
     }
 }
