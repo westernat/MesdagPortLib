@@ -9,12 +9,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.mesdag.portlib.util.TransformSet;
+import org.mesdag.portlib.util.ImmutableTransformSet;
+import org.mesdag.portlib.util.PortSets;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @SuppressWarnings("all")
 public record PortItemEnchantments(ItemStack enchantedStack) {
@@ -49,11 +53,11 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
     }
 
     public Set<EnchantmentHolder> keySet() {
-        return new TransformSet<>(EnchantmentHelper.getEnchantments(enchantedStack).keySet(), EnchantmentHolder::wrap);
+        return new ImmutableTransformSet<>(EnchantmentHelper.getEnchantments(enchantedStack).keySet(), EnchantmentHolder::wrap);
     }
 
     public Set<Object2IntMap.Entry<EnchantmentHolder>> entrySet() {
-        return new TransformSet<>(EnchantmentHelper.getEnchantments(enchantedStack).entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getValue()));
+        return new ImmutableTransformSet<>(EnchantmentHelper.getEnchantments(enchantedStack).entrySet(), entry -> new AbstractObject2IntMap.BasicEntry<>(EnchantmentHolder.wrap(entry.getKey()), entry.getValue()));
     }
 
     public int size() {
@@ -101,5 +105,53 @@ public record PortItemEnchantments(ItemStack enchantedStack) {
             ResourceLocation id = EnchantmentHelper.getEnchantmentId((CompoundTag) tag);
             return ForgeRegistries.ENCHANTMENTS.containsKey(id);
         }).mapToInt(t -> 1).sum();
+    }
+
+    public static class Mutable {
+        private final ItemStack stack;
+
+        public Mutable(ItemStack stack) {
+            this.stack = stack;
+        }
+
+        public void set(EnchantmentHolder enchantment, int level) {
+            Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+            if (level <= 0) {
+                enchants.remove(enchantment.value());
+            } else {
+                enchants.put(enchantment.value(), Math.min(level, 255));
+            }
+            EnchantmentHelper.setEnchantments(enchants, stack);
+        }
+
+        public void upgrade(EnchantmentHolder enchantment, int level) {
+            if (level <= 0) return;
+            Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+            enchants.merge(enchantment.value(), Math.min(level, 255), Integer::max);
+            EnchantmentHelper.setEnchantments(enchants, stack);
+        }
+
+        public void removeIf(Predicate<EnchantmentHolder> predicate) {
+            Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+            boolean changed = enchants.keySet().removeIf(ench -> predicate.test(EnchantmentHolder.wrap(ench)));
+            if (changed) {
+                EnchantmentHelper.setEnchantments(enchants, stack);
+            }
+        }
+
+        public int getLevel(EnchantmentHolder enchantment) {
+            return EnchantmentHelper.getItemEnchantmentLevel(enchantment.value(), stack);
+        }
+
+        public Set<EnchantmentHolder> keySet() {
+            Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(stack);
+
+            return PortSets.mutableTransform(enchants.keySet(), EnchantmentHolder::wrap, EnchantmentHolder::value, () -> EnchantmentHelper.setEnchantments(enchants, stack) // 修改后的同步回调
+            );
+        }
+
+        public PortItemEnchantments toImmutable() {
+            return new PortItemEnchantments(stack);
+        }
     }
 }
