@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.village;
 
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class PortWandererTradesEvent extends PortEvent {
         return internal.getRareTrades();
     }
 
-    public RegistryAccess getRegistryAccess() {
-        return internal.getRegistryAccess();
+    public PortRegistryAccess getRegistryAccess() {
+        return new PortRegistryAccess(internal.getRegistryAccess());
     }
 
     static {
