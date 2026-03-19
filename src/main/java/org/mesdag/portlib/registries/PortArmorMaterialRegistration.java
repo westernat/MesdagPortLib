@@ -1,27 +1,29 @@
 package org.mesdag.portlib.registries;
 
-import net.minecraft.world.item.ArmorMaterial;
-import org.mesdag.portlib.diff.Diff;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import org.jetbrains.annotations.ApiStatus;
+import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.wrapper.world.item.PortArmorMaterial;
-import org.mesdag.portlib.wrapper.world.item.armor.PortArmorMaterialWrapper;
 
-public class PortArmorMaterialRegistration extends PortRegistration<ArmorMaterial> {
+import java.util.Objects;
 
+public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMaterial> {
     PortArmorMaterialRegistration(String namespace) {
-        super(namespace, null);
+        super(namespace, PortRegistries.Keys.ARMOR_MATERIALS);
     }
 
-    @Diff
-    public PortRegistryEntry<ArmorMaterial> register(PortArmorMaterial.Settings settings) {
-        return new PortRegistryEntry.Memoized<>(
-            namespace,
-            settings.assetId.getPath(),
-            () -> new PortArmorMaterialWrapper(settings)
-        );
-    }
-
+    @ApiStatus.Internal
     @Override
-    public PortRegistryEntry<ArmorMaterial> register(String name, com.google.common.base.Supplier<ArmorMaterial> valueSupplier) {
-        throw new UnsupportedOperationException("ArmorMaterial does not support direct registration in 1.20.1");
+    public PortRegistryEntry<PortArmorMaterial> register(String name, Supplier<PortArmorMaterial> valueSupplier) {
+        return new PortRegistryEntry.Memoized<>(namespace, name, Suppliers.memoize(valueSupplier));
+    }
+
+    public PortRegistryEntry<PortArmorMaterial> register(PortArmorMaterial.Settings settings) {
+        Objects.requireNonNull(settings.name, "ArmorMaterial name must not be null for registration!");
+        if (settings.name.indexOf(':') == -1) {
+            settings.name = namespace + ':' + settings.name; // with namespace
+        }
+        return register(settings.name, () -> new PortArmorMaterial(settings));
     }
 }

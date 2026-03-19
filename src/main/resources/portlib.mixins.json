@@ -9,6 +9,7 @@
         "ChunkAccessMixin",
         "ChunkMapMixin",
         "ChunkSerializerMixin",
+        "DataPackRegistriesHooksAccessor",
         "EntityMixin",
         "FoodPropertiesMixin",
         "ItemEntityMixin",
