@@ -21,8 +21,12 @@ public class PortRegistration<T> {
         PortRegisterHandler.registrations.put(registryKey, entries);
     }
 
+    protected PortIdentifier asId(String name) {
+        return PortIdentifier.fromNamespaceAndPath(namespace, name);
+    }
+
     public PortRegistryEntry<T> register(String name, Supplier<T> valueSupplier) {
-        PortRegistryEntry<T> entry = new PortRegistryEntry<>(PortIdentifier.fromNamespaceAndPath(namespace, name), valueSupplier);
+        PortRegistryEntry<T> entry = new PortRegistryEntry<>(asId(name), valueSupplier);
         entry.object = DeferredHolder.create(registryKey, entry.identifier);
         entries.add(entry);
         return entry;
