@@ -8,7 +8,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.function.Consumer;
 
-@SuppressWarnings("all")
 public class PortEventHandler {
     public static <E extends Event> void addListener(Consumer<E> consumer) {
         PortEventHooks.wrapEvent(PortEventPriority.NORMAL, false, getEventClass(consumer), consumer);
@@ -26,12 +25,13 @@ public class PortEventHandler {
         PortEventHooks.wrapEvent(priority, receiveCancelled, clazz, consumer);
     }
 
+    @SuppressWarnings("unchecked")
     private static <E extends Event> Class<E> getEventClass(Consumer<E> consumer) {
         Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        if (Event.class.isAssignableFrom(clazz)) {
+        if (clazz != null && Event.class.isAssignableFrom(clazz)) {
             return (Class<E>) clazz;
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("The consumer's event type could not be inferred. Please use addListener(priority, receiveCancelled, Class<E>, Consumer<E>) instead.");
     }
 
     public static <E extends Event> void postEvent(E event) {

@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class PortGetEnchantmentLevelEvent extends PortEvent {
     private final GetEnchantmentLevelEvent e;
 
+    @Diff
     public PortGetEnchantmentLevelEvent(GetEnchantmentLevelEvent e) {
         this.e = e;
     }

@@ -43,12 +43,12 @@ public class PortEventHooks {
                     PortLib.LOGGER.warn("Failed to find wrapper function for {}", rawFrom);
                 } else {
                     PortBus bus = IModBusEvent.class.isAssignableFrom(rawFrom) ? PortBus.MOD : PortBus.GAME;
-                    bus.unwrap().addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> consumer.accept((F) wrapper.apply(raw)));
+                    bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> consumer.accept((F) wrapper.apply(raw)));
                 }
             }
         } else {
             PortBus bus = IModBusEvent.class.isAssignableFrom(from) ? PortBus.MOD : PortBus.GAME;
-            bus.unwrap().addListener(priority.unwrap(), receiveCancelled, from, consumer);
+            bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, from, consumer);
         }
     }
 }

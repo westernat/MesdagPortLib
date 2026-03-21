@@ -18,7 +18,7 @@ public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMat
     PortArmorMaterialRegistration(String namespace) {
         super(namespace, PortRegistries.Keys.ARMOR_MATERIALS);
         this.register = DeferredRegister.create(Registries.ARMOR_MATERIAL, namespace);
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @ApiStatus.Internal

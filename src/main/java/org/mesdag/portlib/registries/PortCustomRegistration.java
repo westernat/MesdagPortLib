@@ -24,7 +24,7 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
             maker.builder = builder;
             consumer.accept(maker);
         });
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     public void register(ResourceLocation key, T value) {

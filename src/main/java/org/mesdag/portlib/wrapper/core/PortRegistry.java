@@ -16,6 +16,11 @@ public class PortRegistry<V> {
     }
 
     @Diff
+    public Registry<V> unwrap() {
+        return registry;
+    }
+
+    @Diff
     public static <V> PortRegistry<V> wrap(Registry<V> registry) {
         return new PortRegistry<>(registry);
     }

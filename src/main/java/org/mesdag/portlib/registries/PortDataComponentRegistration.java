@@ -18,7 +18,7 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
     PortDataComponentRegistration(String namespace) {
         super(namespace, PortRegistries.Keys.DATA_COMPONENTS);
         this.register = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, namespace);
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @ApiStatus.Internal
@@ -29,6 +29,7 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
         return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> PortRegistryEntry<PortDataComponentType<T>> registerTyped(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
         return (PortRegistryEntry<PortDataComponentType<T>>) (PortRegistryEntry<?>) register(name, () -> {
             PortDataComponentType.PortBuilder<T> builder = new PortDataComponentType.PortBuilder<>();
