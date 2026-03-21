@@ -5,19 +5,22 @@ import net.neoforged.fml.event.IModBusEvent;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PortEventHooks {
-    static final Map<Class<? extends Event>, Function<? extends Event, ? extends PortEvent>> wrappers = new IdentityHashMap<>();
-    static final Map<Class<? extends PortEvent>, Class<? extends Event>> rawGetter = new IdentityHashMap<>();
+    private static final Map<Class<? extends Event>, Function<? extends Event, ? extends PortEvent>> wrappers = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends PortEvent>, Class<? extends Event>> rawGetter = new ConcurrentHashMap<>();
 
     public static void init() {}
 
     @Diff
     public static <F extends Event, T extends PortEvent> void register(Class<F> from, Class<T> to, Function<F, T> function) {
+        if (PortEvent.class.isAssignableFrom(from)) {
+            throw new IllegalArgumentException("PortEvent cannot be wrapped");
+        }
         wrappers.put(from, function);
         rawGetter.put(to, from);
     }

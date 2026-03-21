@@ -9,7 +9,6 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.Collection;
 
-
 public class PortLivingDropsEvent extends PortLivingEvent implements IPortCancellableEvent {
     private final LivingDropsEvent e;
 

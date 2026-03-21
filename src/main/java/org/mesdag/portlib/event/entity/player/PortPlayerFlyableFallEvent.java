@@ -1,0 +1,35 @@
+package org.mesdag.portlib.event.entity.player;
+
+import net.neoforged.neoforge.event.entity.player.PlayerFlyableFallEvent;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEventHooks;
+
+public class PortPlayerFlyableFallEvent extends PortPlayerEvent {
+    private final PlayerFlyableFallEvent e;
+
+    @Diff
+    public PortPlayerFlyableFallEvent(PlayerFlyableFallEvent e) {
+        super(e.getEntity());
+        this.e = e;
+    }
+
+    public float getDistance() {
+        return e.getDistance();
+    }
+
+    public void setDistance(float distance) {
+        e.setDistance(distance);
+    }
+
+    public float getMultiplier() {
+        return e.getMultiplier();
+    }
+
+    public void setMultiplier(float multiplier) {
+        e.setMultiplier(multiplier);
+    }
+
+    static {
+        PortEventHooks.register(PlayerFlyableFallEvent.class, PortPlayerFlyableFallEvent.class, PortPlayerFlyableFallEvent::new);
+    }
+}

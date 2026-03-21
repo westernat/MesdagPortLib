@@ -1,0 +1,27 @@
+package org.mesdag.portlib.event.entity.player;
+
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEventHooks;
+
+public class PortPlayerWakeUpEvent extends PortPlayerEvent {
+    private final PlayerWakeUpEvent e;
+
+    @Diff
+    public PortPlayerWakeUpEvent(PlayerWakeUpEvent e) {
+        super(e.getEntity());
+        this.e = e;
+    }
+
+    public boolean wakeImmediately() {
+        return e.wakeImmediately();
+    }
+
+    public boolean updateLevel() {
+        return e.updateLevel();
+    }
+
+    static {
+        PortEventHooks.register(PlayerWakeUpEvent.class, PortPlayerWakeUpEvent.class, PortPlayerWakeUpEvent::new);
+    }
+}

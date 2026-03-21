@@ -7,7 +7,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-
 public class PortLivingDestroyBlockEvent extends PortLivingEvent implements IPortCancellableEvent {
     private final LivingDestroyBlockEvent e;
 

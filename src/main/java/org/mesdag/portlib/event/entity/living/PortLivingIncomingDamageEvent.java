@@ -1,13 +1,12 @@
 package org.mesdag.portlib.event.entity.living;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
-import net.neoforged.neoforge.common.damagesource.IReductionFunction;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-
+import org.mesdag.portlib.wrapper.common.damagesource.IPortReductionFunction;
+import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 
 public class PortLivingIncomingDamageEvent extends PortLivingEvent implements IPortCancellableEvent {
     private final LivingIncomingDamageEvent e;
@@ -18,8 +17,8 @@ public class PortLivingIncomingDamageEvent extends PortLivingEvent implements IP
         this.e = e;
     }
 
-    public DamageContainer getContainer() {
-        return e.getContainer();
+    public PortDamageContainer getContainer() {
+        return PortDamageContainer.wrap(e.getContainer());
     }
 
     public DamageSource getSource() {
@@ -38,8 +37,8 @@ public class PortLivingIncomingDamageEvent extends PortLivingEvent implements IP
         e.setAmount(newDamage);
     }
 
-    public void addReductionModifier(DamageContainer.Reduction type, IReductionFunction reductionFunc) {
-        e.addReductionModifier(type, reductionFunc);
+    public void addReductionModifier(PortDamageContainer.PortReduction type, IPortReductionFunction reductionFunc) {
+        e.addReductionModifier(type.unwrap(), reductionFunc.unwrap());
     }
 
     public void setInvulnerabilityTicks(int ticks) {

@@ -8,7 +8,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-
 public class PortLivingUseTotemEvent extends PortLivingEvent implements IPortCancellableEvent {
     private final LivingUseTotemEvent e;
 
@@ -31,7 +30,6 @@ public class PortLivingUseTotemEvent extends PortLivingEvent implements IPortCan
     }
 
     static {
-        PortEventHooks.register(LivingUseTotemEvent.class, PortLivingUseTotemEvent.class, PortLivingUseTotemEvent::new
-        );
+        PortEventHooks.register(LivingUseTotemEvent.class, PortLivingUseTotemEvent.class, PortLivingUseTotemEvent::new);
     }
 }

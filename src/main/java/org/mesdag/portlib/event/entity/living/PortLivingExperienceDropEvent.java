@@ -32,6 +32,7 @@ public class PortLivingExperienceDropEvent extends PortLivingEvent implements IP
     public int getOriginalExperience() {
         return e.getOriginalExperience();
     }
+
     static {
         PortEventHooks.register(LivingExperienceDropEvent.class, PortLivingExperienceDropEvent.class, PortLivingExperienceDropEvent::new);
     }
