@@ -1,0 +1,52 @@
+package org.mesdag.portlib.event.entity.living;
+
+import net.minecraft.world.damagesource.DamageSource;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.common.damagesource.IReductionFunction;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEventHooks;
+
+
+public class PortLivingIncomingDamageEvent extends PortLivingEvent implements IPortCancellableEvent {
+    private final LivingIncomingDamageEvent e;
+
+    @Diff
+    public PortLivingIncomingDamageEvent(LivingIncomingDamageEvent e) {
+        super(e.getEntity());
+        this.e = e;
+    }
+
+    public DamageContainer getContainer() {
+        return e.getContainer();
+    }
+
+    public DamageSource getSource() {
+        return e.getSource();
+    }
+
+    public float getAmount() {
+        return e.getAmount();
+    }
+
+    public float getOriginalAmount() {
+        return e.getOriginalAmount();
+    }
+
+    public void setAmount(float newDamage) {
+        e.setAmount(newDamage);
+    }
+
+    public void addReductionModifier(DamageContainer.Reduction type, IReductionFunction reductionFunc) {
+        e.addReductionModifier(type, reductionFunc);
+    }
+
+    public void setInvulnerabilityTicks(int ticks) {
+        e.setInvulnerabilityTicks(ticks);
+    }
+
+    static {
+        PortEventHooks.register(LivingIncomingDamageEvent.class, PortLivingIncomingDamageEvent.class, PortLivingIncomingDamageEvent::new);
+    }
+}
