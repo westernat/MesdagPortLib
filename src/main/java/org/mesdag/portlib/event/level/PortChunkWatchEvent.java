@@ -9,11 +9,11 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortChunkWatchEvent extends PortEvent {
-    private final ChunkWatchEvent e;
+public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends PortEvent {
+    protected final E e;
 
     @Diff
-    public PortChunkWatchEvent(ChunkWatchEvent e) {
+    public PortChunkWatchEvent(E e) {
         this.e = e;
     }
 
@@ -29,45 +29,39 @@ public abstract class PortChunkWatchEvent extends PortEvent {
         return e.getLevel();
     }
 
-    public abstract static class PortWatch extends PortChunkWatchEvent {
+    public static class PortWatch extends PortChunkWatchEvent<ChunkWatchEvent.Watch> {
         @Diff
-        public PortWatch(ChunkWatchEvent e) {
+        public PortWatch(ChunkWatchEvent.Watch e) {
             super(e);
         }
 
-        public abstract LevelChunk getChunk();
+        public LevelChunk getChunk() {
+            return e.getChunk();
+        }
 
         static {
-            PortEventHooks.register(ChunkWatchEvent.Watch.class, PortWatch.class, e -> new PortWatch(e) {
-                @Override
-                public LevelChunk getChunk() {
-                    return e.getChunk();
-                }
-            });
+            PortEventHooks.register(ChunkWatchEvent.Watch.class, PortWatch.class, PortWatch::new);
         }
     }
 
-    public abstract static class PortSent extends PortChunkWatchEvent {
+    public static class PortSent extends PortChunkWatchEvent<ChunkWatchEvent.Sent> {
         @Diff
-        public PortSent(ChunkWatchEvent e) {
+        public PortSent(ChunkWatchEvent.Sent e) {
             super(e);
         }
 
-        public abstract LevelChunk getChunk();
+        public LevelChunk getChunk() {
+            return e.getChunk();
+        }
 
         static {
-            PortEventHooks.register(ChunkWatchEvent.Sent.class, PortSent.class, e -> new PortSent(e) {
-                @Override
-                public LevelChunk getChunk() {
-                    return e.getChunk();
-                }
-            });
+            PortEventHooks.register(ChunkWatchEvent.Sent.class, PortSent.class, PortSent::new);
         }
     }
 
-    public static class PortUnWatch extends PortChunkWatchEvent {
+    public static class PortUnWatch extends PortChunkWatchEvent<ChunkWatchEvent.UnWatch> {
         @Diff
-        public PortUnWatch(ChunkWatchEvent e) {
+        public PortUnWatch(ChunkWatchEvent.UnWatch e) {
             super(e);
         }
 

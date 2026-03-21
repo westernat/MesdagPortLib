@@ -3,6 +3,7 @@ package org.mesdag.portlib.event.furnace;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
 public class PortFurnaceFuelBurnTimeEvent extends PortEvent implements IPortCancellableEvent {
     private final FurnaceFuelBurnTimeEvent internal;
 
+    @Diff
     public PortFurnaceFuelBurnTimeEvent(FurnaceFuelBurnTimeEvent internal) {
         this.internal = internal;
     }
@@ -20,8 +22,7 @@ public class PortFurnaceFuelBurnTimeEvent extends PortEvent implements IPortCanc
         return internal.getItemStack();
     }
 
-    @Nullable
-    public RecipeType<?> getRecipeType() {
+    public @Nullable RecipeType<?> getRecipeType() {
         return internal.getRecipeType();
     }
 
