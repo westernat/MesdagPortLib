@@ -1,0 +1,25 @@
+package org.mesdag.portlib.event.entity.item;
+
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEventHooks;
+
+public class PortItemTossEvent extends PortItemEvent implements IPortCancellableEvent {
+    private final ItemTossEvent e;
+
+    @Diff
+    public PortItemTossEvent(ItemTossEvent e) {
+        super(e.getEntity());
+        this.e = e;
+    }
+
+    public Player getPlayer() {
+        return e.getPlayer();
+    }
+
+    static {
+        PortEventHooks.register(ItemTossEvent.class, PortItemTossEvent.class, PortItemTossEvent::new);
+    }
+}
