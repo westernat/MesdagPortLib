@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 
 import java.util.Collection;
 import java.util.List;

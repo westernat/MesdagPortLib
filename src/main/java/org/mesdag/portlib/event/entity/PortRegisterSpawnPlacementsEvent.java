@@ -56,6 +56,10 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent implements IPort
         }
     }
 
+    static {
+        PortEventHooks.register(RegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent::new);
+    }
+
     public static class PortMergedSpawnPredicate<T extends Entity> {
         private final RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> predicate;
 
@@ -81,9 +85,5 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent implements IPort
         public static <T extends Entity> PortMergedSpawnPredicate<T> wrap(RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> predicate) {
             return new PortMergedSpawnPredicate<>(predicate);
         }
-    }
-
-    static {
-        PortEventHooks.register(RegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent::new);
     }
 }

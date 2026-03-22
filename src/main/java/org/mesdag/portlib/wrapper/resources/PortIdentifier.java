@@ -6,12 +6,34 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 
+import java.util.function.UnaryOperator;
+
 @SuppressWarnings("all")
 public class PortIdentifier extends ResourceLocation {
     private @Nullable CustomPacketPayload.Type<?> type;
 
     private PortIdentifier(String namespace, String path) {
         super(namespace, path);
+    }
+
+    @Override
+    public PortIdentifier withPath(String path) {
+        return new PortIdentifier(getNamespace(), assertValidPath(getNamespace(), path));
+    }
+
+    @Override
+    public PortIdentifier withPath(UnaryOperator<String> pathOperator) {
+        return withPath(pathOperator.apply(getPath()));
+    }
+
+    @Override
+    public PortIdentifier withPrefix(String pathPrefix) {
+        return withPath(pathPrefix + getPath());
+    }
+
+    @Override
+    public PortIdentifier withSuffix(String pathSuffix) {
+        return withPath(getPath() + pathSuffix);
     }
 
     @Diff

@@ -8,9 +8,9 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
 
 import java.util.Objects;
 import java.util.function.BiPredicate;

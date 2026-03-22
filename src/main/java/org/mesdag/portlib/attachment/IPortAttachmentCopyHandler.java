@@ -10,7 +10,7 @@ public interface IPortAttachmentCopyHandler<T> {
 
     @Diff
     default IAttachmentCopyHandler<T> unwrap() {
-        return (attachment, holder, provider) -> IPortAttachmentCopyHandler.this.copy(attachment, IPortAttachmentHolder.wrap(holder), new PortRegistryAccess(provider));
+        return (attachment, holder, provider) -> copy(attachment, IPortAttachmentHolder.wrap(holder), new PortRegistryAccess(provider));
     }
 
     @Diff
