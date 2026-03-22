@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
-import org.mesdag.portlib.diff.PortPatchedDataComponentMap;
+import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.event.PortBus;
 import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -38,7 +37,7 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
 
     public void register(ResourceLocation key, T value) {
         if (registriesLoaded) {
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "The object %s (name %s) is being added too late.", value, key));
+            return;
         }
         if (registry.get() instanceof ForgeRegistry<T> registry) {
             boolean locked = registry.isLocked();

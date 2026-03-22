@@ -1,8 +1,7 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.attachment;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,11 +13,14 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.IPortAttachmentHolder;
 import org.mesdag.portlib.attachment.IPortAttachmentSerializer;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.util.Private;
 import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -147,7 +149,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
     @Final
     default void deserializeAttachments(PortRegistryAccess provider, CompoundTag tag) {
         for (var key : tag.getAllKeys()) {
-            ResourceLocation keyLocation = ResourceLocation.tryParse(key);
+            PortIdentifier keyLocation = PortIdentifier.tryParse(key);
             if (keyLocation == null) {
                 PortLib.LOGGER.error("Encountered invalid data attachment key {}. Skipping.", key);
                 continue;

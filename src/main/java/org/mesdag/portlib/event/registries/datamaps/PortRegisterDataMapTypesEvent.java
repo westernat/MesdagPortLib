@@ -13,11 +13,11 @@ import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterDataMapTypesEvent extends Event implements IModBusEvent {
+public class PortRegisterDataMapTypesEvent extends Event implements IModBusEvent {
     private final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments;
 
     @ApiStatus.Internal
-    public RegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments) {
+    public PortRegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments) {
         this.attachments = attachments;
     }
 

@@ -9,6 +9,14 @@ public enum PortNetworkDirection {
     LOGIN_TO_SERVER,
     LOGIN_TO_CLIENT;
 
+    public boolean isLogin() {
+        return this == LOGIN_TO_CLIENT || this == LOGIN_TO_SERVER;
+    }
+
+    public boolean isPlay() {
+        return this == PLAY_TO_CLIENT || this == PLAY_TO_SERVER;
+    }
+
     @Diff
     NetworkDirection unwrap() {
         return switch (this) {

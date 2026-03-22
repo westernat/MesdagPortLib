@@ -3,7 +3,7 @@ package org.mesdag.portlib.diff.mixin;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
-import org.mesdag.portlib.diff.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 

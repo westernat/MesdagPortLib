@@ -1,7 +1,7 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
 import net.minecraft.world.entity.Entity;
-import org.mesdag.portlib.diff.PortAttachmentInternals;
+import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 
 public interface IPortEntityExtension {
     static void copyAttachmentsFrom(Entity self, Entity other, boolean isDeath) {

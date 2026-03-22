@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 
 import java.util.Optional;
@@ -22,6 +23,11 @@ public interface PortHolder<T> extends Holder<T> {
             throw new IllegalArgumentException("Not registered: " + value);
         }
         return optional.get();
+    }
+
+    @Diff
+    static <T> @Nullable ResourceKey<T> getKey(Holder<T> holder) {
+        return holder.unwrapKey().orElse(null);
     }
 
     Holder<T> delegate();
@@ -90,5 +96,9 @@ public interface PortHolder<T> extends Holder<T> {
 
     default String getRegisteredName() {
         return unwrapKey().map(key -> key.location().toString()).orElse("[unregistered]");
+    }
+
+    default @Nullable ResourceKey<T> getKey() {
+        return getKey(this);
     }
 }

@@ -1,4 +1,4 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.attachment;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
@@ -7,10 +7,11 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.IPortPacket;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.List;

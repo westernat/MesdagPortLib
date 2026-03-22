@@ -1,14 +1,49 @@
 package org.mesdag.portlib.wrapper.resources;
 
 import net.minecraft.ResourceLocationException;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
 
-@SuppressWarnings("all")
+import java.util.function.UnaryOperator;
+
 public class PortIdentifier extends ResourceLocation {
+    public static final PortStreamCodec<FriendlyByteBuf, PortIdentifier> STREAM_CODEC = new PortStreamCodec<>() {
+        @Override
+        public void encode(FriendlyByteBuf byteBuf, PortIdentifier value) {
+            byteBuf.writeResourceLocation(value);
+        }
+
+        @Override
+        public PortIdentifier decode(FriendlyByteBuf byteBuf) {
+            return parse(byteBuf.readUtf(32767));
+        }
+    };
+
     @SuppressWarnings("removal")
     private PortIdentifier(String namespace, String path) {
         super(namespace, path);
+    }
+
+    @Override
+    public PortIdentifier withPath(String path) {
+        return new PortIdentifier(getNamespace(), assertValidPath(getNamespace(), path));
+    }
+
+    @Override
+    public PortIdentifier withPath(UnaryOperator<String> pathOperator) {
+        return withPath(pathOperator.apply(getPath()));
+    }
+
+    @Override
+    public PortIdentifier withPrefix(String pathPrefix) {
+        return withPath(pathPrefix + getPath());
+    }
+
+    @Override
+    public PortIdentifier withSuffix(String pathSuffix) {
+        return withPath(getPath() + pathSuffix);
     }
 
     public static PortIdentifier fromNamespaceAndPath(String namespace, String path) {

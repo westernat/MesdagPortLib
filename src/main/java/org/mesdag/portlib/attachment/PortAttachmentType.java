@@ -8,11 +8,11 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
 
 import java.util.Objects;
 import java.util.function.BiPredicate;

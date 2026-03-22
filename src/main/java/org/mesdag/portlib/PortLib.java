@@ -2,13 +2,18 @@ package org.mesdag.portlib;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentHolder;
 import org.mesdag.portlib.component.PortDataComponentType;
-import org.mesdag.portlib.diff.*;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.PortRegistries;
+import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
+import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
+import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
 import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
@@ -38,6 +43,14 @@ public class PortLib {
         PortAttachmentSync.init();
         PortEventHooks.init();
         PortAttachmentInternals.init();
+        PortDataMapLoader.init();
+        PortNetworkHandler.init();
+        PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
+//            ForgeChunkManager
+            PortDataMapLoader.initDataMaps();
+//            modifyComponents
+//            extendPoiTypes
+        });
         if (PortEnvironment.isDeveloper()) {
             PortAttachmentRegistration attachment = PortRegisterHandler.attachment(MODID);
             Supplier<PortAttachmentType<TestAttachment>> testAttachment = attachment.registerTyped("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
@@ -58,11 +71,6 @@ public class PortLib {
                 }
             });
         }
-        NETWORK_HANDLER.registerInGameS2C(
-                PortSyncAttachmentsPayload.IDENTIFIER,
-                PortSyncAttachmentsPayload.STREAM_CODEC,
-                PortSyncAttachmentsPayload::handle
-        );
     }
 
     public static PortIdentifier asResource(String path) {

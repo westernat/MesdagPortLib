@@ -2,7 +2,7 @@ package org.mesdag.portlib.attachment;
 
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 
 public interface PortAttachmentSyncHandler<T> {
     default boolean sendToPlayer(IPortAttachmentHolder holder, ServerPlayer to) {

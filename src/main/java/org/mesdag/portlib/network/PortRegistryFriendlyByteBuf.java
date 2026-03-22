@@ -1,9 +1,8 @@
-package org.mesdag.portlib.wrapper.network;
+package org.mesdag.portlib.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
-import org.mesdag.portlib.network.PortConnectionType;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {

@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import org.mesdag.portlib.diff.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;

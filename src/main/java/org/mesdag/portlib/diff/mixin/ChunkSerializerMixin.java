@@ -10,7 +10,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.diff.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

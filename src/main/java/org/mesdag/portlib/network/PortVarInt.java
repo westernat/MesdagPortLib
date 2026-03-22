@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper.network;
+package org.mesdag.portlib.network;
 
 import io.netty.buffer.ByteBuf;
 

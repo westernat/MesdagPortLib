@@ -3,8 +3,8 @@ package org.mesdag.portlib.component;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
 
 public class PortDataComponentType<T> {
     @Diff

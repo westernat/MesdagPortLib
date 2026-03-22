@@ -3,7 +3,7 @@ package org.mesdag.portlib.component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.PortPatchedDataComponentMap;
+import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 
 import java.util.function.Supplier;
 

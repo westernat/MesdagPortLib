@@ -7,14 +7,16 @@ import net.minecraft.core.IdMap;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.mesdag.portlib.diff.PortRegistryManager;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.network.PortVarInt;
 import org.mesdag.portlib.wrapper.core.PortIdMap;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
-import org.mesdag.portlib.wrapper.network.PortVarInt;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
@@ -66,6 +68,64 @@ public interface PortByteBufCodecs {
             PortVarInt.write(buffer, value);
         }
     };
+    PortStreamCodec<FriendlyByteBuf, ResourceLocation> RESOURCE_LOCATION = new PortStreamCodec<>() {
+        @Override
+        public ResourceLocation decode(FriendlyByteBuf buffer) {
+            return buffer.readResourceLocation();
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buffer, ResourceLocation value) {
+            buffer.writeResourceLocation(value);
+        }
+    };
+
+    static <B extends ByteBuf, K, V, M extends Map<K, V>> PortStreamCodec<B, M> map(
+            IntFunction<? extends M> factory, PortStreamCodec<? super B, K> keyCodec, PortStreamCodec<? super B, V> valueCodec
+    ) {
+        return map(factory, keyCodec, valueCodec, Integer.MAX_VALUE);
+    }
+
+    static <B extends ByteBuf, K, V, M extends Map<K, V>> PortStreamCodec<B, M> map(
+            final IntFunction<? extends M> factory, final PortStreamCodec<? super B, K> keyCodec, final PortStreamCodec<? super B, V> valueCodec, final int maxSize
+    ) {
+        return new PortStreamCodec<>() {
+            public void encode(B buffer, M value) {
+                writeCount(buffer, value.size(), maxSize);
+                value.forEach((k, v) -> {
+                    keyCodec.encode(buffer, k);
+                    valueCodec.encode(buffer, v);
+                });
+            }
+
+            public M decode(B buffer) {
+                int i = readCount(buffer, maxSize);
+                M m = factory.apply(Math.min(i, 65536));
+
+                for (int j = 0; j < i; j++) {
+                    K k = keyCodec.decode(buffer);
+                    V v = valueCodec.decode(buffer);
+                    m.put(k, v);
+                }
+
+                return m;
+            }
+        };
+    }
+
+    static <B extends FriendlyByteBuf> PortStreamCodec<B, ResourceKey<? extends Registry<?>>> registryKey() {
+        return new PortStreamCodec<>() {
+            @Override
+            public ResourceKey<? extends Registry<?>> decode(B buf) {
+                return ResourceKey.createRegistryKey(buf.readResourceLocation());
+            }
+
+            @Override
+            public void encode(B buf, ResourceKey<? extends Registry<?>> value) {
+                buf.writeResourceLocation(value.location());
+            }
+        };
+    }
 
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(
             final ResourceKey<? extends Registry<T>> registryKey, final Function<Registry<T>, IdMap<R>> idGetter
@@ -101,6 +161,10 @@ public interface PortByteBufCodecs {
 
     static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec<B, C> collection(IntFunction<C> factory, PortStreamCodec<? super B, V> codec) {
         return collection(factory, codec, Integer.MAX_VALUE);
+    }
+
+    static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec.PortCodecOperation<B, V, C> collection(IntFunction<C> factory) {
+        return codec -> collection(factory, codec);
     }
 
     static int readCount(ByteBuf buffer, int maxSize) {

@@ -1,8 +1,9 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.attachment;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.Objects;

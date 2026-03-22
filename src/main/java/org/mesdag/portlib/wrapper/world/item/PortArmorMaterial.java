@@ -7,7 +7,9 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.sounds.SoundEventHolder;
 
 import java.util.EnumMap;
@@ -17,25 +19,25 @@ import java.util.function.Supplier;
 
 public class PortArmorMaterial {
     private final ArmorMaterial delegate;
+    private final Holder<SoundEvent> equipSound;
+    private final List<PortLayer> layers;
 
     private PortArmorMaterial(ArmorMaterial delegate) {
         this.delegate = delegate;
-    }
-
-    private static int getDurability(ArmorItem.Type type, int durabilityFactor) {
-        return switch (type) {
-            case HELMET -> 11;
-            case CHESTPLATE -> 16;
-            case LEGGINGS -> 15;
-            case BOOTS -> 13;
-        } * durabilityFactor;
+        this.equipSound = PortHolder.getDelegate(ForgeRegistries.SOUND_EVENTS, delegate.getEquipSound());
+        this.layers = List.of();
     }
 
     public PortArmorMaterial(Settings settings) {
         this.delegate = new ArmorMaterial() {
             @Override
             public int getDurabilityForType(ArmorItem.Type type) {
-                return getDurability(type, settings.durabilityFactor);
+                return switch (type) {
+                    case HELMET -> 11;
+                    case CHESTPLATE -> 16;
+                    case LEGGINGS -> 15;
+                    case BOOTS -> 13;
+                } * settings.durabilityFactor;
             }
 
             @Override
@@ -73,6 +75,8 @@ public class PortArmorMaterial {
                 return settings.knockbackResistance;
             }
         };
+        this.equipSound = settings.equipSound;
+        this.layers = settings.layers;
     }
 
     @Diff
@@ -90,15 +94,15 @@ public class PortArmorMaterial {
     }
 
     public int getEnchantmentValue() {
-        return delegate.enchantmentValue();
+        return delegate.getEnchantmentValue();
     }
 
     public Holder<SoundEvent> getEquipSound() {
-        return delegate.equipSound();
+        return equipSound;
     }
 
     public Supplier<Ingredient> getRepairIngredient() {
-        return delegate.repairIngredient();
+        return delegate::getRepairIngredient;
     }
 
     public List<PortLayer> getLayers() {
@@ -106,11 +110,11 @@ public class PortArmorMaterial {
     }
 
     public float getToughness() {
-        return delegate.toughness();
+        return delegate.getToughness();
     }
 
     public float getKnockbackResistance() {
-        return delegate.knockbackResistance();
+        return delegate.getKnockbackResistance();
     }
 
     public static class PortLayer {

@@ -1,4 +1,4 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.attachment;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
@@ -16,14 +16,17 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentSyncHandler;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.PortBundledPacket;
+import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortConnectionType;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
-import org.mesdag.portlib.wrapper.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.wrapper.server.level.PortChunkMap;
 
 import java.util.ArrayList;
