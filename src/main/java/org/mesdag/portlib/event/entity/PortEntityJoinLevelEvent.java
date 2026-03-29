@@ -6,13 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortEntityJoinLevelEvent extends PortEntityEvent {
-    private final EntityJoinLevelEvent e;
-
+public class PortEntityJoinLevelEvent extends PortEntityEvent<EntityJoinLevelEvent> {
     @Diff
     public PortEntityJoinLevelEvent(EntityJoinLevelEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Level getLevel() {

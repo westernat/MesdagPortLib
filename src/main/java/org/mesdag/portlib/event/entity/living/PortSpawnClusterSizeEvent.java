@@ -5,13 +5,10 @@ import net.neoforged.neoforge.event.entity.living.SpawnClusterSizeEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortSpawnClusterSizeEvent extends PortLivingEvent {
-    private final SpawnClusterSizeEvent e;
-
+public class PortSpawnClusterSizeEvent extends PortLivingEvent<SpawnClusterSizeEvent> {
     @Diff
     public PortSpawnClusterSizeEvent(SpawnClusterSizeEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public int getSize() {

@@ -1,17 +1,16 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import net.minecraft.world.Difficulty;
 import net.neoforged.neoforge.event.DifficultyChangeEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortDifficultyChangeEvent extends PortEvent {
-    private final DifficultyChangeEvent e;
-
+public class PortDifficultyChangeEvent extends PortEvent<DifficultyChangeEvent> {
     @Diff
     public PortDifficultyChangeEvent(DifficultyChangeEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public Difficulty getDifficulty() {

@@ -17,13 +17,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.PortLogicalSide;
 import org.mesdag.portlib.wrapper.common.util.PortTriState;
 
-public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> extends PortPlayerEvent {
-    protected final E e;
-
+public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> extends PortPlayerEvent<E> {
     @Diff
     public PortPlayerInteractEvent(E e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public InteractionHand getHand() {
@@ -125,12 +122,6 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
             e.setUseItem(triggerItem.unwrap());
         }
 
-        @Override
-        public void setCanceled(boolean canceled) {
-            IPortCancellableEvent.super.setCanceled(canceled);
-            e.setCanceled(canceled);
-        }
-
         public InteractionResult getCancellationResult() {
             return e.getCancellationResult();
         }
@@ -198,12 +189,6 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
 
         public void setUseItem(PortTriState triggerItem) {
             e.setUseItem(triggerItem.unwrap());
-        }
-
-        @Override
-        public void setCanceled(boolean canceled) {
-            IPortCancellableEvent.super.setCanceled(canceled);
-            e.setCanceled(canceled);
         }
 
         public enum PortAction {

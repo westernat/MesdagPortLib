@@ -6,13 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingDeathEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingDeathEvent e;
-
+public class PortLivingDeathEvent extends PortLivingEvent<LivingDeathEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingDeathEvent(LivingDeathEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public DamageSource getSource() {

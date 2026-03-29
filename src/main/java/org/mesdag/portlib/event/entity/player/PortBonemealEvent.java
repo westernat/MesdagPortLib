@@ -12,12 +12,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortBonemealEvent extends PortEvent implements IPortCancellableEvent {
-    private final BonemealEvent e;
-
+public class PortBonemealEvent extends PortEvent<BonemealEvent> implements IPortCancellableEvent {
     @Diff
     public PortBonemealEvent(BonemealEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public @Nullable Player getPlayer() {
@@ -50,12 +48,6 @@ public class PortBonemealEvent extends PortEvent implements IPortCancellableEven
 
     public boolean isSuccessful() {
         return e.isSuccessful();
-    }
-
-    @Override
-    public void setCanceled(boolean canceled) {
-        IPortCancellableEvent.super.setCanceled(canceled);
-        e.setCanceled(canceled);
     }
 
     static {

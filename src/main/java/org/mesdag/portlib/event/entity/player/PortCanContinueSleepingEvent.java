@@ -10,13 +10,10 @@ import org.mesdag.portlib.event.entity.living.PortLivingEvent;
 
 import java.util.Optional;
 
-public class PortCanContinueSleepingEvent extends PortLivingEvent {
-    private final CanContinueSleepingEvent e;
-
+public class PortCanContinueSleepingEvent extends PortLivingEvent<CanContinueSleepingEvent> {
     @Diff
     public PortCanContinueSleepingEvent(CanContinueSleepingEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Optional<BlockPos> getSleepingPos() {

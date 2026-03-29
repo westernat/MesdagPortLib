@@ -2,23 +2,20 @@ package org.mesdag.portlib.event.entity.living;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortLivingConversionEvent extends PortLivingEvent {
-    public PortLivingConversionEvent(LivingEntity entity) {
-        super(entity);
+public abstract class PortLivingConversionEvent<E extends LivingConversionEvent> extends PortLivingEvent<E> {
+    public PortLivingConversionEvent(E e) {
+        super(e);
     }
 
-    public static class PortPre extends PortLivingConversionEvent implements ICancellableEvent {
-        private final LivingConversionEvent.Pre e;
-
+    public static class PortPre extends PortLivingConversionEvent<LivingConversionEvent.Pre> implements IPortCancellableEvent {
         @Diff
         public PortPre(LivingConversionEvent.Pre e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public EntityType<? extends LivingEntity> getOutcome() {
@@ -34,13 +31,10 @@ public abstract class PortLivingConversionEvent extends PortLivingEvent {
         }
     }
 
-    public static class PortPost extends PortLivingConversionEvent {
-        private final LivingConversionEvent.Post e;
-
+    public static class PortPost extends PortLivingConversionEvent<LivingConversionEvent.Post> implements IPortCancellableEvent {
         @Diff
         public PortPost(LivingConversionEvent.Post e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public LivingEntity getOutcome() {

@@ -3,6 +3,7 @@ package org.mesdag.portlib.registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.registries.callback.PortBakeCallback;
 import org.mesdag.portlib.registries.callback.PortClearCallback;
@@ -10,7 +11,8 @@ import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 
 @SuppressWarnings("all")
 public class PortRegistryMaker<T> {
-    RegistryBuilder<T> builder;
+    @Diff
+    public RegistryBuilder<T> builder;
 
     public PortRegistryMaker<T> defaultKey(ResourceLocation key) {
         builder.defaultKey(key);

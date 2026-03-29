@@ -14,13 +14,10 @@ import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityEvent;
 
-public abstract class PortMobSpawnEvent extends PortEntityEvent {
-    private final MobSpawnEvent e;
-
+public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEntityEvent<E> {
     @Diff
-    protected PortMobSpawnEvent(MobSpawnEvent e) {
-        super(e.getEntity());
-        this.e = e;
+    protected PortMobSpawnEvent(E e) {
+        super(e);
     }
 
     @Override
@@ -44,12 +41,10 @@ public abstract class PortMobSpawnEvent extends PortEntityEvent {
         return e.getZ();
     }
 
-    public static class PortSpawnPlacementCheck extends PortEvent {
-        private final MobSpawnEvent.SpawnPlacementCheck e;
-
+    public static class PortSpawnPlacementCheck extends PortEvent<MobSpawnEvent.SpawnPlacementCheck> {
         @Diff
         public PortSpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck e) {
-            this.e = e;
+            super(e);
         }
 
         public EntityType<?> getEntityType() {
@@ -117,12 +112,10 @@ public abstract class PortMobSpawnEvent extends PortEntityEvent {
         }
     }
 
-    public static class PortPositionCheck extends PortMobSpawnEvent {
-        private final MobSpawnEvent.PositionCheck e;
-
+    public static class PortPositionCheck extends PortMobSpawnEvent<MobSpawnEvent.PositionCheck> {
+        @Diff
         public PortPositionCheck(MobSpawnEvent.PositionCheck e) {
             super(e);
-            this.e = e;
         }
 
         public @Nullable BaseSpawner getSpawner() {

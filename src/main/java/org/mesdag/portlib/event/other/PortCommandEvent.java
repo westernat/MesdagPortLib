@@ -1,19 +1,19 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.neoforge.event.CommandEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nullable;
 
-public class PortCommandEvent extends PortEvent implements IPortCancellableEvent {
-    private final CommandEvent e;
-
+public class PortCommandEvent extends PortEvent<CommandEvent> implements IPortCancellableEvent {
     @Diff
     public PortCommandEvent(CommandEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public ParseResults<CommandSourceStack> getParseResults() {

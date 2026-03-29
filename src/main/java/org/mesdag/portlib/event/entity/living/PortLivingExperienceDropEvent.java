@@ -8,13 +8,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortLivingExperienceDropEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingExperienceDropEvent e;
-
+public class PortLivingExperienceDropEvent extends PortLivingEvent<LivingExperienceDropEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingExperienceDropEvent(LivingExperienceDropEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public int getDroppedExperience() {

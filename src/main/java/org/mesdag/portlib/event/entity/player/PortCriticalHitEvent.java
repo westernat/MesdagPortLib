@@ -5,13 +5,10 @@ import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortCriticalHitEvent extends PortPlayerEvent {
-    private final CriticalHitEvent e;
-
+public class PortCriticalHitEvent extends PortPlayerEvent<CriticalHitEvent> {
     @Diff
     public PortCriticalHitEvent(CriticalHitEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Entity getTarget() {

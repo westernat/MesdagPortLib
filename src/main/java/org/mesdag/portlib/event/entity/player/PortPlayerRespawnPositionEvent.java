@@ -7,13 +7,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerRespawnPositionEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerRespawnPositionEvent extends PortPlayerEvent {
-    private final PlayerRespawnPositionEvent e;
-
+public class PortPlayerRespawnPositionEvent extends PortPlayerEvent<PlayerRespawnPositionEvent> {
     @Diff
     public PortPlayerRespawnPositionEvent(PlayerRespawnPositionEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public DimensionTransition getDimensionTransition() {

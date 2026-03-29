@@ -7,13 +7,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 
-public class PortLivingShieldBlockEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingShieldBlockEvent e;
-
+public class PortLivingShieldBlockEvent extends PortLivingEvent<LivingShieldBlockEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingShieldBlockEvent(LivingShieldBlockEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public PortDamageContainer getDamageContainer() {

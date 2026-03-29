@@ -6,13 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortSweepAttackEvent extends PortPlayerEvent implements IPortCancellableEvent {
-    private final SweepAttackEvent e;
-
+public class PortSweepAttackEvent extends PortPlayerEvent<SweepAttackEvent> implements IPortCancellableEvent {
     @Diff
     public PortSweepAttackEvent(SweepAttackEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Entity getTarget() {
@@ -29,12 +26,6 @@ public class PortSweepAttackEvent extends PortPlayerEvent implements IPortCancel
 
     public void setSweeping(boolean sweep) {
         e.setSweeping(sweep);
-    }
-
-    @Override
-    public void setCanceled(boolean canceled) {
-        IPortCancellableEvent.super.setCanceled(canceled);
-        e.setCanceled(canceled);
     }
 
     static {

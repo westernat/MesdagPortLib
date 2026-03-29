@@ -5,13 +5,10 @@ import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingGetProjectileEvent extends PortLivingEvent {
-    private final LivingGetProjectileEvent e;
-
+public class PortLivingGetProjectileEvent extends PortLivingEvent<LivingGetProjectileEvent> {
     @Diff
     public PortLivingGetProjectileEvent(LivingGetProjectileEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getProjectileWeaponItemStack() {

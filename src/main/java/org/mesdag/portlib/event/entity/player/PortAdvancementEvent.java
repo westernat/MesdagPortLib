@@ -6,19 +6,18 @@ import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortAdvancementEvent extends PortPlayerEvent {
-    private final AdvancementEvent e;
-
-    public PortAdvancementEvent(AdvancementEvent e) {
-        super(e.getEntity());
-        this.e = e;
+public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends PortPlayerEvent<E> {
+    @Diff
+    public PortAdvancementEvent(E e) {
+        super(e);
     }
 
     public AdvancementHolder getAdvancement() {
         return e.getAdvancement();
     }
 
-    public static class PortAdvancementEarnEvent extends PortAdvancementEvent {
+    public static class PortAdvancementEarnEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementEarnEvent> {
+        @Diff
         public PortAdvancementEarnEvent(AdvancementEvent.AdvancementEarnEvent e) {
             super(e);
         }
@@ -28,12 +27,10 @@ public abstract class PortAdvancementEvent extends PortPlayerEvent {
         }
     }
 
-    public static class PortAdvancementProgressEvent extends PortAdvancementEvent {
-        private final AdvancementEvent.AdvancementProgressEvent e;
-
+    public static class PortAdvancementProgressEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementProgressEvent> {
+        @Diff
         public PortAdvancementProgressEvent(AdvancementEvent.AdvancementProgressEvent e) {
             super(e);
-            this.e = e;
         }
 
         public AdvancementProgress getAdvancementProgress() {

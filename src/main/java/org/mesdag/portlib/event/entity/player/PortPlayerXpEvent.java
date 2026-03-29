@@ -1,24 +1,20 @@
 package org.mesdag.portlib.event.entity.player;
 
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortPlayerXpEvent extends PortPlayerEvent {
-    public PortPlayerXpEvent(Player player) {
-        super(player);
+public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPlayerEvent<E> {
+    public PortPlayerXpEvent(E e) {
+        super(e);
     }
 
-    public static class PortPickupXp extends PortPlayerXpEvent implements IPortCancellableEvent {
-        private final PlayerXpEvent.PickupXp e;
-
+    public static class PortPickupXp extends PortPlayerXpEvent<PlayerXpEvent.PickupXp> implements IPortCancellableEvent {
         @Diff
         public PortPickupXp(PlayerXpEvent.PickupXp e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public ExperienceOrb getOrb() {
@@ -30,13 +26,10 @@ public abstract class PortPlayerXpEvent extends PortPlayerEvent {
         }
     }
 
-    public static class PortXpChange extends PortPlayerXpEvent implements IPortCancellableEvent {
-        private final PlayerXpEvent.XpChange e;
-
+    public static class PortXpChange extends PortPlayerXpEvent<PlayerXpEvent.XpChange> implements IPortCancellableEvent {
         @Diff
         public PortXpChange(PlayerXpEvent.XpChange e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public int getAmount() {
@@ -52,13 +45,10 @@ public abstract class PortPlayerXpEvent extends PortPlayerEvent {
         }
     }
 
-    public static class PortLevelChange extends PortPlayerXpEvent implements IPortCancellableEvent {
-        private final PlayerXpEvent.LevelChange e;
-
+    public static class PortLevelChange extends PortPlayerXpEvent<PlayerXpEvent.LevelChange> implements IPortCancellableEvent {
         @Diff
         public PortLevelChange(PlayerXpEvent.LevelChange e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public int getLevels() {

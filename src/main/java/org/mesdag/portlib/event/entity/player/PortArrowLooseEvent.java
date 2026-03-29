@@ -7,13 +7,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortArrowLooseEvent extends PortPlayerEvent implements IPortCancellableEvent {
-    private final ArrowLooseEvent e;
-
+public class PortArrowLooseEvent extends PortPlayerEvent<ArrowLooseEvent> implements IPortCancellableEvent {
     @Diff
     public PortArrowLooseEvent(ArrowLooseEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getBow() {

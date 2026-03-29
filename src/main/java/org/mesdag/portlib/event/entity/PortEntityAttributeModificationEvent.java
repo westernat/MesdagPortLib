@@ -12,13 +12,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortEntityAttributeModificationEvent extends PortEvent implements IPortModBusEvent {
-
-    private final EntityAttributeModificationEvent e;
-
+public class PortEntityAttributeModificationEvent extends PortEvent<EntityAttributeModificationEvent> implements IPortModBusEvent {
     @Diff
     public PortEntityAttributeModificationEvent(EntityAttributeModificationEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public void add(EntityType<? extends LivingEntity> entityType, Holder<Attribute> attribute, double value) {

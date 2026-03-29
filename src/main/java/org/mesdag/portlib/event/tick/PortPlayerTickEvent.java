@@ -5,12 +5,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.player.PortPlayerEvent;
 
-public abstract class PortPlayerTickEvent<E extends PlayerTickEvent> extends PortPlayerEvent {
-    protected final E e;
-
-    protected PortPlayerTickEvent(E e) {
-        super(e.getEntity());
-        this.e = e;
+public abstract class PortPlayerTickEvent<E extends PlayerTickEvent> extends PortPlayerEvent<E> {
+    @Diff
+    public PortPlayerTickEvent(E e) {
+        super(e);
     }
 
     public static class PortPre extends PortPlayerTickEvent<PlayerTickEvent.Pre> {

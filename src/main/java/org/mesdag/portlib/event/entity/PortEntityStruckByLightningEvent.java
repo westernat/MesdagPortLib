@@ -7,14 +7,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortEntityStruckByLightningEvent extends PortEntityEvent implements IPortCancellableEvent {
-
-    private final EntityStruckByLightningEvent e;
-
+public class PortEntityStruckByLightningEvent extends PortEntityEvent<EntityStruckByLightningEvent> implements IPortCancellableEvent {
     @Diff
     public PortEntityStruckByLightningEvent(EntityStruckByLightningEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public LightningBolt getLightning() {

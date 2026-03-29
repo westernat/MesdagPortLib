@@ -5,13 +5,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerContainerEvent extends PortPlayerEvent {
-    private final PlayerContainerEvent e;
-
+public class PortPlayerContainerEvent extends PortPlayerEvent<PlayerContainerEvent> {
     @Diff
     public PortPlayerContainerEvent(PlayerContainerEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public AbstractContainerMenu getContainer() {

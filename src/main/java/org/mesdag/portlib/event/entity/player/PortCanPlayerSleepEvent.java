@@ -10,13 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortCanPlayerSleepEvent extends PortPlayerEvent {
-    private final CanPlayerSleepEvent e;
-
+public class PortCanPlayerSleepEvent extends PortPlayerEvent<CanPlayerSleepEvent> {
     @Diff
     public PortCanPlayerSleepEvent(CanPlayerSleepEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     @Override

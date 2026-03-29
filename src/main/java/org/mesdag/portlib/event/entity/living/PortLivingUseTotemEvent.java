@@ -8,13 +8,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingUseTotemEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingUseTotemEvent e;
-
+public class PortLivingUseTotemEvent extends PortLivingEvent<LivingUseTotemEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingUseTotemEvent(LivingUseTotemEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public DamageSource getSource() {

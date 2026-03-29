@@ -11,12 +11,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortAlterGroundEvent extends PortEvent {
-    private final AlterGroundEvent e;
-
+public class PortAlterGroundEvent extends PortEvent<AlterGroundEvent> {
     @Diff
     public PortAlterGroundEvent(AlterGroundEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public TreeDecorator.Context getContext() {

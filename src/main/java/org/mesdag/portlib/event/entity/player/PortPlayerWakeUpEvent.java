@@ -4,13 +4,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerWakeUpEvent extends PortPlayerEvent {
-    private final PlayerWakeUpEvent e;
-
+public class PortPlayerWakeUpEvent extends PortPlayerEvent<PlayerWakeUpEvent> {
     @Diff
     public PortPlayerWakeUpEvent(PlayerWakeUpEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public boolean wakeImmediately() {

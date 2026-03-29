@@ -7,13 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerDestroyItemEvent extends PortPlayerEvent {
-    private final PlayerDestroyItemEvent e;
-
+public class PortPlayerDestroyItemEvent extends PortPlayerEvent<PlayerDestroyItemEvent> {
     @Diff
     public PortPlayerDestroyItemEvent(PlayerDestroyItemEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getOriginal() {

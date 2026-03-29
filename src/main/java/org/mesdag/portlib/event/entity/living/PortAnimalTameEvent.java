@@ -7,13 +7,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortAnimalTameEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final AnimalTameEvent e;
-
+public class PortAnimalTameEvent extends PortLivingEvent<AnimalTameEvent> implements IPortCancellableEvent {
     @Diff
     public PortAnimalTameEvent(AnimalTameEvent e) {
-        super(e.getAnimal());
-        this.e = e;
+        super(e);
     }
 
     public Animal getAnimal() {

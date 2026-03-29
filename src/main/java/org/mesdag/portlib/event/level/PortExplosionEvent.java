@@ -12,12 +12,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortEvent {
-    protected final E e;
-
+public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortEvent<E> {
     @Diff
     public PortExplosionEvent(E e) {
-        this.e = e;
+        super(e);
     }
 
     public Level getLevel() {

@@ -7,22 +7,18 @@ import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionBrewing;
 
-public class PortRegisterBrewingRecipesEvent extends PortEvent {
-    private final PortPotionBrewing.PortBuilder builder;
-    private final PortRegistryAccess registryAccess;
-
+public class PortRegisterBrewingRecipesEvent extends PortEvent<RegisterBrewingRecipesEvent> {
     @Diff
     public PortRegisterBrewingRecipesEvent(RegisterBrewingRecipesEvent e) {
-        this.builder = new PortPotionBrewing.PortBuilder(e.getBuilder());
-        this.registryAccess = new PortRegistryAccess(e.getRegistryAccess());
+        super(e);
     }
 
     public PortPotionBrewing.PortBuilder getBuilder() {
-        return builder;
+        return new PortPotionBrewing.PortBuilder(e.getBuilder());
     }
 
     public PortRegistryAccess getRegistryAccess() {
-        return registryAccess;
+        return new PortRegistryAccess(e.getRegistryAccess());
     }
 
     static {

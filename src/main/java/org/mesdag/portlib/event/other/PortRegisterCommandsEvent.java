@@ -1,4 +1,4 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
@@ -6,14 +6,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortRegisterCommandsEvent extends PortEvent {
-    private final RegisterCommandsEvent e;
-
+public class PortRegisterCommandsEvent extends PortEvent<RegisterCommandsEvent> {
     @Diff
     public PortRegisterCommandsEvent(RegisterCommandsEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public CommandDispatcher<CommandSourceStack> getDispatcher() {

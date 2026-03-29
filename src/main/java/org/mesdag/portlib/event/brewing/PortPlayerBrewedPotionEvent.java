@@ -6,13 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.player.PortPlayerEvent;
 
-public class PortPlayerBrewedPotionEvent extends PortPlayerEvent {
-    private final PlayerBrewedPotionEvent e;
-
+public class PortPlayerBrewedPotionEvent extends PortPlayerEvent<PlayerBrewedPotionEvent> {
     @Diff
     public PortPlayerBrewedPotionEvent(PlayerBrewedPotionEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getStack() {

@@ -7,12 +7,9 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingEntityUseItemEvent extends PortLivingEvent {
-    private final LivingEntityUseItemEvent e;
-
+public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUseItemEvent> {
     private PortLivingEntityUseItemEvent(LivingEntityUseItemEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getItem() {

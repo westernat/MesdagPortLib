@@ -8,12 +8,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortEnchantmentLevelSetEvent extends PortEvent {
-    private final EnchantmentLevelSetEvent e;
-
+public class PortEnchantmentLevelSetEvent extends PortEvent<EnchantmentLevelSetEvent> {
     @Diff
     public PortEnchantmentLevelSetEvent(EnchantmentLevelSetEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public Level getLevel() {

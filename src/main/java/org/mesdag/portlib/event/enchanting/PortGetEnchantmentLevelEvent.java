@@ -15,12 +15,10 @@ import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.Optional;
 
-public class PortGetEnchantmentLevelEvent extends PortEvent {
-    private final GetEnchantmentLevelEvent e;
-
+public class PortGetEnchantmentLevelEvent extends PortEvent<GetEnchantmentLevelEvent> {
     @Diff
     public PortGetEnchantmentLevelEvent(GetEnchantmentLevelEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getStack() {

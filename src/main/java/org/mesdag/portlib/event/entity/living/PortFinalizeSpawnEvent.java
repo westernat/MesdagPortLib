@@ -6,19 +6,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortFinalizeSpawnEvent extends PortMobSpawnEvent implements ICancellableEvent {
-    private final FinalizeSpawnEvent e;
-
+public class PortFinalizeSpawnEvent extends PortMobSpawnEvent implements IPortCancellableEvent {
     @Diff
     public PortFinalizeSpawnEvent(FinalizeSpawnEvent e) {
         super(e);
-        this.e = e;
     }
 
     public DifficultyInstance getDifficulty() {

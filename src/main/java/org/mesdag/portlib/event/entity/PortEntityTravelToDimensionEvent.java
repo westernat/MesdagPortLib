@@ -8,14 +8,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortEntityTravelToDimensionEvent extends PortEntityEvent implements IPortCancellableEvent {
-
-    private final EntityTravelToDimensionEvent e;
-
+public class PortEntityTravelToDimensionEvent extends PortEntityEvent<EntityTravelToDimensionEvent> implements IPortCancellableEvent {
     @Diff
     public PortEntityTravelToDimensionEvent(EntityTravelToDimensionEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ResourceKey<Level> getDimension() {

@@ -10,13 +10,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nonnegative;
 
-public class PortItemFishedEvent extends PortPlayerEvent implements IPortCancellableEvent {
-    private final ItemFishedEvent e;
-
+public class PortItemFishedEvent extends PortPlayerEvent<ItemFishedEvent> implements IPortCancellableEvent {
     @Diff
     public PortItemFishedEvent(ItemFishedEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public int getRodDamage() {

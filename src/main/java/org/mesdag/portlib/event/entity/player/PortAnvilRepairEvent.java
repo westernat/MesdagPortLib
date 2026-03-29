@@ -5,13 +5,10 @@ import net.neoforged.neoforge.event.entity.player.AnvilRepairEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortAnvilRepairEvent extends PortPlayerEvent {
-    private final AnvilRepairEvent e;
-
+public class PortAnvilRepairEvent extends PortPlayerEvent<AnvilRepairEvent> {
     @Diff
     public PortAnvilRepairEvent(AnvilRepairEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getOutput() {

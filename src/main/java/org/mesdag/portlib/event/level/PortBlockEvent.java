@@ -22,12 +22,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 import java.util.EnumSet;
 import java.util.List;
 
-public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent {
-    protected final E e;
-
+public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> {
     @Diff
     public PortBlockEvent(E e) {
-        this.e = e;
+        super(e);
     }
 
     public LevelAccessor getLevel() {
@@ -50,12 +48,6 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent {
 
         public Player getPlayer() {
             return e.getPlayer();
-        }
-
-        @Override
-        public void setCanceled(boolean canceled) {
-            IPortCancellableEvent.super.setCanceled(canceled);
-            e.setCanceled(canceled);
         }
 
         static {

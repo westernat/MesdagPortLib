@@ -6,17 +6,14 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortAttackEntityEvent extends PortPlayerEvent implements IPortCancellableEvent {
-    private final Entity target;
-
+public class PortAttackEntityEvent extends PortPlayerEvent<AttackEntityEvent> implements IPortCancellableEvent {
     @Diff
     public PortAttackEntityEvent(AttackEntityEvent e) {
-        super(e.getEntity());
-        this.target = e.getTarget();
+        super(e);
     }
 
     public Entity getTarget() {
-        return target;
+        return e.getTarget();
     }
 
     static {

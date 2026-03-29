@@ -8,13 +8,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortEntityMountEvent extends PortEntityEvent implements IPortCancellableEvent {
-    private final EntityMountEvent e;
-
+public class PortEntityMountEvent extends PortEntityEvent<EntityMountEvent> implements IPortCancellableEvent {
     @Diff
     public PortEntityMountEvent(EntityMountEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
     public boolean isMounting() {
         return e.isMounting();

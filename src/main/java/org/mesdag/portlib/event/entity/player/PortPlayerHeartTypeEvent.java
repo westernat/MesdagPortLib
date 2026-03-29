@@ -4,13 +4,10 @@ import net.minecraft.client.gui.Gui;
 import net.neoforged.neoforge.event.entity.player.PlayerHeartTypeEvent;
 import org.mesdag.portlib.diff.Diff;
 
-public class PortPlayerHeartTypeEvent extends PortPlayerEvent {
-    private final PlayerHeartTypeEvent e;
-
+public class PortPlayerHeartTypeEvent extends PortPlayerEvent<PlayerHeartTypeEvent> {
     @Diff
     public PortPlayerHeartTypeEvent(PlayerHeartTypeEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Gui.HeartType getOriginalType() {

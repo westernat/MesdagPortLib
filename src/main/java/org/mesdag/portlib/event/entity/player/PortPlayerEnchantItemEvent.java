@@ -8,13 +8,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortPlayerEnchantItemEvent extends PortPlayerEvent {
-    private final PlayerEnchantItemEvent e;
-
+public class PortPlayerEnchantItemEvent extends PortPlayerEvent<PlayerEnchantItemEvent> {
     @Diff
     public PortPlayerEnchantItemEvent(PlayerEnchantItemEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getEnchantedItem() {

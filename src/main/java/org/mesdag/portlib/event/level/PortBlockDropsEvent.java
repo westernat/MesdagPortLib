@@ -36,12 +36,6 @@ public class PortBlockDropsEvent extends PortBlockEvent<BlockDropsEvent> impleme
     }
 
     @Override
-    public void setCanceled(boolean canceled) {
-        IPortCancellableEvent.super.setCanceled(canceled);
-        e.setCanceled(canceled);
-    }
-
-    @Override
     public ServerLevel getLevel() {
         return e.getLevel();
     }

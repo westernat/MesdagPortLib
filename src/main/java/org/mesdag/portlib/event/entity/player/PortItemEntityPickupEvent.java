@@ -9,12 +9,10 @@ import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.util.PortTriState;
 
-public abstract class PortItemEntityPickupEvent extends PortEvent {
-    private final ItemEntityPickupEvent e;
-
+public abstract class PortItemEntityPickupEvent<E extends ItemEntityPickupEvent> extends PortEvent<E> {
     @Diff
-    public PortItemEntityPickupEvent(ItemEntityPickupEvent e) {
-        this.e = e;
+    public PortItemEntityPickupEvent(E e) {
+        super(e);
     }
 
     public Player getPlayer() {
@@ -25,13 +23,10 @@ public abstract class PortItemEntityPickupEvent extends PortEvent {
         return e.getItemEntity();
     }
 
-    public static class PortPre extends PortItemEntityPickupEvent {
-        private final ItemEntityPickupEvent.Pre e;
-
+    public static class PortPre extends PortItemEntityPickupEvent<ItemEntityPickupEvent.Pre> {
         @Diff
         public PortPre(ItemEntityPickupEvent.Pre e) {
             super(e);
-            this.e = e;
         }
 
         public void setCanPickup(PortTriState state) {
@@ -47,12 +42,9 @@ public abstract class PortItemEntityPickupEvent extends PortEvent {
         }
     }
 
-    public static class PortPost extends PortItemEntityPickupEvent {
-        private final ItemEntityPickupEvent.Post e;
-
+    public static class PortPost extends PortItemEntityPickupEvent<ItemEntityPickupEvent.Post> {
         public PortPost(ItemEntityPickupEvent.Post e) {
             super(e);
-            this.e = e;
         }
 
         public ItemStack getOriginalStack() {

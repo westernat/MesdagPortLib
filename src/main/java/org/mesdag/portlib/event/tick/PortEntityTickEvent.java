@@ -6,24 +6,16 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityEvent;
 
-public abstract class PortEntityTickEvent<E extends EntityTickEvent> extends PortEntityEvent {
-    protected final E e;
-
-    protected PortEntityTickEvent(E e) {
-        super(e.getEntity());
-        this.e = e;
+public abstract class PortEntityTickEvent<E extends EntityTickEvent> extends PortEntityEvent<E> {
+    @Diff
+    public PortEntityTickEvent(E e) {
+        super(e);
     }
 
     public static class PortPre extends PortEntityTickEvent<EntityTickEvent.Pre> implements IPortCancellableEvent {
         @Diff
         public PortPre(EntityTickEvent.Pre e) {
             super(e);
-        }
-
-        @Override
-        public void setCanceled(boolean canceled) {
-            IPortCancellableEvent.super.setCanceled(canceled);
-            e.setCanceled(canceled);
         }
 
         static {

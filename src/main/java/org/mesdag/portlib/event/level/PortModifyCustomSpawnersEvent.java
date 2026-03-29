@@ -9,12 +9,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortModifyCustomSpawnersEvent extends PortEvent {
-    private final ModifyCustomSpawnersEvent e;
-
+public class PortModifyCustomSpawnersEvent extends PortEvent<ModifyCustomSpawnersEvent> {
     @Diff
     public PortModifyCustomSpawnersEvent(ModifyCustomSpawnersEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public ServerLevel getLevel() {

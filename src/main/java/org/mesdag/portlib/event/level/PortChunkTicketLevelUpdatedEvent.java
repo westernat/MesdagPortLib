@@ -9,12 +9,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nullable;
 
-public class PortChunkTicketLevelUpdatedEvent extends PortEvent {
-    private final ChunkTicketLevelUpdatedEvent e;
-
+public class PortChunkTicketLevelUpdatedEvent extends PortEvent<ChunkTicketLevelUpdatedEvent> {
     @Diff
     public PortChunkTicketLevelUpdatedEvent(ChunkTicketLevelUpdatedEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public ServerLevel getLevel() {

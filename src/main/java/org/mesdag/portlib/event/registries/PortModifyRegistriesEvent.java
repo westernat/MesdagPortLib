@@ -10,12 +10,10 @@ import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.core.PortRegistry;
 
-public class PortModifyRegistriesEvent extends PortEvent implements IPortModBusEvent {
-    private final ModifyRegistriesEvent e;
-
+public class PortModifyRegistriesEvent extends PortEvent<ModifyRegistriesEvent> implements IPortModBusEvent {
     @Diff
     public PortModifyRegistriesEvent(ModifyRegistriesEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public Iterable<PortRegistry<?>> getRegistries() {

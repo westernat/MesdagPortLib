@@ -1,18 +1,17 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortServerChatEvent extends PortEvent implements IPortCancellableEvent {
-
-    private final ServerChatEvent e;
-
+public class PortServerChatEvent extends PortEvent<ServerChatEvent> implements IPortCancellableEvent {
     @Diff
     public PortServerChatEvent(ServerChatEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public ServerPlayer getPlayer() {

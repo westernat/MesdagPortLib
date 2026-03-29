@@ -6,13 +6,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerSpawnPhantomsEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerSpawnPhantomsEvent extends PortPlayerEvent {
-    private final PlayerSpawnPhantomsEvent e;
-
+public class PortPlayerSpawnPhantomsEvent extends PortPlayerEvent<PlayerSpawnPhantomsEvent> {
     @Diff
     public PortPlayerSpawnPhantomsEvent(PlayerSpawnPhantomsEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public int getPhantomsToSpawn() {

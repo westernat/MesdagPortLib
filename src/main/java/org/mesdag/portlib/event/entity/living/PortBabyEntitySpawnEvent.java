@@ -10,12 +10,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortBabyEntitySpawnEvent extends PortEvent implements IPortCancellableEvent {
-    private final BabyEntitySpawnEvent e;
-
+public class PortBabyEntitySpawnEvent extends PortEvent<BabyEntitySpawnEvent> implements IPortCancellableEvent {
     @Diff
     public PortBabyEntitySpawnEvent(BabyEntitySpawnEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public Mob getParentA() {

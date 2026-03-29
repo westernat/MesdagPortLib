@@ -6,13 +6,10 @@ import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingEquipmentChangeEvent extends PortLivingEvent{
-    private final LivingEquipmentChangeEvent e;
-
+public class PortLivingEquipmentChangeEvent extends PortLivingEvent<LivingEquipmentChangeEvent> {
     @Diff
     public PortLivingEquipmentChangeEvent(LivingEquipmentChangeEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public EquipmentSlot getSlot() {

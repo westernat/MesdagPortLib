@@ -9,12 +9,11 @@ import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortEntityAttributeCreationEvent extends PortEvent implements IPortModBusEvent {
-    private final EntityAttributeCreationEvent e;
+public class PortEntityAttributeCreationEvent extends PortEvent<EntityAttributeCreationEvent> implements IPortModBusEvent {
 
     @Diff
     public PortEntityAttributeCreationEvent(EntityAttributeCreationEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public void put(EntityType<? extends LivingEntity> entity, AttributeSupplier supplier) {

@@ -9,13 +9,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.Collection;
 
-public class PortLivingDropsEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingDropsEvent e;
-
+public class PortLivingDropsEvent extends PortLivingEvent<LivingDropsEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingDropsEvent(LivingDropsEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public DamageSource getSource() {

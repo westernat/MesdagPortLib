@@ -11,13 +11,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends PortEntityEvent implements IPortCancellableEvent {
-    protected final E e;
-
+public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends PortEntityEvent<E> implements IPortCancellableEvent {
     @Diff
     public PortEntityTeleportEvent(E e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public double getTargetX() {

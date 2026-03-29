@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
@@ -63,7 +64,7 @@ public class PortNetworkHandler {
     }
 
     public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
-            PortIdentifier identifier,
+            ResourceLocation identifier,
             Consumer<IPortCustomLoginTask> consumer,
             PortIdentifier s2cIdentifier,
             PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,

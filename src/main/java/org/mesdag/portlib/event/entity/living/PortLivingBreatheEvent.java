@@ -4,13 +4,10 @@ import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingBreatheEvent extends PortLivingEvent {
-    private final LivingBreatheEvent e;
-
+public class PortLivingBreatheEvent extends PortLivingEvent<LivingBreatheEvent> {
     @Diff
     public PortLivingBreatheEvent(LivingBreatheEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public boolean canBreathe() {

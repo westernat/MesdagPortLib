@@ -6,13 +6,10 @@ import net.neoforged.neoforge.event.entity.player.TradeWithVillagerEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortTradeWithVillagerEvent extends PortPlayerEvent {
-    private final TradeWithVillagerEvent e;
-
+public class PortTradeWithVillagerEvent extends PortPlayerEvent<TradeWithVillagerEvent> {
     @Diff
     public PortTradeWithVillagerEvent(TradeWithVillagerEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public MerchantOffer getMerchantOffer() {

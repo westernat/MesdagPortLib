@@ -10,25 +10,20 @@ import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.world.effect.MobEffectHolder;
 
-public abstract class PortMobEffectEvent extends PortLivingEvent {
-    private final MobEffectEvent e;
-
-    protected PortMobEffectEvent(MobEffectEvent e) {
-        super(e.getEntity());
-        this.e = e;
+public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortLivingEvent<E> {
+    @Diff
+    public PortMobEffectEvent(E e) {
+        super(e);
     }
 
     public @Nullable MobEffectInstance getEffectInstance() {
         return e.getEffectInstance();
     }
 
-    public static class PortRemove extends PortMobEffectEvent implements IPortCancellableEvent {
-        private final MobEffectEvent.Remove e;
-
+    public static class PortRemove extends PortMobEffectEvent<MobEffectEvent.Remove> implements IPortCancellableEvent {
         @Diff
         public PortRemove(MobEffectEvent.Remove e) {
             super(e);
-            this.e = e;
         }
 
         public MobEffectHolder getEffect() {
@@ -49,13 +44,10 @@ public abstract class PortMobEffectEvent extends PortLivingEvent {
         }
     }
 
-    public static class PortApplicable extends PortMobEffectEvent {
-        private final MobEffectEvent.Applicable e;
-
+    public static class PortApplicable extends PortMobEffectEvent<MobEffectEvent.Applicable> {
         @Diff
         public PortApplicable(MobEffectEvent.Applicable e) {
             super(e);
-            this.e = e;
         }
 
         @Override
@@ -108,13 +100,10 @@ public abstract class PortMobEffectEvent extends PortLivingEvent {
         }
     }
 
-    public static class PortAdded extends PortMobEffectEvent {
-        private final MobEffectEvent.Added e;
-
+    public static class PortAdded extends PortMobEffectEvent<MobEffectEvent.Added> {
         @Diff
         public PortAdded(MobEffectEvent.Added e) {
             super(e);
-            this.e = e;
         }
 
         @Override
@@ -135,7 +124,7 @@ public abstract class PortMobEffectEvent extends PortLivingEvent {
         }
     }
 
-    public static class PortExpired extends PortMobEffectEvent implements IPortCancellableEvent {
+    public static class PortExpired extends PortMobEffectEvent<MobEffectEvent.Expired> implements IPortCancellableEvent {
         @Diff
         public PortExpired(MobEffectEvent.Expired e) {
             super(e);

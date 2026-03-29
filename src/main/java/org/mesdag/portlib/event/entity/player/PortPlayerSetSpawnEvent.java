@@ -9,13 +9,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerSetSpawnEvent extends PortPlayerEvent implements IPortCancellableEvent {
-    private final PlayerSetSpawnEvent e;
-
+public class PortPlayerSetSpawnEvent extends PortPlayerEvent<PlayerSetSpawnEvent> implements IPortCancellableEvent {
     @Diff
     public PortPlayerSetSpawnEvent(PlayerSetSpawnEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public boolean isForced() {

@@ -10,12 +10,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortExplosionKnockbackEvent extends PortEvent {
-    private final ExplosionKnockbackEvent e;
-
+public class PortExplosionKnockbackEvent extends PortEvent<ExplosionKnockbackEvent> {
     @Diff
     public PortExplosionKnockbackEvent(ExplosionKnockbackEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public List<BlockPos> getAffectedBlocks() {

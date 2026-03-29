@@ -1,4 +1,4 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
@@ -7,16 +7,16 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.VanillaGameEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nullable;
 
-public class PortVanillaGameEvent extends PortEvent implements IPortCancellableEvent {
-    private final VanillaGameEvent e;
-
+public class PortVanillaGameEvent extends PortEvent<VanillaGameEvent> implements IPortCancellableEvent {
     @Diff
     public PortVanillaGameEvent(VanillaGameEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public Level getLevel() {

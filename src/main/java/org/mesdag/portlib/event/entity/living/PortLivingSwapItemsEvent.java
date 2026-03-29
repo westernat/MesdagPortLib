@@ -1,24 +1,21 @@
 package org.mesdag.portlib.event.entity.living;
 
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortLivingSwapItemsEvent extends PortLivingEvent {
-    private PortLivingSwapItemsEvent(LivingEntity entity) {
-        super(entity);
+public abstract class PortLivingSwapItemsEvent<E extends LivingSwapItemsEvent> extends PortLivingEvent<E> {
+    @Diff
+    public PortLivingSwapItemsEvent(E e) {
+        super(e);
     }
 
-    public static class PortHands extends PortLivingSwapItemsEvent implements IPortCancellableEvent {
-        private final LivingSwapItemsEvent.Hands e;
-
+    public static class PortHands extends PortLivingSwapItemsEvent<LivingSwapItemsEvent.Hands> implements IPortCancellableEvent {
         @Diff
         public PortHands(LivingSwapItemsEvent.Hands e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public ItemStack getItemSwappedToMainHand() {

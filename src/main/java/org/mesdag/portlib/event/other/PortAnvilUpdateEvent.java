@@ -1,19 +1,19 @@
-package org.mesdag.portlib.event;
+package org.mesdag.portlib.event.other;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nullable;
 
-public class PortAnvilUpdateEvent extends PortEvent implements IPortCancellableEvent {
-    private final AnvilUpdateEvent e;
-
+public class PortAnvilUpdateEvent extends PortEvent<AnvilUpdateEvent> implements IPortCancellableEvent {
     @Diff
     public PortAnvilUpdateEvent(AnvilUpdateEvent e) {
-        super();
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getLeft() {

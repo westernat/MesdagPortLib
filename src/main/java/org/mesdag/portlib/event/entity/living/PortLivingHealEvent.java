@@ -5,13 +5,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingHealEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingHealEvent e;
-
+public class PortLivingHealEvent extends PortLivingEvent<LivingHealEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingHealEvent(LivingHealEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public float getAmount() {

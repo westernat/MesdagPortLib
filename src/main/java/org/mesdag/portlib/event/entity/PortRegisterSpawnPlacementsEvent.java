@@ -12,12 +12,10 @@ import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortRegisterSpawnPlacementsEvent extends PortEvent implements IPortModBusEvent {
-    private final RegisterSpawnPlacementsEvent e;
-
+public class PortRegisterSpawnPlacementsEvent extends PortEvent<RegisterSpawnPlacementsEvent> implements IPortModBusEvent {
     @Diff
     public PortRegisterSpawnPlacementsEvent(RegisterSpawnPlacementsEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate) {

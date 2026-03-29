@@ -7,12 +7,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortPotionBrewEvent extends PortEvent {
-    private final PotionBrewEvent e;
-
+public abstract class PortPotionBrewEvent extends PortEvent<PotionBrewEvent> {
     @Diff
     public PortPotionBrewEvent(PotionBrewEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getItem(int index) {

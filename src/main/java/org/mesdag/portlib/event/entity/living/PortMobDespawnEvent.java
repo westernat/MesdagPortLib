@@ -4,13 +4,10 @@ import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortMobDespawnEvent extends PortMobSpawnEvent {
-    private final MobDespawnEvent e;
-
+public class PortMobDespawnEvent extends PortMobSpawnEvent<MobDespawnEvent> {
     @Diff
     public PortMobDespawnEvent(MobDespawnEvent e) {
         super(e);
-        this.e = e;
     }
 
     public void setResult(PortResult result) {

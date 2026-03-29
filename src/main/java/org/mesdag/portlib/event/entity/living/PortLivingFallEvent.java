@@ -5,13 +5,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingFallEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingFallEvent e;
-
+public class PortLivingFallEvent extends PortLivingEvent<LivingFallEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingFallEvent(LivingFallEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public float getDistance() {

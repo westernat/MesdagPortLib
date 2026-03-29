@@ -8,13 +8,10 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 
-public class PortProjectileImpactEvent extends PortEntityEvent implements IPortCancellableEvent {
-    private final ProjectileImpactEvent e;
-
+public class PortProjectileImpactEvent extends PortEntityEvent<ProjectileImpactEvent> implements IPortCancellableEvent {
     @Diff
     public PortProjectileImpactEvent(ProjectileImpactEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public HitResult getRayTraceResult() {

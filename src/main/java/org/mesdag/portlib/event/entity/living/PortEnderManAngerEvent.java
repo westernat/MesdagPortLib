@@ -7,13 +7,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortEnderManAngerEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final EnderManAngerEvent e;
-
+public class PortEnderManAngerEvent extends PortLivingEvent<EnderManAngerEvent> implements IPortCancellableEvent {
     @Diff
     public PortEnderManAngerEvent(EnderManAngerEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Player getPlayer() {

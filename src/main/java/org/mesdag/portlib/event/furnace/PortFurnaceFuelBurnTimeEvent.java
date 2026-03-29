@@ -10,28 +10,26 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import javax.annotation.Nullable;
 
-public class PortFurnaceFuelBurnTimeEvent extends PortEvent implements IPortCancellableEvent {
-    private final FurnaceFuelBurnTimeEvent internal;
-
+public class PortFurnaceFuelBurnTimeEvent extends PortEvent<FurnaceFuelBurnTimeEvent> implements IPortCancellableEvent {
     @Diff
-    public PortFurnaceFuelBurnTimeEvent(FurnaceFuelBurnTimeEvent internal) {
-        this.internal = internal;
+    public PortFurnaceFuelBurnTimeEvent(FurnaceFuelBurnTimeEvent e) {
+        super(e);
     }
 
     public ItemStack getItemStack() {
-        return internal.getItemStack();
+        return e.getItemStack();
     }
 
     public @Nullable RecipeType<?> getRecipeType() {
-        return internal.getRecipeType();
+        return e.getRecipeType();
     }
 
     public void setBurnTime(int burnTime) {
-        internal.setBurnTime(burnTime);
+        e.setBurnTime(burnTime);
     }
 
     public int getBurnTime() {
-        return internal.getBurnTime();
+        return e.getBurnTime();
     }
 
     static {

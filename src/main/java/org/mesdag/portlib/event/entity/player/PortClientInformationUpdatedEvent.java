@@ -6,13 +6,10 @@ import net.neoforged.neoforge.event.entity.player.ClientInformationUpdatedEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortClientInformationUpdatedEvent extends PortPlayerEvent {
-    private final ClientInformationUpdatedEvent e;
-
+public class PortClientInformationUpdatedEvent extends PortPlayerEvent<ClientInformationUpdatedEvent> {
     @Diff
     public PortClientInformationUpdatedEvent(ClientInformationUpdatedEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     @Override

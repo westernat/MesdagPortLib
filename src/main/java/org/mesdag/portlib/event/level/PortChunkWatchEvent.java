@@ -9,12 +9,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends PortEvent {
-    protected final E e;
-
+public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends PortEvent<E> {
     @Diff
     public PortChunkWatchEvent(E e) {
-        this.e = e;
+        super(e);
     }
 
     public ServerPlayer getPlayer() {

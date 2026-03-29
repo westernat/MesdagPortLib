@@ -6,13 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortItemTossEvent extends PortItemEvent implements IPortCancellableEvent {
-    private final ItemTossEvent e;
-
+public class PortItemTossEvent extends PortItemEvent<ItemTossEvent> implements IPortCancellableEvent {
     @Diff
     public PortItemTossEvent(ItemTossEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public Player getPlayer() {

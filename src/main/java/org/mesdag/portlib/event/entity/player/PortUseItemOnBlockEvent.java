@@ -16,12 +16,10 @@ import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.PortLogicalSide;
 
-public class PortUseItemOnBlockEvent extends PortEvent implements IPortCancellableEvent {
-    private final UseItemOnBlockEvent e;
-
+public class PortUseItemOnBlockEvent extends PortEvent<UseItemOnBlockEvent> implements IPortCancellableEvent {
     @Diff
     public PortUseItemOnBlockEvent(UseItemOnBlockEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public @Nullable Player getPlayer() {

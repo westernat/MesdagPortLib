@@ -5,13 +5,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingKnockBackEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingKnockBackEvent e;
-
+public class PortLivingKnockBackEvent extends PortLivingEvent<LivingKnockBackEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingKnockBackEvent(LivingKnockBackEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public float getStrength() {

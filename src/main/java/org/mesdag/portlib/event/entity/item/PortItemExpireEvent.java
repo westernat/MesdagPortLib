@@ -4,13 +4,10 @@ import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortItemExpireEvent extends PortItemEvent {
-    private final ItemExpireEvent e;
-
+public class PortItemExpireEvent extends PortItemEvent<ItemExpireEvent> {
     @Diff
     public PortItemExpireEvent(ItemExpireEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public int getExtraLife() {

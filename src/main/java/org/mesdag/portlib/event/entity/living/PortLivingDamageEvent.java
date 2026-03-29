@@ -1,24 +1,20 @@
 package org.mesdag.portlib.event.entity.living;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 
-public abstract class PortLivingDamageEvent extends PortLivingEvent {
-    private PortLivingDamageEvent(LivingEntity entity) {
-        super(entity);
+public abstract class PortLivingDamageEvent<E extends LivingDamageEvent> extends PortLivingEvent<E> {
+    private PortLivingDamageEvent(E e) {
+        super(e);
     }
 
-    public static class PortPre extends PortLivingDamageEvent {
-        private final LivingDamageEvent.Pre e;
-
+    public static class PortPre extends PortLivingDamageEvent<LivingDamageEvent.Pre> {
         @Diff
         public PortPre(LivingDamageEvent.Pre e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public PortDamageContainer getContainer() {
@@ -46,13 +42,10 @@ public abstract class PortLivingDamageEvent extends PortLivingEvent {
         }
     }
 
-    public static class PortPost extends PortLivingDamageEvent {
-        private final LivingDamageEvent.Post e;
-
+    public static class PortPost extends PortLivingDamageEvent<LivingDamageEvent.Post> {
         @Diff
         public PortPost(LivingDamageEvent.Post e) {
-            super(e.getEntity());
-            this.e = e;
+            super(e);
         }
 
         public float getOriginalDamage() {

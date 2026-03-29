@@ -7,13 +7,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingChangeTargetEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingChangeTargetEvent e;
-
+public class PortLivingChangeTargetEvent extends PortLivingEvent<LivingChangeTargetEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingChangeTargetEvent(LivingChangeTargetEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public @Nullable LivingEntity getNewAboutToBeSetTarget() {

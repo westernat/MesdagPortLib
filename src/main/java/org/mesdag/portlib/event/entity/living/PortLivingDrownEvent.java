@@ -5,13 +5,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingDrownEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final LivingDrownEvent e;
-
+public class PortLivingDrownEvent extends PortLivingEvent<LivingDrownEvent> implements IPortCancellableEvent {
     @Diff
     public PortLivingDrownEvent(LivingDrownEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public boolean isDrowning() {

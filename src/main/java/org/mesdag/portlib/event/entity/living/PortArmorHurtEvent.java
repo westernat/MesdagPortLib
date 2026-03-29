@@ -11,13 +11,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.Map;
 
-public class PortArmorHurtEvent extends PortLivingEvent implements IPortCancellableEvent {
-    private final ArmorHurtEvent e;
-
+public class PortArmorHurtEvent extends PortLivingEvent<ArmorHurtEvent> implements IPortCancellableEvent {
     @Diff
     public PortArmorHurtEvent(ArmorHurtEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public ItemStack getArmorItemStack(EquipmentSlot slot) {

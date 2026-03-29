@@ -6,11 +6,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortServerTickEvent<E extends ServerTickEvent> extends PortEvent {
-    protected final E e;
-
-    protected PortServerTickEvent(E e) {
-        this.e = e;
+public abstract class PortServerTickEvent<E extends ServerTickEvent> extends PortEvent<E> {
+    @Diff
+    public PortServerTickEvent(E e) {
+        super(e);
     }
 
     public boolean hasTime() {

@@ -4,13 +4,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerFlyableFallEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortPlayerFlyableFallEvent extends PortPlayerEvent {
-    private final PlayerFlyableFallEvent e;
-
+public class PortPlayerFlyableFallEvent extends PortPlayerEvent<PlayerFlyableFallEvent> {
     @Diff
     public PortPlayerFlyableFallEvent(PlayerFlyableFallEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public float getDistance() {

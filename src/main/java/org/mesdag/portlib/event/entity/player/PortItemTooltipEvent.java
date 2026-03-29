@@ -12,13 +12,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortItemTooltipEvent extends PortPlayerEvent {
-    private final ItemTooltipEvent e;
-
+public class PortItemTooltipEvent extends PortPlayerEvent<ItemTooltipEvent> {
     @Diff
     public PortItemTooltipEvent(ItemTooltipEvent e) {
-        super(e.getEntity());
-        this.e = e;
+        super(e);
     }
 
     public TooltipFlag getFlags() {

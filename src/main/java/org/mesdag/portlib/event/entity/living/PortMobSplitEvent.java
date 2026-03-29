@@ -9,12 +9,10 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 import java.util.List;
 
-public class PortMobSplitEvent extends PortEvent implements IPortCancellableEvent {
-    private final MobSplitEvent e;
-
+public class PortMobSplitEvent extends PortEvent<MobSplitEvent> implements IPortCancellableEvent {
     @Diff
     public PortMobSplitEvent(MobSplitEvent e) {
-        this.e = e;
+        super(e);
     }
 
     public Mob getParent() {
@@ -23,12 +21,6 @@ public class PortMobSplitEvent extends PortEvent implements IPortCancellableEven
 
     public List<Mob> getChildren() {
         return e.getChildren();
-    }
-
-    @Override
-    public void setCanceled(boolean canceled) {
-        IPortCancellableEvent.super.setCanceled(canceled);
-        e.setCanceled(canceled);
     }
 
     static {
