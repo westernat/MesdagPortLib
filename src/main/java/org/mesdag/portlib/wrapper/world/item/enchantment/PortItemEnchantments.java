@@ -16,8 +16,7 @@ public class PortItemEnchantments {
     private final ItemEnchantments delegate;
     public final boolean showInTooltip;
 
-    @Diff
-    public PortItemEnchantments(ItemEnchantments delegate) {
+    private PortItemEnchantments(ItemEnchantments delegate) {
         this.delegate = delegate;
         this.showInTooltip = delegate.showInTooltip;
     }
@@ -27,12 +26,17 @@ public class PortItemEnchantments {
         return delegate;
     }
 
+    @Diff
+    public static PortItemEnchantments wrap(ItemEnchantments delegate) {
+        return new PortItemEnchantments(delegate);
+    }
+
     public int getLevel(EnchantmentHolder enchantment) {
         return delegate.getLevel(enchantment.delegate());
     }
 
     public PortItemEnchantments withTooltip(boolean showInTooltip) {
-        return new PortItemEnchantments(delegate.withTooltip(showInTooltip));
+        return PortItemEnchantments.wrap(delegate.withTooltip(showInTooltip));
     }
 
     public Set<EnchantmentHolder> keySet() {
@@ -84,7 +88,7 @@ public class PortItemEnchantments {
         }
 
         public PortItemEnchantments toImmutable() {
-            return new PortItemEnchantments(delegate.toImmutable());
+            return PortItemEnchantments.wrap(delegate.toImmutable());
         }
     }
 }

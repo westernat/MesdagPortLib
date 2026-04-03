@@ -71,11 +71,11 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
             return e.getDefaultResult();
         }
 
-        public void setResult(PortResult result) {
+        public void setPortResult(PortResult result) {
             e.setResult(result.unwrap());
         }
 
-        public PortResult getResult() {
+        public PortResult getPortResult() {
             return PortResult.wrap(e.getResult());
         }
 
@@ -126,11 +126,11 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
             return this.e.getSpawnType();
         }
 
-        public void setResult(PortResult result) {
+        public void setPortResult(PortResult result) {
             e.setResult(result.unwrap());
         }
 
-        public PortResult getResult() {
+        public PortResult getPortResult() {
             return PortResult.wrap(e.getResult());
         }
 

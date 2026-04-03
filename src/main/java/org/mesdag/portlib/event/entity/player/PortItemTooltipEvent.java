@@ -2,13 +2,13 @@ package org.mesdag.portlib.event.entity.player;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.world.item.PortItem;
 
 import java.util.List;
 
@@ -35,8 +35,8 @@ public class PortItemTooltipEvent extends PortPlayerEvent<ItemTooltipEvent> {
         return e.getEntity();
     }
 
-    public TooltipContext getContext() {
-        return e.getContext();
+    public PortItem.PortTooltipContext getContext() {
+        return PortItem.PortTooltipContext.wrap(e.getContext());
     }
 
     static {

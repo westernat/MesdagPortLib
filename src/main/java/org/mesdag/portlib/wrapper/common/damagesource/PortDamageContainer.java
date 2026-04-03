@@ -7,8 +7,7 @@ import org.mesdag.portlib.diff.Diff;
 public class PortDamageContainer {
     private final DamageContainer container;
 
-    @Diff
-    public PortDamageContainer(DamageContainer container) {
+    private PortDamageContainer(DamageContainer container) {
         this.container = container;
     }
 
@@ -61,6 +60,9 @@ public class PortDamageContainer {
     public float getReduction(PortReduction type) {
         return container.getReduction(type.unwrap());
     }
+
+    @Diff
+    public void setReduction(PortReduction reduction, float amount) {}
 
     public enum PortReduction {
         INVULNERABILITY,

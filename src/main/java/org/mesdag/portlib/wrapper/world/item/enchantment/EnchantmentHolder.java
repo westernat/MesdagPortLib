@@ -2,7 +2,6 @@ package org.mesdag.portlib.wrapper.world.item.enchantment;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.enchantment.Enchantment;
-import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 
 @SuppressWarnings("all")
@@ -18,7 +17,6 @@ public class EnchantmentHolder implements PortHolder<Enchantment> {
         return delegate;
     }
 
-    @Diff
     public static EnchantmentHolder wrap(Holder<Enchantment> value) {
         return new EnchantmentHolder(value);
     }

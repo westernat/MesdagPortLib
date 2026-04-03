@@ -11,13 +11,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PortEventHooks {
-    private static final Map<Class<? extends Event>, Function<? extends Event, ? extends PortEvent>> wrappers = new ConcurrentHashMap<>();
-    private static final Map<Class<? extends PortEvent>, Class<? extends Event>> rawGetter = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends Event>, Function<? extends Event, ? extends PortEvent<?>>> wrappers = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new ConcurrentHashMap<>();
 
     public static void init() {}
 
     @Diff
-    public static <F extends Event, T extends PortEvent> void register(Class<F> from, Class<T> to, Function<F, T> function) {
+    public static <F extends Event, T extends PortEvent<?>> void register(Class<F> from, Class<T> to, Function<F, T> function) {
         if (PortEvent.class.isAssignableFrom(from)) {
             throw new IllegalArgumentException("PortEvent cannot be wrapped");
         }
@@ -26,7 +26,7 @@ public class PortEventHooks {
     }
 
     @SuppressWarnings("unchecked")
-    static <F extends Event, T extends PortEvent> void wrapEvent(PortEventPriority priority, boolean receiveCancelled, Class<F> from, Consumer<F> consumer) {
+    static <F extends Event, T extends PortEvent<?>> void wrapEvent(PortEventPriority priority, boolean receiveCancelled, Class<F> from, Consumer<F> consumer) {
         if (PortEvent.class.isAssignableFrom(from)) {
             Class<F> rawFrom = (Class<F>) rawGetter.get(from);
             if (rawFrom == null) {

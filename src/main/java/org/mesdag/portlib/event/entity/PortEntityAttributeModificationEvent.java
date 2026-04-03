@@ -1,14 +1,13 @@
 package org.mesdag.portlib.event.entity;
 
-import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 
 import java.util.List;
 
@@ -18,16 +17,16 @@ public class PortEntityAttributeModificationEvent extends PortEvent<EntityAttrib
         super(e);
     }
 
-    public void add(EntityType<? extends LivingEntity> entityType, Holder<Attribute> attribute, double value) {
-        e.add(entityType, attribute, value);
+    public void add(EntityType<? extends LivingEntity> entityType, AttributeHolder attribute, double value) {
+        e.add(entityType, attribute.delegate(), value);
     }
 
-    public void add(EntityType<? extends LivingEntity> entityType, Holder<Attribute> attribute) {
-        e.add(entityType, attribute);
+    public void add(EntityType<? extends LivingEntity> entityType, AttributeHolder attribute) {
+        e.add(entityType, attribute.delegate());
     }
 
-    public boolean has(EntityType<? extends LivingEntity> entityType, Holder<Attribute> attribute) {
-        return e.has(entityType, attribute);
+    public boolean has(EntityType<? extends LivingEntity> entityType, AttributeHolder attribute) {
+        return e.has(entityType, attribute.delegate());
     }
 
     public List<EntityType<? extends LivingEntity>> getTypes() {

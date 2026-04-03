@@ -24,9 +24,10 @@ public interface IPortCondition {
         return new ICondition() {
             @Override
             public boolean test(IContext context) {
-                return IPortCondition.this.test(context);
+                return IPortCondition.this.test(IPortContext.wrap(context));
             }
 
+            @Diff
             @Override
             public MapCodec<? extends ICondition> codec() {
                 return IPortCondition.this.codec();

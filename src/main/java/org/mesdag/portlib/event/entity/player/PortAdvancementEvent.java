@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.entity.player;
 
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.advancements.PortAdvancementHolder;
 
 public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends PortPlayerEvent<E> {
     @Diff
@@ -12,8 +12,8 @@ public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends P
         super(e);
     }
 
-    public AdvancementHolder getAdvancement() {
-        return e.getAdvancement();
+    public PortAdvancementHolder getAdvancement() {
+        return PortAdvancementHolder.wrap(e.getAdvancement());
     }
 
     public static class PortAdvancementEarnEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementEarnEvent> {

@@ -2,7 +2,6 @@ package org.mesdag.portlib.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
@@ -11,6 +10,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.world.entity.PortSpawnPlacementType;
 
 public class PortRegisterSpawnPlacementsEvent extends PortEvent<RegisterSpawnPlacementsEvent> implements IPortModBusEvent {
     @Diff
@@ -26,8 +26,8 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent<RegisterSpawnPla
         e.register(entityType, predicate, operation.unwrap());
     }
 
-    public <T extends Entity> void register(EntityType<T> entityType, @Nullable SpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, PortOperation operation) {
-        e.register(entityType, placementType, heightmap, predicate, operation.unwrap());
+    public <T extends Entity> void register(EntityType<T> entityType, @Nullable PortSpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, PortOperation operation) {
+        e.register(entityType, placementType == null ? null : placementType.unwrap(), heightmap, predicate, operation.unwrap());
     }
 
     public enum PortOperation {
@@ -56,32 +56,5 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent<RegisterSpawnPla
 
     static {
         PortEventHooks.register(RegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent::new);
-    }
-
-    public static class PortMergedSpawnPredicate<T extends Entity> {
-        private final RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> predicate;
-
-        @Diff
-        private PortMergedSpawnPredicate(RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> predicate) {
-            this.predicate = predicate;
-        }
-
-        public SpawnPlacementType getSpawnType() {
-            return predicate.getSpawnType();
-        }
-
-        public Heightmap.Types getHeightmapType() {
-            return predicate.getHeightmapType();
-        }
-
-        @Diff
-        public RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> unwrap() {
-            return predicate;
-        }
-
-        @Diff
-        public static <T extends Entity> PortMergedSpawnPredicate<T> wrap(RegisterSpawnPlacementsEvent.MergedSpawnPredicate<T> predicate) {
-            return new PortMergedSpawnPredicate<>(predicate);
-        }
     }
 }

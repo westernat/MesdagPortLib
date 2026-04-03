@@ -39,13 +39,13 @@ public class PortCriticalHitEvent extends PortPlayerEvent<CriticalHitEvent> {
         return e.isVanillaCritical();
     }
 
-    public void setDisableSweep(boolean disableSweep) {
-        e.setDisableSweep(disableSweep);
-    }
-
-    public boolean disableSweep() {
-        return e.disableSweep();
-    }
+//    public void setDisableSweep(boolean disableSweep) {
+//        e.setDisableSweep(disableSweep);
+//    }
+//
+//    public boolean disableSweep() {
+//        return e.disableSweep();
+//    }
 
     static {
         PortEventHooks.register(CriticalHitEvent.class, PortCriticalHitEvent.class, PortCriticalHitEvent::new);

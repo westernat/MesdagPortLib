@@ -12,7 +12,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortFinalizeSpawnEvent extends PortMobSpawnEvent implements IPortCancellableEvent {
+public class PortFinalizeSpawnEvent extends PortMobSpawnEvent<FinalizeSpawnEvent> implements IPortCancellableEvent {
     @Diff
     public PortFinalizeSpawnEvent(FinalizeSpawnEvent e) {
         super(e);

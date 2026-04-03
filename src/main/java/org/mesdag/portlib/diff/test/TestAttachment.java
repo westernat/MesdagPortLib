@@ -50,7 +50,7 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
         nbt.putDouble("d", d);
         nbt.putString("str", str);
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(tag -> nbt.put("stack", tag));
+        ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(tag -> nbt.put("delegate", tag));
         return nbt;
     }
 
@@ -65,6 +65,6 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
         this.d = nbt.getDouble("d");
         this.str = nbt.getString("str");
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ItemStack.CODEC.parse(ops, nbt.get("stack")).result().ifPresent(result -> this.stack = result);
+        ItemStack.CODEC.parse(ops, nbt.get("delegate")).result().ifPresent(result -> this.stack = result);
     }
 }

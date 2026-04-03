@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
+// todo wait for 1.20.1
 public class PortEffectParticleModificationEvent extends PortLivingEvent<EffectParticleModificationEvent> {
     @Diff
     public PortEffectParticleModificationEvent(EffectParticleModificationEvent e) {

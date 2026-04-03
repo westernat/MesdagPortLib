@@ -67,7 +67,7 @@ public class PortItemStack {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
             return null;
         }
-        return new PortItemEnchantments(stack.get(DataComponents.ENCHANTMENTS));
+        return PortItemEnchantments.wrap(stack.get(DataComponents.ENCHANTMENTS));
     }
 
     public static void setEnchantments(ItemStack stack, PortItemEnchantments value) {
@@ -276,7 +276,7 @@ public class PortItemStack {
 
     public static @Nullable PortItemEnchantments getStoredEnchantments(ItemStack stack) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(stack)) {
-            return new PortItemEnchantments(stack.get(DataComponents.STORED_ENCHANTMENTS));
+            return PortItemEnchantments.wrap(stack.get(DataComponents.STORED_ENCHANTMENTS));
         }
         return null;
     }

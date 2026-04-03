@@ -13,4 +13,12 @@ public enum PortNetworkDirection {
     public boolean isPlay() {
         return this == PLAY_TO_CLIENT || this == PLAY_TO_SERVER;
     }
+
+    public boolean toClient() {
+        return this == PLAY_TO_CLIENT || this == LOGIN_TO_CLIENT;
+    }
+
+    public boolean toServer() {
+        return this == PLAY_TO_SERVER || this == LOGIN_TO_SERVER;
+    }
 }

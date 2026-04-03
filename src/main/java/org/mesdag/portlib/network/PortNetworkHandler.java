@@ -1,15 +1,11 @@
 package org.mesdag.portlib.network;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.ObjectBooleanImmutablePair;
 import it.unimi.dsi.fastutil.objects.ObjectBooleanPair;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
@@ -17,8 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
-import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -28,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.network.login.IPortCustomLoginTask;
-import org.mesdag.portlib.network.login.PortLoginPacket;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.*;
@@ -63,37 +56,37 @@ public class PortNetworkHandler {
         register(identifier, codec, handler, PortNetworkDirection.LOGIN_TO_SERVER, null);
     }
 
-    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
-            ResourceLocation identifier,
-            Consumer<IPortCustomLoginTask> consumer,
-            PortIdentifier s2cIdentifier,
-            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
-            BiConsumer<S2C, IPortPacket.Context> s2cHandler,
-            @Nullable PortIdentifier c2sIdentifier,
-            @Nullable PortStreamCodec<? super FriendlyByteBuf, C2S> c2sCodec,
-            @Nullable BiConsumer<C2S, IPortPacket.Context> c2sHandler
-    ) {
-        boolean noC2S = c2sIdentifier == null;
-        if (noC2S != (c2sHandler == null) || noC2S != (c2sCodec == null)) {
-            throw new IllegalArgumentException("c2sIdentifier, c2sCodec and c2sHandler must be either all null or all non-null");
-        }
-        ConfigurationTask.Type type = new ConfigurationTask.Type(identifier);
-        register(s2cIdentifier, s2cCodec, s2cHandler, PortNetworkDirection.LOGIN_TO_CLIENT, null);
-        if (!noC2S) {
-            register(c2sIdentifier, c2sCodec, c2sHandler, PortNetworkDirection.LOGIN_TO_SERVER, type);
-        }
-        tasks.put(type, new ObjectBooleanImmutablePair<>(consumer, noC2S));
-    }
-
-    public <S2C extends PortLoginPacket & IPortPacket.S2C> void addLoginTask(
-            PortIdentifier identifier,
-            Consumer<IPortCustomLoginTask> consumer,
-            PortIdentifier s2cIdentifier,
-            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
-            BiConsumer<S2C, IPortPacket.Context> s2cHandler
-    ) {
-        addLoginTask(identifier, consumer, s2cIdentifier, s2cCodec, s2cHandler, null, null, null);
-    }
+//    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
+//            ResourceLocation identifier,
+//            Consumer<IPortCustomLoginTask> consumer,
+//            PortIdentifier s2cIdentifier,
+//            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
+//            BiConsumer<S2C, IPortPacket.Context> s2cHandler,
+//            @Nullable PortIdentifier c2sIdentifier,
+//            @Nullable PortStreamCodec<? super FriendlyByteBuf, C2S> c2sCodec,
+//            @Nullable BiConsumer<C2S, IPortPacket.Context> c2sHandler
+//    ) {
+//        boolean noC2S = c2sIdentifier == null;
+//        if (noC2S != (c2sHandler == null) || noC2S != (c2sCodec == null)) {
+//            throw new IllegalArgumentException("c2sIdentifier, c2sCodec and c2sHandler must be either all null or all non-null");
+//        }
+//        ConfigurationTask.Type type = new ConfigurationTask.Type(identifier);
+//        register(s2cIdentifier, s2cCodec, s2cHandler, PortNetworkDirection.LOGIN_TO_CLIENT, null);
+//        if (!noC2S) {
+//            register(c2sIdentifier, c2sCodec, c2sHandler, PortNetworkDirection.LOGIN_TO_SERVER, type);
+//        }
+//        tasks.put(type, new ObjectBooleanImmutablePair<>(consumer, noC2S));
+//    }
+//
+//    public <S2C extends PortLoginPacket & IPortPacket.S2C> void addLoginTask(
+//            PortIdentifier identifier,
+//            Consumer<IPortCustomLoginTask> consumer,
+//            PortIdentifier s2cIdentifier,
+//            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
+//            BiConsumer<S2C, IPortPacket.Context> s2cHandler
+//    ) {
+//        addLoginTask(identifier, consumer, s2cIdentifier, s2cCodec, s2cHandler, null, null, null);
+//    }
 
     private <B extends ByteBuf, P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler, PortNetworkDirection direction, @Nullable ConfigurationTask.Type type) {
         payloads.computeIfAbsent(direction, d -> new ArrayList<>()).add(new Payload<>(identifier, codec, handler, type));
@@ -152,40 +145,40 @@ public class PortNetworkHandler {
                 handler.payloads = null;
             }
         });
-        PortEventHandler.addListener((RegisterConfigurationTasksEvent event) -> {
-            ServerConfigurationPacketListener listener = event.getListener();
-            IPortCustomLoginTask loginTask = new IPortCustomLoginTask() {
-                @Override
-                public Consumer<IPortPacket> sender() {
-                    return listener::send;
-                }
-
-                @Override
-                public void disconnect(Component reason) {
-                    listener.disconnect(reason);
-                }
-            };
-            for (PortNetworkHandler handler : handlers) {
-                for (Map.Entry<ConfigurationTask.Type, ObjectBooleanPair<Consumer<IPortCustomLoginTask>>> entry : handler.tasks.entrySet()) {
-                    event.register(new ICustomConfigurationTask() {
-                        @Override
-                        public void run(Consumer<CustomPacketPayload> sender) {
-                            ObjectBooleanPair<Consumer<IPortCustomLoginTask>> pair = entry.getValue();
-                            pair.left().accept(loginTask);
-                            if (pair.rightBoolean()) {
-                                listener.finishCurrentTask(entry.getKey());
-                            }
-                        }
-
-                        @Override
-                        public Type type() {
-                            return entry.getKey();
-                        }
-                    });
-                }
-                handler.tasks = null;
-            }
-        });
+//        PortEventHandler.addListener((RegisterConfigurationTasksEvent event) -> {
+//            ServerConfigurationPacketListener listener = event.getListener();
+//            IPortCustomLoginTask loginTask = new IPortCustomLoginTask() {
+//                @Override
+//                public Consumer<IPortPacket> sender() {
+//                    return listener::send;
+//                }
+//
+//                @Override
+//                public void disconnect(Component reason) {
+//                    listener.disconnect(reason);
+//                }
+//            };
+//            for (PortNetworkHandler handler : handlers) {
+//                for (Map.Entry<ConfigurationTask.Type, ObjectBooleanPair<Consumer<IPortCustomLoginTask>>> entry : handler.tasks.entrySet()) {
+//                    event.register(new ICustomConfigurationTask() {
+//                        @Override
+//                        public void run(Consumer<CustomPacketPayload> sender) {
+//                            ObjectBooleanPair<Consumer<IPortCustomLoginTask>> pair = entry.getValue();
+//                            pair.left().accept(loginTask);
+//                            if (pair.rightBoolean()) {
+//                                listener.finishCurrentTask(entry.getKey());
+//                            }
+//                        }
+//
+//                        @Override
+//                        public Type type() {
+//                            return entry.getKey();
+//                        }
+//                    });
+//                }
+//                handler.tasks = null;
+//            }
+//        });
     }
 
     private record Payload<B extends ByteBuf, P extends IPortPacket>(

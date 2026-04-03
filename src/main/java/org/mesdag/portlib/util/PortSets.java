@@ -14,7 +14,6 @@ public class PortSets {
     }
 
     /// 创建一个支持修改（删除）的转换 Set。
-    /// 适用于 1.21.1 原生支持同步的场景。
     ///
     /// @param fromSet      底层原始集合
     /// @param toFunction   正向转换函数 (F -> T)
@@ -25,7 +24,6 @@ public class PortSets {
     }
 
     /// 创建一个支持修改并带有副作用回调的转换 Set。
-    /// 专门用于 1.20.1 侧需要手动同步 NBT 的场景。
     ///
     /// @param fromSet      底层原始集合
     /// @param toFunction   正向转换函数 (F -> T)

@@ -10,11 +10,11 @@ public class PortMobDespawnEvent extends PortMobSpawnEvent<MobDespawnEvent> {
         super(e);
     }
 
-    public void setResult(PortResult result) {
+    public void setPortResult(PortResult result) {
         e.setResult(result.unwrap());
     }
 
-    public PortResult getResult() {
+    public PortResult getPortResult() {
         return PortResult.wrap(e.getResult());
     }
 

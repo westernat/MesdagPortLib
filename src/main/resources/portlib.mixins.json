@@ -3,7 +3,8 @@
     "package": "org.mesdag.portlib.diff.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "AbstractArrowAccessor"
+        "AbstractArrowAccessor",
+        "ServerPlayerMixin"
     ],
     "injectors": {
         "defaultRequire": 1

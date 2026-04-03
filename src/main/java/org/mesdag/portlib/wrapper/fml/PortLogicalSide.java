@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper;
+package org.mesdag.portlib.wrapper.fml;
 
 import net.neoforged.fml.LogicalSide;
 import org.mesdag.portlib.diff.Diff;

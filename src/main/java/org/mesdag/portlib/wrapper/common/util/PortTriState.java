@@ -20,6 +20,20 @@ public enum PortTriState {
         return this == FALSE;
     }
 
+    public int unwrapState() {
+        return switch (this) {
+            case TRUE -> 1;
+            case DEFAULT -> 0;
+            case FALSE -> -1;
+        };
+    }
+
+    public static PortTriState wrapState(int state) {
+        if (state > 0) return TRUE;
+        if (state < 0) return FALSE;
+        return DEFAULT;
+    }
+
     @Diff
     public TriState unwrap() {
         return switch (this) {

@@ -14,7 +14,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.PortLogicalSide;
+import org.mesdag.portlib.wrapper.fml.PortLogicalSide;
 
 public class PortUseItemOnBlockEvent extends PortEvent<UseItemOnBlockEvent> implements IPortCancellableEvent {
     @Diff
