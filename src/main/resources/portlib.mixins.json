@@ -5,21 +5,37 @@
     "mixins": [
         "AbstractArrowAccessor",
         "AbstractArrowMixin",
+        "BlockBehaviourMixin",
+        "BlockBehaviourMixin$BlockStateBaseMixin",
         "BlockEntityMixin",
         "ChunkAccessMixin",
         "ChunkMapMixin",
         "ChunkSerializerMixin",
         "DataPackRegistriesHooksAccessor",
+        "EnchantmentMenuMixin",
         "EntityMixin",
         "FoodPropertiesMixin",
+        "InventoryMixin",
         "ItemEntityMixin",
         "ItemMixin",
         "ItemMixin$PropertiesMixin",
         "ItemStackMixin",
         "LevelChunkMixin",
         "LevelMixin",
+        "LivingEntityAccessor",
+        "LivingEntityMixin",
+        "MobEffectInstanceMixin",
+        "MobEffectMixin",
+        "MobMixin",
+        "PlayerListMixin",
         "PlayerMixin",
-        "ServerLevelMixin"
+        "ServerEntityMixin",
+        "ServerGamePacketListenerImplMixin",
+        "ServerLevelMixin",
+        "ServerPlayerMixin",
+        "SlimeMixin",
+        "WitchMixin",
+        "WitherBossMixin"
     ],
     "injectors": {
         "defaultRequire": 1
@@ -28,6 +44,9 @@
         "requireAnnotations": true
     },
     "client": [
-        "ClientPacketListenerMixin"
-    ]
+        "ClientPacketListenerMixin",
+        "GuiMixin",
+        "GuiMixin$HeartTypeMixin"
+    ],
+    "minVersion": "0.8"
 }

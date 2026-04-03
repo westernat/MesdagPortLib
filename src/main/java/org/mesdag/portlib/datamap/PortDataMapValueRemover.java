@@ -9,21 +9,21 @@ import org.mesdag.portlib.wrapper.core.PortRegistry;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface DataMapValueRemover<R, T> {
+public interface PortDataMapValueRemover<R, T> {
     Optional<T> remove(T value, PortRegistry<R> registry, Either<TagKey<R>, ResourceKey<R>> source, R object);
 
-    class Default<T, R> implements DataMapValueRemover<R, T> {
-        public static final Default<?, ?> INSTANCE = new Default<>();
+    class PortDefault<T, R> implements PortDataMapValueRemover<R, T> {
+        public static final PortDefault<?, ?> INSTANCE = new PortDefault<>();
 
-        public static <T, R> Default<T, R> defaultRemover() {
-            return (Default<T, R>) INSTANCE;
+        public static <T, R> PortDefault<T, R> defaultRemover() {
+            return (PortDefault<T, R>) INSTANCE;
         }
 
-        public static <T, R> Codec<Default<T, R>> codec() {
+        public static <T, R> Codec<PortDefault<T, R>> codec() {
             return Codec.unit(defaultRemover());
         }
 
-        private Default() {}
+        private PortDefault() {}
 
         @Override
         public Optional<T> remove(T value, PortRegistry<R> registry, Either<TagKey<R>, ResourceKey<R>> source, R object) {

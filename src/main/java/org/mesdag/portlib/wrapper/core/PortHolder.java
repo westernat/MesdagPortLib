@@ -2,6 +2,7 @@ package org.mesdag.portlib.wrapper.core;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -100,5 +101,11 @@ public interface PortHolder<T> extends Holder<T> {
 
     default @Nullable ResourceKey<T> getKey() {
         return getKey(this);
+    }
+
+    default @Nullable HolderLookup.RegistryLookup<T> unwrapLookup() {
+        return delegate() instanceof Holder.Reference<T> ref
+                ? ref.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null
+                : null;
     }
 }

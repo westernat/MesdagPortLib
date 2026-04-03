@@ -1,6 +1,10 @@
 package org.mesdag.portlib.wrapper.world.item;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.diff.IPortItem;
 
@@ -11,6 +15,78 @@ public class PortItem {
         public static Item.Properties component(Item.Properties properties, Consumer<PortDataComponentMap.PortBuilder> consumer) {
             IPortItem.IPortProperties.of(properties).portlib$set(consumer);
             return properties;
+        }
+    }
+
+    public interface PortTooltipContext {
+        PortTooltipContext EMPTY = new PortTooltipContext() {
+            @Override
+            public @Nullable HolderLookup.Provider registries() {
+                return null;
+            }
+
+            @Override
+            public float tickRate() {
+                return 20.0F;
+            }
+
+            @Override
+            public @Nullable MapItemSavedData mapData(String mapName) {
+                return null;
+            }
+        };
+
+        @Nullable HolderLookup.Provider registries();
+
+        float tickRate();
+
+        @Nullable MapItemSavedData mapData(String mapName);
+
+        default @Nullable Level level() {
+            return null;
+        }
+
+        static PortTooltipContext of(@Nullable Level level) {
+            return level == null ? EMPTY : new PortTooltipContext() {
+                @Override
+                public HolderLookup.Provider registries() {
+                    return level.registryAccess();
+                }
+
+                @Override
+                public float tickRate() {
+                    return 20.0F;
+                }
+
+                @Override
+                public MapItemSavedData mapData(String mapName) {
+                    return level.getMapData(mapName);
+                }
+
+                @Override
+                public Level level() {
+                    return level;
+                }
+            };
+        }
+
+        static PortTooltipContext of(HolderLookup.Provider registries) {
+            return new PortTooltipContext() {
+                @Override
+                public HolderLookup.Provider registries() {
+                    return registries;
+                }
+
+                @Override
+                public float tickRate() {
+                    return 20.0F;
+                }
+
+                @Override
+                public @Nullable MapItemSavedData mapData(String mapName) {
+                    return null;
+                }
+            };
         }
     }
 }

@@ -3,6 +3,9 @@ package org.mesdag.portlib.network;
 import net.jodah.typetools.TypeResolver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +14,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -151,6 +155,16 @@ public class PortNetworkHandler {
             throw new IllegalStateException("Cannot get class from consumer");
         }
         return aClass;
+    }
+
+    @Diff
+    public Packet<ClientGamePacketListener> toVanillaClientbound(IPortPacket.S2C packet) {
+        return (Packet<ClientGamePacketListener>) channel.toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    @Diff
+    public Packet<ServerGamePacketListener> toVanillaServerbound(IPortPacket.C2S packet) {
+        return (Packet<ServerGamePacketListener>) channel.toVanillaPacket(packet, NetworkDirection.PLAY_TO_SERVER);
     }
 
     public void sendToServer(IPortPacket.C2S packet, IPortPacket.C2S... packets) {

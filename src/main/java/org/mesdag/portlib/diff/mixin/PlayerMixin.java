@@ -1,29 +1,64 @@
 package org.mesdag.portlib.diff.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import org.mesdag.portlib.diff.IPortFoodProperties;
-import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.diff.IPortLivingEntity;
+import org.mesdag.portlib.diff.IPortPlayer;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
+import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
+import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
+import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.world.entity.player.PortPlayer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin implements PortSelfGetter<Player> {
+public abstract class PlayerMixin implements IPortPlayer {
     @Shadow
     public abstract Inventory getInventory();
 
     @Shadow
     @Nullable
     public abstract ItemEntity drop(ItemStack itemStack, boolean includeThrowerName);
+
+    @Shadow
+    public abstract void setAbsorptionAmount(float amount);
+
+    @Shadow
+    public abstract float getAbsorptionAmount();
+
+    @Shadow
+    @Final
+    protected static EntityDataAccessor<Byte> DATA_PLAYER_MODE_CUSTOMISATION;
+
+    @Override
+    public int portlib$getModelCustomisation() {
+        return portlib$self().getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION);
+    }
 
     @ModifyReturnValue(method = "eat", at = @At("RETURN"))
     private ItemStack usingConvertsTo(ItemStack original, @Local(argsOnly = true) ItemStack food) {
@@ -44,5 +79,96 @@ public abstract class PlayerMixin implements PortSelfGetter<Player> {
             }
         }
         return original;
+    }
+
+    // region actuallyHurt
+
+    /// ```java
+    /// damageAmount = this.getDamageAfterArmorAbsorb(damageSource, damageAmount);
+    ///```
+    /// ↓
+    /// ```java
+    /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - this.getDamageAfterArmorAbsorb(damageSrc, this.damageContainers.peek().getNewDamage()));
+    /// this.getDamageAfterMagicAbsorb(damageSrc, this.damageContainers.peek().getNewDamage());
+    ///```
+    @WrapOperation(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
+    private float setArmorReduction(Player instance, DamageSource damageSource, float damageAmount, Operation<Float> original) {
+        PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
+        container.setReduction(PortDamageContainer.PortReduction.ARMOR, container.getNewDamage() - original.call(instance, damageSource, container.getNewDamage()));
+        return container.getNewDamage(); // 即onLivingDamagePre方法替换掉的getDamageAfterMagicAbsorb方法的第二个参数
+    }
+
+    /// ```java
+    /// damageAmount = this.getDamageAfterMagicAbsorb(damageSource, damageAmount);
+    ///```
+    /// ↓
+    /// ```java
+    /// float damage = net.neoforged.neoforge.common.CommonHooks.onLivingDamagePre(this, this.damageContainers.peek());
+    /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION, Math.min(this.getAbsorptionAmount(), damage));
+    /// float absorbed = Math.min(damage, this.damageContainers.peek().getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION));
+    /// this.setAbsorptionAmount(Math.max(0, this.getAbsorptionAmount() - absorbed));
+    ///```
+    @ModifyExpressionValue(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
+    private float onLivingDamagePre(float original, @Share("absorbed") LocalFloatRef absorbed) {
+        PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
+        float damage = PortLivingDamageEvent.PortPre.onLivingDamagePre(portlib$self(), container);
+        container.setReduction(PortDamageContainer.PortReduction.ABSORPTION, Math.min(getAbsorptionAmount(), damage));
+        absorbed.set(Math.min(damage, container.getReduction(PortDamageContainer.PortReduction.ABSORPTION)));
+        setAbsorptionAmount(Math.max(0, getAbsorptionAmount() - absorbed.get()));
+        return damage; // 其实已经被ignored
+    }
+
+    /// ```java
+    /// float f1 = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
+    ///```
+    /// ↓
+    /// ```java
+    /// float f1 = this.damageContainers.peek().getNewDamage();
+    ///```
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f1")
+    private float modifyF1(float original) {
+        return IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek().getNewDamage();
+    }
+
+    @WrapWithCondition(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setAbsorptionAmount(F)V"))
+    private boolean deny(Player instance, float absorptionAmount) {
+        return false;
+    }
+
+    /// ```java
+    /// float f = damageAmount - f1;
+    ///```
+    /// ↓
+    /// ```java
+    /// float f = absorbed;
+    ///```
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f")
+    private float modifyF(float original, @Share("absorbed") LocalFloatRef absorbed) {
+        return absorbed.get();
+    }
+
+    @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;onLivingHurt(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)F", remap = false))
+    private void markCouldPost(CallbackInfo ci, @Share("couldPost") LocalBooleanRef couldPost) {
+        couldPost.set(true);
+    }
+
+    @Inject(method = "actuallyHurt", at = @At("RETURN"))
+    private void onLivingDamagePost(CallbackInfo ci, @Share("couldPost") LocalBooleanRef couldPost) {
+        if (couldPost.get()) {
+            PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
+            PortLivingDamageEvent.PortPost.onLivingDamagePost(portlib$self(), container);
+        }
+    }
+
+    // endregion actuallyHurt
+
+    @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;stopSleepInBed(ZZ)V"))
+    private boolean canEntityContinueSleeping(Player instance, boolean wakeImmediately, boolean updateLevelForSleepingPlayers) {
+        return PortCanContinueSleepingEvent.canEntityContinueSleeping(portlib$self(), portlib$self().level().isDay() ? Player.BedSleepingProblem.NOT_POSSIBLE_NOW : null);
+    }
+
+    @ModifyVariable(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getFireAspect(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "flag3")
+    private boolean fireSweepAttack(boolean original, @Local(argsOnly = true) Entity target) {
+        return PortEventHandler.postEventWithReturn(new PortSweepAttackEvent(portlib$self(), target, original)).isSweeping();
     }
 }

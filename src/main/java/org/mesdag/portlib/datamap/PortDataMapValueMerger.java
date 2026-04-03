@@ -8,14 +8,14 @@ import org.mesdag.portlib.wrapper.core.PortRegistry;
 import java.util.*;
 
 @FunctionalInterface
-public interface DataMapValueMerger<R, T> {
+public interface PortDataMapValueMerger<R, T> {
     T merge(PortRegistry<R> registry, Either<TagKey<R>, ResourceKey<R>> first, T firstValue, Either<TagKey<R>, ResourceKey<R>> second, T secondValue);
 
-    static <T, R> DataMapValueMerger<R, T> defaultMerger() {
+    static <T, R> PortDataMapValueMerger<R, T> defaultMerger() {
         return (registry, first, firstValue, second, secondValue) -> secondValue;
     }
 
-    static <T, R> DataMapValueMerger<R, List<T>> listMerger() {
+    static <T, R> PortDataMapValueMerger<R, List<T>> listMerger() {
         return (registry, first, firstValue, second, secondValue) -> {
             final List<T> list = new ArrayList<>(firstValue);
             list.addAll(secondValue);
@@ -23,7 +23,7 @@ public interface DataMapValueMerger<R, T> {
         };
     }
 
-    static <T, R> DataMapValueMerger<R, Set<T>> setMerger() {
+    static <T, R> PortDataMapValueMerger<R, Set<T>> setMerger() {
         return (registry, first, firstValue, second, secondValue) -> {
             final Set<T> set = new HashSet<>(firstValue);
             set.addAll(secondValue);
@@ -31,7 +31,7 @@ public interface DataMapValueMerger<R, T> {
         };
     }
 
-    static <K, V, R> DataMapValueMerger<R, Map<K, V>> mapMerger() {
+    static <K, V, R> PortDataMapValueMerger<R, Map<K, V>> mapMerger() {
         return (registry, first, firstValue, second, secondValue) -> {
             final Map<K, V> map = new HashMap<>(firstValue);
             map.putAll(secondValue);

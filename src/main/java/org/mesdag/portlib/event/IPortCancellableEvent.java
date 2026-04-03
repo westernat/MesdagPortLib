@@ -1,16 +1,16 @@
 package org.mesdag.portlib.event;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 
 public interface IPortCancellableEvent {
-    @MustBeInvokedByOverriders
+    @ApiStatus.NonExtendable
     default void setCanceled(boolean canceled) {
-        ((PortEvent) this).setCanceled(canceled);
+        ((PortEvent<?>) this).setCanceled(canceled);
+        ((PortEvent<?>) this).unwrap().setCanceled(canceled);
     }
 
     @ApiStatus.NonExtendable
     default boolean isCanceled() {
-        return ((PortEvent) this).isCanceled();
+        return ((PortEvent<?>) this).isCanceled();
     }
 }

@@ -15,7 +15,7 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
     PortAttachmentRegistration(String namespace) {
         super(namespace, PortRegistries.Keys.ATTACHMENT_TYPES);
         this.register = DeferredRegister.create(PortRegistries.Keys.ATTACHMENT_TYPES, namespace);
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @ApiStatus.Internal

@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.datamap.DataMapType;
+import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortFriendlyByteBuf;
@@ -42,7 +42,7 @@ public record PortRegistryDataMapSyncPayload<T>(
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) PortFriendlyByteBuf.readRegistryKey(buf);
         final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = IPortFriendlyByteBufExtension.readMap(buf, FriendlyByteBuf::readResourceLocation, (b1, key) -> {
-            final DataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
+            final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             return b1.readMap(bf -> bf.readResourceKey(registryKey), bf -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
         return new PortRegistryDataMapSyncPayload<>(registryKey, attach);
@@ -51,7 +51,7 @@ public record PortRegistryDataMapSyncPayload<T>(
     public void write(PortRegistryFriendlyByteBuf buf) {
         buf.writeResourceKey(registryKey);
         IPortFriendlyByteBufExtension.writeMap(buf, dataMaps, FriendlyByteBuf::writeResourceLocation, (b1, key, attach) -> {
-            final DataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
+            final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             b1.writeMap(attach, FriendlyByteBuf::writeResourceKey, (bf, value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
         });
     }

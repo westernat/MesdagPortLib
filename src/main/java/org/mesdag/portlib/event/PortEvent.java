@@ -6,48 +6,51 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.util.Final;
 
-public class PortEvent extends Event {
+public class PortEvent<E extends Event> extends Event {
+    protected final E e;
+
+    public PortEvent(E e) {
+        this.e = e;
+    }
+
+    E unwrap() {
+        return e;
+    }
+
     @Diff
-    @Final
     @Override
-    public boolean isCancelable() {
+    public final boolean isCancelable() {
         return this instanceof IPortCancellableEvent;
     }
 
     @Diff
-    @Final
     @Override
-    public boolean hasResult() {
+    public final boolean hasResult() {
         return super.hasResult();
     }
 
     @Diff
-    @Final
     @Override
-    public Result getResult() {
+    public final Result getResult() {
         return super.getResult();
     }
 
     @Diff
-    @Final
     @Override
-    public ListenerList getListenerList() {
+    public final ListenerList getListenerList() {
         return super.getListenerList();
     }
 
     @Diff
-    @Final
     @Override
-    public @Nullable EventPriority getPhase() {
+    public final @Nullable EventPriority getPhase() {
         return super.getPhase();
     }
 
     @Diff
-    @Final
     @Override
-    public void setPhase(@NotNull EventPriority value) {
+    public final void setPhase(@NotNull EventPriority value) {
         super.setPhase(value);
     }
 }

@@ -13,7 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.mesdag.portlib.datamap.DataMapType;
+import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortWithConditions;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
@@ -32,7 +32,7 @@ public record DataMapFile<T, R>(
         return new JsonObject();
     }
 
-    public static <T, R> DataMapFile<T, R> read(ResourceKey<Registry<R>> registryKey, JsonObject json, DataMapType<R, T> dataMap) {
+    public static <T, R> DataMapFile<T, R> read(ResourceKey<Registry<R>> registryKey, JsonObject json, PortDataMapType<R, T> dataMap) {
         boolean replace = GsonHelper.getAsBoolean(json, "replace", false);
 
         ImmutableMap.Builder<Either<TagKey<R>, ResourceKey<R>>, Optional<PortWithConditions<DataMapEntry<T>>>> valuesBuilder = ImmutableMap.builder();

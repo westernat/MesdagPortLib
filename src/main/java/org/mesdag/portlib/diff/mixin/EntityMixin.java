@@ -1,13 +1,18 @@
 package org.mesdag.portlib.diff.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
@@ -63,5 +68,10 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
         if (attachments != null) {
             compound.put(ATTACHMENTS_NBT_KEY, attachments);
         }
+    }
+
+    @ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
+    private boolean isEntityInvulnerableTo(boolean original, @Local(argsOnly = true) DamageSource source) {
+        return PortEventHandler.postEventWithReturn(new PortEntityInvulnerabilityCheckEvent(portlib$self(), source, original)).isInvulnerable();
     }
 }

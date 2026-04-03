@@ -5,42 +5,40 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
-import org.jetbrains.annotations.ApiStatus;
+import org.mesdag.portlib.diff.Diff;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@SuppressWarnings("all")
 public class PortEventHandler {
     public static <E extends Event> void addListener(Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(consumer);
+        PortEventHooks.wrapEvent(PortEventPriority.NORMAL, false, getEventClass(consumer), consumer);
     }
 
     public static <E extends Event> void addListener(PortEventPriority priority, Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(priority.unwrap(), consumer);
+        PortEventHooks.wrapEvent(priority, false, getEventClass(consumer), consumer);
     }
 
     public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Consumer<E> consumer) {
-        getBus(consumer).unwrap().addListener(priority.unwrap(), receiveCancelled, consumer);
+        PortEventHooks.wrapEvent(priority, receiveCancelled, getEventClass(consumer), consumer);
     }
 
     public static <E extends Event> void addListener(PortEventPriority priority, boolean receiveCancelled, Class<E> clazz, Consumer<E> consumer) {
-        getBus(clazz).unwrap().addListener(priority.unwrap(), receiveCancelled, clazz, consumer);
+        PortEventHooks.wrapEvent(priority, receiveCancelled, clazz, consumer);
     }
 
-    @ApiStatus.Internal
+    @SuppressWarnings("unchecked")
+    private static <E extends Event> Class<E> getEventClass(Consumer<E> consumer) {
+        Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
+        if (clazz != null && Event.class.isAssignableFrom(clazz)) {
+            return (Class<E>) clazz;
+        }
+        throw new IllegalArgumentException("The consumer's event type could not be inferred. Please use addListener(priority, receiveCancelled, Class<E>, Consumer<E>) instead.");
+    }
+
+    @Diff
     public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
         addListener(PortEventPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
-    }
-
-    private static <E extends Event> PortBus getBus(Consumer<E> consumer) {
-        Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        // addListener时会自动检查
-        return getBus(clazz);
-    }
-
-    private static PortBus getBus(Class<?> clazz) {
-        return IModBusEvent.class.isAssignableFrom(clazz) ? PortBus.MOD : PortBus.GAME;
     }
 
     public static <E extends Event> void postEvent(E event) {

@@ -28,7 +28,7 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
             maker.onBake(owner -> registriesLoaded = true);
             return maker.make();
         });
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     public void addCallback(PortRegistryCallback<T> callback) {

@@ -7,21 +7,21 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.jetbrains.annotations.ApiStatus;
-import org.mesdag.portlib.datamap.DataMapType;
+import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PortRegisterDataMapTypesEvent extends Event implements IModBusEvent {
-    private final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments;
+    private final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> attachments;
 
     @ApiStatus.Internal
-    public PortRegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments) {
+    public PortRegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> attachments) {
         this.attachments = attachments;
     }
 
-    public <T, R> void register(DataMapType<R, T> type) {
+    public <T, R> void register(PortDataMapType<R, T> type) {
         final var registry = type.registryKey();
         if (DataPackRegistriesHooks.getDataPackRegistries().stream().anyMatch(data -> data.key().equals(registry))) {
             if (type.networkCodec() != null && PortDataPackRegistriesHooks.getSyncedRegistry(registry) == null) {

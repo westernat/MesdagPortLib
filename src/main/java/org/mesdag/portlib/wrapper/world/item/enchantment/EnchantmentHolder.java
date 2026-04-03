@@ -11,7 +11,11 @@ public final class EnchantmentHolder implements PortHolder<Enchantment> {
     private final Holder<Enchantment> delegate;
 
     private EnchantmentHolder(Enchantment value) {
-        this.delegate = PortHolder.getDelegate(ForgeRegistries.ENCHANTMENTS, value);
+        this(PortHolder.getDelegate(ForgeRegistries.ENCHANTMENTS, value));
+    }
+
+    private EnchantmentHolder(Holder<Enchantment> value) {
+        this.delegate = value;
     }
 
     @Override
@@ -21,6 +25,10 @@ public final class EnchantmentHolder implements PortHolder<Enchantment> {
 
     @Diff
     public static EnchantmentHolder wrap(Enchantment value) {
+        return new EnchantmentHolder(value);
+    }
+
+    public static EnchantmentHolder wrap(Holder<Enchantment> value) {
         return new EnchantmentHolder(value);
     }
 }

@@ -9,9 +9,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
-import org.mesdag.portlib.datamap.AdvancedDataMapType;
-import org.mesdag.portlib.datamap.DataMapType;
-import org.mesdag.portlib.datamap.DataMapValueRemover;
+import org.mesdag.portlib.datamap.PortAdvancedDataMapType;
+import org.mesdag.portlib.datamap.PortDataMapType;
+import org.mesdag.portlib.datamap.PortDataMapValueRemover;
 import org.mesdag.portlib.diff.Diff;
 
 import java.util.Optional;
@@ -33,16 +33,16 @@ public record DataMapEntry<T>(T value, boolean replace) {
 
     public record Removal<T, R>(
             Either<TagKey<R>, ResourceKey<R>> key,
-            Optional<DataMapValueRemover<R, T>> remover
+            Optional<PortDataMapValueRemover<R, T>> remover
     ) {
-        public JsonElement write(DataMapType<R, T> dataMap) {
+        public JsonElement write(PortDataMapType<R, T> dataMap) {
             return new JsonObject();
         }
 
-        public static <T, R> Removal<T, R> read(ResourceKey<Registry<R>> registryKey, JsonObject json, DataMapType<R, T> dataMap) {
+        public static <T, R> Removal<T, R> read(ResourceKey<Registry<R>> registryKey, JsonObject json, PortDataMapType<R, T> dataMap) {
             Either<TagKey<R>, ResourceKey<R>> removalKey = DataMapFile.readTagOrValue(registryKey, GsonHelper.getAsString(json, "key"));
-            if (dataMap instanceof AdvancedDataMapType<R, T, ?> advanced) {
-                DataMapValueRemover<R, T> remover = ((Codec<DataMapValueRemover<R, T>>) advanced.remover()).parse(JsonOps.INSTANCE, json.get("remover")).result().orElse(null);
+            if (dataMap instanceof PortAdvancedDataMapType<R, T, ?> advanced) {
+                PortDataMapValueRemover<R, T> remover = ((Codec<PortDataMapValueRemover<R, T>>) advanced.remover()).parse(JsonOps.INSTANCE, json.get("remover")).result().orElse(null);
                 return new Removal<>(removalKey, Optional.ofNullable(remover));
             }
             return new Removal<>(removalKey, Optional.empty());

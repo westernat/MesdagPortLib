@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("all")
 public class PortItemEnchantments {
+    public static final PortItemEnchantments EMPTY = new PortItemEnchantments(new ListTag(), true);
     private final ListTag listTag;
     public final boolean showInTooltip;
     private Map<Enchantment, Integer> enchants;

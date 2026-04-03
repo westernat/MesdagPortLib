@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -11,9 +12,13 @@ import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
@@ -30,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements IPortItemStack {
+public abstract class ItemStackMixin implements IPortItemStack, IPortItemStackExtension {
     @Shadow
     public abstract CompoundTag getOrCreateTag();
 
@@ -126,6 +131,24 @@ public abstract class ItemStackMixin implements IPortItemStack {
     private void load(CompoundTag compoundTag, CallbackInfo ci) {
         if (compoundTag.contains(DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
             portlib$patch.deserializeNBT(new PortRegistryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
+        }
+    }
+
+    @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
+    private void itemAfterBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+        PortUseItemOnBlockEvent event = new PortUseItemOnBlockEvent(context, PortUseItemOnBlockEvent.PortUsePhase.ITEM_AFTER_BLOCK);
+        PortEventHandler.postEvent(event);
+        if (event.isCanceled()) {
+            cir.setReturnValue(event.getCancellationResult().result());
+        }
+    }
+
+    @Inject(method = "onItemUseFirst", at = @At("HEAD"), cancellable = true, remap = false)
+    private void itemBeforeUseBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+        PortUseItemOnBlockEvent event = new PortUseItemOnBlockEvent(context, PortUseItemOnBlockEvent.PortUsePhase.ITEM_BEFORE_BLOCK);
+        PortEventHandler.postEvent(event);
+        if (event.isCanceled()) {
+            cir.setReturnValue(event.getCancellationResult().result());
         }
     }
 }

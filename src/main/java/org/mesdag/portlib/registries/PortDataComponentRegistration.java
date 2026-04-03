@@ -16,7 +16,7 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
     PortDataComponentRegistration(String namespace) {
         super(namespace, PortRegistries.Keys.DATA_COMPONENTS);
         this.register = DeferredRegister.create(PortRegistries.Keys.DATA_COMPONENTS, namespace);
-        register.register(PortBus.MOD.unwrap());
+        register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @ApiStatus.Internal

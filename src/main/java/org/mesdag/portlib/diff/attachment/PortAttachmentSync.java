@@ -185,10 +185,10 @@ public final class PortAttachmentSync {
         return new PortSyncAttachmentsPayload(syncTarget(holder), syncedTypes, data);
     }
 
-    public static void syncInitialEntityAttachments(Entity entity, ServerPlayer to, Consumer<Packet<? super ClientGamePacketListener>> packetConsumer) {
+    public static void syncInitialEntityAttachments(Entity entity, ServerPlayer to, Consumer<Packet<ClientGamePacketListener>> packetConsumer) {
         var packet = syncInitialAttachments(CPortAttachmentHolder.of(entity), to);
         if (packet != null) {
-            PortLib.NETWORK_HANDLER.sendToPlayer(to, packet);
+            packetConsumer.accept(PortLib.NETWORK_HANDLER.toVanillaClientbound(packet));
         }
     }
 
