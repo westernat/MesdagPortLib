@@ -8,12 +8,16 @@
         "BlockBehaviourMixin",
         "BlockBehaviourMixin$BlockStateBaseMixin",
         "BlockEntityMixin",
+        "BlockEntityTypeAccessor",
+        "BlockMixin",
+        "BlockSnapshotAccessor",
         "ChunkAccessMixin",
         "ChunkMapMixin",
         "ChunkSerializerMixin",
         "DataPackRegistriesHooksAccessor",
         "EnchantmentMenuMixin",
         "EntityMixin",
+        "ExplosionMixin",
         "FoodPropertiesMixin",
         "InventoryMixin",
         "ItemEntityMixin",
@@ -34,6 +38,7 @@
         "ServerLevelMixin",
         "ServerPlayerMixin",
         "SlimeMixin",
+        "StatsCounterMixin",
         "WitchMixin",
         "WitherBossMixin"
     ],
@@ -44,6 +49,7 @@
         "requireAnnotations": true
     },
     "client": [
+        "ClientLevelMixin",
         "ClientPacketListenerMixin",
         "GuiMixin",
         "GuiMixin$HeartTypeMixin"

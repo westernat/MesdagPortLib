@@ -25,11 +25,14 @@ public interface PortDataComponentMap {
 
     Set<PortDataComponentType<?>> keySet();
 
+    static PortBuilder builder() {
+        return new PortBuilder();
+    }
+
     class PortBuilder {
         private final Map<PortDataComponentType<?>, Optional<?>> map = new IdentityHashMap<>();
 
-        @Diff
-        public PortBuilder() {}
+        PortBuilder() {}
 
         public <T> PortBuilder set(PortDataComponentType<T> component, T value) {
             map.put(component, Optional.of(value));

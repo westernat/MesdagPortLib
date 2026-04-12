@@ -5,15 +5,38 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.level.ChunkWatchEvent;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEvent;
+import org.mesdag.portlib.event.PortEventHooks;
 
-public abstract class PortChunkWatchEvent extends ChunkWatchEvent {
-    public PortChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel level) {
-        super(player, pos, level);
+public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends PortEvent<E> {
+    public PortChunkWatchEvent(E e) {
+        super(e);
     }
 
-    public static class Watch extends ChunkWatchEvent.Watch {
-        public Watch(Watch event) {
-            super(event.getPlayer(), event.getChunk(), event.getLevel());
+    public ServerPlayer getPlayer() {
+        return e.getPlayer();
+    }
+
+    public ChunkPos getPos() {
+        return e.getPos();
+    }
+
+    public ServerLevel getLevel() {
+        return e.getLevel();
+    }
+
+    public static class PortWatch extends PortChunkWatchEvent<ChunkWatchEvent.Watch> {
+        public PortWatch(ChunkWatchEvent.Watch e) {
+            super(e);
+        }
+
+        public LevelChunk getChunk() {
+            return e.getChunk();
+        }
+
+        static {
+            PortEventHooks.register(ChunkWatchEvent.Watch.class, PortWatch.class, PortWatch::new);
         }
     }
 
@@ -30,9 +53,14 @@ public abstract class PortChunkWatchEvent extends ChunkWatchEvent {
         }
     }
 
-    public static class UnWatch extends ChunkWatchEvent.UnWatch {
-        public UnWatch(UnWatch event) {
-            super(event.getPlayer(), event.getPos(), event.getLevel());
+    public static class PortUnWatch extends PortChunkWatchEvent<ChunkWatchEvent.UnWatch> {
+        @Diff
+        public PortUnWatch(ChunkWatchEvent.UnWatch e) {
+            super(e);
+        }
+
+        static {
+            PortEventHooks.register(ChunkWatchEvent.UnWatch.class, PortUnWatch.class, PortUnWatch::new);
         }
     }
 }

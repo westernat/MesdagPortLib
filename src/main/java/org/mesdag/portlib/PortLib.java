@@ -18,6 +18,7 @@ import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortAttachmentRegistration;
 import org.mesdag.portlib.registries.PortDataComponentRegistration;
@@ -48,7 +49,7 @@ public class PortLib {
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForgeChunkManager
             PortDataMapLoader.initDataMaps();
-//            modifyComponents
+            PortModifyDefaultComponentsEvent.modifyComponents();
 //            extendPoiTypes
         });
         if (PortEnvironment.isDeveloper()) {

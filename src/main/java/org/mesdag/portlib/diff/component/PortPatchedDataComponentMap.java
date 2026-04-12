@@ -1,6 +1,7 @@
 package org.mesdag.portlib.diff.component;
 
 import com.mojang.serialization.Codec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -16,7 +17,6 @@ import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,10 +26,11 @@ import java.util.function.Supplier;
 @SuppressWarnings("unchecked")
 public class PortPatchedDataComponentMap {
     private final PortDataComponentMap prototype;
-    private final Map<PortDataComponentType<?>, Optional<?>> patch = new IdentityHashMap<>();
+    private final Map<PortDataComponentType<?>, Optional<?>> patch;
 
     public PortPatchedDataComponentMap(@Nullable Item item) {
         this.prototype = item == null ? PortDataComponentMap.EMPTY : IPortItem.of(item);
+        this.patch = new Reference2ObjectArrayMap<>();
     }
 
     public <T> @Nullable T get(PortDataComponentType<T> type) {

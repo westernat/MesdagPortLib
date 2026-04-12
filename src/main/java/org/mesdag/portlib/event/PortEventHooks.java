@@ -4,11 +4,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
+import org.mesdag.portlib.event.other.PortBlockEntityTypeAddBlocksEvent;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 
 import java.util.Map;
@@ -22,6 +24,7 @@ public class PortEventHooks {
 
     public static void init() {
         PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
+        PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
     }
 
     @Diff

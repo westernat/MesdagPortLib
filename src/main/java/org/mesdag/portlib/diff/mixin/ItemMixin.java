@@ -30,6 +30,16 @@ public abstract class ItemMixin implements IPortItem {
     private @Nullable Map<PortDataComponentType<?>, Optional<?>> portlib$prototype;
 
     @Override
+    public Map<PortDataComponentType<?>, Optional<?>> portlib$getComponents() {
+        return portlib$prototype;
+    }
+
+    @Override
+    public void portlib$setComponents(Map<PortDataComponentType<?>, Optional<?>> map) {
+        this.portlib$prototype = map;
+    }
+
+    @Override
     public <T> T get(PortDataComponentType<T> type) {
         if (portlib$prototype == null) return null;
         return (T) portlib$prototype.get(type);
@@ -45,7 +55,7 @@ public abstract class ItemMixin implements IPortItem {
     private void setup(Item.Properties properties, CallbackInfo ci) {
         Consumer<PortBuilder> consumer = IPortProperties.of(properties).portlib$get();
         if (consumer != null) {
-            PortBuilder builder = new PortDataComponentMap.PortBuilder();
+            PortBuilder builder = PortDataComponentMap.builder();
             consumer.accept(builder);
             this.portlib$prototype = builder.getMap();
         }

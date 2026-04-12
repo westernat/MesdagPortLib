@@ -1,6 +1,8 @@
 package org.mesdag.portlib.diff.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -13,6 +15,7 @@ import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
+import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
@@ -73,5 +76,13 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
     @ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
     private boolean isEntityInvulnerableTo(boolean original, @Local(argsOnly = true) DamageSource source) {
         return PortEventHandler.postEventWithReturn(new PortEntityInvulnerabilityCheckEvent(portlib$self(), source, original)).isInvulnerable();
+    }
+
+    @WrapOperation(method = "rideTick",at= @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+    private void fireEntityTick(Entity instance, Operation<Void> original) {
+        if (!PortEventHandler.postEventWithReturn(new PortEntityTickEvent.PortPre(instance)).isCanceled()) {
+            original.call(instance);
+            PortEventHandler.postEvent(new PortEntityTickEvent.PortPost(instance));
+        }
     }
 }
