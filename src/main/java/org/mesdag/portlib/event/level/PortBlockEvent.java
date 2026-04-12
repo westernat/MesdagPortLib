@@ -9,15 +9,15 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
-import net.neoforged.bus.api.ICancellableEvent;
-import net.neoforged.neoforge.common.ItemAbility;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.util.PortLists;
+import org.mesdag.portlib.wrapper.common.PortItemAbility;
+import org.mesdag.portlib.wrapper.common.util.PortBlockSnapshot;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -55,9 +55,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortEntityPlaceEvent extends PortBlockEvent<BlockEvent.EntityPlaceEvent> implements IPortCancellableEvent {
+    public static class PortEntityPlaceEvent<E extends BlockEvent.EntityPlaceEvent> extends PortBlockEvent<E> implements IPortCancellableEvent {
         @Diff
-        public PortEntityPlaceEvent(BlockEvent.EntityPlaceEvent e) {
+        public PortEntityPlaceEvent(E e) {
             super(e);
         }
 
@@ -66,8 +66,8 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
             return e.getEntity();
         }
 
-        public BlockSnapshot getBlockSnapshot() {
-            return e.getBlockSnapshot();
+        public PortBlockSnapshot getBlockSnapshot() {
+            return PortBlockSnapshot.wrap(e.getBlockSnapshot());
         }
 
         public BlockState getPlacedBlock() {
@@ -83,17 +83,15 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortEntityMultiPlaceEvent extends PortEntityPlaceEvent implements IPortCancellableEvent {
-        private final List<BlockSnapshot> blockSnapshots;
-
+    public static class PortEntityMultiPlaceEvent extends PortEntityPlaceEvent<BlockEvent.EntityMultiPlaceEvent> implements IPortCancellableEvent {
         @Diff
         public PortEntityMultiPlaceEvent(BlockEvent.EntityMultiPlaceEvent e) {
             super(e);
-            this.blockSnapshots = e.getReplacedBlockSnapshots();
         }
 
-        public List<BlockSnapshot> getReplacedBlockSnapshots() {
-            return blockSnapshots;
+        @Diff
+        public List<PortBlockSnapshot> getReplacedBlockSnapshots() {
+            return PortLists.immutableTransform(e.getReplacedBlockSnapshots(), PortBlockSnapshot::wrap);
         }
 
         static {
@@ -181,7 +179,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortBlockToolModificationEvent extends PortBlockEvent<BlockEvent.BlockToolModificationEvent> implements ICancellableEvent {
+    public static class PortBlockToolModificationEvent extends PortBlockEvent<BlockEvent.BlockToolModificationEvent> implements IPortCancellableEvent {
         @Diff
         public PortBlockToolModificationEvent(BlockEvent.BlockToolModificationEvent e) {
             super(e);
@@ -195,8 +193,8 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
             return e.getHeldItemStack();
         }
 
-        public ItemAbility getItemAbility() {
-            return e.getItemAbility();
+        public PortItemAbility getItemAbility() {
+            return PortItemAbility.wrap(e.getItemAbility());
         }
 
         public boolean isSimulated() {

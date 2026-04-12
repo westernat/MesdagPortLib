@@ -1,6 +1,5 @@
 package org.mesdag.portlib.event.other;
 
-import it.unimi.dsi.fastutil.objects.ObjectSortedSet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
@@ -37,13 +36,13 @@ public final class PortBuildCreativeModeTabContentsEvent extends PortEvent<Build
         return e.hasPermissions();
     }
 
-    public ObjectSortedSet<ItemStack> getParentEntries() {
-        return e.getParentEntries();
-    }
-
-    public ObjectSortedSet<ItemStack> getSearchEntries() {
-        return e.getSearchEntries();
-    }
+//    public Iterable<ItemStack> getParentEntries() {
+//        return e.getParentEntries();
+//    }
+//
+//    public Iterable<ItemStack> getSearchEntries() {
+//        return e.getSearchEntries();
+//    }
 
     @Override
     public void accept(ItemStack newEntry, CreativeModeTab.TabVisibility visibility) {

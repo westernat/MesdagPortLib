@@ -1,6 +1,5 @@
 package org.mesdag.portlib.event.other;
 
-import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -10,6 +9,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.world.level.gameevent.GameEventHolder;
 
 import javax.annotation.Nullable;
 
@@ -28,8 +28,8 @@ public class PortVanillaGameEvent extends PortEvent<VanillaGameEvent> implements
         return e.getCause();
     }
 
-    public Holder<GameEvent> getVanillaEvent() {
-        return e.getVanillaEvent();
+    public GameEventHolder getVanillaEvent() {
+        return GameEventHolder.wrap(e.getVanillaEvent());
     }
 
     public Vec3 getEventPosition() {

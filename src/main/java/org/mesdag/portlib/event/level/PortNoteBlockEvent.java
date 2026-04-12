@@ -1,9 +1,9 @@
 package org.mesdag.portlib.event.level;
 
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.level.NoteBlockEvent;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortBlockEvent<E> {
@@ -28,7 +28,7 @@ public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortB
         e.setNote(note.unwrap(), octave.unwrap());
     }
 
-    public static class PortPlay extends PortNoteBlockEvent<NoteBlockEvent.Play> implements ICancellableEvent {
+    public static class PortPlay extends PortNoteBlockEvent<NoteBlockEvent.Play> implements IPortCancellableEvent {
         @Diff
         public PortPlay(NoteBlockEvent.Play e) {
             super(e);
@@ -47,7 +47,7 @@ public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortB
         }
     }
 
-    public static class Change extends PortNoteBlockEvent<NoteBlockEvent.Change> implements ICancellableEvent {
+    public static class Change extends PortNoteBlockEvent<NoteBlockEvent.Change> implements IPortCancellableEvent {
         @Diff
         public Change(NoteBlockEvent.Change e) {
             super(e);

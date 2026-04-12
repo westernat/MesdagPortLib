@@ -1,7 +1,6 @@
 package org.mesdag.portlib.event.other;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
@@ -25,9 +24,9 @@ public class PortLootTableLoadEvent extends PortEvent<LootTableLoadEvent> implem
         return e.getName();
     }
 
-    public ResourceKey<LootTable> getKey() {
-        return e.getKey();
-    }
+//    public ResourceKey<LootTable> getKey() {
+//        return e.getKey();
+//    }
 
     public LootTable getTable() {
         return e.getTable();

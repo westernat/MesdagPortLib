@@ -3,7 +3,7 @@ package org.mesdag.portlib.event.other;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
-import org.mesdag.portlib.component.PortDataComponentPatch$Builder;
+import org.mesdag.portlib.component.PortDataComponentPatch;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
@@ -19,12 +19,12 @@ public class PortModifyDefaultComponentsEvent extends PortEvent<ModifyDefaultCom
         super(e);
     }
 
-    public void modify(ItemLike item, Consumer<PortDataComponentPatch$Builder> patch) {
-        e.modify(item, builder -> patch.accept(PortDataComponentPatch$Builder.wrap(builder)));
+    public void modify(ItemLike item, Consumer<PortDataComponentPatch.PortBuilder> patch) {
+        e.modify(item, builder -> patch.accept(PortDataComponentPatch.PortBuilder.wrap(builder)));
     }
 
-    public void modifyMatching(Predicate<? super Item> predicate, Consumer<PortDataComponentPatch$Builder> patch) {
-        e.modifyMatching(predicate, builder -> patch.accept(PortDataComponentPatch$Builder.wrap(builder)));
+    public void modifyMatching(Predicate<? super Item> predicate, Consumer<PortDataComponentPatch.PortBuilder> patch) {
+        e.modifyMatching(predicate, builder -> patch.accept(PortDataComponentPatch.PortBuilder.wrap(builder)));
     }
 
     public Stream<Item> getAllItems() {

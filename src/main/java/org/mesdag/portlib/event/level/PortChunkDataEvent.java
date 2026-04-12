@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.level;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.chunk.status.ChunkType;
 import net.neoforged.neoforge.event.level.ChunkDataEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.world.level.chunk.status.PortChunkType;
 
 public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortChunkEvent<E> {
     @Diff
@@ -22,8 +22,8 @@ public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortC
             super(e);
         }
 
-        public ChunkType getType() {
-            return e.getType();
+        public PortChunkType getType() {
+            return PortChunkType.wrap(e.getType());
         }
 
         static {

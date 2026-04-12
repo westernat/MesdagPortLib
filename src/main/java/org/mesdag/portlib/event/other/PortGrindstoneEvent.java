@@ -1,10 +1,7 @@
 package org.mesdag.portlib.event.other;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.GrindstoneEvent;
-import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
@@ -73,13 +70,13 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
             e.setNewBottomItem(newBottom);
         }
 
-        public ContainerLevelAccess getContainerAccess() {
-            return e.getContainerAccess();
-        }
-
-        public @Nullable Player getPlayer() {
-            return e.getPlayer();
-        }
+//        public ContainerLevelAccess getContainerAccess() {
+//            return e.getContainerAccess();
+//        }
+//
+//        public @Nullable Player getPlayer() {
+//            return e.getPlayer();
+//        }
 
         static {
             PortEventHooks.register(GrindstoneEvent.OnTakeItem.class, PortOnTakeItem.class, PortOnTakeItem::new);
