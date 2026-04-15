@@ -11,7 +11,6 @@ import org.mesdag.portlib.event.PortEventPriority;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("all")
 public class PortRegisterHandler {
     public static <T> PortRegistration<T> create(String namespace, ResourceKey<? extends Registry<T>> registryKey) {
         return new PortRegistration<>(namespace, registryKey);
@@ -33,7 +32,20 @@ public class PortRegisterHandler {
         return new PortArmorMaterialRegistration(namespace);
     }
 
+    public static PortAttributeRegistration attribute(String namespace) {
+        return new PortAttributeRegistration(namespace);
+    }
+
+    public static PortIngredientTypeRegistration ingredientType(String namespace) {
+        return new PortIngredientTypeRegistration(namespace);
+    }
+
+    public static PortParticleTypeRegistration particleType(String namespace) {
+        return new PortParticleTypeRegistration(namespace);
+    }
+
     @Diff
+    @SuppressWarnings("unchecked")
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
@@ -41,9 +53,10 @@ public class PortRegisterHandler {
             if (entries == null) return;
             for (PortRegistryEntry<?> entry : entries) {
                 event.register(
-                    (ResourceKey<R>) registryKey,
-                    entry.identifier,
-                    (Supplier<T>) entry.valueSupplier);
+                        (ResourceKey<R>) registryKey,
+                        entry.identifier,
+                        (Supplier<T>) entry.valueSupplier
+                );
                 entry.valueSupplier = null;
             }
         });

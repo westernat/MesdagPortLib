@@ -3,6 +3,8 @@ package org.mesdag.portlib.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {
@@ -21,5 +23,10 @@ public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {
 
     public PortRegistryAccess registryAccess() {
         return registryAccess;
+    }
+
+    @Diff
+    public static PortRegistryFriendlyByteBuf wrap(FriendlyByteBuf buffer) {
+        return new PortRegistryFriendlyByteBuf(buffer, PortEnvironment.registryAccess(), PortConnectionType.MODDED);
     }
 }

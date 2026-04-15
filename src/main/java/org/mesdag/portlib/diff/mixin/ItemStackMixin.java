@@ -6,6 +6,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.PortEventHandler;
@@ -23,19 +26,25 @@ import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Map;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements IPortItemStack, IPortItemStackExtension {
+    private static final Logger log = LoggerFactory.getLogger(ItemStackMixin.class);
+
     @Shadow
     public abstract CompoundTag getOrCreateTag();
 
@@ -151,4 +160,18 @@ public abstract class ItemStackMixin implements IPortItemStack, IPortItemStackEx
             cir.setReturnValue(event.getCancellationResult().result());
         }
     }
+
+    // region AttributeModifier
+
+    @ModifyArg(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 8))
+    private <E> E modifyPositive(E e, @Local(name = "entry") Map.Entry<Attribute, AttributeModifier> entry, @Local(argsOnly = true) TooltipFlag tooltipFlag) {
+        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag, true);
+    }
+
+    @ModifyArg(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 9))
+    private <E> E modifyNegative(E e, @Local(name = "entry") Map.Entry<Attribute, AttributeModifier> entry, @Local(argsOnly = true) TooltipFlag tooltipFlag) {
+        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag, false);
+    }
+
+    // endregion AttributeModifier
 }

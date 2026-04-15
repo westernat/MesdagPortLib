@@ -37,7 +37,7 @@ public interface PortStreamCodec<B, V> {
         };
     }
 
-    static <B, V> PortStreamCodec<B, V> ofMember(final PortStreamMemberEncoder<B, V> encoder, final PortStreamDecoder<B, V> decoder) {
+    static <B, V> PortStreamCodec<B, V> ofMember(PortStreamMemberEncoder<B, V> encoder, PortStreamDecoder<B, V> decoder) {
         return new PortStreamCodec<>() {
             @Override
             public V decode(B buffer) {
@@ -51,7 +51,7 @@ public interface PortStreamCodec<B, V> {
         };
     }
 
-    static <B, C, T1> PortStreamCodec<B, C> composite(final PortStreamCodec<? super B, T1> codec, final Function<C, T1> getter, final Function<T1, C> factory) {
+    static <B, C, T1> PortStreamCodec<B, C> composite(PortStreamCodec<? super B, T1> codec, Function<C, T1> getter, Function<T1, C> factory) {
         return new PortStreamCodec<>() {
             @Override
             public C decode(B buffer) {
@@ -67,11 +67,11 @@ public interface PortStreamCodec<B, V> {
     }
 
     static <B, C, T1, T2> PortStreamCodec<B, C> composite(
-            final PortStreamCodec<? super B, T1> codec1,
-            final Function<C, T1> getter1,
-            final PortStreamCodec<? super B, T2> codec2,
-            final Function<C, T2> getter2,
-            final BiFunction<T1, T2, C> factory
+            PortStreamCodec<? super B, T1> codec1,
+            Function<C, T1> getter1,
+            PortStreamCodec<? super B, T2> codec2,
+            Function<C, T2> getter2,
+            BiFunction<T1, T2, C> factory
     ) {
         return new PortStreamCodec<>() {
             @Override
@@ -90,13 +90,13 @@ public interface PortStreamCodec<B, V> {
     }
 
     static <B, C, T1, T2, T3> PortStreamCodec<B, C> composite(
-            final PortStreamCodec<? super B, T1> codec1,
-            final Function<C, T1> getter1,
-            final PortStreamCodec<? super B, T2> codec2,
-            final Function<C, T2> getter2,
-            final PortStreamCodec<? super B, T3> codec3,
-            final Function<C, T3> getter3,
-            final Function3<T1, T2, T3, C> factory
+            PortStreamCodec<? super B, T1> codec1,
+            Function<C, T1> getter1,
+            PortStreamCodec<? super B, T2> codec2,
+            Function<C, T2> getter2,
+            PortStreamCodec<? super B, T3> codec3,
+            Function<C, T3> getter3,
+            Function3<T1, T2, T3, C> factory
     ) {
         return new PortStreamCodec<>() {
             @Override
@@ -117,15 +117,15 @@ public interface PortStreamCodec<B, V> {
     }
 
     static <B, C, T1, T2, T3, T4> PortStreamCodec<B, C> composite(
-            final PortStreamCodec<? super B, T1> codec1,
-            final Function<C, T1> getter1,
-            final PortStreamCodec<? super B, T2> codec2,
-            final Function<C, T2> getter2,
-            final PortStreamCodec<? super B, T3> codec3,
-            final Function<C, T3> getter3,
-            final PortStreamCodec<? super B, T4> codec4,
-            final Function<C, T4> getter4,
-            final Function4<T1, T2, T3, T4, C> factory
+            PortStreamCodec<? super B, T1> codec1,
+            Function<C, T1> getter1,
+            PortStreamCodec<? super B, T2> codec2,
+            Function<C, T2> getter2,
+            PortStreamCodec<? super B, T3> codec3,
+            Function<C, T3> getter3,
+            PortStreamCodec<? super B, T4> codec4,
+            Function<C, T4> getter4,
+            Function4<T1, T2, T3, T4, C> factory
     ) {
         return new PortStreamCodec<>() {
             @Override
@@ -148,17 +148,17 @@ public interface PortStreamCodec<B, V> {
     }
 
     static <B, C, T1, T2, T3, T4, T5> PortStreamCodec<B, C> composite(
-            final PortStreamCodec<? super B, T1> codec1,
-            final Function<C, T1> getter1,
-            final PortStreamCodec<? super B, T2> codec2,
-            final Function<C, T2> getter2,
-            final PortStreamCodec<? super B, T3> codec3,
-            final Function<C, T3> getter3,
-            final PortStreamCodec<? super B, T4> codec4,
-            final Function<C, T4> getter4,
-            final PortStreamCodec<? super B, T5> codec5,
-            final Function<C, T5> getter5,
-            final Function5<T1, T2, T3, T4, T5, C> factory
+            PortStreamCodec<? super B, T1> codec1,
+            Function<C, T1> getter1,
+            PortStreamCodec<? super B, T2> codec2,
+            Function<C, T2> getter2,
+            PortStreamCodec<? super B, T3> codec3,
+            Function<C, T3> getter3,
+            PortStreamCodec<? super B, T4> codec4,
+            Function<C, T4> getter4,
+            PortStreamCodec<? super B, T5> codec5,
+            Function<C, T5> getter5,
+            Function5<T1, T2, T3, T4, T5, C> factory
     ) {
         return new PortStreamCodec<>() {
             @Override
@@ -183,19 +183,19 @@ public interface PortStreamCodec<B, V> {
     }
 
     static <B, C, T1, T2, T3, T4, T5, T6> PortStreamCodec<B, C> composite(
-            final PortStreamCodec<? super B, T1> codec1,
-            final Function<C, T1> getter1,
-            final PortStreamCodec<? super B, T2> codec2,
-            final Function<C, T2> getter2,
-            final PortStreamCodec<? super B, T3> codec3,
-            final Function<C, T3> getter3,
-            final PortStreamCodec<? super B, T4> codec4,
-            final Function<C, T4> getter4,
-            final PortStreamCodec<? super B, T5> codec5,
-            final Function<C, T5> getter5,
-            final PortStreamCodec<? super B, T6> codec6,
-            final Function<C, T6> getter6,
-            final Function6<T1, T2, T3, T4, T5, T6, C> factory
+            PortStreamCodec<? super B, T1> codec1,
+            Function<C, T1> getter1,
+            PortStreamCodec<? super B, T2> codec2,
+            Function<C, T2> getter2,
+            PortStreamCodec<? super B, T3> codec3,
+            Function<C, T3> getter3,
+            PortStreamCodec<? super B, T4> codec4,
+            Function<C, T4> getter4,
+            PortStreamCodec<? super B, T5> codec5,
+            Function<C, T5> getter5,
+            PortStreamCodec<? super B, T6> codec6,
+            Function<C, T6> getter6,
+            Function6<T1, T2, T3, T4, T5, T6, C> factory
     ) {
         return new PortStreamCodec<>() {
             @Override

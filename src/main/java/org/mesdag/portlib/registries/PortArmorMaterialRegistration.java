@@ -2,7 +2,6 @@ package org.mesdag.portlib.registries;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.wrapper.world.item.PortArmorMaterial;
 
@@ -13,9 +12,8 @@ public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMat
         super(namespace, PortRegistries.Keys.ARMOR_MATERIALS);
     }
 
-    @ApiStatus.Internal
     @Override
-    public PortRegistryEntry<PortArmorMaterial> register(String name, Supplier<PortArmorMaterial> valueSupplier) {
+    public <R extends PortArmorMaterial> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
         return new PortRegistryEntry.Memoized<>(namespace, name, Suppliers.memoize(valueSupplier));
     }
 

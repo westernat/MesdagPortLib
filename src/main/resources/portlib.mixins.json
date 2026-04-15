@@ -5,6 +5,7 @@
     "mixins": [
         "AbstractArrowAccessor",
         "AbstractArrowMixin",
+        "AttributeMixin",
         "BlockBehaviourMixin",
         "BlockBehaviourMixin$BlockStateBaseMixin",
         "BlockEntityMixin",

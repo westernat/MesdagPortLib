@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
@@ -42,30 +41,30 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
 
     @Override
     public void handle(Context context) {
-        record MandatoryEntry(ResourceKey<? extends Registry<?>> registry, ResourceLocation id) {}
-        final Set<MandatoryEntry> ourMandatory = new HashSet<>();
+        record MandatoryEntry(ResourceKey<? extends Registry<?>> registry, PortIdentifier id) {}
+        Set<MandatoryEntry> ourMandatory = new HashSet<>();
         PortDataMapLoader.getDataMaps().forEach((reg, values) -> values.values().forEach(attach -> {
             if (attach.mandatorySync()) {
                 ourMandatory.add(new MandatoryEntry(reg, attach.id()));
             }
         }));
 
-        final Set<MandatoryEntry> theirMandatory = new HashSet<>();
+        Set<MandatoryEntry> theirMandatory = new HashSet<>();
         dataMaps.forEach((reg, values) -> values.forEach(attach -> {
             if (attach.mandatory()) {
                 theirMandatory.add(new MandatoryEntry(reg, attach.id()));
             }
         }));
 
-        final List<Component> messages = new ArrayList<>();
-        final var missingOur = Sets.difference(ourMandatory, theirMandatory);
+        List<Component> messages = new ArrayList<>();
+        var missingOur = Sets.difference(ourMandatory, theirMandatory);
         if (!missingOur.isEmpty()) {
             messages.add(Component.translatable("portlib.network.data_maps.missing_our", Component.literal(missingOur.stream()
                     .map(e -> e.id() + " (" + e.registry().location() + ")")
                     .collect(Collectors.joining(", "))).withStyle(ChatFormatting.GOLD)));
         }
 
-        final var missingTheir = Sets.difference(theirMandatory, ourMandatory);
+        var missingTheir = Sets.difference(theirMandatory, ourMandatory);
         if (!missingTheir.isEmpty()) {
             messages.add(Component.translatable("portlib.network.data_maps.missing_their", Component.literal(missingTheir.stream()
                     .map(e -> e.id() + " (" + e.registry().location() + ")")
@@ -86,7 +85,7 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
             return;
         }
 
-        final var known = new HashMap<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>>();
+        var known = new HashMap<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>>();
         PortDataMapLoader.getDataMaps().forEach((key, vals) -> known.put(key, vals.keySet()));
         context.reply(new PortKnownRegistryDataMapsReplyPayload(known));
     }
@@ -99,10 +98,11 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
         return IDENTIFIER;
     }
 
-    public record KnownDataMap(ResourceLocation id, boolean mandatory) {
+    public record KnownDataMap(PortIdentifier id, boolean mandatory) {
         public static final PortStreamCodec<FriendlyByteBuf, KnownDataMap> STREAM_CODEC = PortStreamCodec.composite(
-                PortByteBufCodecs.RESOURCE_LOCATION, KnownDataMap::id,
+                PortByteBufCodecs.IDENTIFIER, KnownDataMap::id,
                 PortByteBufCodecs.BOOL, KnownDataMap::mandatory,
-                KnownDataMap::new);
+                KnownDataMap::new
+        );
     }
 }

@@ -5,7 +5,6 @@ import io.netty.util.AttributeKey;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
@@ -26,21 +25,21 @@ public class PortKnownRegistryDataMapsReplyPayload extends PortLoginPacket imple
             PortByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize,
                     PortByteBufCodecs.registryKey(),
-                    PortByteBufCodecs.RESOURCE_LOCATION.apply(PortByteBufCodecs.collection(ArrayList::new))
+                    PortByteBufCodecs.IDENTIFIER.apply(PortByteBufCodecs.collection(ArrayList::new))
             ), PortKnownRegistryDataMapsReplyPayload::dataMaps,
             PortKnownRegistryDataMapsReplyPayload::new
     );
-    private final Map<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>> dataMaps;
+    private final Map<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>> dataMaps;
 
-    public PortKnownRegistryDataMapsReplyPayload(Map<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>> dataMaps) {
+    public PortKnownRegistryDataMapsReplyPayload(Map<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>> dataMaps) {
         this.dataMaps = dataMaps;
     }
 
-    public Map<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>> dataMaps() {
+    public Map<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>> dataMaps() {
         return dataMaps;
     }
 
-    public static final AttributeKey<Map<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>>> ATTRIBUTE_KNOWN_DATA_MAPS = AttributeKey.valueOf("portlib:known_data_maps");
+    public static final AttributeKey<Map<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>>> ATTRIBUTE_KNOWN_DATA_MAPS = AttributeKey.valueOf("portlib:known_data_maps");
 
     @Override
     public void handle(Context context) {

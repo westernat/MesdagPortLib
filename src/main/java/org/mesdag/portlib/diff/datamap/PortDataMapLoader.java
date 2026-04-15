@@ -33,6 +33,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.registries.datamaps.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.core.PortRegistry;
+import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.io.Reader;
 import java.util.*;
@@ -44,7 +45,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PortDataMapLoader implements PreparableReloadListener {
     static PortDataMapLoader INSTANCE;
-    private static Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> dataMaps = Map.of();
+    private static Map<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> dataMaps = Map.of();
 
     private final ICondition.IContext conditionContext;
     private final RegistryAccess registryAccess;
@@ -74,7 +75,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
             }
         });
         PortEventHandler.addListener((OnDatapackSyncEvent event) -> {
-            for (Map.Entry<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> entry : getDataMaps().entrySet()) {
+            for (Map.Entry<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> entry : getDataMaps().entrySet()) {
                 IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(entry.getKey().location());
                 ServerPlayer player = event.getPlayer();
                 if (player == null) {
@@ -92,11 +93,11 @@ public class PortDataMapLoader implements PreparableReloadListener {
         if (player.connection.connection.isMemoryConnection() && PortDataPackRegistriesHooks.getSyncedRegistry((ResourceKey) registryKey) == null) {
             return;
         }
-        Map<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>> map = player.connection.connection.channel().attr(PortKnownRegistryDataMapsReplyPayload.ATTRIBUTE_KNOWN_DATA_MAPS).get();
+        Map<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>> map = player.connection.connection.channel().attr(PortKnownRegistryDataMapsReplyPayload.ATTRIBUTE_KNOWN_DATA_MAPS).get();
         if (map == null) return;
-        Collection<ResourceLocation> attachments = map.getOrDefault(registryKey, List.of());
+        Collection<PortIdentifier> attachments = map.getOrDefault(registryKey, List.of());
         if (attachments.isEmpty()) return;
-        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> att = new HashMap<>();
+        final Map<PortIdentifier, Map<ResourceKey<T>, ?>> att = new HashMap<>();
         attachments.forEach(key -> {
             final var attach = getDataMap(registryKey, key);
             if (attach == null || attach.networkCodec() == null) return;
@@ -196,15 +197,15 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     private static Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> load(ResourceManager manager, ProfilerFiller profiler, RegistryAccess access, ICondition.IContext context) {
-        final Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> values = new HashMap<>();
+        Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> values = new HashMap<>();
         access.registries().forEach(registryEntry -> {
-            final var registryKey = registryEntry.key();
+            var registryKey = registryEntry.key();
             profiler.push("registry_data_maps/" + registryKey.location() + "/locating");
-            final var fileToId = FileToIdConverter.json("data_maps/" + getFolderLocation(registryKey.location()));
+            ResourceLocation location = registryKey.location();
+            var fileToId = FileToIdConverter.json("data_maps/" + getFolderLocation(PortIdentifier.fromNamespaceAndPath(location.getNamespace(), location.getPath())));
             for (Map.Entry<ResourceLocation, List<Resource>> entry : fileToId.listMatchingResourceStacks(manager).entrySet()) {
-                ResourceLocation key = entry.getKey();
-                final ResourceLocation attachmentId = fileToId.fileToId(key);
-                final var attachment = getDataMap((ResourceKey) registryKey, attachmentId);
+                ResourceLocation attachmentId = fileToId.fileToId(entry.getKey());
+                var attachment = getDataMap((ResourceKey) registryKey, PortIdentifier.fromNamespaceAndPath(attachmentId.getNamespace(), attachmentId.getPath()));
                 if (attachment == null) {
                     PortLib.LOGGER.warn("Found data map file for non-existent data map type '{}' on registry '{}'.", attachmentId, registryKey.location());
                     continue;
@@ -219,8 +220,8 @@ public class PortDataMapLoader implements PreparableReloadListener {
         return values;
     }
 
-    public static String getFolderLocation(ResourceLocation registryId) {
-        return (registryId.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) ? "" : registryId.getNamespace() + "/") + registryId.getPath();
+    public static String getFolderLocation(PortIdentifier registryId) {
+        return (registryId.getNamespace().equals(PortIdentifier.DEFAULT_NAMESPACE) ? "" : registryId.getNamespace() + "/") + registryId.getPath();
     }
 
     private static <A, T> List<DataMapFile<A, T>> readData(PortDataMapType<T, A> attachmentType, ResourceKey<Registry<T>> registryKey, List<Resource> resources) {
@@ -261,17 +262,17 @@ public class PortDataMapLoader implements PreparableReloadListener {
         return (Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>>) (Map) byRegistries.computeIfAbsent(registry, r -> new IdentityHashMap<>());
     }
 
-    public static <R> @Nullable PortDataMapType<R, ?> getDataMap(ResourceKey<? extends Registry<R>> registry, ResourceLocation key) {
-        final var map = dataMaps.get(registry);
+    public static <R> @Nullable PortDataMapType<R, ?> getDataMap(ResourceKey<? extends Registry<R>> registry, PortIdentifier key) {
+        var map = dataMaps.get(registry);
         return map == null ? null : (PortDataMapType<R, ?>) map.get(key);
     }
 
-    public static Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> getDataMaps() {
+    public static Map<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> getDataMaps() {
         return dataMaps;
     }
 
     public static void initDataMaps() {
-        final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> dataMapTypes = new HashMap<>();
+        Map<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> dataMapTypes = new HashMap<>();
         PortEventHandler.postEvent(new PortRegisterDataMapTypesEvent(dataMapTypes));
         dataMaps = new IdentityHashMap<>();
         dataMapTypes.forEach((key, values) -> dataMaps.put(key, Collections.unmodifiableMap(values)));

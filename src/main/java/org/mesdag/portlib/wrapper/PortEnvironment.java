@@ -1,12 +1,12 @@
 package org.mesdag.portlib.wrapper;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-@SuppressWarnings("all")
 public class PortEnvironment {
     public static boolean isPhysicalClient() {
         return FMLEnvironment.dist.isClient();
@@ -22,9 +22,14 @@ public class PortEnvironment {
 
     public static RegistryAccess registryAccess() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server == null && isPhysicalClient()) {
-            return Minecraft.getInstance().getConnection().registryAccess();
+        if (server == null) {
+            if (isPhysicalClient()) {
+                ClientPacketListener connection = Minecraft.getInstance().getConnection();
+                if (connection != null) {
+                    return connection.registryAccess();
+                }
+            }
         }
-        return server.registryAccess();
+        return server == null ? RegistryAccess.EMPTY : server.registryAccess();
     }
 }

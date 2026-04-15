@@ -14,10 +14,10 @@ import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+@SuppressWarnings("UnstableApiUsage")
 public class PortCustomRegistration<T> extends PortRegistration<T> {
     final PortRegistryMaker<T> maker;
     final java.util.function.Supplier<IForgeRegistry<T>> registry;
-    private boolean registriesLoaded = false;
 
     PortCustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
         super(namespace, registryKey);
@@ -25,7 +25,6 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
         this.maker = new PortRegistryMaker<>();
         this.registry = register.makeRegistry(() -> {
             consumer.accept(maker);
-            maker.onBake(owner -> registriesLoaded = true);
             return maker.make();
         });
         register.register(PortBus.MOD.unwrap(namespace));
@@ -36,14 +35,11 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
     }
 
     public void register(ResourceLocation key, T value) {
-        if (registriesLoaded) {
-            return;
-        }
-        if (registry.get() instanceof ForgeRegistry<T> registry) {
-            boolean locked = registry.isLocked();
-            if (locked) registry.unfreeze();
-            registry.register(key, value);
-            if (locked) registry.freeze();
+        if (registry.get() instanceof ForgeRegistry<T> registry1) {
+            boolean locked = registry1.isLocked();
+            if (locked) registry1.unfreeze();
+            registry1.register(key, value);
+            if (locked) registry1.freeze();
         }
     }
 

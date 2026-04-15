@@ -21,14 +21,14 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
 
     @ApiStatus.Internal
     @Override
-    public PortRegistryEntry<PortDataComponentType<?>> register(String name, Supplier<PortDataComponentType<?>> valueSupplier) {
-        Supplier<PortDataComponentType<?>> memoize = Suppliers.memoize(valueSupplier);
+    public <R extends PortDataComponentType<?>> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
+        Supplier<R> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, memoize);
         return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
 
-    public <T> PortRegistryEntry<PortDataComponentType<T>> registerTyped(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
-        return (PortRegistryEntry<PortDataComponentType<T>>) (PortRegistryEntry<?>) register(name, () -> {
+    public <T> PortRegistryEntry<PortDataComponentType<T>> register(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
+        return register(name, () -> {
             PortDataComponentType.PortBuilder<T> builder = new PortDataComponentType.PortBuilder<>();
             consumer.accept(builder);
             return builder.build();
