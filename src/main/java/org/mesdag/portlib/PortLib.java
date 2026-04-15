@@ -35,10 +35,10 @@ public class PortLib {
         PortEventHooks.init();
         if (PortEnvironment.isDeveloper()) {
             PortAttachmentRegistration attachment = PortRegisterHandler.attachment(PortLib.MODID);
-            Supplier<PortAttachmentType<TestAttachment>> testAttachment = attachment.registerTyped("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
+            Supplier<PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
 
             PortDataComponentRegistration dataComponent = PortRegisterHandler.dataComponent(MODID);
-            Supplier<PortDataComponentType<TestComponent>> testDataComponent = dataComponent.registerTyped("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
+            Supplier<PortDataComponentType<TestComponent>> testDataComponent = dataComponent.register("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
 
             PortEventHandler.addListener((PortPlayerInteractEvent.PortEntityInteract event) -> {
                 ItemStack stack = event.getItemStack();

@@ -8,15 +8,10 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
 
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-@SuppressWarnings("all")
 public class PortRegisterHandler {
-    static final Map<ResourceKey<? extends Registry<?>>, List<PortRegistryEntry<?>>> registrations = new IdentityHashMap<>();
-
     public static <T, R extends Registry<T>> PortRegistration<T> create(String namespace, ResourceKey<R> registryKey) {
         return new PortRegistration<>(namespace, registryKey);
     }
@@ -37,11 +32,24 @@ public class PortRegisterHandler {
         return new PortArmorMaterialRegistration(namespace);
     }
 
+    public static PortAttributeRegistration attribute(String namespace) {
+        return new PortAttributeRegistration(namespace);
+    }
+
+    public static PortIngredientTypeRegistration ingredientType(String namespace) {
+        return new PortIngredientTypeRegistration(namespace);
+    }
+
+    public static PortParticleTypeRegistration particleType(String namespace) {
+        return new PortParticleTypeRegistration(namespace);
+    }
+
     @Diff
+    @SuppressWarnings("unchecked")
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            List<PortRegistryEntry<?>> entries = registrations.get(registryKey);
+            List<PortRegistryEntry<?>> entries = PortRegistration.registrations.get(registryKey);
             if (entries == null) return;
             for (PortRegistryEntry<?> entry : entries) {
                 event.register(

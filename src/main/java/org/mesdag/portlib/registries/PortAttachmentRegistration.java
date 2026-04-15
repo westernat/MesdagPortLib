@@ -10,7 +10,6 @@ import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.event.PortBus;
 
-@SuppressWarnings("unchecked")
 public class PortAttachmentRegistration extends PortRegistration<PortAttachmentType<?>> {
     private final DeferredRegister<AttachmentType<?>> register;
 
@@ -22,13 +21,13 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
 
     @ApiStatus.Internal
     @Override
-    public PortRegistryEntry<PortAttachmentType<?>> register(String name, Supplier<PortAttachmentType<?>> valueSupplier) {
-        Supplier<PortAttachmentType<?>> memoize = Suppliers.memoize(valueSupplier);
+    public <R extends PortAttachmentType<?>> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
+        Supplier<R> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, () -> memoize.get().unwrap());
         return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
 
-    public <T> PortRegistryEntry<PortAttachmentType<T>> registerTyped(String name, Supplier<PortAttachmentType.PortBuilder<T>> valueSupplier) {
-        return (PortRegistryEntry<PortAttachmentType<T>>) (PortRegistryEntry<?>) register(name, () -> valueSupplier.get().build());
+    public <T> PortRegistryEntry<PortAttachmentType<T>> registerSimple(String name, Supplier<PortAttachmentType.PortBuilder<T>> valueSupplier) {
+        return register(name, () -> valueSupplier.get().build());
     }
 }

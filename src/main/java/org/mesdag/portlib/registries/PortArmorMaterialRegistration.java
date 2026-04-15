@@ -5,7 +5,6 @@ import com.google.common.base.Suppliers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ArmorMaterial;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.event.PortBus;
 import org.mesdag.portlib.wrapper.world.item.PortArmorMaterial;
@@ -21,10 +20,9 @@ public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMat
         register.register(PortBus.MOD.unwrap(namespace));
     }
 
-    @ApiStatus.Internal
     @Override
-    public PortRegistryEntry<PortArmorMaterial> register(String name, Supplier<PortArmorMaterial> valueSupplier) {
-        Supplier<PortArmorMaterial> memoize = Suppliers.memoize(valueSupplier);
+    public <R extends PortArmorMaterial> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
+        Supplier<R> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, () -> memoize.get().unwrap());
         return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
     }
