@@ -1,6 +1,7 @@
 package org.mesdag.portlib;
 
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.Mod;
 import org.mesdag.portlib.attachment.PortAttachmentHolder;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("all")
 @Mod(PortLib.MODID)
 public class PortLib {
     public static final String MODID = "portlib";
@@ -51,6 +51,11 @@ public class PortLib {
                     }
                     event.setCancellationResult(InteractionResult.SUCCESS);
                 }
+            });
+
+            PortEventHandler.addListener((PortPlayerInteractEvent.PortRightClickEmpty event) -> {
+                Item item = event.getItemStack().getItem();
+                item.helloWorld(event.getEntity());
             });
         }
     }
