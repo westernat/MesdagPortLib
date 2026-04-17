@@ -3,6 +3,7 @@ package org.mesdag.portlib.attachment;
 import com.google.common.base.Predicates;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,7 +13,6 @@ import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.Objects;
 import java.util.function.BiPredicate;
@@ -70,7 +70,7 @@ public class PortAttachmentType<T> {
     public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return builder(defaultValueConstructor).serialize(new IPortAttachmentSerializer<S, T>() {
             @Override
-            public T read(IPortAttachmentHolder holder, S tag, PortRegistryAccess provider) {
+            public T read(IPortAttachmentHolder holder, S tag, HolderLookup.Provider provider) {
                 var ret = defaultValueConstructor.apply(holder);
                 ret.deserializeNBT(provider, tag);
                 return ret;
@@ -78,7 +78,7 @@ public class PortAttachmentType<T> {
 
             @Nullable
             @Override
-            public S write(T attachment, PortRegistryAccess provider) {
+            public S write(T attachment, HolderLookup.Provider provider) {
                 return attachment.serializeNBT(provider);
             }
         });
@@ -113,16 +113,16 @@ public class PortAttachmentType<T> {
 
         public PortBuilder<T> serialize(Codec<T> codec, Predicate<? super T> shouldSerialize) {
             Objects.requireNonNull(codec);
-            return serialize(new IPortAttachmentSerializer<Tag, T>() {
+            return serialize(new IPortAttachmentSerializer<>() {
                 @Override
-                public T read(IPortAttachmentHolder holder, Tag tag, PortRegistryAccess provider) {
+                public T read(IPortAttachmentHolder holder, Tag tag, HolderLookup.Provider provider) {
                     DataResult<T> parsingResult = codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag);
                     return parsingResult.getOrThrow(false, msg -> buildException("read", msg));
                 }
 
                 @Nullable
                 @Override
-                public Tag write(T attachment, PortRegistryAccess provider) {
+                public Tag write(T attachment, HolderLookup.Provider provider) {
                     if (!shouldSerialize.test(attachment)) {
                         return null;
                     }

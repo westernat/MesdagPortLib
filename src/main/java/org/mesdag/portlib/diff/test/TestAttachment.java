@@ -1,6 +1,7 @@
 package org.mesdag.portlib.diff.test;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -10,7 +11,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.IPortNBTSerializable;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 @Diff
 public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
@@ -39,7 +39,7 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
     }
 
     @Override
-    public CompoundTag serializeNBT(PortRegistryAccess provider) {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("z", z);
         nbt.putByte("b", b);
@@ -55,7 +55,7 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(PortRegistryAccess provider, CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         this.z = nbt.getBoolean("z");
         this.b = nbt.getByte("b");
         this.s = nbt.getShort("s");

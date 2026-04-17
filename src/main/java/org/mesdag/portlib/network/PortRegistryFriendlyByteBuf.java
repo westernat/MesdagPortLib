@@ -5,15 +5,14 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.PortEnvironment;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {
-    private final PortRegistryAccess registryAccess;
+    private final RegistryAccess registryAccess;
     private final PortConnectionType connectionType;
 
     public PortRegistryFriendlyByteBuf(ByteBuf source, RegistryAccess registryAccess, PortConnectionType connectionType) {
         super(source);
-        this.registryAccess = new PortRegistryAccess(registryAccess);
+        this.registryAccess = registryAccess;
         this.connectionType = connectionType;
     }
 
@@ -21,7 +20,7 @@ public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {
         return connectionType;
     }
 
-    public PortRegistryAccess registryAccess() {
+    public RegistryAccess registryAccess() {
         return registryAccess;
     }
 

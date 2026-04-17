@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.attachment;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -9,13 +10,12 @@ import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.function.Predicate;
 
 @Diff
 public final class PortAttachmentInternals {
-    private static <H extends CPortAttachmentHolder> void copyAttachments(PortRegistryAccess provider, H from, H to, Predicate<PortAttachmentType<?>> filter) {
+    private static <H extends CPortAttachmentHolder> void copyAttachments(HolderLookup.Provider provider, H from, H to, Predicate<PortAttachmentType<?>> filter) {
         if (from.portlib$attachments() == null) {
             return;
         }
@@ -35,12 +35,12 @@ public final class PortAttachmentInternals {
         }
     }
 
-    public static void copyChunkAttachmentsOnPromotion(PortRegistryAccess provider, CPortAttachmentHolder from, CPortAttachmentHolder to) {
+    public static void copyChunkAttachmentsOnPromotion(HolderLookup.Provider provider, CPortAttachmentHolder from, CPortAttachmentHolder to) {
         copyAttachments(provider, from, to, type -> true);
     }
 
     public static void copyEntityAttachments(Entity from, Entity to, boolean isDeath) {
-        copyAttachments(new PortRegistryAccess(from.level().registryAccess()), CPortAttachmentHolder.of(from), CPortAttachmentHolder.of(to), isDeath ? type -> type.copyOnDeath : type -> true);
+        copyAttachments(from.level().registryAccess(), CPortAttachmentHolder.of(from), CPortAttachmentHolder.of(to), isDeath ? type -> type.copyOnDeath : type -> true);
     }
 
     public static void init() {

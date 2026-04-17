@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.Objects;
 
@@ -28,12 +27,12 @@ public class PortLevelAttachmentsSavedData extends SavedData {
 
     public PortLevelAttachmentsSavedData(ServerLevel level, CompoundTag tag) {
         this.level = level;
-        CPortAttachmentHolder.of(level).deserializeAttachments(new PortRegistryAccess(level.registryAccess()), tag);
+        CPortAttachmentHolder.of(level).deserializeAttachments(level.registryAccess(), tag);
     }
 
     @Override
     public CompoundTag save(CompoundTag tag) {
-        return Objects.requireNonNullElseGet(CPortAttachmentHolder.of(level).serializeAttachments(new PortRegistryAccess(level.registryAccess())), CompoundTag::new);
+        return Objects.requireNonNullElseGet(CPortAttachmentHolder.of(level).serializeAttachments(level.registryAccess()), CompoundTag::new);
     }
 
     @Override

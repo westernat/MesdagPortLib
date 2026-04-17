@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.attachment;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +20,6 @@ import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.util.Private;
 import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.PortEnvironment;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.IdentityHashMap;
@@ -120,7 +120,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
     }
 
     @Final
-    default @Nullable CompoundTag serializeAttachments(PortRegistryAccess provider) {
+    default @Nullable CompoundTag serializeAttachments(HolderLookup.Provider provider) {
         if (portlib$attachments() == null) {
             return null;
         }
@@ -147,7 +147,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
 
     @Protected(onlyInClass = true)
     @Final
-    default void deserializeAttachments(PortRegistryAccess provider, CompoundTag tag) {
+    default void deserializeAttachments(HolderLookup.Provider provider, CompoundTag tag) {
         for (var key : tag.getAllKeys()) {
             PortIdentifier keyLocation = PortIdentifier.tryParse(key);
             if (keyLocation == null) {

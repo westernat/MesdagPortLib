@@ -11,7 +11,6 @@ import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,14 +21,14 @@ public abstract class ChunkSerializerMixin {
     @Inject(method = "read", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/ChunkAccess;setLightCorrect(Z)V"))
     private static void readAttachments(ServerLevel level, PoiManager poiManager, ChunkPos pos, CompoundTag tag, CallbackInfoReturnable<ProtoChunk> cir, @Local(name = "chunkaccess") ChunkAccess chunk) {
         if (tag.contains(CPortAttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
-            CPortAttachmentHolder.of(chunk).deserializeAttachments(new PortRegistryAccess(level.registryAccess()), tag.getCompound(CPortAttachmentHolder.ATTACHMENTS_NBT_KEY));
+            CPortAttachmentHolder.of(chunk).deserializeAttachments(level.registryAccess(), tag.getCompound(CPortAttachmentHolder.ATTACHMENTS_NBT_KEY));
         }
     }
 
     @Inject(method = "write", at = @At("RETURN"))
     private static void writeAttachments(ServerLevel level, ChunkAccess chunk, CallbackInfoReturnable<CompoundTag> cir, @Local(name = "compoundtag") CompoundTag tag) {
         try {
-            final CompoundTag capTag = CPortAttachmentHolder.of(chunk).serializeAttachments(new PortRegistryAccess(level.registryAccess()));
+            final CompoundTag capTag = CPortAttachmentHolder.of(chunk).serializeAttachments(level.registryAccess());
             if (capTag != null) {
                 tag.put(CPortAttachmentHolder.ATTACHMENTS_NBT_KEY, capTag);
             }

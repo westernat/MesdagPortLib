@@ -21,7 +21,7 @@ import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
 import org.spongepowered.asm.mixin.Final;
@@ -127,13 +127,13 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Inject(method = "save", at = @At("HEAD"))
     private void save(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
         if (portlib$patch.isEmpty()) return;
-        compoundTag.put(DATA_COMPONENTS, portlib$patch.serializeNBT(new PortRegistryAccess()));
+        compoundTag.put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
     }
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
     private void load(CompoundTag compoundTag, CallbackInfo ci) {
         if (compoundTag.contains(DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
-            portlib$patch.deserializeNBT(new PortRegistryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
+            portlib$patch.deserializeNBT(PortEnvironment.registryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
         }
     }
 

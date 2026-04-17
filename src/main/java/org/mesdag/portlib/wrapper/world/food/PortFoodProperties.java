@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.food;
 
-import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -12,11 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
-@SuppressWarnings("all")
 public class PortFoodProperties {
     @Diff
     public static final String KEY = "portlib:food";
@@ -72,18 +68,6 @@ public class PortFoodProperties {
         }
         data.put("effects", listTag);
         return data;
-    }
-
-    public float eatSeconds(FoodProperties food) {
-        return IPortFoodProperties.of(food).portlib$getEatSeconds();
-    }
-
-    public Optional<ItemStack> usingConvertsTo(FoodProperties food) {
-        return Optional.ofNullable(IPortFoodProperties.of(food).portlib$getUsingConvertsTo());
-    }
-
-    public List<PortPossibleEffect> effects(FoodProperties food) {
-        return Lists.transform(IPortFoodProperties.of(food).portlib$getEffects(), pair -> new PortPossibleEffect(pair.getFirst(), pair.getSecond()));
     }
 
     public record PortPossibleEffect(Supplier<MobEffectInstance> effectSupplier, float probability) {

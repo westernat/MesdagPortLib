@@ -1,11 +1,11 @@
 package org.mesdag.portlib.attachment;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public interface IPortAttachmentSerializer<S extends Tag, T> {
-    T read(IPortAttachmentHolder holder, S tag, PortRegistryAccess provider);
+    T read(IPortAttachmentHolder holder, S tag, HolderLookup.Provider provider);
 
-    @Nullable S write(T attachment, PortRegistryAccess provider);
+    @Nullable S write(T attachment, HolderLookup.Provider provider);
 }

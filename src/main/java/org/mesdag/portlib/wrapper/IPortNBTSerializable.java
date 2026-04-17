@@ -1,21 +1,21 @@
 package org.mesdag.portlib.wrapper;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public interface IPortNBTSerializable<T extends Tag> extends INBTSerializable<T> {
-    T serializeNBT(PortRegistryAccess provider);
+    T serializeNBT(HolderLookup.Provider provider);
 
-    void deserializeNBT(PortRegistryAccess provider, T nbt);
+    void deserializeNBT(HolderLookup.Provider provider, T nbt);
 
     @Override
     default T serializeNBT() {
-        return serializeNBT(new PortRegistryAccess());
+        return serializeNBT(PortEnvironment.registryAccess());
     }
 
     @Override
     default void deserializeNBT(T nbt) {
-        deserializeNBT(new PortRegistryAccess(), nbt);
+        deserializeNBT(PortEnvironment.registryAccess(), nbt);
     }
 }

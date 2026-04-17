@@ -1,27 +1,28 @@
-package org.mesdag.portlib.wrapper.world.item.crafting;
+package PortLib.extensions.net.minecraft.world.item.crafting.Ingredient;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.*;
+import manifold.ext.rt.api.Extension;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.serialization.PortCodec;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class PortIngredient {
-    public static final Codec<Ingredient> CODEC = makeIngredientCodec(true);
-    public static final Codec<Ingredient> CODEC_NONEMPTY = makeIngredientCodec(false);
-    public static final MapCodec<Ingredient> MAP_CODEC_NONEMPTY = makeIngredientMapCodec();
-    public static final Codec<List<Ingredient>> LIST_CODEC = MAP_CODEC_NONEMPTY.codec().listOf();
-    public static final Codec<List<Ingredient>> LIST_CODEC_NONEMPTY = PortCodec.validate(LIST_CODEC, list -> list.isEmpty() ? DataResult.error(() -> "Item array cannot be empty, at least one item must be defined") : DataResult.success(list));
+@Extension
+public class PortIngredientExtension {
+    private static final Codec<Ingredient> CODEC = makeIngredientCodec(true);
+    private static final Codec<Ingredient> CODEC_NONEMPTY = makeIngredientCodec(false);
+    private static final MapCodec<Ingredient> MAP_CODEC_NONEMPTY = makeIngredientMapCodec();
+    private static final Codec<List<Ingredient>> LIST_CODEC = MAP_CODEC_NONEMPTY.codec().listOf();
+    private static final Codec<List<Ingredient>> LIST_CODEC_NONEMPTY = LIST_CODEC.validate(list -> list.isEmpty() ? DataResult.error(() -> "Item array cannot be empty, at least one item must be defined") : DataResult.success(list));
 
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = new PortStreamCodec<>() {
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(PortRegistryFriendlyByteBuf buf, Ingredient ingredient) {
             ingredient.toNetwork(buf);
@@ -33,8 +34,38 @@ public class PortIngredient {
         }
     };
 
+    @Extension
+    public static Codec<Ingredient> codec() {
+        return CODEC;
+    }
+
+    @Extension
+    public static Codec<Ingredient> codecNonempty() {
+        return CODEC_NONEMPTY;
+    }
+
+    @Extension
+    public static MapCodec<Ingredient> mapCodecNonempty() {
+        return MAP_CODEC_NONEMPTY;
+    }
+
+    @Extension
+    public static Codec<List<Ingredient>> listCodec() {
+        return LIST_CODEC;
+    }
+
+    @Extension
+    public static Codec<List<Ingredient>> listCodecNonempty() {
+        return LIST_CODEC_NONEMPTY;
+    }
+
+    @Extension
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, Ingredient> contentsStreamCodec() {
+        return CONTENTS_STREAM_CODEC;
+    }
+
     private static Codec<Ingredient> makeIngredientCodec(boolean allowEmpty) {
-        var listCodec = PortCodec.lazyInitialized(() -> allowEmpty ? LIST_CODEC : LIST_CODEC_NONEMPTY);
+        var listCodec = Codec.lazyInitialized(() -> allowEmpty ? LIST_CODEC : LIST_CODEC_NONEMPTY);
         return Codec.either(listCodec, makeIngredientMapCodec().codec()).xmap(
                 either -> either.map(list -> CompoundIngredient.of(list.toArray(Ingredient[]::new)), Function.identity()),
                 ingredient -> {

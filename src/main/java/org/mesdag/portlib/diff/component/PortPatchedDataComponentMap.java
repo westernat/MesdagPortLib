@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff.component;
 
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -14,7 +15,6 @@ import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.PortRegistries;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Map;
@@ -91,7 +91,7 @@ public class PortPatchedDataComponentMap {
         return has(type.get());
     }
 
-    public CompoundTag serializeNBT(PortRegistryAccess provider) {
+    public CompoundTag serializeNBT(RegistryAccess provider) {
         CompoundTag tag = new CompoundTag();
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         for (Map.Entry<PortDataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
@@ -107,7 +107,7 @@ public class PortPatchedDataComponentMap {
         return tag;
     }
 
-    public void deserializeNBT(PortRegistryAccess provider, CompoundTag tag) {
+    public void deserializeNBT(RegistryAccess provider, CompoundTag tag) {
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         for (var key : tag.getAllKeys()) {
             PortIdentifier keyLocation = PortIdentifier.tryParse(key);

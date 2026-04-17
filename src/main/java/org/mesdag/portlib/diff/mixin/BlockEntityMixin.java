@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
@@ -9,8 +10,8 @@ import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.util.Final;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -62,9 +63,9 @@ public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSel
 
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     private void saveAttachments(CompoundTag tag, CallbackInfo ci) {
-        PortRegistryAccess registryAccess = level == null
-                ? new PortRegistryAccess()
-                : new PortRegistryAccess(level.registryAccess());
+        RegistryAccess registryAccess = level == null
+                ? PortEnvironment.registryAccess()
+                : level.registryAccess();
         var attachmentsTag = serializeAttachments(registryAccess);
         if (attachmentsTag != null) {
             tag.put(ATTACHMENTS_NBT_KEY, attachmentsTag);
@@ -73,9 +74,9 @@ public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSel
 
     @Inject(method = "load", at = @At("TAIL"))
     private void loadAttachments(CompoundTag tag, CallbackInfo ci) {
-        PortRegistryAccess registryAccess = level == null
-                ? new PortRegistryAccess()
-                : new PortRegistryAccess(level.registryAccess());
+        RegistryAccess registryAccess = level == null
+                ? PortEnvironment.registryAccess()
+                : level.registryAccess();
         if (tag.contains(ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
             deserializeAttachments(registryAccess, tag.getCompound(ATTACHMENTS_NBT_KEY));
         }

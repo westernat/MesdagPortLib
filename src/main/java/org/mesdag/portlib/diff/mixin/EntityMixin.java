@@ -18,7 +18,6 @@ import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -61,13 +60,13 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
     @Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
     private void loadAttachments(CompoundTag compound, CallbackInfo ci) {
         if (compound.contains(ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
-            deserializeAttachments(new PortRegistryAccess(level.registryAccess()), compound.getCompound(ATTACHMENTS_NBT_KEY));
+            deserializeAttachments(level.registryAccess(), compound.getCompound(ATTACHMENTS_NBT_KEY));
         }
     }
 
     @Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
     private void saveAttachments(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-        CompoundTag attachments = serializeAttachments(new PortRegistryAccess(level.registryAccess()));
+        CompoundTag attachments = serializeAttachments(level.registryAccess());
         if (attachments != null) {
             compound.put(ATTACHMENTS_NBT_KEY, attachments);
         }
