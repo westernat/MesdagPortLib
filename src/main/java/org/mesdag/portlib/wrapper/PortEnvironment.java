@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class PortEnvironment {
@@ -44,5 +45,10 @@ public class PortEnvironment {
             }
         }
         return server == null ? RegistryAccess.EMPTY : server.registryAccess();
+    }
+
+    /// 可于游戏加载早期阶段判断
+    public static boolean isModLoaded(String modid) {
+        return LoadingModList.get().getModFileById(modid) != null;
     }
 }
