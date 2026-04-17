@@ -9,7 +9,6 @@ import manifold.ext.rt.api.This;
 import net.minecraft.Util;
 import org.joml.Vector4f;
 import org.mesdag.portlib.diff.MemoizeCodec;
-import org.mesdag.portlib.wrapper.datafixers.util.PortEither;
 
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +50,7 @@ public class PortCodecExtension {
 
     @Extension
     public static <T> Codec<T> withAlternative(Codec<T> primary, Codec<? extends T> alternative) {
-        return Codec.either(primary, alternative).xmap(PortEither::unwrap, Either::left);
+        return Codec.either(primary, alternative).xmap(Either::unwrap, Either::left);
     }
 
     @Extension
