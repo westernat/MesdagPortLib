@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.Objects;
@@ -41,5 +42,10 @@ public class PortEnvironment {
             return Minecraft.getInstance().getConnection().registryAccess();
         }
         return Objects.requireNonNull(server, "No Server Found").registryAccess();
+    }
+
+    /// 可于游戏加载早期阶段判断
+    public static boolean isModLoaded(String modid) {
+        return LoadingModList.get().getModFileById(modid) != null;
     }
 }
