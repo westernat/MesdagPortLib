@@ -27,7 +27,6 @@ import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
-import org.mesdag.portlib.wrapper.server.level.PortChunkMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +131,7 @@ public final class PortAttachmentSync {
         if (type.syncHandler == null || !(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        var players = PortChunkMap.getPlayersWatching(serverLevel.getChunkSource().chunkMap, entity);
+        var players = serverLevel.getChunkSource().chunkMap.getPlayersWatching(entity);
         if (entity instanceof ServerPlayer serverPlayer) {
             // Players do not track themselves
             var newPlayers = new ArrayList<ServerPlayer>(players.size() + 1);
