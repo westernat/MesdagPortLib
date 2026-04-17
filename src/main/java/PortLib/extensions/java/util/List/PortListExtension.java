@@ -14,4 +14,11 @@ public class PortListExtension {
         }
         return thiz.get(0);
     }
+
+    public static <E> E getLast(@This List<E> thiz) {
+        if (thiz.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return thiz.get(thiz.size() - 1);
+    }
 }

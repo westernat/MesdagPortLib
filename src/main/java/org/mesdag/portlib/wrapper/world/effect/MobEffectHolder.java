@@ -6,7 +6,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 
-@SuppressWarnings("all")
 public class MobEffectHolder implements PortHolder<MobEffect> {
     private final Holder<MobEffect> delegate;
 
