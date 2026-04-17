@@ -150,7 +150,8 @@ jar {
     }
 
     manifest.attributes([
-            "MixinConfigs": "${mod_id}.mixins.json"
+            "MixinConfigs": "${mod_id}.mixins.json",
+            'Contains-Sources': 'java,class'
     ])
 }
 
