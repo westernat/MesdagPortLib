@@ -11,6 +11,9 @@ import java.util.function.Consumer;
 
 @Extension
 public class PortItemExtension {
+    public static void helloWorld(@This Item thiz, Player player) {
+        player.sendSystemMessage(Component.literal("hello world!"));
+    }
 
     public static class Properties {
         public static Item.Properties component(@This Item.Properties properties, Consumer<PortDataComponentMap.PortBuilder> consumer) {
@@ -18,9 +21,5 @@ public class PortItemExtension {
             consumer.accept(builder);
             return properties;
         }
-    }
-
-    public static void helloWorld(@This Item thiz, Player player) {
-        player.sendSystemMessage(Component.literal("hello world!"));
     }
 }

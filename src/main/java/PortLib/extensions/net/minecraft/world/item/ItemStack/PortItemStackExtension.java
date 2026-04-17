@@ -24,12 +24,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
 import org.mesdag.portlib.wrapper.world.item.component.*;
 import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Extension
 public class PortItemStackExtension {
@@ -415,4 +417,48 @@ public class PortItemStackExtension {
     public static PortItemEnchantments getAllPortEnchantments(@This ItemStack thiz, HolderLookup.RegistryLookup<Enchantment> lookup) {
         return PortItemEnchantments.wrap(thiz.getAllEnchantments(lookup));
     }
+
+    // region DataComponentHolder
+
+    public static <T> @Nullable T getData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return thiz.get(type.unwrap());
+    }
+
+    public static <T> @Nullable T getData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return thiz.get(type.get().unwrap());
+    }
+
+    public static <T> @Nullable T setData(@This ItemStack thiz, PortDataComponentType<T> type, T value) {
+        return thiz.set(type.unwrap(), value);
+    }
+
+    public static <T> @Nullable T setData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type, T value) {
+        return thiz.set(type.get().unwrap(), value);
+    }
+
+    public static <T> @Nullable T removeData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return thiz.remove(type.unwrap());
+    }
+
+    public static <T> @Nullable T removeData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return thiz.remove(type.get().unwrap());
+    }
+
+    public static <T> T getDataOrDefault(@This ItemStack thiz, PortDataComponentType<? extends T> type, T defaultValue) {
+        return thiz.getOrDefault(type.unwrap(), defaultValue);
+    }
+
+    public static <T> T getDataOrDefault(@This ItemStack thiz, Supplier<PortDataComponentType<? extends T>> type, T defaultValue) {
+        return thiz.getOrDefault(type.get().unwrap(), defaultValue);
+    }
+
+    public static <T> boolean hasData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return thiz.has(type.unwrap());
+    }
+
+    public static <T> boolean hasData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return thiz.has(type.get().unwrap());
+    }
+
+    // endregion DataComponentHolder
 }
