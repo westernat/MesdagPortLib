@@ -8,7 +8,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentType;
-import org.mesdag.portlib.component.PortDataComponentHolder;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortRegistries;
@@ -67,7 +66,7 @@ public class PortLib {
                         TestAttachment data = PortAttachmentHolder.of(event.getTarget()).getData(testAttachment);
                         data.setStack(stack);
 
-                        PortDataComponentHolder.of(stack).set(testDataComponent, new TestComponent(1));
+                        stack.setData(testDataComponent, new TestComponent(1));
                     }
                     event.setCancellationResult(InteractionResult.SUCCESS);
                 }

@@ -23,6 +23,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.wrapper.PortEnvironment;
@@ -33,6 +34,7 @@ import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Extension
 public class PortItemStackExtension {
@@ -496,4 +498,48 @@ public class PortItemStackExtension {
         var enchantments = getEnchantments(thiz);
         return PortGetEnchantmentLevelEvent.getAllEnchantmentLevels(enchantments, thiz, lookup);
     }
+
+    // region DataComponentHolder
+
+    public static <T> @Nullable T getData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return IPortItemStack.of(thiz).portlib$patch().get(type);
+    }
+
+    public static <T> @Nullable T getData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return IPortItemStack.of(thiz).portlib$patch().get(type);
+    }
+
+    public static <T> @Nullable T setData(@This ItemStack thiz, PortDataComponentType<T> type, T value) {
+        return IPortItemStack.of(thiz).portlib$patch().set(type, value);
+    }
+
+    public static <T> @Nullable T setData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type, T value) {
+        return IPortItemStack.of(thiz).portlib$patch().set(type, value);
+    }
+
+    public static <T> @Nullable T removeData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return IPortItemStack.of(thiz).portlib$patch().remove(type);
+    }
+
+    public static <T> @Nullable T removeData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return IPortItemStack.of(thiz).portlib$patch().remove(type);
+    }
+
+    public static <T> T getDataOrDefault(@This ItemStack thiz, PortDataComponentType<? extends T> type, T defaultValue) {
+        return IPortItemStack.of(thiz).portlib$patch().getOrDefault(type, defaultValue);
+    }
+
+    public static <T> T getDataOrDefault(@This ItemStack thiz, Supplier<PortDataComponentType<? extends T>> type, T defaultValue) {
+        return IPortItemStack.of(thiz).portlib$patch().getOrDefault(type, defaultValue);
+    }
+
+    public static <T> boolean hasData(@This ItemStack thiz, PortDataComponentType<T> type) {
+        return IPortItemStack.of(thiz).portlib$patch().has(type);
+    }
+
+    public static <T> boolean hasData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+        return IPortItemStack.of(thiz).portlib$patch().has(type);
+    }
+
+    // endregion DataComponentHolder
 }
