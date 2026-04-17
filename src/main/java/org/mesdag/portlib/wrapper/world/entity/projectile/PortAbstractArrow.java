@@ -8,7 +8,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAbstractArrow;
 import org.mesdag.portlib.diff.mixin.AbstractArrowAccessor;
-import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 
 public class PortAbstractArrow {
     public static void setup(
@@ -19,9 +18,9 @@ public class PortAbstractArrow {
         IPortAbstractArrow iArrow = IPortAbstractArrow.of(arrow);
         iArrow.portlib$setPickupItem(pickupItemStack);
 
-        arrow.setCustomName(PortItemStack.getCustomName(pickupItemStack));
-        boolean intangible = PortItemStack.getIntangibleProjectile(pickupItemStack);
-        PortItemStack.setIntangibleProjectile(pickupItemStack, false);
+        arrow.setCustomName(pickupItemStack.getCustomName());
+        boolean intangible = pickupItemStack.getIntangibleProjectile();
+        pickupItemStack.setIntangibleProjectile(false);
         if (intangible) {
             arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         }
