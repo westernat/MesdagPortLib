@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.wrapper.world.item.InstrumentHolder;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
 import org.mesdag.portlib.wrapper.world.item.component.*;
 import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
@@ -33,7 +32,6 @@ import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 import java.util.List;
 
 @Extension
-@SuppressWarnings("all")
 public class PortItemStackExtension {
     private static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy, DataComponentType<CustomData> type) {
         CustomData data = orDefault ? stack.getOrDefault(type, CustomData.EMPTY) : stack.get(type);
@@ -406,10 +404,10 @@ public class PortItemStackExtension {
         BlockItem.setBlockEntityData(thiz, type, data);
     }
 
-    public static @Nullable InstrumentHolder getInstrument(@This ItemStack thiz) {
-        Holder<Instrument> value = thiz.get(DataComponents.INSTRUMENT);
-        return value == null ? null : InstrumentHolder.wrap(value);
+    public static @Nullable Holder<Instrument> getInstrument(@This ItemStack thiz) {
+        return thiz.get(DataComponents.INSTRUMENT);
     }
+
     public static int getEnchantmentLevel(@This ItemStack thiz, EnchantmentHolder enchantment) {
         return thiz.getEnchantmentLevel(enchantment.delegate());
     }
