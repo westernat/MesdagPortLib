@@ -1,12 +1,12 @@
 package org.mesdag.portlib.event.registries;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.function.Consumer;
 
@@ -16,8 +16,8 @@ public class PortDataMapsUpdatedEvent extends PortEvent<DataMapsUpdatedEvent> {
         super(e);
     }
 
-    public PortRegistryAccess getRegistries() {
-        return new PortRegistryAccess(e.getRegistries());
+    public RegistryAccess getRegistries() {
+        return e.getRegistries();
     }
 
     public Registry<?> getRegistry() {

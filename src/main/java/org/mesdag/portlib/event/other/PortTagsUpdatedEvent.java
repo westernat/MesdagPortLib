@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.other;
 
+import net.minecraft.core.RegistryAccess;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public class PortTagsUpdatedEvent extends PortEvent<TagsUpdatedEvent> {
     @Diff
@@ -12,8 +12,8 @@ public class PortTagsUpdatedEvent extends PortEvent<TagsUpdatedEvent> {
         super(e);
     }
 
-    public PortRegistryAccess getRegistryAccess() {
-        return new PortRegistryAccess(e.getRegistryAccess());
+    public RegistryAccess getRegistryAccess() {
+        return e.getRegistryAccess();
     }
 
     public PortUpdateCause getUpdateCause() {

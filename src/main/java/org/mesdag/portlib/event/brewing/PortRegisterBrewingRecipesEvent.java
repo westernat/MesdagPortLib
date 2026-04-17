@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.brewing;
 
+import net.minecraft.core.RegistryAccess;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionBrewing;
 
 public class PortRegisterBrewingRecipesEvent extends PortEvent<RegisterBrewingRecipesEvent> {
@@ -17,8 +17,8 @@ public class PortRegisterBrewingRecipesEvent extends PortEvent<RegisterBrewingRe
         return new PortPotionBrewing.PortBuilder(e.getBuilder());
     }
 
-    public PortRegistryAccess getRegistryAccess() {
-        return new PortRegistryAccess(e.getRegistryAccess());
+    public RegistryAccess getRegistryAccess() {
+        return e.getRegistryAccess();
     }
 
     static {

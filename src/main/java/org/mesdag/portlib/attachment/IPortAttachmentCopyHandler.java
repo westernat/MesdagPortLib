@@ -1,16 +1,16 @@
 package org.mesdag.portlib.attachment;
 
+import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.attachment.IAttachmentCopyHandler;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 public interface IPortAttachmentCopyHandler<T> {
-    @Nullable T copy(T attachment, IPortAttachmentHolder holder, PortRegistryAccess provider);
+    @Nullable T copy(T attachment, IPortAttachmentHolder holder, HolderLookup.Provider provider);
 
     @Diff
     default IAttachmentCopyHandler<T> unwrap() {
-        return (attachment, holder, provider) -> copy(attachment, IPortAttachmentHolder.wrap(holder), new PortRegistryAccess(provider));
+        return (attachment, holder, provider) -> copy(attachment, IPortAttachmentHolder.wrap(holder), provider);
     }
 
     @Diff
@@ -21,7 +21,7 @@ public interface IPortAttachmentCopyHandler<T> {
     @Diff
     record Delegate<T>(IAttachmentCopyHandler<T> delegate) implements IPortAttachmentCopyHandler<T> {
         @Override
-        public @Nullable T copy(T attachment, IPortAttachmentHolder holder, PortRegistryAccess provider) {
+        public @Nullable T copy(T attachment, IPortAttachmentHolder holder, HolderLookup.Provider provider) {
             return delegate.copy(attachment, holder.unwrap(), provider);
         }
 
