@@ -1,6 +1,7 @@
 package org.mesdag.portlib;
 
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -18,6 +19,7 @@ import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.event.entity.player.PortPlayerInteractEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.PortAttachmentRegistration;
@@ -30,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("all")
 @Mod(PortLib.MODID)
 public class PortLib {
     public static final String MODID = "portlib";
@@ -72,6 +73,11 @@ public class PortLib {
                 }
             });
         }
+
+        PortEventHandler.addListener((PortPlayerInteractEvent.PortRightClickEmpty event) -> {
+            Item item = event.getItemStack().getItem();
+            item.helloWorld(event.getEntity());
+        });
     }
 
     public static PortIdentifier asResource(String path) {

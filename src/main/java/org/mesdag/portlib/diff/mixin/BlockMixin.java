@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(Block.class)
@@ -29,7 +30,7 @@ public abstract class BlockMixin {
 
     @Unique
     private static void portlib$beginCapturingDrops() {
-        portlib$capturedDrops = new java.util.ArrayList<>();
+        portlib$capturedDrops = new ArrayList<>();
     }
 
     @Unique
@@ -43,9 +44,8 @@ public abstract class BlockMixin {
     private static boolean capture(Level instance, Entity entity, Operation<Boolean> original) {
         if (portlib$capturedDrops == null) {
             return original.call(instance, entity);
-        } else {
-            return portlib$capturedDrops.add((ItemEntity) entity);
         }
+        return portlib$capturedDrops.add((ItemEntity) entity);
     }
 
     @Inject(method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;)Ljava/util/List;"))

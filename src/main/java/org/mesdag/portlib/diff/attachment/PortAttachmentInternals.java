@@ -9,7 +9,6 @@ import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
-import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 
 import java.util.function.Predicate;
@@ -50,8 +49,8 @@ public final class PortAttachmentInternals {
                 PortSyncAttachmentsPayload.STREAM_CODEC,
                 PortSyncAttachmentsPayload::handle
         );
-        PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> IPortEntityExtension.copyAttachmentsFrom(event.getEntity(), event.getOriginal(), event.isWasDeath()));
-        PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> IPortEntityExtension.copyAttachmentsFrom(event.getOutcome(), event.getEntity(), true));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> event.getEntity().copyAttachmentsFrom(event.getOriginal(), event.isWasDeath()));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> event.getOutcome().copyAttachmentsFrom(event.getEntity(), true));
     }
 
     private PortAttachmentInternals() {}

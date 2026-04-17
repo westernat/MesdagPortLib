@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(StatsCounter.class)
 public abstract class StatsCounterMixin {
-    @WrapOperation(method = "setValue", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/Object2IntMap;put(Ljava/lang/Object;I)I"))
+    @WrapOperation(method = "setValue", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/Object2IntMap;put(Ljava/lang/Object;I)I", remap = false))
     private <K> int onStatAward(Object2IntMap<K> instance, Object o, int i, Operation<Integer> original, @Local(argsOnly = true) Player player) {
         PortStatAwardEvent event = new PortStatAwardEvent(player, (Stat<?>) o, i);
         PortEventHandler.postEvent(event);
