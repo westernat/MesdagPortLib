@@ -133,4 +133,9 @@ public class PortPatchedDataComponentMap {
     public boolean isEmpty() {
         return patch.isEmpty();
     }
+
+    @Diff
+    public PortDataComponentMap getPrototype() {
+        return prototype;
+    }
 }

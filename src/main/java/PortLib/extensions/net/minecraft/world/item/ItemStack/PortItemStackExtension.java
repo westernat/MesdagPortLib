@@ -23,6 +23,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
@@ -539,6 +540,10 @@ public class PortItemStackExtension {
 
     public static <T> boolean hasData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
         return IPortItemStack.of(thiz).portlib$patch().has(type);
+    }
+
+    public static PortDataComponentMap getPrototypeData(@This ItemStack thiz) {
+        return IPortItemStack.of(thiz).portlib$patch().getPrototype();
     }
 
     // endregion DataComponentHolder
