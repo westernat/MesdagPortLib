@@ -97,9 +97,9 @@ public class PortDataMapLoader implements PreparableReloadListener {
         if (map == null) return;
         Collection<PortIdentifier> attachments = map.getOrDefault(registryKey, List.of());
         if (attachments.isEmpty()) return;
-        final Map<PortIdentifier, Map<ResourceKey<T>, ?>> att = new HashMap<>();
+        Map<PortIdentifier, Map<ResourceKey<T>, ?>> att = new HashMap<>();
         attachments.forEach(key -> {
-            final var attach = getDataMap(registryKey, key);
+            var attach = getDataMap(registryKey, key);
             if (attach == null || attach.networkCodec() == null) return;
             att.put(key, INSTANCE.getDataMap(registry, attach));
         });
@@ -129,8 +129,8 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
     private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<DataMapFile<T, R>> entries) {
         record WithSource<T, R>(T attachment, Either<TagKey<R>, ResourceKey<R>> source) {}
-        final Map<ResourceKey<R>, WithSource<T, R>> result = new IdentityHashMap<>();
-        final PortDataMapValueMerger<R, T> merger = attachment instanceof PortAdvancedDataMapType<R, T, ?> adv ? adv.merger() : PortDataMapValueMerger.defaultMerger();
+        Map<ResourceKey<R>, WithSource<T, R>> result = new IdentityHashMap<>();
+        PortDataMapValueMerger<R, T> merger = attachment instanceof PortAdvancedDataMapType<R, T, ?> adv ? adv.merger() : PortDataMapValueMerger.defaultMerger();
         entries.forEach(entry -> {
             if (entry.replace()) {
                 result.clear();
@@ -140,9 +140,9 @@ public class PortDataMapLoader implements PreparableReloadListener {
                 if (value.isEmpty()) return;
 
                 resolve(registry, tKey, true, holder -> {
-                    final var newValue = value.get().carrier();
-                    final var key = PortHolder.getKey(holder);
-                    final var oldValue = result.get(key);
+                    var newValue = value.get().carrier();
+                    var key = holder.getKey();
+                    var oldValue = result.get(key);
                     if (oldValue == null || newValue.replace()) {
                         result.put(key, new WithSource<>(newValue.value(), tKey));
                     } else {
@@ -155,10 +155,10 @@ public class PortDataMapLoader implements PreparableReloadListener {
                 if (removal.remover().isPresent()) {
                     var remover = removal.remover().orElseThrow();
                     resolve(registry, removal.key(), false, holder -> {
-                        final var key = PortHolder.getKey(holder);
-                        final var oldValue = result.get(key);
+                        var key = PortHolder.getKey(holder);
+                        var oldValue = result.get(key);
                         if (oldValue != null) {
-                            final var newValue = remover.remove(oldValue.attachment(), PortRegistry.wrap(registry), oldValue.source(), holder.value());
+                            var newValue = remover.remove(oldValue.attachment(), PortRegistry.wrap(registry), oldValue.source(), holder.value());
                             if (newValue.isEmpty()) {
                                 result.remove(key);
                             } else {
@@ -171,7 +171,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                 }
             }
         });
-        final Map<ResourceKey<R>, T> newMap = new IdentityHashMap<>();
+        Map<ResourceKey<R>, T> newMap = new IdentityHashMap<>();
         result.forEach((key, val) -> newMap.put(key, val.attachment()));
 
         return newMap;

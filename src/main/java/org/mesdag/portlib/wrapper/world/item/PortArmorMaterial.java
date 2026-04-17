@@ -202,13 +202,8 @@ public class PortArmorMaterial {
             return this;
         }
 
-        public Settings equipSound(Holder<SoundEvent> sound) {
-            this.equipSound = SoundEventHolder.wrap(sound);
-            return this;
-        }
-
-        public Settings equipSound(SoundEvent sound) {
-            this.equipSound = SoundEventHolder.wrap(sound);
+        public Settings equipSound(SoundEventHolder sound) {
+            this.equipSound = sound;
             return this;
         }
 

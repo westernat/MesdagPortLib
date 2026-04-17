@@ -3,6 +3,7 @@ package PortLib.extensions.net.minecraft.world.item.ItemStack;
 import com.google.common.collect.ImmutableList;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,10 +17,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -29,7 +27,6 @@ import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
-import org.mesdag.portlib.wrapper.world.item.InstrumentHolder;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
 import org.mesdag.portlib.wrapper.world.item.component.*;
 import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
@@ -479,13 +476,12 @@ public class PortItemStackExtension {
         BlockItem.setBlockEntityData(thiz, type, data);
     }
 
-    public static @Nullable InstrumentHolder getInstrument(@This ItemStack thiz) {
+    public static @Nullable Holder<Instrument> getInstrument(@This ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
         if (tag != null && tag.contains("instrument", 8)) {
             ResourceLocation id = ResourceLocation.tryParse(tag.getString("instrument"));
             if (id != null) {
-                return BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, id))
-                    .map(InstrumentHolder::wrap).orElse(null);
+                return BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, id)).orElse(null);
             }
         }
         return null;

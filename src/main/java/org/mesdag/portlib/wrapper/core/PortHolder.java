@@ -2,7 +2,6 @@ package org.mesdag.portlib.wrapper.core;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-@SuppressWarnings("all")
 public interface PortHolder<T> extends Holder<T> {
     @Diff
     static <T> Holder<T> getDelegate(IForgeRegistry<T> registry, T value) {
@@ -63,13 +61,6 @@ public interface PortHolder<T> extends Holder<T> {
         return delegate().is(tagKey);
     }
 
-    default boolean is(Holder<T> holder) {
-        if (kind() == Kind.DIRECT) {
-            return value().equals(holder.value());
-        }
-        return unwrapKey().map(holder::is).orElse(false);
-    }
-
     @Override
     default Stream<TagKey<T>> tags() {
         return delegate().tags();
@@ -93,19 +84,5 @@ public interface PortHolder<T> extends Holder<T> {
     @Override
     default boolean canSerializeIn(HolderOwner<T> owner) {
         return delegate().canSerializeIn(owner);
-    }
-
-    default String getRegisteredName() {
-        return unwrapKey().map(key -> key.location().toString()).orElse("[unregistered]");
-    }
-
-    default @Nullable ResourceKey<T> getKey() {
-        return getKey(this);
-    }
-
-    default @Nullable HolderLookup.RegistryLookup<T> unwrapLookup() {
-        return delegate() instanceof Holder.Reference<T> ref
-                ? ref.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null
-                : null;
     }
 }

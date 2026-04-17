@@ -66,7 +66,7 @@ public class PortGetEnchantmentLevelEvent extends Event {
     @Diff
     public static int getEnchantmentLevelSpecific(int level, ItemStack stack, EnchantmentHolder ench) {
         HolderLookup.RegistryLookup<Enchantment> lookup = ench.unwrapLookup();
-        if (lookup == null) { // Pretty sure this is never null, but I can't *prove* that it isn't.
+        if (lookup == null) {
             return level;
         }
 

@@ -14,14 +14,12 @@ import java.util.function.BiFunction;
 @Extension
 public class PortFriendlyByteBufExtension {
     public static <K, V> Map<K, V> readMap(@This FriendlyByteBuf thiz, PortStreamDecoder<? super FriendlyByteBuf, K> keyReader, BiFunction<FriendlyByteBuf, K, V> valueReader) {
-        final int size = thiz.readVarInt();
-        final Map<K, V> map = Maps.newHashMapWithExpectedSize(size);
-
+        int size = thiz.readVarInt();
+        Map<K, V> map = Maps.newHashMapWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
-            final K k = keyReader.decode(thiz);
+            K k = keyReader.decode(thiz);
             map.put(k, valueReader.apply(thiz, k));
         }
-
         return map;
     }
 

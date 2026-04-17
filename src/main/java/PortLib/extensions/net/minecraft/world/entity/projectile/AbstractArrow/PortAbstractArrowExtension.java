@@ -1,5 +1,7 @@
-package org.mesdag.portlib.wrapper.world.entity.projectile;
+package PortLib.extensions.net.minecraft.world.entity.projectile.AbstractArrow;
 
+import manifold.ext.rt.api.Extension;
+import manifold.ext.rt.api.This;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -9,23 +11,24 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAbstractArrow;
 import org.mesdag.portlib.diff.mixin.AbstractArrowAccessor;
 
-public class PortAbstractArrow {
+@Extension
+public class PortAbstractArrowExtension {
     public static void setup(
-            AbstractArrow arrow,
+            @This AbstractArrow thiz,
             ItemStack pickupItemStack,
             @Nullable ItemStack firedFromWeapon
     ) {
-        IPortAbstractArrow iArrow = IPortAbstractArrow.of(arrow);
+        IPortAbstractArrow iArrow = IPortAbstractArrow.of(thiz);
         iArrow.portlib$setPickupItem(pickupItemStack);
 
-        arrow.setCustomName(pickupItemStack.getCustomName());
+        thiz.setCustomName(pickupItemStack.getCustomName());
         boolean intangible = pickupItemStack.getIntangibleProjectile();
         pickupItemStack.setIntangibleProjectile(false);
         if (intangible) {
-            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            thiz.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         }
 
-        if (/*arrow.getPierceLevel() == 0 && */firedFromWeapon != null && arrow.level() instanceof ServerLevel level) {
+        if (/*arrow.getPierceLevel() == 0 && */firedFromWeapon != null && thiz.level() instanceof ServerLevel) {
             if (firedFromWeapon.isEmpty()) {
                 throw new IllegalArgumentException("Invalid weapon firing an arrow");
             }
@@ -33,26 +36,26 @@ public class PortAbstractArrow {
             iArrow.portlib$setFiredFromWeapon(firedFromWeapon);
             int i = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.PIERCING, firedFromWeapon);
             if (i > 0) {
-                arrow.setPierceLevel((byte) i);
+                thiz.setPierceLevel((byte) i);
             }
 
             // EnchantmentHelper.onProjectileSpawned(serverlevel, firedFromWeapon, this, item -> this.firedFromWeapon = null);
         }
     }
 
-    public static ItemStack getPickupItem(AbstractArrow arrow) {
-        return getPickupItemStackOrigin(arrow).copy();
+    public static ItemStack pickupItem(@This AbstractArrow thiz) {
+        return thiz.pickupItemStackOrigin().copy();
     }
 
-    public static ItemStack getPickupItemStackOrigin(AbstractArrow arrow) {
-        return IPortAbstractArrow.of(arrow).portlib$getPickupItem();
+    public static ItemStack pickupItemStackOrigin(@This AbstractArrow thiz) {
+        return IPortAbstractArrow.of(thiz).portlib$getPickupItem();
     }
 
-    public static ItemStack getDefaultPickupItem(AbstractArrow arrow) {
-        return ((AbstractArrowAccessor) arrow).callGetPickupItem();
+    public static ItemStack defaultPickupItem(@This AbstractArrow thiz) {
+        return ((AbstractArrowAccessor) thiz).callGetPickupItem();
     }
 
-    public static ItemStack getWeaponItem(AbstractArrow arrow) {
-        return IPortAbstractArrow.of(arrow).portlib$getFiredFromWeapon();
+    public static ItemStack weaponItem(@This AbstractArrow thiz) {
+        return IPortAbstractArrow.of(thiz).portlib$getFiredFromWeapon();
     }
 }
