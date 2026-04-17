@@ -1,5 +1,6 @@
 package PortLib.extensions.com.mojang.blaze3d.vertex.VertexConsumer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
@@ -49,6 +50,14 @@ public class PortVertexConsumerExtension {
 
     public static VertexConsumer setWhiteAlpha(@This VertexConsumer thiz, int alpha) {
         return thiz.color(FastColor.ARGB32.color(alpha, 255, 255, 255));
+    }
+
+    public static VertexConsumer addVertex(@This VertexConsumer thiz, PoseStack.Pose pose, Vector3f pos) {
+        return thiz.addVertex(pose, pos.x(), pos.y(), pos.z());
+    }
+
+    public static VertexConsumer addVertex(@This VertexConsumer thiz, PoseStack.Pose pose, float x, float y, float z) {
+        return thiz.addVertex(pose, x, y, z);
     }
 
     public static VertexConsumer addVertex(@This VertexConsumer thiz, Vector3f pos) {
