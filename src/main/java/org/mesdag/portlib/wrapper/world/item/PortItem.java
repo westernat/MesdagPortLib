@@ -12,14 +12,6 @@ import org.mesdag.portlib.diff.Diff;
 import java.util.function.Consumer;
 
 public class PortItem {
-    public static class PortProperties {
-        public static Item.Properties component(Item.Properties properties, Consumer<PortDataComponentMap.PortBuilder> consumer) {
-            PortDataComponentMap.PortBuilder builder = new PortDataComponentMap.PortBuilder(properties);
-            consumer.accept(builder);
-            return properties;
-        }
-    }
-
     public interface PortTooltipContext {
         PortTooltipContext EMPTY = wrap(Item.TooltipContext.EMPTY);
 
