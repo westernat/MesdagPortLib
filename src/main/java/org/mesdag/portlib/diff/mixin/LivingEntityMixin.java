@@ -26,7 +26,6 @@ import org.mesdag.portlib.event.entity.living.PortMobEffectEvent;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
-import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortLivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,7 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Stack;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivingEntityExtension {
+public abstract class LivingEntityMixin implements IPortLivingEntity {
     @Shadow
     protected float lastHurt;
 
@@ -221,6 +220,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
             PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
             PortLivingDamageEvent.PortPost.onLivingDamagePost(portlib$self(), container);
         }
+    }
+
+    @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER))
+    private void onDamageTaken(CallbackInfo ci) {
+        portlib$self().onDamageTaken(portlib$damageContainers.peek());
     }
 
     // endregion actuallyHurt

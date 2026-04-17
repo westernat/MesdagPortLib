@@ -31,7 +31,6 @@
         "LivingEntityAccessor",
         "LivingEntityMixin",
         "MobEffectInstanceMixin",
-        "MobEffectMixin",
         "MobMixin",
         "PlayerListMixin",
         "PlayerMixin",

@@ -160,6 +160,11 @@ public abstract class PlayerMixin implements IPortPlayer {
         }
     }
 
+    @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER))
+    private void onDamageTaken(CallbackInfo ci) {
+        portlib$self().onDamageTaken(IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek());
+    }
+
     // endregion actuallyHurt
 
     @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;stopSleepInBed(ZZ)V"))

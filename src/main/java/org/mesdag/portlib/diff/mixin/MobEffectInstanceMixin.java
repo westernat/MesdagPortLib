@@ -12,7 +12,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
-import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +32,7 @@ public abstract class MobEffectInstanceMixin implements IPortMobEffectInstance {
 
     @Inject(method = "<init>(Lnet/minecraft/world/effect/MobEffect;IIZZZLnet/minecraft/world/effect/MobEffectInstance;Ljava/util/Optional;)V", at = @At("TAIL"))
     private void fillEffectCures(CallbackInfo ci, @Local(argsOnly = true) MobEffect effect) {
-        IPortMobEffectExtension.of(effect).fillEffectCures(portlib$cures, portlib$self());
+        effect.fillPortEffectCures(portlib$cures, portlib$self());
     }
 
     @Inject(method = "setDetailsFrom", at = @At("TAIL"))

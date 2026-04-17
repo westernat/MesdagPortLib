@@ -21,13 +21,10 @@ import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
-import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.core.PortRegistryAccess;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItemStack;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,9 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements IPortItemStack, IPortItemStackExtension {
-    private static final Logger log = LoggerFactory.getLogger(ItemStackMixin.class);
-
+public abstract class ItemStackMixin implements IPortItemStack {
     @Shadow
     public abstract CompoundTag getOrCreateTag();
 
