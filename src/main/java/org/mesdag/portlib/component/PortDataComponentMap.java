@@ -10,17 +10,7 @@ import org.mesdag.portlib.util.PortSets;
 import java.util.Set;
 
 public interface PortDataComponentMap {
-    PortDataComponentMap EMPTY = new PortDataComponentMap() {
-        @Override
-        public <T> @Nullable T get(PortDataComponentType<T> type) {
-            return null;
-        }
-
-        @Override
-        public Set<PortDataComponentType<?>> keySet() {
-            return Set.of();
-        }
-    };
+    PortDataComponentMap EMPTY = DataComponentMap.EMPTY.wrap();
 
     <T> @Nullable T get(PortDataComponentType<T> type);
 
@@ -31,7 +21,7 @@ public interface PortDataComponentMap {
         return new DataComponentMap() {
             @Override
             public @Nullable <T> T get(DataComponentType<? extends T> component) {
-                return PortDataComponentMap.this.get(PortDataComponentType.wrap(component));
+                return PortDataComponentMap.this.get(component.wrap());
             }
 
             @Override
@@ -39,11 +29,6 @@ public interface PortDataComponentMap {
                 return Set.of();
             }
         };
-    }
-
-    @Diff
-    static PortDataComponentMap wrap(DataComponentMap delegate) {
-        return new Delegate(delegate);
     }
 
     @Diff
@@ -55,7 +40,7 @@ public interface PortDataComponentMap {
 
         @Override
         public Set<PortDataComponentType<?>> keySet() {
-            return PortSets.mutableTransform(delegate.keySet(), PortDataComponentType::wrap, PortDataComponentType::unwrap);
+            return PortSets.mutableTransform(delegate.keySet(), DataComponentType::wrap, PortDataComponentType::unwrap);
         }
 
         @Override

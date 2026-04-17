@@ -12,18 +12,14 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 public class PortDataComponentType<T> {
     private final DataComponentType<T> delegate;
 
-    PortDataComponentType(DataComponentType<T> delegate) {
+    @Diff
+    public PortDataComponentType(DataComponentType<T> delegate) {
         this.delegate = delegate;
     }
 
     @Diff
     public DataComponentType<T> unwrap() {
         return delegate;
-    }
-
-    @Diff
-    public static <T> PortDataComponentType<T> wrap(DataComponentType<T> delegate) {
-        return new PortDataComponentType<>(delegate);
     }
 
     public static class PortBuilder<T> {

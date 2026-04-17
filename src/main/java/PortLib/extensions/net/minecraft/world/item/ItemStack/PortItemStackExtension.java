@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
 import org.mesdag.portlib.wrapper.world.item.component.*;
@@ -458,6 +459,10 @@ public class PortItemStackExtension {
 
     public static <T> boolean hasData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
         return thiz.has(type.get().unwrap());
+    }
+
+    public static PortDataComponentMap getPrototypeData(@This ItemStack thiz) {
+        return thiz.getPrototype().wrap();
     }
 
     // endregion DataComponentHolder
