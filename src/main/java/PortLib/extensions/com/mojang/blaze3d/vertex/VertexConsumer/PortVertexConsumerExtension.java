@@ -57,7 +57,7 @@ public class PortVertexConsumerExtension {
     }
 
     public static VertexConsumer addVertex(@This VertexConsumer thiz, PoseStack.Pose pose, float x, float y, float z) {
-        return thiz.addVertex(pose, x, y, z);
+        return thiz.addVertex(pose.pose(), x, y, z);
     }
 
     public static VertexConsumer addVertex(@This VertexConsumer thiz, Vector3f pos) {
