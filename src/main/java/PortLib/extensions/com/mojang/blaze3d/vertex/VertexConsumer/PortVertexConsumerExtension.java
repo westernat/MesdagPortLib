@@ -68,4 +68,8 @@ public class PortVertexConsumerExtension {
         Vector4f vector4f = pose.transform(new Vector4f(x, y, z, 1.0F));
         return thiz.addVertex(vector4f.x(), vector4f.y(), vector4f.z());
     }
+
+    public static VertexConsumer setNormal(@This VertexConsumer thiz, PoseStack.Pose pose, float normalX, float normalY, float normalZ) {
+        return thiz.normal(pose.normal(), normalX, normalY, normalZ);
+    }
 }
