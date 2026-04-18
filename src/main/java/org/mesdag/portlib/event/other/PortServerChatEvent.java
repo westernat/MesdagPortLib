@@ -35,6 +35,6 @@ public class PortServerChatEvent extends PortEvent<ServerChatEvent> implements I
     }
 
     static {
-        PortEventHooks.register(ServerChatEvent.class, PortServerChatEvent.class, PortServerChatEvent::new);
+        PortEventHooks.register();
     }
 }

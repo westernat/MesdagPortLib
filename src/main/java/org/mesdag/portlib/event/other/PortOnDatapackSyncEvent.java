@@ -30,6 +30,6 @@ public class PortOnDatapackSyncEvent extends PortEvent<OnDatapackSyncEvent> {
     }
 
     static {
-        PortEventHooks.register(OnDatapackSyncEvent.class, PortOnDatapackSyncEvent.class, PortOnDatapackSyncEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -27,7 +27,7 @@ public abstract class PortLivingConversionEvent<E extends LivingConversionEvent>
         }
 
         static {
-            PortEventHooks.register(LivingConversionEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -42,7 +42,7 @@ public abstract class PortLivingConversionEvent<E extends LivingConversionEvent>
         }
 
         static {
-            PortEventHooks.register(LivingConversionEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

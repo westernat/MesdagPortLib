@@ -31,13 +31,13 @@ public class PortRegistryMaker<T> {
 
     public PortRegistryMaker<T> callback(PortRegistryCallback<T> inst) {
         if (inst instanceof PortAddCallback<T> callback) {
-            builder.onAdd((owner, stage, id, key, obj, oldObj) -> callback.onAdd(PortRegistry.wrap(owner), id, key, obj));
+            builder.onAdd((owner, stage, id, key, obj, oldObj) -> callback.onAdd((PortRegistry<T>) owner.wrap(), id, key, obj));
         }
         if (inst instanceof PortBakeCallback<T> callback) {
-            builder.onBake((owner, stage) -> callback.onBake(PortRegistry.wrap(owner)));
+            builder.onBake((owner, stage) -> callback.onBake((PortRegistry<T>) owner.wrap()));
         }
         if (inst instanceof PortClearCallback<T> callback) {
-            builder.onClear((owner, stage) -> callback.onClear(PortRegistry.wrap(owner)));
+            builder.onClear((owner, stage) -> callback.onClear((PortRegistry<T>) owner.wrap()));
         }
         return this;
     }

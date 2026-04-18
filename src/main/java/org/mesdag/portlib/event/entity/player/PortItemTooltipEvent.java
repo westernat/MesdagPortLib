@@ -41,6 +41,6 @@ public class PortItemTooltipEvent extends PortPlayerEvent<ItemTooltipEvent> {
     }
 
     static {
-        PortEventHooks.register(ItemTooltipEvent.class, PortItemTooltipEvent.class, PortItemTooltipEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -35,6 +35,6 @@ public class PortLivingBreatheEvent extends PortLivingEvent<LivingBreatheEvent> 
     }
 
     static {
-        PortEventHooks.register(LivingBreatheEvent.class, PortLivingBreatheEvent.class, PortLivingBreatheEvent::new);
+        PortEventHooks.register();
     }
 }

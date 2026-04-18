@@ -32,7 +32,7 @@ public abstract class PortPotionBrewEvent extends PortEvent<PotionBrewEvent> {
         }
 
         static {
-            PortEventHooks.register(PotionBrewEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -43,7 +43,7 @@ public abstract class PortPotionBrewEvent extends PortEvent<PotionBrewEvent> {
         }
 
         static {
-            PortEventHooks.register(PotionBrewEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

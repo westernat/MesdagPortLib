@@ -19,9 +19,4 @@ public enum PortLogicalSide {
     public LogicalSide unwrap() {
         return this == CLIENT ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
-
-    @Diff
-    public static PortLogicalSide wrap(LogicalSide side) {
-        return side == LogicalSide.CLIENT ? CLIENT : SERVER;
-    }
 }

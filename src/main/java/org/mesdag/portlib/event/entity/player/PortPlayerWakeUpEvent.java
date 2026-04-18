@@ -19,6 +19,6 @@ public class PortPlayerWakeUpEvent extends PortPlayerEvent<PlayerWakeUpEvent> {
     }
 
     static {
-        PortEventHooks.register(PlayerWakeUpEvent.class, PortPlayerWakeUpEvent.class, PortPlayerWakeUpEvent::new);
+        PortEventHooks.register();
     }
 }

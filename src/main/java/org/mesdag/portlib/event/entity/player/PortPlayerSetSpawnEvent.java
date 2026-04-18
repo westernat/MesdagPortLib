@@ -28,6 +28,6 @@ public class PortPlayerSetSpawnEvent extends PortPlayerEvent<PlayerSetSpawnEvent
     }
 
     static {
-        PortEventHooks.register(PlayerSetSpawnEvent.class, PortPlayerSetSpawnEvent.class, PortPlayerSetSpawnEvent::new);
+        PortEventHooks.register();
     }
 }

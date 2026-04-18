@@ -33,6 +33,6 @@ public class PortFurnaceFuelBurnTimeEvent extends PortEvent<FurnaceFuelBurnTimeE
     }
 
     static {
-        PortEventHooks.register(FurnaceFuelBurnTimeEvent.class, PortFurnaceFuelBurnTimeEvent.class, PortFurnaceFuelBurnTimeEvent::new);
+        PortEventHooks.register();
     }
 }

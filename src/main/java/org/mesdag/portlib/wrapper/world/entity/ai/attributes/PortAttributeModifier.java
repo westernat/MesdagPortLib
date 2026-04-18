@@ -17,7 +17,8 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
         return new PortAttributeModifier(toId(modifier.getId(), modifier.getName()), modifier.getAmount(), PortOperation.wrap(modifier.getOperation()));
     }
 
-    private static PortIdentifier toId(UUID uuid, String name) {
+    @Diff
+    public static PortIdentifier toId(UUID uuid, String name) {
         return PortIdentifier.fromNamespaceAndPath(uuidToNamespace(uuid), name);
     }
 

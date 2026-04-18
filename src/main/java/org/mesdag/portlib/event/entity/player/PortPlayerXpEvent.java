@@ -22,7 +22,7 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         }
 
         static {
-            PortEventHooks.register(PlayerXpEvent.PickupXp.class, PortPickupXp.class, PortPickupXp::new);
+            PortEventHooks.register();
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         }
 
         static {
-            PortEventHooks.register(PlayerXpEvent.XpChange.class, PortXpChange.class, PortXpChange::new);
+            PortEventHooks.register();
         }
     }
 
@@ -60,7 +60,7 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         }
 
         static {
-            PortEventHooks.register(PlayerXpEvent.LevelChange.class, PortLevelChange.class, PortLevelChange::new);
+            PortEventHooks.register();
         }
     }
 }

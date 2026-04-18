@@ -29,6 +29,6 @@ public class PortEntityMobGriefingEvent extends PortEntityEvent<EntityMobGriefin
     }
 
     static {
-        PortEventHooks.register(EntityMobGriefingEvent.class, PortEntityMobGriefingEvent.class, PortEntityMobGriefingEvent::new);
+        PortEventHooks.register();
     }
 }

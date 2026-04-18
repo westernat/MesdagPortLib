@@ -32,6 +32,6 @@ public class PortAnvilRepairEvent extends PortPlayerEvent<AnvilRepairEvent> {
     }
 
     static {
-        PortEventHooks.register(AnvilRepairEvent.class, PortAnvilRepairEvent.class, PortAnvilRepairEvent::new);
+        PortEventHooks.register();
     }
 }

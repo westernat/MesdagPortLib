@@ -36,6 +36,6 @@ public class PortChunkTicketLevelUpdatedEvent extends PortEvent<ChunkTicketLevel
     }
 
     static {
-        PortEventHooks.register(ChunkTicketLevelUpdatedEvent.class, PortChunkTicketLevelUpdatedEvent.class, PortChunkTicketLevelUpdatedEvent::new);
+        PortEventHooks.register();
     }
 }

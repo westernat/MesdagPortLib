@@ -106,7 +106,7 @@ public class PortItemStackExtension {
         return List.of();
     }
 
-    public static @Nullable PortItemEnchantments getEnchantments(@This ItemStack thiz) {
+    public static @Nullable PortItemEnchantments getPortEnchantments(@This ItemStack thiz) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(thiz)) {
             return null;
         }
@@ -243,10 +243,6 @@ public class PortItemStackExtension {
 
     public static int getRepaireCost(@This ItemStack thiz) {
         return thiz.getBaseRepairCost();
-    }
-
-    public static void setRepairCost(@This ItemStack thiz, int cost) {
-        thiz.setRepairCost(cost);
     }
 
     private static boolean getUnit(ItemStack stack, String key) {
@@ -496,7 +492,7 @@ public class PortItemStackExtension {
     }
 
     public static PortItemEnchantments getAllPortEnchantments(@This ItemStack thiz, HolderLookup.RegistryLookup<Enchantment> lookup) {
-        var enchantments = getEnchantments(thiz);
+        var enchantments = getPortEnchantments(thiz);
         return PortGetEnchantmentLevelEvent.getAllEnchantmentLevels(enchantments, thiz, lookup);
     }
 

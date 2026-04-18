@@ -1,4 +1,4 @@
-package org.mesdag.portlib.event.registries.datamaps;
+package org.mesdag.portlib.event.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

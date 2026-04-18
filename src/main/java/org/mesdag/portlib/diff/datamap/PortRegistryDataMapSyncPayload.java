@@ -7,6 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -18,6 +19,8 @@ import net.minecraftforge.registries.RegistryManager;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortFriendlyByteBuf;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
@@ -76,11 +79,12 @@ public record PortRegistryDataMapSyncPayload<T>(
     public void handle(Context context) {
         context.enqueueWork(() -> {
             try {
+                var regAccess = Minecraft.getInstance().level.registryAccess();
                 IForgeRegistry registry = RegistryManager.ACTIVE.getRegistry(registryKey);
                 Map innerMap = PortDataMapLoader.INSTANCE.getInnerMap(registry);
                 innerMap.clear();
                 dataMaps.forEach((attachKey, maps) -> innerMap.put(PortDataMapLoader.getDataMap(registryKey, attachKey), Collections.unmodifiableMap(maps)));
-//                NeoForge.EVENT_BUS.post(new DataMapsUpdatedEvent(regAccess, registry, DataMapsUpdatedEvent.UpdateCause.CLIENT_SYNC));
+                PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(regAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.CLIENT_SYNC));
             } catch (Throwable t) {
                 PortLib.LOGGER.error("Failed to handle registry data map sync: ", t);
                 context.disconnect(Component.translatable("portlib.network.data_maps.failed", registryKey.location().toString(), t.toString()));

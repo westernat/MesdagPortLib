@@ -29,6 +29,6 @@ public class PortWandererTradesEvent extends PortEvent<WandererTradesEvent> {
     }
 
     static {
-        PortEventHooks.register(WandererTradesEvent.class, PortWandererTradesEvent.class, PortWandererTradesEvent::new);
+        PortEventHooks.register();
     }
 }

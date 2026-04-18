@@ -52,7 +52,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
 
         static {
-            PortEventHooks.register(MobEffectEvent.Remove.class, PortRemove.class, e -> new PortRemove(e, null));
+            PortEventHooks.register();
         }
     }
 
@@ -123,7 +123,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
 
         static {
-            PortEventHooks.register(MobEffectEvent.Added.class, PortAdded.class, PortAdded::new);
+            PortEventHooks.register();
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
 
         static {
-            PortEventHooks.register(MobEffectEvent.Expired.class, PortExpired.class, PortExpired::new);
+            PortEventHooks.register();
         }
     }
 }

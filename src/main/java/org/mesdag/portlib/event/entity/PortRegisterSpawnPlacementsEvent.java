@@ -55,6 +55,6 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent<SpawnPlacementRe
     }
 
     static {
-        PortEventHooks.register(SpawnPlacementRegisterEvent.class, PortRegisterSpawnPlacementsEvent.class, PortRegisterSpawnPlacementsEvent::new);
+        PortEventHooks.register();
     }
 }

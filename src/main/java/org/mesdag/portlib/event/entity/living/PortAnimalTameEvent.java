@@ -22,6 +22,6 @@ public class PortAnimalTameEvent extends PortLivingEvent<AnimalTameEvent> implem
     }
 
     static {
-        PortEventHooks.register(AnimalTameEvent.class, PortAnimalTameEvent.class, PortAnimalTameEvent::new);
+        PortEventHooks.register();
     }
 }

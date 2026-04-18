@@ -51,7 +51,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.BreakEvent.class, PortBreakEvent.class, PortBreakEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.EntityPlaceEvent.class, PortEntityPlaceEvent.class, PortEntityPlaceEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -94,7 +94,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.EntityMultiPlaceEvent.class, PortEntityMultiPlaceEvent.class, PortEntityMultiPlaceEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.NeighborNotifyEvent.class, PortNeighborNotifyEvent.class, PortNeighborNotifyEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.FluidPlaceBlockEvent.class, PortFluidPlaceBlockEvent.class, PortFluidPlaceBlockEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -159,7 +159,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.FarmlandTrampleEvent.class, PortFarmlandTrampleEvent.class, PortFarmlandTrampleEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -174,7 +174,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.PortalSpawnEvent.class, PortalSpawnEvent.class, PortalSpawnEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -213,7 +213,7 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(BlockEvent.BlockToolModificationEvent.class, PortBlockToolModificationEvent.class, PortBlockToolModificationEvent::new);
+            PortEventHooks.register();
         }
     }
 }

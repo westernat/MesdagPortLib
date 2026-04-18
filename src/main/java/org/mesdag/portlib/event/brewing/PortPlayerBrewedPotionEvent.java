@@ -17,6 +17,6 @@ public class PortPlayerBrewedPotionEvent extends PortPlayerEvent<PlayerBrewedPot
     }
 
     static {
-        PortEventHooks.register(PlayerBrewedPotionEvent.class, PortPlayerBrewedPotionEvent.class, PortPlayerBrewedPotionEvent::new);
+        PortEventHooks.register();
     }
 }

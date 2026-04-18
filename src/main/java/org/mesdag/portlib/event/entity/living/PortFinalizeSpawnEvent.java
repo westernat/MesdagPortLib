@@ -62,6 +62,6 @@ public class PortFinalizeSpawnEvent extends PortMobSpawnEvent<MobSpawnEvent.Fina
     }
 
     static {
-        PortEventHooks.register(MobSpawnEvent.FinalizeSpawn.class, PortFinalizeSpawnEvent.class, PortFinalizeSpawnEvent::new);
+        PortEventHooks.register();
     }
 }

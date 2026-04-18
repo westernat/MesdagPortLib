@@ -38,11 +38,11 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
         }
 
         public PortTriState canPickup() {
-            return PortTriState.wrapResult(e.getResult());
+            return e.getResult().wrap();
         }
 
         static {
-            PortEventHooks.register(EntityItemPickupEvent.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -60,7 +60,7 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
         }
 
         static {
-            PortEventHooks.register(PlayerEvent.ItemPickupEvent.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

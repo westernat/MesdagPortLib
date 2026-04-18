@@ -6,6 +6,8 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
+import java.util.List;
+
 public abstract class PortLevelTickEvent extends PortEvent<TickEvent.LevelTickEvent> {
     @Diff
     public PortLevelTickEvent(TickEvent.LevelTickEvent e) {
@@ -20,15 +22,6 @@ public abstract class PortLevelTickEvent extends PortEvent<TickEvent.LevelTickEv
         return e.level;
     }
 
-    static {
-        PortEventHooks.register(TickEvent.LevelTickEvent.class, PortLevelTickEvent.class, e -> {
-            if (e.phase == TickEvent.Phase.START) {
-                return new PortPre(e);
-            }
-            return new PortPost(e);
-        });
-    }
-
     public static class PortPre extends PortLevelTickEvent {
         @Diff
         public PortPre(TickEvent.LevelTickEvent e) {
@@ -41,5 +34,17 @@ public abstract class PortLevelTickEvent extends PortEvent<TickEvent.LevelTickEv
         public PortPost(TickEvent.LevelTickEvent e) {
             super(e);
         }
+    }
+
+    static {
+        PortEventHooks.registerCombined(TickEvent.LevelTickEvent.class, List.of(
+                PortPre.class,
+                PortPost.class
+        ), e -> {
+            if (e.phase == TickEvent.Phase.START) {
+                return new PortPre(e);
+            }
+            return new PortPost(e);
+        });
     }
 }

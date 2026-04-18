@@ -30,7 +30,8 @@ import org.mesdag.portlib.datamap.PortDataMapValueMerger;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.registries.datamaps.PortRegisterDataMapTypesEvent;
+import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
+import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.core.PortRegistry;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
@@ -124,7 +125,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         clear(registry);
         result.results().forEach((key, entries) -> getInnerMap(registry).put(
                 key, this.buildDataMap(registry, key, (List) entries)));
-//        NeoForge.EVENT_BUS.post(new DataMapsUpdatedEvent(registryAccess, registry, DataMapsUpdatedEvent.UpdateCause.SERVER_RELOAD));
+        PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
     }
 
     private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<DataMapFile<T, R>> entries) {
@@ -146,7 +147,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                     if (oldValue == null || newValue.replace()) {
                         result.put(key, new WithSource<>(newValue.value(), tKey));
                     } else {
-                        result.put(key, new WithSource<>(merger.merge(PortRegistry.wrap(registry), oldValue.source(), oldValue.attachment(), tKey, newValue.value()), tKey));
+                        result.put(key, new WithSource<>(merger.merge((PortRegistry<R>) registry.wrap(), oldValue.source(), oldValue.attachment(), tKey, newValue.value()), tKey));
                     }
                 });
             });
@@ -158,7 +159,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                         var key = PortHolder.getKey(holder);
                         var oldValue = result.get(key);
                         if (oldValue != null) {
-                            var newValue = remover.remove(oldValue.attachment(), PortRegistry.wrap(registry), oldValue.source(), holder.value());
+                            var newValue = remover.remove(oldValue.attachment(), (PortRegistry<R>) registry.wrap(), oldValue.source(), holder.value());
                             if (newValue.isEmpty()) {
                                 result.remove(key);
                             } else {

@@ -25,6 +25,6 @@ public class PortSpawnClusterSizeEvent extends PortLivingEvent<LivingPackSizeEve
     }
 
     static {
-        PortEventHooks.register(LivingPackSizeEvent.class, PortSpawnClusterSizeEvent.class, PortSpawnClusterSizeEvent::new);
+        PortEventHooks.register();
     }
 }

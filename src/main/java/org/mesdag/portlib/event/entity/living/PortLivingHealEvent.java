@@ -20,6 +20,6 @@ public class PortLivingHealEvent extends PortLivingEvent<LivingHealEvent> implem
     }
 
     static {
-        PortEventHooks.register(LivingHealEvent.class, PortLivingHealEvent.class, PortLivingHealEvent::new);
+        PortEventHooks.register();
     }
 }

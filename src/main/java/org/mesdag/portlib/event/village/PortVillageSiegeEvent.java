@@ -33,6 +33,6 @@ public class PortVillageSiegeEvent extends PortEvent<VillageSiegeEvent> implemen
     }
 
     static {
-        PortEventHooks.register(VillageSiegeEvent.class, PortVillageSiegeEvent.class, PortVillageSiegeEvent::new);
+        PortEventHooks.register();
     }
 }

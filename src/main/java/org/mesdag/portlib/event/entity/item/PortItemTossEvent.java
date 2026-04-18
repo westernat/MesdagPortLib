@@ -17,6 +17,6 @@ public class PortItemTossEvent extends PortItemEvent<ItemTossEvent> implements I
     }
 
     static {
-        PortEventHooks.register(ItemTossEvent.class, PortItemTossEvent.class, PortItemTossEvent::new);
+        PortEventHooks.register();
     }
 }

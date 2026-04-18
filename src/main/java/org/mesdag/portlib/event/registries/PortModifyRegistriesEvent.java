@@ -20,7 +20,7 @@ public class PortModifyRegistriesEvent extends Event implements IModBusEvent {
         return BuiltInRegistries.REGISTRY.registryKeySet().stream()
                 .map(key -> RegistryManager.ACTIVE.getRegistry(key.location()))
                 .filter(Objects::nonNull)
-                .<PortRegistry<?>>map(PortRegistry::wrap)
+                .<PortRegistry<?>>map(IForgeRegistry::wrap)
                 .toList();
     }
 
@@ -29,6 +29,6 @@ public class PortModifyRegistriesEvent extends Event implements IModBusEvent {
         if (registry == null) {
             throw new IllegalArgumentException("No registry with key " + key);
         }
-        return PortRegistry.wrap(registry);
+        return (PortRegistry<T>) registry.wrap();
     }
 }

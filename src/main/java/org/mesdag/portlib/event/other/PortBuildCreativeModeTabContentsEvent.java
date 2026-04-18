@@ -104,6 +104,6 @@ public final class PortBuildCreativeModeTabContentsEvent extends PortEvent<Build
     }
 
     static {
-        PortEventHooks.register(BuildCreativeModeTabContentsEvent.class, PortBuildCreativeModeTabContentsEvent.class, PortBuildCreativeModeTabContentsEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -31,6 +31,6 @@ public class PortLivingExperienceDropEvent extends PortLivingEvent<LivingExperie
     }
 
     static {
-        PortEventHooks.register(LivingExperienceDropEvent.class, PortLivingExperienceDropEvent.class, PortLivingExperienceDropEvent::new);
+        PortEventHooks.register();
     }
 }

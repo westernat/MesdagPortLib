@@ -25,6 +25,6 @@ public class PortLivingEquipmentChangeEvent extends PortLivingEvent<LivingEquipm
     }
 
     static {
-        PortEventHooks.register(LivingEquipmentChangeEvent.class, PortLivingEquipmentChangeEvent.class, PortLivingEquipmentChangeEvent::new);
+        PortEventHooks.register();
     }
 }

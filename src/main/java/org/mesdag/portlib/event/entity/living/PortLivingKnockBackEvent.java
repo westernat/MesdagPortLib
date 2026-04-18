@@ -48,6 +48,6 @@ public class PortLivingKnockBackEvent extends PortLivingEvent<LivingKnockBackEve
     }
 
     static {
-        PortEventHooks.register(LivingKnockBackEvent.class, PortLivingKnockBackEvent.class, PortLivingKnockBackEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -21,6 +21,6 @@ public class PortEntityJoinLevelEvent extends PortEntityEvent<EntityJoinLevelEve
     }
 
     static {
-        PortEventHooks.register(EntityJoinLevelEvent.class, PortEntityJoinLevelEvent.class, PortEntityJoinLevelEvent::new);
+        PortEventHooks.register();
     }
 }

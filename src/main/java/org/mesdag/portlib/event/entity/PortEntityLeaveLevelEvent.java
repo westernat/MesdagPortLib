@@ -16,6 +16,7 @@ public class PortEntityLeaveLevelEvent extends PortEntityEvent<EntityLeaveLevelE
         return e.getLevel();
     }
 
-    static {PortEventHooks.register(EntityLeaveLevelEvent.class, PortEntityLeaveLevelEvent.class, PortEntityLeaveLevelEvent::new);
+    static {
+        PortEventHooks.register();
     }
 }

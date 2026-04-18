@@ -19,6 +19,6 @@ public class PortSleepFinishedTimeEvent extends PortLevelEvent<SleepFinishedTime
     }
 
     static {
-        PortEventHooks.register(SleepFinishedTimeEvent.class, PortSleepFinishedTimeEvent.class, PortSleepFinishedTimeEvent::new);
+        PortEventHooks.register();
     }
 }

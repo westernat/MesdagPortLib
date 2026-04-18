@@ -73,7 +73,7 @@ public class PortPlayLevelSoundEvent<E extends PlayLevelSoundEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(PlayLevelSoundEvent.AtEntity.class, PortAtEntity.class, PortAtEntity::new);
+            PortEventHooks.register();
         }
     }
 
@@ -88,7 +88,7 @@ public class PortPlayLevelSoundEvent<E extends PlayLevelSoundEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(PlayLevelSoundEvent.AtPosition.class, PortAtPosition.class, PortAtPosition::new);
+            PortEventHooks.register();
         }
     }
 }

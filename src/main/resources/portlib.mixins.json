@@ -17,10 +17,12 @@
         "ChunkMapMixin",
         "ChunkSerializerMixin",
         "DataPackRegistriesHooksAccessor",
+        "DoorBlockMixin",
         "EnchantmentMenuMixin",
         "EntityMixin",
         "ExplosionMixin",
         "FoodPropertiesMixin",
+        "ForgeModelBlockRendererAccessor",
         "InventoryMixin",
         "ItemEntityMixin",
         "ItemMixin",
@@ -34,6 +36,7 @@
         "MobMixin",
         "PlayerListMixin",
         "PlayerMixin",
+        "RegisterGuiOverlaysEventAccessor",
         "ServerEntityMixin",
         "ServerGamePacketListenerImplMixin",
         "ServerLevelMixin",
@@ -50,10 +53,21 @@
         "requireAnnotations": true
     },
     "client": [
+        "CameraMixin",
+        "ChunkRenderDispatcherMixin$RenderChunkMixin",
+        "ChunkRenderDispatcherMixin$RenderChunkMixin$RebuildTaskMixin",
         "ClientLevelMixin",
         "ClientPacketListenerMixin",
+        "EffectRenderingInventoryScreenMixin",
         "GuiMixin",
-        "GuiMixin$HeartTypeMixin"
+        "GuiMixin$HeartTypeMixin",
+        "MinecraftMixin",
+        "ModelManagerMixin",
+        "MouseHandlerMixin",
+        "MusicManagerMixin",
+        "RenderBuffersMixin",
+        "RenderRegionCacheMixin",
+        "SpriteSourcesMixin"
     ],
     "minVersion": "0.8"
 }

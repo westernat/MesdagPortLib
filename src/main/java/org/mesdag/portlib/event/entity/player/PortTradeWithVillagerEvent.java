@@ -21,6 +21,6 @@ public class PortTradeWithVillagerEvent extends PortPlayerEvent<TradeWithVillage
     }
 
     static {
-        PortEventHooks.register(TradeWithVillagerEvent.class, PortTradeWithVillagerEvent.class, PortTradeWithVillagerEvent::new);
+        PortEventHooks.register();
     }
 }

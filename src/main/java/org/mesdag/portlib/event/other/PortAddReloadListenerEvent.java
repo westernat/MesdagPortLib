@@ -38,6 +38,6 @@ public class PortAddReloadListenerEvent extends PortEvent<AddReloadListenerEvent
     }
 
     static {
-        PortEventHooks.register(AddReloadListenerEvent.class, PortAddReloadListenerEvent.class, PortAddReloadListenerEvent::new);
+        PortEventHooks.register();
     }
 }

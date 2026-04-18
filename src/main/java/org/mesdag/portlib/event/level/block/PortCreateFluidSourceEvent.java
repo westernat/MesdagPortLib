@@ -48,6 +48,6 @@ public class PortCreateFluidSourceEvent extends PortEvent<BlockEvent.CreateFluid
     }
 
     static {
-        PortEventHooks.register(BlockEvent.CreateFluidSourceEvent.class, PortCreateFluidSourceEvent.class, PortCreateFluidSourceEvent::new);
+        PortEventHooks.register();
     }
 }

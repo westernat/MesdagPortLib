@@ -40,6 +40,6 @@ public class PortCriticalHitEvent extends PortPlayerEvent<CriticalHitEvent> {
     }
 
     static {
-        PortEventHooks.register(CriticalHitEvent.class, PortCriticalHitEvent.class, PortCriticalHitEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -24,6 +24,6 @@ public class PortLivingGetProjectileEvent extends PortLivingEvent<LivingGetProje
     }
 
     static {
-        PortEventHooks.register(LivingGetProjectileEvent.class, PortLivingGetProjectileEvent.class, PortLivingGetProjectileEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -44,7 +44,7 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(GrindstoneEvent.OnPlaceItem.class, PortOnPlaceItem.class, PortOnPlaceItem::new);
+            PortEventHooks.register();
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
 //        }
 
         static {
-            PortEventHooks.register(GrindstoneEvent.OnTakeItem.class, PortOnTakeItem.class, PortOnTakeItem::new);
+            PortEventHooks.register();
         }
     }
 }

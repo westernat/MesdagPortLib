@@ -27,6 +27,6 @@ public class PortLivingUseTotemEvent extends PortLivingEvent<LivingUseTotemEvent
     }
 
     static {
-        PortEventHooks.register(LivingUseTotemEvent.class, PortLivingUseTotemEvent.class, PortLivingUseTotemEvent::new);
+        PortEventHooks.register();
     }
 }

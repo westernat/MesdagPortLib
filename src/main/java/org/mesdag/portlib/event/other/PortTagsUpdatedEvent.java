@@ -40,6 +40,6 @@ public class PortTagsUpdatedEvent extends PortEvent<TagsUpdatedEvent> {
     }
 
     static {
-        PortEventHooks.register(TagsUpdatedEvent.class, PortTagsUpdatedEvent.class, PortTagsUpdatedEvent::new);
+        PortEventHooks.register();
     }
 }

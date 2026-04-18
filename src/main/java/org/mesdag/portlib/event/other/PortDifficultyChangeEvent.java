@@ -22,6 +22,6 @@ public class PortDifficultyChangeEvent extends PortEvent<DifficultyChangeEvent> 
     }
 
     static {
-        PortEventHooks.register(DifficultyChangeEvent.class, PortDifficultyChangeEvent.class, PortDifficultyChangeEvent::new);
+        PortEventHooks.register();
     }
 }

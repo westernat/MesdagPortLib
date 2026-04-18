@@ -18,6 +18,6 @@ public class PortEntityStruckByLightningEvent extends PortEntityEvent<EntityStru
     }
 
     static {
-        PortEventHooks.register(EntityStruckByLightningEvent.class, PortEntityStruckByLightningEvent.class, PortEntityStruckByLightningEvent::new);
+        PortEventHooks.register();
     }
 }

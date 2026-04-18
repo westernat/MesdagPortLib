@@ -13,6 +13,6 @@ public class PortGameShuttingDownEvent extends PortEvent<GameShuttingDownEvent> 
     }
 
     static {
-        PortEventHooks.register(GameShuttingDownEvent.class, PortGameShuttingDownEvent.class, PortGameShuttingDownEvent::new);
+        PortEventHooks.register();
     }
 }
