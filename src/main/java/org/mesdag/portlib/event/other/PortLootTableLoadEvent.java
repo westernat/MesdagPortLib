@@ -37,6 +37,6 @@ public class PortLootTableLoadEvent extends PortEvent<LootTableLoadEvent> implem
     }
 
     static {
-        PortEventHooks.register(LootTableLoadEvent.class, PortLootTableLoadEvent.class, PortLootTableLoadEvent::new);
+        PortEventHooks.register();
     }
 }

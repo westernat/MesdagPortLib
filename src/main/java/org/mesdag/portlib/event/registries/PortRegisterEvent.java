@@ -2,7 +2,6 @@ package org.mesdag.portlib.event.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
@@ -44,15 +43,14 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
     @FunctionalInterface
     public interface PortRegisterHelper<T> {
         default void register(ResourceKey<T> key, T value) {
-            ResourceLocation name = key.location();
-            register(PortIdentifier.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
+            register(key.location().wrap(), value);
         }
 
         void register(PortIdentifier name, T value);
 
         @Diff
         default RegisterEvent.RegisterHelper<T> unwrap() {
-            return (name, value) -> register(PortIdentifier.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
+            return (name, value) -> register(name.wrap(), value);
         }
 
         @Diff
@@ -75,6 +73,6 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
     }
 
     static {
-        PortEventHooks.register(RegisterEvent.class, PortRegisterEvent.class, PortRegisterEvent::new);
+        PortEventHooks.register();
     }
 }

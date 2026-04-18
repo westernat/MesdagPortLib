@@ -17,6 +17,6 @@ public class PortAttackEntityEvent extends PortPlayerEvent<AttackEntityEvent> im
     }
 
     static {
-        PortEventHooks.register(AttackEntityEvent.class, PortAttackEntityEvent.class, PortAttackEntityEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -23,6 +23,6 @@ public class PortPlayerEnchantItemEvent extends PortPlayerEvent<PlayerEnchantIte
     }
 
     static {
-        PortEventHooks.register(PlayerEnchantItemEvent.class, PortPlayerEnchantItemEvent.class, PortPlayerEnchantItemEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -22,7 +22,7 @@ public class PortPlayerContainerEvent extends PortPlayerEvent<PlayerContainerEve
         }
 
         static {
-            PortEventHooks.register(PlayerContainerEvent.Open.class, PortOpen.class, PortOpen::new);
+            PortEventHooks.register();
         }
     }
 
@@ -33,7 +33,7 @@ public class PortPlayerContainerEvent extends PortPlayerEvent<PlayerContainerEve
         }
 
         static {
-            PortEventHooks.register(PlayerContainerEvent.Close.class, PortClose.class, PortClose::new);
+            PortEventHooks.register();
         }
     }
 }

@@ -23,6 +23,6 @@ public class PortEnderManAngerEvent extends PortLivingEvent<EnderManAngerEvent> 
     }
 
     static {
-        PortEventHooks.register(EnderManAngerEvent.class, PortEnderManAngerEvent.class, PortEnderManAngerEvent::new);
+        PortEventHooks.register();
     }
 }

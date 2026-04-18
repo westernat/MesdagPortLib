@@ -16,7 +16,7 @@ public interface PortDataMapValueMerger<R, T> {
     @Diff
     default DataMapValueMerger<R, T> unwrap() {
         return (registry, first, firstValue, second, secondValue) -> {
-            PortRegistry<R> wrapped = PortRegistry.wrap(registry);
+            PortRegistry<R> wrapped = (PortRegistry<R>) registry.wrap();
             return merge(wrapped, first, firstValue, second, secondValue);
         };
     }

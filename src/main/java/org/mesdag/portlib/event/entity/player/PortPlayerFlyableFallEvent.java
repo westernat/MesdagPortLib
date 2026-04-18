@@ -27,6 +27,6 @@ public class PortPlayerFlyableFallEvent extends PortPlayerEvent<PlayerFlyableFal
     }
 
     static {
-        PortEventHooks.register(PlayerFlyableFallEvent.class, PortPlayerFlyableFallEvent.class, PortPlayerFlyableFallEvent::new);
+        PortEventHooks.register();
     }
 }

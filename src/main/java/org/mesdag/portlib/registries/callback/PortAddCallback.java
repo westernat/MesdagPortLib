@@ -12,6 +12,6 @@ public non-sealed interface PortAddCallback<V> extends PortRegistryCallback<V> {
     @Diff
     @Override
     default AddCallback<V> unwrap() {
-        return (registry, id, key, value) -> onAdd(PortRegistry.wrap(registry), id, key, value);
+        return (registry, id, key, value) -> onAdd((PortRegistry<V>) registry.wrap(), id, key, value);
     }
 }

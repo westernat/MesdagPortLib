@@ -51,6 +51,6 @@ public class PortBonemealEvent extends PortEvent<BonemealEvent> implements IPort
     }
 
     static {
-        PortEventHooks.register(BonemealEvent.class, PortBonemealEvent.class, PortBonemealEvent::new);
+        PortEventHooks.register();
     }
 }

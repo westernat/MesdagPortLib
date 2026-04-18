@@ -12,7 +12,7 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
 
     @Diff
     public static PortAttributeModifier wrap(AttributeModifier modifier) {
-        return new PortAttributeModifier(PortIdentifier.fromNamespaceAndPath(modifier.id().getNamespace(), modifier.id().getPath()), modifier.amount(), PortOperation.wrap(modifier.operation()));
+        return new PortAttributeModifier(modifier.id().wrap(), modifier.amount(), PortOperation.wrap(modifier.operation()));
     }
 
     public enum PortOperation {

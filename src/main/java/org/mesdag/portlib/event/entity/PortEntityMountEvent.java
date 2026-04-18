@@ -33,6 +33,6 @@ public class PortEntityMountEvent extends PortEntityEvent<EntityMountEvent> impl
     }
 
     static {
-        PortEventHooks.register(EntityMountEvent.class, PortEntityMountEvent.class, PortEntityMountEvent::new);
+        PortEventHooks.register();
     }
 }

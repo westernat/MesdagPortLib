@@ -24,6 +24,6 @@ public class PortMobSplitEvent extends PortEvent<MobSplitEvent> implements IPort
     }
 
     static {
-        PortEventHooks.register(MobSplitEvent.class, PortMobSplitEvent.class, PortMobSplitEvent::new);
+        PortEventHooks.register();
     }
 }

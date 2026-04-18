@@ -29,6 +29,6 @@ public class PortSweepAttackEvent extends PortPlayerEvent<SweepAttackEvent> impl
     }
 
     static {
-        PortEventHooks.register(SweepAttackEvent.class, PortSweepAttackEvent.class, PortSweepAttackEvent::new);
+        PortEventHooks.register();
     }
 }

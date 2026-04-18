@@ -33,6 +33,6 @@ public class PortCanContinueSleepingEvent extends PortLivingEvent<CanContinueSle
     }
 
     static {
-        PortEventHooks.register(CanContinueSleepingEvent.class, PortCanContinueSleepingEvent.class, PortCanContinueSleepingEvent::new);
+        PortEventHooks.register();
     }
 }

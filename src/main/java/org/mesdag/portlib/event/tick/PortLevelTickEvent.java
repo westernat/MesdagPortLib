@@ -27,7 +27,7 @@ public abstract class PortLevelTickEvent<E extends LevelTickEvent> extends PortE
         }
 
         static {
-            PortEventHooks.register(LevelTickEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class PortLevelTickEvent<E extends LevelTickEvent> extends PortE
         }
 
         static {
-            PortEventHooks.register(LevelTickEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

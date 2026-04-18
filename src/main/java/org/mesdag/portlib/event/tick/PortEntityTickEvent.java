@@ -19,7 +19,7 @@ public abstract class PortEntityTickEvent<E extends EntityTickEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(EntityTickEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -30,7 +30,7 @@ public abstract class PortEntityTickEvent<E extends EntityTickEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(EntityTickEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

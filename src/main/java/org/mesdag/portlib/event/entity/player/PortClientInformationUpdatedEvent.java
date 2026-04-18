@@ -26,6 +26,6 @@ public class PortClientInformationUpdatedEvent extends PortPlayerEvent<ClientInf
     }
 
     static {
-        PortEventHooks.register(ClientInformationUpdatedEvent.class, PortClientInformationUpdatedEvent.class, PortClientInformationUpdatedEvent::new);
+        PortEventHooks.register();
     }
 }

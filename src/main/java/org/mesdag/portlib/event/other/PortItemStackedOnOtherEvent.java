@@ -43,6 +43,6 @@ public class PortItemStackedOnOtherEvent extends PortEvent<ItemStackedOnOtherEve
     }
 
     static {
-        PortEventHooks.register(ItemStackedOnOtherEvent.class, PortItemStackedOnOtherEvent.class, PortItemStackedOnOtherEvent::new);
+        PortEventHooks.register();
     }
 }

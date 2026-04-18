@@ -11,6 +11,6 @@ public class PortServerStoppedEvent extends PortServerLifecycleEvent<ServerStopp
     }
 
     static {
-        PortEventHooks.register(ServerStoppedEvent.class, PortServerStoppedEvent.class, PortServerStoppedEvent::new);
+        PortEventHooks.register();
     }
 }

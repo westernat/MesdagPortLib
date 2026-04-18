@@ -18,6 +18,6 @@ public class PortRegisterDataMapTypesEvent extends PortEvent<RegisterDataMapType
     }
 
     static {
-        PortEventHooks.register(RegisterDataMapTypesEvent.class, PortRegisterDataMapTypesEvent.class, PortRegisterDataMapTypesEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -38,7 +38,7 @@ public abstract class PortPistonEvent<E extends PistonEvent> extends PortBlockEv
         }
 
         static {
-            PortEventHooks.register(PistonEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 
@@ -49,7 +49,7 @@ public abstract class PortPistonEvent<E extends PistonEvent> extends PortBlockEv
         }
 
         static {
-            PortEventHooks.register(PistonEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 

@@ -34,6 +34,6 @@ public class PortCommandEvent extends PortEvent<CommandEvent> implements IPortCa
     }
 
     static {
-        PortEventHooks.register(CommandEvent.class, PortCommandEvent.class, PortCommandEvent::new);
+        PortEventHooks.register();
     }
 }

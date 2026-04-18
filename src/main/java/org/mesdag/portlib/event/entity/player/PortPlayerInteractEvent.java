@@ -44,7 +44,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
     }
 
     public PortLogicalSide getSide() {
-        return PortLogicalSide.wrap(e.getSide());
+        return e.getSide().wrap();
     }
 
     public static class PortEntityInteractSpecific extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteractSpecific> implements IPortCancellableEvent {
@@ -70,7 +70,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.EntityInteractSpecific.class, PortEntityInteractSpecific.class, PortEntityInteractSpecific::new);
+            PortEventHooks.register();
         }
     }
     public static class PortEntityInteract extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteract> implements IPortCancellableEvent {
@@ -92,7 +92,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.EntityInteract.class, PortEntityInteract.class, PortEntityInteract::new);
+            PortEventHooks.register();
         }
     }
 
@@ -103,11 +103,11 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         public PortTriState getUseBlock() {
-            return PortTriState.wrap(e.getUseBlock());
+            return e.getUseBlock().wrap();
         }
 
         public PortTriState getUseItem() {
-            return PortTriState.wrap(e.getUseItem());
+            return e.getUseItem().wrap();
         }
 
         public BlockHitResult getHitVec() {
@@ -131,7 +131,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.RightClickBlock.class, PortRightClickBlock.class, PortRightClickBlock::new);
+            PortEventHooks.register();
         }
     }
 
@@ -150,7 +150,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.RightClickItem.class, PortRightClickItem.class, PortRightClickItem::new);
+            PortEventHooks.register();
         }
     }
 
@@ -161,7 +161,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.RightClickEmpty.class, PortRightClickEmpty.class, PortRightClickEmpty::new);
+            PortEventHooks.register();
         }
     }
 
@@ -172,11 +172,11 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         public PortTriState getUseBlock() {
-            return PortTriState.wrap(e.getUseBlock());
+            return e.getUseBlock().wrap();
         }
 
         public PortTriState getUseItem() {
-            return PortTriState.wrap(e.getUseItem());
+            return e.getUseItem().wrap();
         }
 
         public PortAction getAction() {
@@ -219,7 +219,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.LeftClickBlock.class, PortLeftClickBlock.class, PortLeftClickBlock::new);
+            PortEventHooks.register();
         }
     }
 
@@ -230,7 +230,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         static {
-            PortEventHooks.register(PlayerInteractEvent.LeftClickEmpty.class, PortLeftClickEmpty.class, PortLeftClickEmpty::new);
+            PortEventHooks.register();
         }
     }
 }

@@ -34,6 +34,6 @@ public class PortEntityAttributeModificationEvent extends PortEvent<EntityAttrib
     }
 
     static {
-        PortEventHooks.register(EntityAttributeModificationEvent.class, PortEntityAttributeModificationEvent.class, PortEntityAttributeModificationEvent::new);
+        PortEventHooks.register();
     }
 }

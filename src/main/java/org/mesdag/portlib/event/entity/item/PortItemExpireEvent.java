@@ -23,6 +23,6 @@ public class PortItemExpireEvent extends PortItemEvent<ItemExpireEvent> {
     }
 
     static {
-        PortEventHooks.register(ItemExpireEvent.class, PortItemExpireEvent.class, PortItemExpireEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -27,7 +27,7 @@ public abstract class PortServerTickEvent<E extends ServerTickEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(ServerTickEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class PortServerTickEvent<E extends ServerTickEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(ServerTickEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

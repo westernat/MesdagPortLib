@@ -55,7 +55,7 @@ public class PortUseItemOnBlockEvent extends PortEvent<UseItemOnBlockEvent> impl
     }
 
     public PortLogicalSide getSide() {
-        return PortLogicalSide.wrap(e.getSide());
+        return e.getSide().wrap();
     }
 
     public void cancelWithResult(ItemInteractionResult result) {
@@ -96,6 +96,6 @@ public class PortUseItemOnBlockEvent extends PortEvent<UseItemOnBlockEvent> impl
     }
 
     static {
-        PortEventHooks.register(UseItemOnBlockEvent.class, PortUseItemOnBlockEvent.class, PortUseItemOnBlockEvent::new);
+        PortEventHooks.register();
     }
 }

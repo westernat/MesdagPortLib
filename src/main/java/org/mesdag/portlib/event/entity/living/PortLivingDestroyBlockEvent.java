@@ -22,6 +22,6 @@ public class PortLivingDestroyBlockEvent extends PortLivingEvent<LivingDestroyBl
     }
 
     static {
-        PortEventHooks.register(LivingDestroyBlockEvent.class, PortLivingDestroyBlockEvent.class, PortLivingDestroyBlockEvent::new);
+        PortEventHooks.register();
     }
 }

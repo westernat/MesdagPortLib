@@ -43,7 +43,7 @@ public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortB
         }
 
         static {
-            PortEventHooks.register(NoteBlockEvent.Play.class, PortNoteBlockEvent.PortPlay.class, PortNoteBlockEvent.PortPlay::new);
+            PortEventHooks.register();
         }
     }
 
@@ -62,7 +62,7 @@ public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortB
         }
 
         static {
-            PortEventHooks.register(NoteBlockEvent.Change.class, PortNoteBlockEvent.Change.class, PortNoteBlockEvent.Change::new);
+            PortEventHooks.register();
         }
     }
 

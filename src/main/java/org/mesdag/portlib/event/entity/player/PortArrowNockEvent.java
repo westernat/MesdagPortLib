@@ -40,6 +40,6 @@ public class PortArrowNockEvent extends PortPlayerEvent<ArrowNockEvent> implemen
     }
 
     static {
-        PortEventHooks.register(ArrowNockEvent.class, PortArrowNockEvent.class, PortArrowNockEvent::new);
+        PortEventHooks.register();
     }
 }

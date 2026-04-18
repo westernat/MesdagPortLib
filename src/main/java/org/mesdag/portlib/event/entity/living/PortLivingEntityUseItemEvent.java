@@ -35,7 +35,7 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
 
         static {
-            PortEventHooks.register(LivingEntityUseItemEvent.Start.class, PortStart.class, PortStart::new);
+            PortEventHooks.register();
         }
     }
 
@@ -46,7 +46,7 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
 
         static {
-            PortEventHooks.register(LivingEntityUseItemEvent.Tick.class, PortTick.class, PortTick::new);
+            PortEventHooks.register();
         }
     }
 
@@ -57,7 +57,7 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
 
         static {
-            PortEventHooks.register(LivingEntityUseItemEvent.Stop.class, PortStop.class, PortStop::new);
+            PortEventHooks.register();
         }
     }
 
@@ -79,7 +79,7 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
 
         static {
-            PortEventHooks.register(LivingEntityUseItemEvent.Finish.class, PortFinish.class, PortFinish::new);
+            PortEventHooks.register();
         }
     }
 }

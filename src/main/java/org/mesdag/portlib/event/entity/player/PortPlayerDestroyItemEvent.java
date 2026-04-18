@@ -23,6 +23,6 @@ public class PortPlayerDestroyItemEvent extends PortPlayerEvent<PlayerDestroyIte
     }
 
     static {
-        PortEventHooks.register(PlayerDestroyItemEvent.class, PortPlayerDestroyItemEvent.class, PortPlayerDestroyItemEvent::new);
+        PortEventHooks.register();
     }
 }

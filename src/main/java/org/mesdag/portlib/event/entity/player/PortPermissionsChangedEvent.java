@@ -20,6 +20,6 @@ public class PortPermissionsChangedEvent extends PortPlayerEvent<PermissionsChan
     }
 
     static {
-        PortEventHooks.register(PermissionsChangedEvent.class, PortPermissionsChangedEvent.class, PortPermissionsChangedEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -51,7 +51,7 @@ public abstract class PortCropGrowEvent<E extends CropGrowEvent> extends PortBlo
         }
 
         static {
-            PortEventHooks.register(CropGrowEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class PortCropGrowEvent<E extends CropGrowEvent> extends PortBlo
         }
 
         static {
-            PortEventHooks.register(CropGrowEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

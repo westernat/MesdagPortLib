@@ -54,6 +54,6 @@ public class PortLivingShieldBlockEvent extends PortLivingEvent<LivingShieldBloc
     }
 
     static {
-        PortEventHooks.register(LivingShieldBlockEvent.class, PortLivingShieldBlockEvent.class, PortLivingShieldBlockEvent::new);
+        PortEventHooks.register();
     }
 }

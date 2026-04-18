@@ -43,6 +43,6 @@ public class PortMobDespawnEvent extends PortMobSpawnEvent<MobDespawnEvent> {
     }
 
     static {
-        PortEventHooks.register(MobDespawnEvent.class, PortMobDespawnEvent.class, PortMobDespawnEvent::new);
+        PortEventHooks.register();
     }
 }

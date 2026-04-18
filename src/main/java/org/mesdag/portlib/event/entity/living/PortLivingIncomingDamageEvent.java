@@ -43,6 +43,6 @@ public class PortLivingIncomingDamageEvent extends PortLivingEvent<LivingIncomin
     }
 
     static {
-        PortEventHooks.register(LivingIncomingDamageEvent.class, PortLivingIncomingDamageEvent.class, PortLivingIncomingDamageEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -39,6 +39,6 @@ public class PortEffectParticleModificationEvent extends PortLivingEvent<EffectP
     }
 
     static {
-        PortEventHooks.register(EffectParticleModificationEvent.class, PortEffectParticleModificationEvent.class, PortEffectParticleModificationEvent::new);
+        PortEventHooks.register();
     }
 }

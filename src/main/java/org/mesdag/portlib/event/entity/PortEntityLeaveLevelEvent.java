@@ -5,7 +5,6 @@ import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-
 public class PortEntityLeaveLevelEvent extends PortEntityEvent<EntityLeaveLevelEvent> {
     @Diff
     public PortEntityLeaveLevelEvent(EntityLeaveLevelEvent e) {
@@ -16,6 +15,7 @@ public class PortEntityLeaveLevelEvent extends PortEntityEvent<EntityLeaveLevelE
         return e.getLevel();
     }
 
-    static {PortEventHooks.register(EntityLeaveLevelEvent.class, PortEntityLeaveLevelEvent.class, PortEntityLeaveLevelEvent::new);
+    static {
+        PortEventHooks.register();
     }
 }

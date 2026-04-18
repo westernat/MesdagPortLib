@@ -28,6 +28,6 @@ public class PortLivingFallEvent extends PortLivingEvent<LivingFallEvent> implem
     }
 
     static {
-        PortEventHooks.register(LivingFallEvent.class, PortLivingFallEvent.class, PortLivingFallEvent::new);
+        PortEventHooks.register();
     }
 }

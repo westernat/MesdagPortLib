@@ -34,7 +34,7 @@ public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
     }
 
     public PortIdentifier id() {
-        return PortIdentifier.fromNamespaceAndPath(delegate.id().getNamespace(), delegate.id().getPath());
+        return delegate.id().wrap();
     }
 
     public Codec<T> codec() {

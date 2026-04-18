@@ -34,6 +34,6 @@ public class PortArrowLooseEvent extends PortPlayerEvent<ArrowLooseEvent> implem
     }
 
     static {
-        PortEventHooks.register(ArrowLooseEvent.class, PortArrowLooseEvent.class, PortArrowLooseEvent::new);
+        PortEventHooks.register();
     }
 }

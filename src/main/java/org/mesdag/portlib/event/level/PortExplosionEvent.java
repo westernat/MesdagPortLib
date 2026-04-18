@@ -33,7 +33,7 @@ public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortE
         }
 
         static {
-            PortEventHooks.register(ExplosionEvent.Start.class, PortStart.class, PortStart::new);
+            PortEventHooks.register();
         }
     }
 
@@ -52,7 +52,7 @@ public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortE
         }
 
         static {
-            PortEventHooks.register(ExplosionEvent.Detonate.class, PortDetonate.class, PortDetonate::new);
+            PortEventHooks.register();
         }
     }
 }

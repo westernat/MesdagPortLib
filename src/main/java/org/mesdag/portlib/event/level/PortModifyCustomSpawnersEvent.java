@@ -28,6 +28,6 @@ public class PortModifyCustomSpawnersEvent extends PortEvent<ModifyCustomSpawner
     }
 
     static {
-        PortEventHooks.register(ModifyCustomSpawnersEvent.class, PortModifyCustomSpawnersEvent.class, PortModifyCustomSpawnersEvent::new);
+        PortEventHooks.register();
     }
 }

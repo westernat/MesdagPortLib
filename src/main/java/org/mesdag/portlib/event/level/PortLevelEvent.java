@@ -30,7 +30,7 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(LevelEvent.Load.class, PortLoad.class, PortLoad::new);
+            PortEventHooks.register();
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(LevelEvent.Unload.class, PortUnload.class, PortUnload::new);
+            PortEventHooks.register();
         }
     }
 
@@ -52,7 +52,7 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(LevelEvent.Save.class, PortSave.class, PortSave::new);
+            PortEventHooks.register();
         }
     }
 
@@ -67,7 +67,7 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(LevelEvent.CreateSpawnPosition.class, PortCreateSpawnPosition.class, PortCreateSpawnPosition::new);
+            PortEventHooks.register();
         }
     }
 
@@ -98,7 +98,7 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
 
         static {
-            PortEventHooks.register(LevelEvent.PotentialSpawns.class, PotentialSpawns.class, PotentialSpawns::new);
+            PortEventHooks.register();
         }
     }
 }

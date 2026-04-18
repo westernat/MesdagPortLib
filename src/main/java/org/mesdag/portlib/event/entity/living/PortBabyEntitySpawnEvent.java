@@ -37,6 +37,6 @@ public class PortBabyEntitySpawnEvent extends PortEvent<BabyEntitySpawnEvent> im
     }
 
     static {
-        PortEventHooks.register(BabyEntitySpawnEvent.class, PortBabyEntitySpawnEvent.class, PortBabyEntitySpawnEvent::new);
+        PortEventHooks.register();
     }
 }

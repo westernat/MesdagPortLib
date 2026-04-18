@@ -71,7 +71,7 @@ public class PortItemStackExtension {
         return thiz.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).styledLines();
     }
 
-    public static @Nullable PortItemEnchantments getEnchantments(@This ItemStack thiz) {
+    public static @Nullable PortItemEnchantments getPortEnchantments(@This ItemStack thiz) {
         if (PortItemEnchantments.shouldGetStoredEnchantments(thiz)) {
             return null;
         }

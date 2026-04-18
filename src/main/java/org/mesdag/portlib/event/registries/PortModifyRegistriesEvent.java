@@ -17,14 +17,14 @@ public class PortModifyRegistriesEvent extends PortEvent<ModifyRegistriesEvent> 
     }
 
     public Iterable<PortRegistry<?>> getRegistries() {
-        return Streams.of(e.getRegistries()).<PortRegistry<?>>map(PortRegistry::wrap).toList();
+        return Streams.of(e.getRegistries()).<PortRegistry<?>>map(Registry::wrap).toList();
     }
 
     public <T> PortRegistry<T> getRegistry(ResourceKey<? extends Registry<T>> key) {
-        return PortRegistry.wrap(e.getRegistry(key));
+        return (PortRegistry<T>) e.getRegistry(key).wrap();
     }
 
     static {
-        PortEventHooks.register(ModifyRegistriesEvent.class, PortModifyRegistriesEvent.class, PortModifyRegistriesEvent::new);
+        PortEventHooks.register();
     }
 }

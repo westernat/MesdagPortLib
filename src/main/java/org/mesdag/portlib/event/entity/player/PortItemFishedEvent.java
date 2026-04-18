@@ -33,6 +33,6 @@ public class PortItemFishedEvent extends PortPlayerEvent<ItemFishedEvent> implem
     }
 
     static {
-        PortEventHooks.register(ItemFishedEvent.class, PortItemFishedEvent.class, PortItemFishedEvent::new);
+        PortEventHooks.register();
     }
 }

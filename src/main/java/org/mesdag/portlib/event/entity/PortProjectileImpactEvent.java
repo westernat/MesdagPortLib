@@ -23,6 +23,6 @@ public class PortProjectileImpactEvent extends PortEntityEvent<ProjectileImpactE
     }
 
     static {
-        PortEventHooks.register(ProjectileImpactEvent.class, PortProjectileImpactEvent.class, PortProjectileImpactEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -38,7 +38,7 @@ public abstract class PortLivingDamageEvent<E extends LivingDamageEvent> extends
         }
 
         static {
-            PortEventHooks.register(LivingDamageEvent.Pre.class, PortPre.class, PortPre::new);
+            PortEventHooks.register();
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class PortLivingDamageEvent<E extends LivingDamageEvent> extends
         }
 
         static {
-            PortEventHooks.register(LivingDamageEvent.Post.class, PortPost.class, PortPost::new);
+            PortEventHooks.register();
         }
     }
 }

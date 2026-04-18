@@ -49,6 +49,6 @@ public class PortBlockDropsEvent extends PortBlockEvent<BlockDropsEvent> impleme
     }
 
     static {
-        PortEventHooks.register(BlockDropsEvent.class, PortBlockDropsEvent.class, PortBlockDropsEvent::new);
+        PortEventHooks.register();
     }
 }

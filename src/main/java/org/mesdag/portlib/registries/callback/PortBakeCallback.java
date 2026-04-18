@@ -11,6 +11,6 @@ public non-sealed interface PortBakeCallback<V> extends PortRegistryCallback<V> 
     @Diff
     @Override
     default BakeCallback<V> unwrap() {
-        return registry -> onBake(PortRegistry.wrap(registry));
+        return registry -> onBake((PortRegistry<V>) registry.wrap());
     }
 }

@@ -11,6 +11,6 @@ public non-sealed interface PortClearCallback<V> extends PortRegistryCallback<V>
     @Diff
     @Override
     default ClearCallback<V> unwrap() {
-        return (registry, full) -> onClear(PortRegistry.wrap(registry));
+        return (registry, full) -> onClear((PortRegistry<V>) registry.wrap());
     }
 }

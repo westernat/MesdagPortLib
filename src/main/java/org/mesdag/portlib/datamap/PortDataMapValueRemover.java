@@ -16,7 +16,7 @@ public interface PortDataMapValueRemover<R, T> {
 
     @Diff
     default DataMapValueRemover<R, T> unwrap() {
-        return (value, registry, source, object) -> remove(value, PortRegistry.wrap(registry), source, object);
+        return (value, registry, source, object) -> remove(value, (PortRegistry<R>) registry.wrap(), source, object);
     }
 
     @Diff

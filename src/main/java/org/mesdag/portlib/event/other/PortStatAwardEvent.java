@@ -30,6 +30,6 @@ public class PortStatAwardEvent extends PortPlayerEvent<StatAwardEvent> implemen
     }
 
     static {
-        PortEventHooks.register(StatAwardEvent.class, PortStatAwardEvent.class, PortStatAwardEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -30,6 +30,6 @@ public class PortBlockEntityTypeAddBlocksEvent extends PortEvent<BlockEntityType
     }
 
     static {
-        PortEventHooks.register(BlockEntityTypeAddBlocksEvent.class, PortBlockEntityTypeAddBlocksEvent.class, PortBlockEntityTypeAddBlocksEvent::new);
+        PortEventHooks.register();
     }
 }

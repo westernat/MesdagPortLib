@@ -9,9 +9,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.registries.PortRegistryMaker;
-
-import java.util.function.Consumer;
 
 public abstract class PortDataPackRegistryEvent<E extends DataPackRegistryEvent> extends PortEvent<E> implements IPortModBusEvent {
     @Diff
@@ -33,16 +30,16 @@ public abstract class PortDataPackRegistryEvent<E extends DataPackRegistryEvent>
             e.dataPackRegistry(registryKey, codec, networkCodec);
         }
 
-        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec, Consumer<PortRegistryMaker<T>> consumer) {
-            e.dataPackRegistry(registryKey, codec, networkCodec, builder -> {
-                PortRegistryMaker<T> maker = new PortRegistryMaker<>();
-                maker.builder = builder;
-                consumer.accept(maker);
-            });
-        }
+//        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec, Consumer<PortRegistryMaker<T>> consumer) {
+//            e.dataPackRegistry(registryKey, codec, networkCodec, builder -> {
+//                PortRegistryMaker<T> maker = new PortRegistryMaker<>();
+//                maker.builder = builder;
+//                consumer.accept(maker);
+//            });
+//        }
 
         static {
-            PortEventHooks.register(DataPackRegistryEvent.NewRegistry.class, PortNewRegistry.class, PortNewRegistry::new);
+            PortEventHooks.register();
         }
     }
 }

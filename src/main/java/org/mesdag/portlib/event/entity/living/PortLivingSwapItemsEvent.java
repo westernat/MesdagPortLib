@@ -35,7 +35,7 @@ public abstract class PortLivingSwapItemsEvent<E extends LivingSwapItemsEvent> e
         }
 
         static {
-            PortEventHooks.register(LivingSwapItemsEvent.Hands.class, PortHands.class, PortHands::new);
+            PortEventHooks.register();
         }
     }
 }

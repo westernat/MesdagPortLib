@@ -27,7 +27,7 @@ public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortC
         }
 
         static {
-            PortEventHooks.register(ChunkDataEvent.Load.class, PortChunkDataEvent.PortLoad.class, PortChunkDataEvent.PortLoad::new);
+            PortEventHooks.register();
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortC
         }
 
         static {
-            PortEventHooks.register(ChunkDataEvent.Save.class, PortSave.class, PortSave::new);
+            PortEventHooks.register();
         }
     }
 }

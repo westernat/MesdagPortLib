@@ -29,7 +29,7 @@ public abstract class PortChunkEvent<E extends ChunkEvent> extends PortLevelEven
         }
 
         static {
-            PortEventHooks.register(ChunkEvent.Load.class, PortChunkEvent.PortLoad.class, PortChunkEvent.PortLoad::new);
+            PortEventHooks.register();
         }
     }
 
@@ -40,7 +40,7 @@ public abstract class PortChunkEvent<E extends ChunkEvent> extends PortLevelEven
         }
 
         static {
-            PortEventHooks.register(ChunkEvent.Unload.class, PortChunkEvent.PortUnload.class, PortChunkEvent.PortUnload::new);
+            PortEventHooks.register();
         }
     }
 }

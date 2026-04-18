@@ -11,6 +11,6 @@ public class PortServerStartingEvent extends PortServerLifecycleEvent<ServerStar
     }
 
     static {
-        PortEventHooks.register(ServerStartingEvent.class, PortServerStartingEvent.class, PortServerStartingEvent::new);
+        PortEventHooks.register();
     }
 }

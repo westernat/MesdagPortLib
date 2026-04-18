@@ -22,6 +22,6 @@ public class PortRegisterBrewingRecipesEvent extends PortEvent<RegisterBrewingRe
     }
 
     static {
-        PortEventHooks.register(RegisterBrewingRecipesEvent.class, PortRegisterBrewingRecipesEvent.class, PortRegisterBrewingRecipesEvent::new);
+        PortEventHooks.register();
     }
 }

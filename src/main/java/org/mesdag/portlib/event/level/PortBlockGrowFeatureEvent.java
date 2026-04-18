@@ -36,6 +36,6 @@ public class PortBlockGrowFeatureEvent extends PortLevelEvent<BlockGrowFeatureEv
     }
 
     static {
-        PortEventHooks.register(BlockGrowFeatureEvent.class, PortBlockGrowFeatureEvent.class, PortBlockGrowFeatureEvent::new);
+        PortEventHooks.register();
     }
 }

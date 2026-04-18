@@ -17,6 +17,6 @@ public class PortLivingDeathEvent extends PortLivingEvent<LivingDeathEvent> impl
     }
 
     static {
-        PortEventHooks.register(LivingDeathEvent.class, PortLivingDeathEvent.class, PortLivingDeathEvent::new);
+        PortEventHooks.register();
     }
 }

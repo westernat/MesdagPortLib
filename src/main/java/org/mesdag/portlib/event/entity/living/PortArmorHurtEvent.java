@@ -68,6 +68,6 @@ public class PortArmorHurtEvent extends PortLivingEvent<ArmorHurtEvent> implemen
     }
 
     static {
-        PortEventHooks.register(ArmorHurtEvent.class, PortArmorHurtEvent.class, PortArmorHurtEvent::new);
+        PortEventHooks.register();
     }
 }

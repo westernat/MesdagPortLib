@@ -21,6 +21,6 @@ public class PortEntityAttributeCreationEvent extends PortEvent<EntityAttributeC
     }
 
     static {
-        PortEventHooks.register(EntityAttributeCreationEvent.class, PortEntityAttributeCreationEvent.class, PortEntityAttributeCreationEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -30,6 +30,6 @@ public class PortVillagerTradesEvent extends PortEvent<VillagerTradesEvent> {
     }
 
     static {
-        PortEventHooks.register(VillagerTradesEvent.class, PortVillagerTradesEvent.class, PortVillagerTradesEvent::new);
+        PortEventHooks.register();
     }
 }

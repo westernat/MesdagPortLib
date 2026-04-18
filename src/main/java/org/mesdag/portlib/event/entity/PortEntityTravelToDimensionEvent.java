@@ -19,6 +19,6 @@ public class PortEntityTravelToDimensionEvent extends PortEntityEvent<EntityTrav
     }
 
     static {
-        PortEventHooks.register(EntityTravelToDimensionEvent.class, PortEntityTravelToDimensionEvent.class, PortEntityTravelToDimensionEvent::new);
+        PortEventHooks.register();
     }
 }

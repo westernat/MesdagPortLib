@@ -33,6 +33,6 @@ public class PortExplosionKnockbackEvent extends PortEvent<ExplosionKnockbackEve
     }
 
     static {
-        PortEventHooks.register(ExplosionKnockbackEvent.class, PortExplosionKnockbackEvent.class, PortExplosionKnockbackEvent::new);
+        PortEventHooks.register();
     }
 }

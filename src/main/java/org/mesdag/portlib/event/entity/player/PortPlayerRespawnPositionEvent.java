@@ -42,6 +42,6 @@ public class PortPlayerRespawnPositionEvent extends PortPlayerEvent<PlayerRespaw
     }
 
     static {
-        PortEventHooks.register(PlayerRespawnPositionEvent.class, PortPlayerRespawnPositionEvent.class, PortPlayerRespawnPositionEvent::new);
+        PortEventHooks.register();
     }
 }

@@ -57,6 +57,6 @@ public class PortPlayerSpawnPhantomsEvent extends PortPlayerEvent<PlayerSpawnPha
     }
 
     static {
-        PortEventHooks.register(PlayerSpawnPhantomsEvent.class, PortPlayerSpawnPhantomsEvent.class, PortPlayerSpawnPhantomsEvent::new);
+        PortEventHooks.register();
     }
 }

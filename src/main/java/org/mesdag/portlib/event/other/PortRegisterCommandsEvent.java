@@ -28,6 +28,6 @@ public class PortRegisterCommandsEvent extends PortEvent<RegisterCommandsEvent> 
     }
 
     static {
-        PortEventHooks.register(RegisterCommandsEvent.class, PortRegisterCommandsEvent.class, PortRegisterCommandsEvent::new);
+        PortEventHooks.register();
     }
 }

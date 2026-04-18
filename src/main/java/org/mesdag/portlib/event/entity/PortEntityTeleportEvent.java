@@ -68,7 +68,7 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(EntityTeleportEvent.TeleportCommand.class, PortTeleportCommand.class, PortTeleportCommand::new);
+            PortEventHooks.register();
         }
     }
 
@@ -79,7 +79,7 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(EntityTeleportEvent.SpreadPlayersCommand.class, PortSpreadPlayersCommand.class, PortSpreadPlayersCommand::new);
+            PortEventHooks.register();
         }
     }
 
@@ -94,7 +94,7 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(EntityTeleportEvent.EnderEntity.class, PortEnderEntity.class, PortEnderEntity::new);
+            PortEventHooks.register();
         }
     }
 
@@ -125,7 +125,7 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(EntityTeleportEvent.EnderPearl.class, PortEnderPearl.class, PortEnderPearl::new);
+            PortEventHooks.register();
         }
     }
 
@@ -140,7 +140,7 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
 
         static {
-            PortEventHooks.register(EntityTeleportEvent.ChorusFruit.class, PortChorusFruit.class, PortChorusFruit::new);
+            PortEventHooks.register();
         }
     }
 }

@@ -35,6 +35,6 @@ public class PortAddPackFindersEvent extends PortEvent<AddPackFindersEvent> impl
     }
 
     static {
-        PortEventHooks.register(AddPackFindersEvent.class, PortAddPackFindersEvent.class, PortAddPackFindersEvent::new);
+        PortEventHooks.register();
     }
 }

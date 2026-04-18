@@ -38,7 +38,7 @@ public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(ChunkWatchEvent.Watch.class, PortWatch.class, PortWatch::new);
+            PortEventHooks.register();
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(ChunkWatchEvent.Sent.class, PortSent.class, PortSent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends Por
         }
 
         static {
-            PortEventHooks.register(ChunkWatchEvent.UnWatch.class, PortUnWatch.class, PortUnWatch::new);
+            PortEventHooks.register();
         }
     }
 }

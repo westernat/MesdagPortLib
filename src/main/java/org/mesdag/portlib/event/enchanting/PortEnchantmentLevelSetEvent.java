@@ -47,6 +47,6 @@ public class PortEnchantmentLevelSetEvent extends PortEvent<EnchantmentLevelSetE
     }
 
     static {
-        PortEventHooks.register(EnchantmentLevelSetEvent.class, PortEnchantmentLevelSetEvent.class, PortEnchantmentLevelSetEvent::new);
+        PortEventHooks.register();
     }
 }

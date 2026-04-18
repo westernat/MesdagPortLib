@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.core.PortRegistry;
 
 import java.util.function.Consumer;
 
@@ -20,8 +21,8 @@ public class PortDataMapsUpdatedEvent extends PortEvent<DataMapsUpdatedEvent> {
         return e.getRegistries();
     }
 
-    public Registry<?> getRegistry() {
-        return e.getRegistry();
+    public PortRegistry<?> getRegistry() {
+        return e.getRegistry().wrap();
     }
 
     public ResourceKey<? extends Registry<?>> getRegistryKey() {
@@ -33,7 +34,7 @@ public class PortDataMapsUpdatedEvent extends PortEvent<DataMapsUpdatedEvent> {
     }
 
     public PortUpdateCause getCause() {
-        return PortUpdateCause.wrap(e.getCause());
+        return e.getCause().wrap();
     }
 
     public enum PortUpdateCause {
@@ -44,14 +45,9 @@ public class PortDataMapsUpdatedEvent extends PortEvent<DataMapsUpdatedEvent> {
         public DataMapsUpdatedEvent.UpdateCause unwrap() {
             return this == CLIENT_SYNC ? DataMapsUpdatedEvent.UpdateCause.CLIENT_SYNC : DataMapsUpdatedEvent.UpdateCause.SERVER_RELOAD;
         }
-
-        @Diff
-        public static PortUpdateCause wrap(DataMapsUpdatedEvent.UpdateCause cause) {
-            return cause == DataMapsUpdatedEvent.UpdateCause.CLIENT_SYNC ? CLIENT_SYNC : SERVER_RELOAD;
-        }
     }
 
     static {
-        PortEventHooks.register(DataMapsUpdatedEvent.class, PortDataMapsUpdatedEvent.class, PortDataMapsUpdatedEvent::new);
+        PortEventHooks.register();
     }
 }

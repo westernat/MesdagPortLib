@@ -57,6 +57,6 @@ public class PortAnvilUpdateEvent extends PortEvent<AnvilUpdateEvent> implements
     }
 
     static {
-        PortEventHooks.register(AnvilUpdateEvent.class, PortAnvilUpdateEvent.class, PortAnvilUpdateEvent::new);
+        PortEventHooks.register();
     }
 }

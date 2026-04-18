@@ -41,6 +41,6 @@ public class PortVanillaGameEvent extends PortEvent<VanillaGameEvent> implements
     }
 
     static {
-        PortEventHooks.register(VanillaGameEvent.class, PortVanillaGameEvent.class, PortVanillaGameEvent::new);
+        PortEventHooks.register();
     }
 }

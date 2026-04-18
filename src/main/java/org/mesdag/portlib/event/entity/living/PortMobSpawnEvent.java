@@ -108,7 +108,7 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
         }
 
         static {
-            PortEventHooks.register(MobSpawnEvent.SpawnPlacementCheck.class, PortSpawnPlacementCheck.class, PortSpawnPlacementCheck::new);
+            PortEventHooks.register();
         }
     }
 
@@ -159,7 +159,7 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
         }
 
         static {
-            PortEventHooks.register(MobSpawnEvent.PositionCheck.class, PortPositionCheck.class, PortPositionCheck::new);
+            PortEventHooks.register();
         }
     }
 }

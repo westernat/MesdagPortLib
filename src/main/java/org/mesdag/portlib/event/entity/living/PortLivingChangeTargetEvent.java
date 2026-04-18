@@ -67,6 +67,6 @@ public class PortLivingChangeTargetEvent extends PortLivingEvent<LivingChangeTar
     }
 
     static {
-        PortEventHooks.register(LivingChangeTargetEvent.class, PortLivingChangeTargetEvent.class, PortLivingChangeTargetEvent::new);
+        PortEventHooks.register();
     }
 }

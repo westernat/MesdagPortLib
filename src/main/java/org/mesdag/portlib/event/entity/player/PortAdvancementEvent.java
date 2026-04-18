@@ -23,7 +23,7 @@ public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends P
         }
 
         static {
-            PortEventHooks.register(AdvancementEvent.AdvancementEarnEvent.class, PortAdvancementEarnEvent.class, PortAdvancementEarnEvent::new);
+            PortEventHooks.register();
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends P
         }
 
         static {
-            PortEventHooks.register(AdvancementEvent.AdvancementProgressEvent.class, PortAdvancementProgressEvent.class, PortAdvancementProgressEvent::new);
+            PortEventHooks.register();
         }
     }
 }

@@ -28,6 +28,6 @@ public class PortLivingDropsEvent extends PortLivingEvent<LivingDropsEvent> impl
     }
 
     static {
-        PortEventHooks.register(LivingDropsEvent.class, PortLivingDropsEvent.class, PortLivingDropsEvent::new);
+        PortEventHooks.register();
     }
 }

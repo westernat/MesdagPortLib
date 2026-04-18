@@ -32,6 +32,6 @@ public class PortModifyDefaultComponentsEvent extends PortEvent<ModifyDefaultCom
     }
 
     static {
-        PortEventHooks.register(ModifyDefaultComponentsEvent.class, PortModifyDefaultComponentsEvent.class, PortModifyDefaultComponentsEvent::new);
+        PortEventHooks.register();
     }
 }

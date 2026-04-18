@@ -21,11 +21,9 @@ public enum PortTriState {
     }
 
     public int unwrapState() {
-        return switch (this) {
-            case TRUE -> 1;
-            case DEFAULT -> 0;
-            case FALSE -> -1;
-        };
+        if (isTrue()) return 1;
+        if (isFalse()) return -1;
+        return 0;
     }
 
     public static PortTriState wrapState(int state) {
@@ -36,19 +34,8 @@ public enum PortTriState {
 
     @Diff
     public TriState unwrap() {
-        return switch (this) {
-            case TRUE -> TriState.TRUE;
-            case DEFAULT -> TriState.DEFAULT;
-            case FALSE -> TriState.FALSE;
-        };
-    }
-
-    @Diff
-    public static PortTriState wrap(TriState state) {
-        return switch (state) {
-            case TRUE -> TRUE;
-            case DEFAULT -> DEFAULT;
-            case FALSE -> FALSE;
-        };
+        if (isTrue()) return TriState.TRUE;
+        if (isFalse()) return TriState.FALSE;
+        return TriState.DEFAULT;
     }
 }
