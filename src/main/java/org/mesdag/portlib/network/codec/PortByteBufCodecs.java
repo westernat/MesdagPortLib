@@ -1,5 +1,6 @@
 package org.mesdag.portlib.network.codec;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
@@ -295,16 +296,12 @@ public interface PortByteBufCodecs {
             public T decode(PortRegistryFriendlyByteBuf buffer) {
                 Tag tag = streamcodec.decode(buffer);
                 RegistryOps<Tag> registryops = buffer.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-                return codec.parse(registryops, tag).getOrThrow(false, message -> {
-                    throw new DecoderException("Failed to decode: " + message + " " + tag);
-                });
+                return codec.parse(registryops, tag).getOrThrow(message -> new DecoderException("Failed to decode: " + message + " " + tag));
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, T value) {
                 RegistryOps<Tag> registryops = buffer.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-                Tag tag = codec.encodeStart(registryops, value).getOrThrow(false, message -> {
-                    throw new EncoderException("Failed to encode: " + message + " " + value);
-                });
+                Tag tag = codec.encodeStart(registryops, value).getOrThrow(message -> new EncoderException("Failed to encode: " + message + " " + value));
                 streamcodec.encode(buffer, tag);
             }
         };
@@ -348,5 +345,25 @@ public interface PortByteBufCodecs {
             }
             throw new DecoderException("Not a compound tag: " + tag);
         }, Function.identity());
+    }
+
+    static <B extends ByteBuf, L, R> PortStreamCodec<B, Either<L, R>> either(PortStreamCodec<? super B, L> leftCodec, PortStreamCodec<? super B, R> rightCodec) {
+        return new PortStreamCodec<>() {
+            public Either<L, R> decode(B buffer) {
+                return buffer.readBoolean()
+                        ? Either.left(leftCodec.decode(buffer))
+                        : Either.right(rightCodec.decode(buffer));
+            }
+
+            public void encode(B buffer, Either<L, R> either) {
+                either.ifLeft(left -> {
+                    buffer.writeBoolean(true);
+                    leftCodec.encode(buffer, left);
+                }).ifRight(right -> {
+                    buffer.writeBoolean(false);
+                    rightCodec.encode(buffer, right);
+                });
+            }
+        };
     }
 }

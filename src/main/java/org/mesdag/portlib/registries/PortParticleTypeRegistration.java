@@ -20,18 +20,17 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         super(namespace, Registries.PARTICLE_TYPE);
     }
 
-    public <T extends PortParticleOptions> PortRegistryEntry<ParticleType<T>> register(String name, boolean overrideLimiter, MapCodec<T> codec, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+    public <T extends PortParticleOptions> PortRegistryEntry<ParticleType<?>, ParticleType<T>> register(String name, boolean overrideLimiter, MapCodec<T> codec, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+        //                                不能删除下方的T,会导致编译不通过
         return register(name, () -> new ParticleType<T>(overrideLimiter, new ParticleOptions.Deserializer<>() {
             @Override
             public T fromCommand(ParticleType<T> particleType, StringReader reader) throws CommandSyntaxException {
-                return codec.compressedDecode(NbtOps.INSTANCE, TagParser.parseTag(reader.getString())).getOrThrow(false, message -> {
-                    throw new RuntimeException(message);
-                });
+                return codec.compressedDecode(NbtOps.INSTANCE, TagParser.parseTag(reader.getString())).getOrThrow();
             }
 
             @Override
             public T fromNetwork(ParticleType<T> particleType, FriendlyByteBuf buffer) {
-                return streamCodec.decode(PortRegistryFriendlyByteBuf.wrap(buffer));
+                return streamCodec.decode(buffer.wrap());
             }
         }) {
             @Override
@@ -41,7 +40,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         });
     }
 
-    public PortRegistryEntry<SimpleParticleType> register(String name, boolean overrideLimiter) {
+    public PortRegistryEntry<ParticleType<?>, SimpleParticleType> register(String name, boolean overrideLimiter) {
         return register(name, () -> new SimpleParticleType(overrideLimiter));
     }
 }

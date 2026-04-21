@@ -6,8 +6,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-import java.util.List;
-
 public abstract class PortPlayerTickEvent extends PortEvent<TickEvent.PlayerTickEvent> {
     @Diff
     public PortPlayerTickEvent(TickEvent.PlayerTickEvent e) {
@@ -23,6 +21,10 @@ public abstract class PortPlayerTickEvent extends PortEvent<TickEvent.PlayerTick
         public PortPre(TickEvent.PlayerTickEvent e) {
             super(e);
         }
+
+        static {
+            PortEventHooks.registerPredicated(TickEvent.PlayerTickEvent.class, PortPre.class, PortPre::new, event -> event.phase == TickEvent.Phase.START);
+        }
     }
 
     public static class PortPost extends PortPlayerTickEvent {
@@ -30,17 +32,9 @@ public abstract class PortPlayerTickEvent extends PortEvent<TickEvent.PlayerTick
         public PortPost(TickEvent.PlayerTickEvent e) {
             super(e);
         }
-    }
 
-    static {
-        PortEventHooks.registerCombined(TickEvent.PlayerTickEvent.class, List.of(
-                PortPre.class,
-                PortPost.class
-        ), e -> {
-            if (e.phase == TickEvent.Phase.START) {
-                return new PortPre(e);
-            }
-            return new PortPost(e);
-        });
+        static {
+            PortEventHooks.registerPredicated(TickEvent.PlayerTickEvent.class, PortPost.class, PortPost::new, event -> event.phase == TickEvent.Phase.END);
+        }
     }
 }

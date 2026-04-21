@@ -5,6 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.CustomSpawner;
+import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.diff.attachment.PortLevelAttachmentsSavedData;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortModifyCustomSpawnersEvent;
@@ -21,11 +24,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin implements PortSelfGetter<ServerLevel> {
+public abstract class ServerLevelMixin implements CPortAttachmentHolder, PortSelfGetter<ServerLevel> {
     @Mutable
     @Shadow
     @Final
     private List<CustomSpawner> customSpawners;
+
+    @Override
+    public void syncAttach(PortAttachmentType<?> type) {
+        PortAttachmentSync.syncLevelUpdate(portlib$self(), type);
+    }
 
     @Inject(method = "initCapabilities", at = @At("TAIL"), remap = false)
     private void initAttachments(CallbackInfo ci) {

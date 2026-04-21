@@ -6,15 +6,19 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
+import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Set;
 
@@ -53,5 +57,13 @@ public class PortMobEffectInstanceExtension {
     @Extension
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, MobEffectInstance> streamCodec() {
         return STREAM_CODEC;
+    }
+
+    public static ParticleOptions getParticleOptions(@This MobEffectInstance thiz) {
+        MobEffect effect = thiz.getEffect();
+        if (effect instanceof PortMobEffect port) {
+            return port.createParticleOptions(thiz);
+        }
+        return thiz.isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
     }
 }

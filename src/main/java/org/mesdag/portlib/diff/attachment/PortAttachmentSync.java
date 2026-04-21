@@ -97,10 +97,10 @@ public final class PortAttachmentSync {
             return;
         }
         var data = writeCustomData(buf -> {
-            var existingData = holder.getExistingDataOrNull(type);
+            var existingData = holder.getExistingAttachOrNull(type);
             if (existingData != null) {
                 buf.writeBoolean(true);
-                type.syncHandler.write(buf, holder.getData(type), false);
+                type.syncHandler.write(buf, holder.getAttach(type), false);
             } else {
                 buf.writeBoolean(false);
             }
@@ -133,7 +133,6 @@ public final class PortAttachmentSync {
         }
         var players = serverLevel.getChunkSource().chunkMap.getPlayersWatching(entity);
         if (entity instanceof ServerPlayer serverPlayer) {
-            // Players do not track themselves
             var newPlayers = new ArrayList<ServerPlayer>(players.size() + 1);
             newPlayers.addAll(players);
             newPlayers.add(serverPlayer);
@@ -173,7 +172,6 @@ public final class PortAttachmentSync {
                     int indexBetween = buf.writerIndex();
                     syncHandler.write(buf, entry.getValue(), true);
                     if (indexBetween < buf.writerIndex()) {
-                        // Actually wrote something
                         syncedTypes.add(type);
                     } else {
                         buf.writerIndex(indexBefore);
@@ -231,8 +229,6 @@ public final class PortAttachmentSync {
             buf.release();
         }
     }
-
-    private PortAttachmentSync() {}
 
     public static byte[] writeCustomData(Consumer<PortRegistryFriendlyByteBuf> dataWriter, RegistryAccess registryAccess) {
         PortRegistryFriendlyByteBuf buf = new PortRegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess, PortConnectionType.MODDED);

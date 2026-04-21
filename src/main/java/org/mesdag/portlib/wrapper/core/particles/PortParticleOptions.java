@@ -31,7 +31,7 @@ public class PortParticleOptions implements ParticleOptions {
     @ApiStatus.NonExtendable
     @Override
     public void writeToNetwork(FriendlyByteBuf buffer) {
-        streamCodec.encode(PortRegistryFriendlyByteBuf.wrap(buffer), this);
+        streamCodec.encode(buffer.wrap(), this);
     }
 
     @Diff
@@ -40,8 +40,6 @@ public class PortParticleOptions implements ParticleOptions {
     public String writeToString() {
         NbtOps ops = NbtOps.INSTANCE;
         return codec.encode(this, ops, codec.compressedBuilder(ops)).build(ops.empty())
-                .getOrThrow(false, message -> {
-                    throw new RuntimeException(message);
-                }).getAsString();
+                .getOrThrow().getAsString();
     }
 }

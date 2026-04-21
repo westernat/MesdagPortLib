@@ -27,6 +27,7 @@ import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
+import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
@@ -173,6 +174,22 @@ public class PortItemStackExtension {
 
     public static void setShowAttributeModifiersTooltip(@This ItemStack thiz, boolean show) {
         setShowTooltipPart(thiz, ItemStack.TooltipPart.MODIFIERS, show);
+    }
+
+    public static PortItemAttributeModifiers getPortAttributeModifiers(@This ItemStack thiz) {
+        ListTag listTag = null;
+        CompoundTag tag = thiz.getTag();
+        if (tag != null && tag.contains("AttributeModifiers", Tag.TAG_LIST)) {
+            listTag = tag.getList("AttributeModifiers", Tag.TAG_COMPOUND);
+        }
+        if (listTag == null || listTag.isEmpty()) {
+            return thiz.getItem().getDefaultPortAttributeModifiers(thiz);
+        }
+        return new PortItemAttributeModifiers(listTag, thiz.getShowAttributeModifiersTooltip());
+    }
+
+    public static void setPortAttributeModifiers(@This ItemStack thiz, PortItemAttributeModifiers value) {
+        value.applyTo(thiz);
     }
 
     public static boolean getShowUnbreakableTooltip(@This ItemStack thiz) {
@@ -502,7 +519,7 @@ public class PortItemStackExtension {
         return IPortItemStack.of(thiz).portlib$patch().get(type);
     }
 
-    public static <T> @Nullable T getData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+    public static <T> @Nullable T getData(@This ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return IPortItemStack.of(thiz).portlib$patch().get(type);
     }
 
@@ -510,7 +527,7 @@ public class PortItemStackExtension {
         return IPortItemStack.of(thiz).portlib$patch().set(type, value);
     }
 
-    public static <T> @Nullable T setData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type, T value) {
+    public static <T> @Nullable T setData(@This ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
         return IPortItemStack.of(thiz).portlib$patch().set(type, value);
     }
 
@@ -518,7 +535,7 @@ public class PortItemStackExtension {
         return IPortItemStack.of(thiz).portlib$patch().remove(type);
     }
 
-    public static <T> @Nullable T removeData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+    public static <T> @Nullable T removeData(@This ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return IPortItemStack.of(thiz).portlib$patch().remove(type);
     }
 
@@ -534,7 +551,7 @@ public class PortItemStackExtension {
         return IPortItemStack.of(thiz).portlib$patch().has(type);
     }
 
-    public static <T> boolean hasData(@This ItemStack thiz, Supplier<PortDataComponentType<T>> type) {
+    public static <T> boolean hasData(@This ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return IPortItemStack.of(thiz).portlib$patch().has(type);
     }
 

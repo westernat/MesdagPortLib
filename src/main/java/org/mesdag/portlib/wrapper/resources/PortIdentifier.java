@@ -1,5 +1,6 @@
 package org.mesdag.portlib.wrapper.resources;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +10,7 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 import java.util.function.UnaryOperator;
 
 public class PortIdentifier extends ResourceLocation {
+    public static final Codec<PortIdentifier> CODEC = Codec.STRING.xmap(PortIdentifier::parse, PortIdentifier::toString).stable();
     public static final PortStreamCodec<FriendlyByteBuf, PortIdentifier> STREAM_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(FriendlyByteBuf byteBuf, PortIdentifier value) {

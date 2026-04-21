@@ -1,6 +1,5 @@
 package org.mesdag.portlib.network;
 
-import net.jodah.typetools.TypeResolver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -58,20 +57,20 @@ public class PortNetworkHandler {
 //        handlers.add(this);
     }
 
-    public <P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), getClass(handler), PortNetworkDirection.PLAY_TO_CLIENT);
+    public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), getClass(handler), PortNetworkDirection.PLAY_TO_SERVER);
+    public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_SERVER);
     }
 
-    public <P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> s2c(p, s, handler), getClass(handler), PortNetworkDirection.LOGIN_TO_CLIENT);
+    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> c2s(p, s, handler), getClass(handler), PortNetworkDirection.LOGIN_TO_SERVER);
+    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
     }
 
 //    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
@@ -144,17 +143,9 @@ public class PortNetworkHandler {
     private <P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
         channel.registerMessage(
                 packetId++, (Class<P>) packetClass,
-                codec::reversedEncode, codec::decode,
+                (v, b) -> codec.encode(b.wrap(), v), b -> codec.decode(b.wrap()),
                 handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
         codecMap.put(identifier, codec);
-    }
-
-    private static Class<?> getClass(BiConsumer<?, ?> consumer) {
-        Class<?> aClass = TypeResolver.resolveRawArguments(BiConsumer.class, consumer.getClass())[0];
-        if (aClass == TypeResolver.Unknown.class) {
-            throw new IllegalStateException("Cannot get class from consumer");
-        }
-        return aClass;
     }
 
     @Diff

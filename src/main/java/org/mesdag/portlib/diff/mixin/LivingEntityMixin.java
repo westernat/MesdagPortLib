@@ -10,23 +10,26 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import net.minecraft.Util;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.living.PotionColorCalculationEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
-import org.mesdag.portlib.event.entity.living.PortLivingIncomingDamageEvent;
-import org.mesdag.portlib.event.entity.living.PortLivingShieldBlockEvent;
-import org.mesdag.portlib.event.entity.living.PortMobEffectEvent;
+import org.mesdag.portlib.event.entity.living.*;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extension.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortLivingEntity;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,10 +40,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin implements IPortLivingEntity {
+public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivingEntityExtension {
     @Shadow
     protected float lastHurt;
 
@@ -50,8 +55,15 @@ public abstract class LivingEntityMixin implements IPortLivingEntity {
     @Shadow
     public abstract void setAbsorptionAmount(float absorptionAmount);
 
+    @Shadow
+    @Final
+    private Map<MobEffect, MobEffectInstance> activeEffects;
     @Unique
-    protected Stack<PortDamageContainer> portlib$damageContainers = new Stack<>();
+    private Stack<PortDamageContainer> portlib$damageContainers = new Stack<>();
+    @Unique
+    private List<ParticleOptions> portlib$effectParticles = List.of();
+    @Unique
+    private boolean portlib$dirty = false;
 
     @Override
     public void portlib$setDamageContainers(Stack<PortDamageContainer> damageContainers) {
@@ -61,6 +73,26 @@ public abstract class LivingEntityMixin implements IPortLivingEntity {
     @Override
     public Stack<PortDamageContainer> portlib$getDamageContainers() {
         return portlib$damageContainers;
+    }
+
+    @Override
+    public void portlib$setEffectParticles(List<ParticleOptions> list) {
+        this.portlib$effectParticles = list;
+    }
+
+    @Override
+    public List<ParticleOptions> portlib$getEffectParticles() {
+        return portlib$effectParticles;
+    }
+
+    @Override
+    public void portlib$setDirty(boolean dirty) {
+        this.portlib$dirty = dirty;
+    }
+
+    @Override
+    public boolean portlib$isDirty() {
+        return portlib$dirty;
     }
 
     // region hurt
@@ -248,4 +280,41 @@ public abstract class LivingEntityMixin implements IPortLivingEntity {
     private boolean canEntityContinueSleeping(boolean original) {
         return PortCanContinueSleepingEvent.canEntityContinueSleeping(portlib$self(), original ? null : Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
     }
+
+    // region effect particles
+
+    @Inject(method = "updateInvisibilityStatus", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setInvisible(Z)V", ordinal = 0))
+    private void updateSynchronizedMobEffectParticles(CallbackInfo ci) {
+        this.portlib$effectParticles = List.of();
+        this.portlib$dirty = true;
+    }
+
+    @Inject(method = "updateInvisibilityStatus", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/syncher/SynchedEntityData;set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;)V", ordinal = 0))
+    private void updateSynchronizedMobEffectParticles(CallbackInfo ci, @Local(name = "event") PotionColorCalculationEvent event) { // serverside, LivingEntity.effectsDirty
+        this.portlib$effectParticles = activeEffects.values().stream()
+                .map(instance -> PortEventHandler.postEventWithReturn(new PortEffectParticleModificationEvent(portlib$self(), instance)))
+                .filter(PortEffectParticleModificationEvent::isCustomParticle)
+                .map(PortEffectParticleModificationEvent::getParticleOptions)
+                .toList();
+        if (activeEffects.size() == portlib$effectParticles.size()) {
+            event.setColor(0);
+            event.shouldHideParticles(false);
+        }
+        this.portlib$dirty = true;
+    }
+
+    @Inject(method = "tickEffects", at = @At("TAIL"))
+    private void tickEffectParticles(CallbackInfo ci, @Local(name = "flag1") boolean ambience) { // clientside
+        LivingEntity self = portlib$self();
+        if (self.level().isClientSide && !portlib$effectParticles.isEmpty()) {
+            int invisibleFactor = self.isInvisible() ? 15 : 4;
+            int ambienceFactor = ambience ? 5 : 1;
+            if (self.getRandom().nextInt(invisibleFactor * ambienceFactor) == 0) {
+                ParticleOptions particle = Util.getRandom(portlib$effectParticles, self.getRandom());
+                self.level().addParticle(particle, self.getRandomX(0.5), self.getRandomY(), self.getRandomZ(0.5), 1.0, 1.0, 1.0);
+            }
+        }
+    }
+
+    // endregion effect particles
 }

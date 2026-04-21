@@ -4,21 +4,11 @@ import com.mojang.datafixers.util.Function3;
 import com.mojang.datafixers.util.Function4;
 import com.mojang.datafixers.util.Function5;
 import com.mojang.datafixers.util.Function6;
-import org.mesdag.portlib.diff.Diff;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface PortStreamCodec<B, V> {
-    void encode(B buffer, V value);
-
-    V decode(B buffer);
-
-    @Diff
-    default void reversedEncode(V value, B buffer) {
-        encode(buffer, value);
-    }
-
+public interface PortStreamCodec<B, V> extends PortStreamDecoder<B, V>, PortStreamEncoder<B, V> {
     default <O> PortStreamCodec<B, O> apply(PortCodecOperation<B, V, O> operation) {
         return operation.apply(this);
     }

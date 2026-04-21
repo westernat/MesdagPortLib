@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelWriter;
-import org.mesdag.portlib.diff.LevelWriter$AddFreshEntityAction;
+import org.mesdag.portlib.diff.action.LevelWriter$AddFreshEntityAction;
 import org.mesdag.portlib.event.entity.living.PortMobSplitEvent;
 import org.mesdag.portlib.util.PortLists;
 import org.mesdag.portlib.wrapper.PortSelfGetter;

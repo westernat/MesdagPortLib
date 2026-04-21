@@ -17,7 +17,7 @@ public interface PortAttributeTooltipContext extends PortItem.PortTooltipContext
         return new PortAttributeTooltipContext() {
 
             @Override
-            public HolderLookup.Provider registries() {
+            public @Nullable HolderLookup.Provider registries() {
                 return itemCtx.registries();
             }
 
@@ -27,17 +27,17 @@ public interface PortAttributeTooltipContext extends PortItem.PortTooltipContext
             }
 
             @Override
-            public MapItemSavedData mapData(String mapName) {
+            public @Nullable MapItemSavedData mapData(String mapName) {
                 return itemCtx.mapData(mapName);
             }
 
             @Override
-            public Level level() {
+            public @Nullable Level level() {
                 return itemCtx.level();
             }
 
             @Override
-            public Player player() {
+            public @Nullable Player player() {
                 return player;
             }
 

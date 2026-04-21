@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Event;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
 
 import java.util.function.Consumer;
@@ -37,9 +36,5 @@ public class PortAddAttributeTooltipsEvent extends Event {
 
     public boolean shouldShow() {
         return stack.getShowAttributeModifiersTooltip();
-    }
-
-    static {
-        PortEventHooks.register();
     }
 }

@@ -28,7 +28,7 @@ public class PortEventHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Event> Class<E> getEventClass(Consumer<E> consumer) {
+    static <E extends Event> Class<E> getEventClass(Consumer<E> consumer) {
         Class<?> clazz = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
         if (clazz != null && Event.class.isAssignableFrom(clazz)) {
             return (Class<E>) clazz;

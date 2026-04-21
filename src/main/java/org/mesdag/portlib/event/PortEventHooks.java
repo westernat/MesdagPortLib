@@ -1,5 +1,8 @@
 package org.mesdag.portlib.event;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -19,15 +22,15 @@ import org.mesdag.portlib.wrapper.PortEnvironment;
 import java.lang.invoke.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class PortEventHooks {
-    private static final Map<Class<? extends Event>, Function<? extends Event, ? extends PortEvent<?>>> wrappers = new ConcurrentHashMap<>();
-    private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new ConcurrentHashMap<>();
+    private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Function<? extends Event, ? extends PortEvent<?>>> wrappers = HashBasedTable.create();
+    private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new Reference2ObjectOpenHashMap<>();
+    private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Predicate<? extends Event>> predicates = HashBasedTable.create();
 
     @Diff
     public static void init() {
@@ -49,22 +52,17 @@ public class PortEventHooks {
     }
 
     @Diff
-    public static <F extends Event, T extends PortEvent<?>> void registerCombined(Class<F> from, List<Class<? extends T>> tos, Function<F, T> function) {
-        validateIfPortEvent(from);
-        validateIfAbstract(from);
-        for (Class<? extends T> to : tos) {
-            validateIfAbstract(to);
-            rawGetter.put(to, from);
-        }
-        wrappers.put(from, function);
+    public static <F extends Event, T extends PortEvent<?>> void registerPredicated(Class<F> from, Class<T> to, Function<F, T> wrapper, Predicate<F> predicate) {
+        register(from, to, wrapper);
+        predicates.put(from, to, predicate);
     }
 
     @Diff
-    public static <F extends Event, T extends PortEvent<?>> void register(Class<F> from, Class<T> to, Function<F, T> function) {
+    public static <F extends Event, T extends PortEvent<?>> void register(Class<F> from, Class<T> to, Function<F, T> wrapper) {
         validateIfPortEvent(from);
         validateIfAbstract(from);
         validateIfAbstract(to);
-        wrappers.put(from, function);
+        wrappers.put(from, to, wrapper);
         rawGetter.put(to, from);
     }
 
@@ -121,7 +119,7 @@ public class PortEventHooks {
             throw new IllegalStateException("Unable to determine caller class");
         }
         if (!PortEvent.class.isAssignableFrom(caller)) {
-            throw new IllegalArgumentException(String.format("Cannot register non-PortEvent class: %s.register() must be called from a static block of a PortEvent subclass.", caller.getName()));
+            throw new IllegalArgumentException(String.format("Cannot register non-PortEvent class: %s register() must be called from a static block of a PortEvent subclass.", caller.getName()));
         }
         @SuppressWarnings("unchecked")
         Class<? extends PortEvent<?>> eventClass = (Class<? extends PortEvent<?>>) caller;
@@ -141,12 +139,17 @@ public class PortEventHooks {
             if (rawFrom == null) {
                 PortLib.LOGGER.warn("Failed to find wrapped class for {}", from);
             } else {
-                Function<F, T> wrapper = (Function<F, T>) wrappers.get(rawFrom);
+                Function<F, T> wrapper = (Function<F, T>) wrappers.get(rawFrom, from);
                 if (wrapper == null) {
                     PortLib.LOGGER.warn("Failed to find wrapper function for {}", rawFrom);
                 } else {
                     PortBus bus = IModBusEvent.class.isAssignableFrom(rawFrom) ? PortBus.MOD : PortBus.GAME;
-                    bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> consumer.accept((F) wrapper.apply(raw)));
+                    Predicate<F> predicate = (Predicate<F>) predicates.get(rawFrom, from);
+                    bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
+                        if (predicate == null || predicate.test(raw)) {
+                            consumer.accept((F) wrapper.apply(raw));
+                        }
+                    });
                 }
             }
         } else {

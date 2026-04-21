@@ -8,7 +8,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.util.Protected;
@@ -117,7 +116,7 @@ public class PortAttachmentType<T> {
                 @Override
                 public T read(IPortAttachmentHolder holder, Tag tag, HolderLookup.Provider provider) {
                     DataResult<T> parsingResult = codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag);
-                    return parsingResult.getOrThrow(false, msg -> buildException("read", msg));
+                    return parsingResult.getOrThrow(msg -> buildException("read", msg));
                 }
 
                 @Nullable
@@ -127,11 +126,11 @@ public class PortAttachmentType<T> {
                         return null;
                     }
                     DataResult<Tag> encodingResult = codec.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment);
-                    return encodingResult.getOrThrow(false, msg -> buildException("write", msg));
+                    return encodingResult.getOrThrow(msg -> buildException("write", msg));
                 }
 
-                private void buildException(String operation, String error) {
-                    PortLib.LOGGER.error("Unable to {} attachment due to an internal codec error: {}", operation, error);
+                private IllegalStateException buildException(String operation, String error) {
+                    return new IllegalStateException("Unable to " + operation + " attachment due to an internal codec error: " + error);
                 }
             });
         }

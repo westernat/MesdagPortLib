@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.mesdag.portlib.diff.ItemStack$hurtAndBreakAction;
+import org.mesdag.portlib.diff.action.ItemStack$hurtAndBreakAction;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.living.PortArmorHurtEvent;
 import org.spongepowered.asm.mixin.Final;

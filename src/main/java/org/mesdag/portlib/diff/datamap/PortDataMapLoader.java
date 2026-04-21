@@ -59,9 +59,10 @@ public class PortDataMapLoader implements PreparableReloadListener {
         this.registryAccess = registryAccess;
     }
 
-    public static void init() {
+    public static <T> void init() {
         PortRegistryDataMapNegotiation.init();
         PortLib.NETWORK_HANDLER.registerInGameS2C(
+                (Class) PortRegistryDataMapSyncPayload.class,
                 PortRegistryDataMapSyncPayload.IDENTIFIER,
                 PortRegistryDataMapSyncPayload.STREAM_CODEC,
                 PortRegistryDataMapSyncPayload::handle

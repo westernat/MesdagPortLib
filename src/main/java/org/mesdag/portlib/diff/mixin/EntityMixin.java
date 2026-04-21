@@ -47,13 +47,13 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
 
     @Final
     @Override
-    public <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
-        return CPortAttachmentHolder.super.setData(type, data);
+    public <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
+        return CPortAttachmentHolder.super.setAttach(type, data);
     }
 
     @Final
     @Override
-    public void syncData(PortAttachmentType<?> type) {
+    public void syncAttach(PortAttachmentType<?> type) {
         PortAttachmentSync.syncEntityUpdate(portlib$self(), type);
     }
 

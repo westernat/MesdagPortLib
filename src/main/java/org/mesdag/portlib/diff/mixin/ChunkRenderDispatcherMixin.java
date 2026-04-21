@@ -84,7 +84,7 @@ public abstract class ChunkRenderDispatcherMixin {
                     @Local(name = "posestack") PoseStack posestack
             ) {
                 if (portlib$additionalRenderers.isEmpty()) {
-                    return null;
+                    return original.call(instance);
                 }
                 var context = new PortAddSectionGeometryEvent.PortSectionRenderingContext(
                         type -> {

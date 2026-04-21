@@ -5,8 +5,12 @@ import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.network.PortConnectionType;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamDecoder;
 import org.mesdag.portlib.network.codec.PortStreamEncoder;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -29,5 +33,10 @@ public class PortFriendlyByteBufExtension {
             keyWriter.encode(thiz, key);
             valueWriter.accept(thiz, key, value);
         });
+    }
+
+    @Diff
+    public static PortRegistryFriendlyByteBuf wrap(@This FriendlyByteBuf thiz) {
+        return new PortRegistryFriendlyByteBuf(thiz, PortEnvironment.registryAccess(), PortConnectionType.MODDED);
     }
 }

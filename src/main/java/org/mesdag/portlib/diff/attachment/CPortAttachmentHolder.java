@@ -64,32 +64,32 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
 
     @Final
     @Override
-    default boolean hasAttachments() {
+    default boolean hasAttaches() {
         return portlib$attachments() != null && !portlib$attachments().isEmpty();
     }
 
     @Final
     @Override
-    default boolean hasData(PortAttachmentType<?> type) {
+    default boolean hasAttach(PortAttachmentType<?> type) {
         validateAttachmentType(type);
         return portlib$attachments() != null && portlib$attachments().containsKey(type);
     }
 
     @Final
     @Override
-    default <T> T getData(PortAttachmentType<T> type) {
+    default <T> T getAttach(PortAttachmentType<T> type) {
         validateAttachmentType(type);
         T ret = (T) getAttachmentMap().get(type);
         if (ret == null) {
             ret = type.defaultValueSupplier.apply(getExposedHolder());
             portlib$attachments().put(type, ret);
-            syncData(type);
+            syncAttach(type);
         }
         return ret;
     }
 
     @Override
-    default <T> @Nullable T getExistingDataOrNull(PortAttachmentType<T> type) {
+    default <T> @Nullable T getExistingAttachOrNull(PortAttachmentType<T> type) {
         validateAttachmentType(type);
         if (portlib$attachments() == null) {
             return null;
@@ -99,23 +99,23 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
 
     @Override
     @MustBeInvokedByOverriders
-    default <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
+    default <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
         validateAttachmentType(type);
         Objects.requireNonNull(data);
         var previousData = (T) getAttachmentMap().put(type, data);
-        syncData(type);
+        syncAttach(type);
         return previousData;
     }
 
     @Override
     @MustBeInvokedByOverriders
-    default <T> @Nullable T removeData(PortAttachmentType<T> type) {
+    default <T> @Nullable T removeAttach(PortAttachmentType<T> type) {
         validateAttachmentType(type);
         if (portlib$attachments() == null) {
             return null;
         }
         var previousData = (T) portlib$attachments().remove(type);
-        syncData(type);
+        syncAttach(type);
         return previousData;
     }
 

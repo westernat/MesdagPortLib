@@ -43,7 +43,7 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) PortFriendlyByteBuf.readRegistryKey(buf);
-        final Map<PortIdentifier, Map<ResourceKey<T>, ?>> attach = buf.readMap(PortByteBufCodecs.IDENTIFIER::decode, (b1, key) -> {
+        final Map<PortIdentifier, Map<ResourceKey<T>, ?>> attach = buf.readMap(PortByteBufCodecs.IDENTIFIER, (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             return b1.readMap(bf -> bf.readResourceKey(registryKey), bf -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
@@ -52,7 +52,7 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     public void write(PortRegistryFriendlyByteBuf buf) {
         buf.writeResourceKey(registryKey);
-        buf.writeMap(dataMaps, PortByteBufCodecs.IDENTIFIER::encode, (b1, key, attach) -> {
+        buf.writeMap(dataMaps, PortByteBufCodecs.IDENTIFIER, (b1, key, attach) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             b1.writeMap(attach, FriendlyByteBuf::writeResourceKey, (bf, value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
         });
@@ -63,16 +63,12 @@ public record PortRegistryDataMapSyncPayload<T>(
     private static <T> T readJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec) {
         JsonElement jsonelement = GsonHelper.fromJson(GSON, buf.readUtf(), JsonElement.class);
         DataResult<T> dataresult = codec.parse(buf.registryAccess().createSerializationContext(JsonOps.INSTANCE), jsonelement);
-        return dataresult.getOrThrow(false, name -> {
-            throw new DecoderException("Failed to decode json: " + name);
-        });
+        return dataresult.getOrThrow(name -> new DecoderException("Failed to decode json: " + name));
     }
 
     private static <T> void writeJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec, T value) {
         DataResult<JsonElement> dataresult = codec.encodeStart(buf.registryAccess().createSerializationContext(JsonOps.INSTANCE), value);
-        buf.writeUtf(GSON.toJson(dataresult.getOrThrow(false, message -> {
-            throw new EncoderException("Failed to encode: " + message + " " + value);
-        })));
+        buf.writeUtf(GSON.toJson(dataresult.getOrThrow(message -> new EncoderException("Failed to encode: " + message + " " + value))));
     }
 
     @Override

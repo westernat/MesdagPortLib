@@ -3,7 +3,6 @@ package org.mesdag.portlib.registries;
 import com.google.common.base.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 
@@ -14,15 +13,12 @@ public class PortAttributeRegistration extends PortRegistration<Attribute> {
         super(namespace, Registries.ATTRIBUTE);
     }
 
-    public <T extends Attribute> PortRegistryEntry<T> register(String name, Supplier<T> valueSupplier, Consumer<PortAttributeMaker> consumer) {
-        PortRegistryEntry<T> entry = new PortRegistryEntry<>(asId(name), () -> {
+    public <T extends Attribute> PortRegistryEntry<Attribute, T> register(String name, Supplier<T> valueSupplier, Consumer<PortAttributeMaker> consumer) {
+        return super.register(name, () -> {
             T t = valueSupplier.get();
             consumer.accept(new PortAttributeMaker(t));
             return t;
         });
-        entry.object = RegistryObject.create(entry.identifier, registryKey, namespace);
-        entries.add(entry);
-        return entry;
     }
 
     public static class PortAttributeMaker {

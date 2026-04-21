@@ -1,4 +1,4 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.action;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.entity.Entity;

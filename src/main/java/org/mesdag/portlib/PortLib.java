@@ -1,15 +1,18 @@
 package org.mesdag.portlib;
 
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
@@ -18,18 +21,14 @@ import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.event.entity.player.PortPlayerInteractEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.network.PortNetworkHandler;
-import org.mesdag.portlib.registries.PortAttachmentRegistration;
-import org.mesdag.portlib.registries.PortDataComponentRegistration;
-import org.mesdag.portlib.registries.PortRegisterHandler;
+import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
+import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Supplier;
 
 @Mod(PortLib.MODID)
 public class PortLib {
@@ -46,6 +45,7 @@ public class PortLib {
         PortAttachmentInternals.init();
         PortDataMapLoader.init();
         PortNetworkHandler.init();
+        IPortLivingEntity.init();
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForgeChunkManager
             PortDataMapLoader.initDataMaps();
@@ -54,16 +54,16 @@ public class PortLib {
         });
         if (PortEnvironment.isDeveloper()) {
             PortAttachmentRegistration attachment = PortRegisterHandler.attachment(MODID);
-            Supplier<PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
+            PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
 
             PortDataComponentRegistration dataComponent = PortRegisterHandler.dataComponent(MODID);
-            Supplier<PortDataComponentType<TestComponent>> testDataComponent = dataComponent.register("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
+            PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<TestComponent>> testDataComponent = dataComponent.register("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
 
             PortEventHandler.addListener((PlayerInteractEvent.EntityInteract event) -> {
                 ItemStack stack = event.getItemStack();
                 if (!stack.isEmpty()) {
                     if (!event.getLevel().isClientSide) {
-                        TestAttachment data = PortAttachmentHolder.of(event.getTarget()).getData(testAttachment);
+                        TestAttachment data = event.getTarget().getAttach(testAttachment::get);
                         data.setStack(stack);
 
                         stack.setData(testDataComponent, new TestComponent(1));
@@ -71,12 +71,10 @@ public class PortLib {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                 }
             });
-        }
 
-        PortEventHandler.addListener((PortPlayerInteractEvent.PortRightClickEmpty event) -> {
-            Item item = event.getItemStack().getItem();
-            item.helloWorld(event.getEntity());
-        });
+            PortRegistration<MobEffect> effects = PortRegisterHandler.create(MODID, Registries.MOB_EFFECT);
+            effects.register("test", () -> new PortMobEffect(MobEffectCategory.BENEFICIAL, 0xFF0000, ParticleTypes.EXPLOSION));
+        }
     }
 
     public static PortIdentifier asResource(String path) {

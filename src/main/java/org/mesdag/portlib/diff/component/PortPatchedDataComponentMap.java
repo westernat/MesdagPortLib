@@ -15,6 +15,7 @@ import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.PortRegistries;
+import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Map;
@@ -38,7 +39,7 @@ public class PortPatchedDataComponentMap {
         return optional == null ? prototype.get(type) : optional.orElse(null);
     }
 
-    public <T> @Nullable T get(Supplier<PortDataComponentType<T>> type) {
+    public <T> @Nullable T get(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return get(type.get());
     }
 
@@ -54,7 +55,7 @@ public class PortPatchedDataComponentMap {
         return optional == null ? t : optional.orElse(t);
     }
 
-    public <T> @Nullable T set(Supplier<PortDataComponentType<T>> type, T value) {
+    public <T> @Nullable T set(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
         return set(type.get(), value);
     }
 
@@ -70,7 +71,7 @@ public class PortPatchedDataComponentMap {
         return optional == null ? t : optional.orElse(null);
     }
 
-    public <T> @Nullable T remove(Supplier<PortDataComponentType<T>> type) {
+    public <T> @Nullable T remove(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return remove(type.get());
     }
 
@@ -87,7 +88,7 @@ public class PortPatchedDataComponentMap {
         return get(type) != null;
     }
 
-    public <T> boolean has(Supplier<PortDataComponentType<T>> type) {
+    public <T> boolean has(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return has(type.get());
     }
 

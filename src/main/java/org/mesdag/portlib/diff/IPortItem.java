@@ -7,8 +7,8 @@ import org.mesdag.portlib.component.PortDataComponentType;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
+@Diff
 public interface IPortItem extends PortDataComponentMap {
     Map<PortDataComponentType<?>, Optional<?>> portlib$getComponents();
 
@@ -19,9 +19,9 @@ public interface IPortItem extends PortDataComponentMap {
     }
 
     interface IPortProperties {
-        void portlib$set(Consumer<PortBuilder> consumer);
+        void portlib$set(PortBuilder consumer);
 
-        @Nullable Consumer<PortBuilder> portlib$get();
+        @Nullable PortBuilder portlib$get();
 
         static IPortProperties of(Item.Properties properties) {
             return (IPortProperties) properties;

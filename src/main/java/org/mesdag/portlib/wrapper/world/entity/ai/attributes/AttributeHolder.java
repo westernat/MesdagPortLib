@@ -7,17 +7,22 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 
 public class AttributeHolder implements PortHolder<Attribute> {
-    private final Attribute value;
+    private Attribute value;
     private final Holder<Attribute> delegate;
 
-    private AttributeHolder(Attribute value) {
+    @Diff
+    public AttributeHolder(Attribute value) {
         this.value = value;
         this.delegate = PortHolder.getDelegate(ForgeRegistries.ATTRIBUTES, value);
     }
 
+    private AttributeHolder(Holder<Attribute> delegate) {
+        this.delegate = delegate;
+    }
+
     @Diff
-    public static AttributeHolder wrap(Attribute value) {
-        return new AttributeHolder(value);
+    public static AttributeHolder wrap(Holder<Attribute> delegate) {
+        return new AttributeHolder(delegate);
     }
 
     @Override
@@ -27,6 +32,6 @@ public class AttributeHolder implements PortHolder<Attribute> {
 
     @Override
     public Attribute value() {
-        return value;
+        return value == null ? delegate.value() : value;
     }
 }

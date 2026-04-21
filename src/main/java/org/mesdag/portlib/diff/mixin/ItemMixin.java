@@ -8,10 +8,10 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
+import org.mesdag.portlib.wrapper.common.extension.IPortItemExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,10 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 @Mixin(Item.class)
-public abstract class ItemMixin implements IPortItem {
+public abstract class ItemMixin implements IPortItem, IPortItemExtension {
     @Unique
     private @Nullable Map<PortDataComponentType<?>, Optional<?>> portlib$prototype;
 
@@ -53,10 +52,8 @@ public abstract class ItemMixin implements IPortItem {
 
     @Inject(method = "<init>",at=@At("TAIL"))
     private void setup(Item.Properties properties, CallbackInfo ci) {
-        Consumer<PortBuilder> consumer = IPortProperties.of(properties).portlib$get();
-        if (consumer != null) {
-            PortBuilder builder = PortDataComponentMap.builder();
-            consumer.accept(builder);
+        PortBuilder builder = IPortProperties.of(properties).portlib$get();
+        if (builder != null) {
             this.portlib$prototype = builder.getMap();
         }
     }
@@ -74,16 +71,16 @@ public abstract class ItemMixin implements IPortItem {
     @Mixin(Item.Properties.class)
     public static abstract class PropertiesMixin implements IPortProperties {
         @Unique
-        private Consumer<PortDataComponentMap.PortBuilder> portlib$consumer;
+        private @Nullable PortBuilder portlib$builder;
 
         @Override
-        public void portlib$set(Consumer<PortBuilder> consumer) {
-            this.portlib$consumer = consumer;
+        public void portlib$set(PortBuilder builder) {
+            this.portlib$builder = builder;
         }
 
         @Override
-        public @Nullable Consumer<PortBuilder> portlib$get() {
-            return portlib$consumer;
+        public @Nullable PortBuilder portlib$get() {
+            return portlib$builder;
         }
     }
 }

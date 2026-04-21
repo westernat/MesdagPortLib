@@ -1,8 +1,9 @@
-package org.mesdag.portlib.diff;
+package org.mesdag.portlib.diff.action;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.entity.living.PortArmorHurtEvent;
 
 import java.util.function.Consumer;

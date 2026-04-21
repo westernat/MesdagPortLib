@@ -180,12 +180,13 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @ModifyExpressionValue(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EquipmentSlot;values()[Lnet/minecraft/world/entity/EquipmentSlot;"))
     private EquipmentSlot[] gatherSkippedAttributeTooltips(
             EquipmentSlot[] original,
-            @Local(argsOnly = true) Player player,
+            @Local(argsOnly = true) @Nullable Player player,
             @Local(argsOnly = true) TooltipFlag isAdvanced,
             @Share("ctx") LocalRef<PortAttributeTooltipContext> ctx,
             @Share("event") LocalRef<PortGatherSkippedAttributeTooltipsEvent> evt
     ) {
-        PortAttributeTooltipContext context = PortAttributeTooltipContext.of(player, PortItem.PortTooltipContext.of(player.level()), isAdvanced);
+        var itemCtx = PortItem.PortTooltipContext.of(player == null ? null : player.level());
+        var context = PortAttributeTooltipContext.of(player, itemCtx, isAdvanced);
         ctx.set(context);
         var event = new PortGatherSkippedAttributeTooltipsEvent(portlib$self(), context);
         PortEventHandler.postEvent(event);
@@ -218,10 +219,9 @@ public abstract class ItemStackMixin implements IPortItemStack {
         return original;
     }
 
+    @SuppressWarnings("UnresolvedLocalCapture")
     @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasTag()Z", ordinal = 1))
     private void addAttributeTooltips(
-            Player player,
-            TooltipFlag isAdvanced,
             CallbackInfoReturnable<List<Component>> cir,
             @Local List<Component> list,
             @Share("ctx") LocalRef<PortAttributeTooltipContext> ctx

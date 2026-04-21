@@ -45,6 +45,7 @@ public final class PortAttachmentInternals {
 
     public static void init() {
         PortLib.NETWORK_HANDLER.registerInGameS2C(
+                PortSyncAttachmentsPayload.class,
                 PortSyncAttachmentsPayload.IDENTIFIER,
                 PortSyncAttachmentsPayload.STREAM_CODEC,
                 PortSyncAttachmentsPayload::handle

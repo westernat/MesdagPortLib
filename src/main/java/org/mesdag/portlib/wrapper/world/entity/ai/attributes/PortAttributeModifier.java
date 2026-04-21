@@ -7,36 +7,35 @@ import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import java.util.UUID;
 
 public record PortAttributeModifier(PortIdentifier id, double amount, PortOperation operation) {
+    private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
+
     @Diff
     public AttributeModifier unwrap() {
         return new AttributeModifier(namespaceToUUID(id.getNamespace()), id.getPath(), amount, operation.unwrap());
     }
 
     @Diff
-    public static PortAttributeModifier wrap(AttributeModifier modifier) {
-        return new PortAttributeModifier(toId(modifier.getId(), modifier.getName()), modifier.getAmount(), PortOperation.wrap(modifier.getOperation()));
-    }
-
-    @Diff
     public static PortIdentifier toId(UUID uuid, String name) {
-        return PortIdentifier.fromNamespaceAndPath(uuidToNamespace(uuid), name);
+        String namespace = toHex16(uuid.getMostSignificantBits()) + toHex16(uuid.getLeastSignificantBits());
+        return PortIdentifier.fromNamespaceAndPath(namespace, name);
     }
 
-    private static String uuidToNamespace(UUID uuid) {
-        return String.format("%016x", uuid.getMostSignificantBits()) +
-                String.format("%016x", uuid.getLeastSignificantBits());
+    private static String toHex16(long value) {
+        char[] buf = new char[16];
+        for (int i = 15; i >= 0; i--) {
+            buf[i] = HEX_DIGITS[(int) (value & 0xF)];
+            value >>>= 4;
+        }
+        return new String(buf);
     }
 
     private static UUID namespaceToUUID(String namespace) {
-        if (namespace.length() != 32) {
-            return UUID.fromString(namespace);
-        }
         try {
             long mostSig = Long.parseUnsignedLong(namespace.substring(0, 16), 16);
             long leastSig = Long.parseUnsignedLong(namespace.substring(16, 32), 16);
             return new UUID(mostSig, leastSig);
-        } catch (Exception e) {
-            return UUID.fromString(namespace);
+        } catch (Throwable e) {
+            return UUID.nameUUIDFromBytes(namespace.getBytes());
         }
     }
 
@@ -55,7 +54,6 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
             return AttributeModifier.Operation.ADDITION;
         }
 
-        @Diff
         public static PortOperation wrap(AttributeModifier.Operation operation) {
             if (operation == AttributeModifier.Operation.MULTIPLY_BASE) {
                 return ADD_MULTIPLIED_BASE;

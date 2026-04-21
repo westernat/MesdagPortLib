@@ -24,7 +24,9 @@ public class PortRegistryFriendlyByteBuf extends FriendlyByteBuf {
         return registryAccess;
     }
 
+    @Deprecated
     @Diff
+    /// @see FriendlyByteBuf#wrap
     public static PortRegistryFriendlyByteBuf wrap(FriendlyByteBuf buffer) {
         return new PortRegistryFriendlyByteBuf(buffer, PortEnvironment.registryAccess(), PortConnectionType.MODDED);
     }

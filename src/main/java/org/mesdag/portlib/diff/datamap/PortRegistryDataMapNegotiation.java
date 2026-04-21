@@ -43,11 +43,13 @@ public class PortRegistryDataMapNegotiation {
 //                PortKnownRegistryDataMapsReplyPayload::handle
 //        );
         PortLib.NETWORK_HANDLER.registerInGameS2C(
+                PortKnownRegistryDataMapsPayload.class,
                 PortKnownRegistryDataMapsPayload.IDENTIFIER,
                 PortKnownRegistryDataMapsPayload.STREAM_CODEC,
                 PortKnownRegistryDataMapsPayload::handle
         );
         PortLib.NETWORK_HANDLER.registerInGameC2S(
+                PortKnownRegistryDataMapsReplyPayload.class,
                 PortKnownRegistryDataMapsReplyPayload.IDENTIFIER,
                 PortKnownRegistryDataMapsReplyPayload.STREAM_CODEC,
                 PortKnownRegistryDataMapsReplyPayload::handle
