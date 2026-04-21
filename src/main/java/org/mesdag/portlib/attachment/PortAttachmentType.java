@@ -21,7 +21,8 @@ import java.util.function.Supplier;
 public class PortAttachmentType<T> {
     private final AttachmentType<T> delegate;
 
-    private PortAttachmentType(AttachmentType<T> delegate) {
+    @Diff
+    public PortAttachmentType(AttachmentType<T> delegate) {
         this.delegate = delegate;
     }
 
@@ -44,11 +45,6 @@ public class PortAttachmentType<T> {
     @Diff
     public AttachmentType<T> unwrap() {
         return delegate;
-    }
-
-    @Diff
-    public static <T> PortAttachmentType<T> wrap(AttachmentType<T> delegate) {
-        return new PortAttachmentType<>(delegate);
     }
 
     public static class PortBuilder<T> {
@@ -113,7 +109,7 @@ public class PortAttachmentType<T> {
         }
 
         public PortAttachmentType<T> build() {
-            return wrap(builder.build());
+            return builder.build().wrap();
         }
     }
 }

@@ -16,20 +16,22 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
     private final DeferredRegister<DataComponentType<?>> register;
 
     PortDataComponentRegistration(String namespace) {
-        super(namespace, PortRegistries.Keys.DATA_COMPONENTS);
+        super(namespace, PortRegistries.Keys.DATA_COMPONENTS, false);
         this.register = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, namespace);
         register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @ApiStatus.Internal
     @Override
-    public <R extends PortDataComponentType<?>> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
+    public <R extends PortDataComponentType<?>> PortRegistryEntry<PortDataComponentType<?>, R> register(String name, Supplier<R> valueSupplier) {
         Supplier<R> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, () -> memoize.get().unwrap());
-        return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
+        PortRegistryEntry.Memoized<PortDataComponentType<?>, R> entry = new PortRegistryEntry.Memoized<>(namespace, name, memoize);
+        entries.add(entry);
+        return entry;
     }
 
-    public <T> PortRegistryEntry<PortDataComponentType<T>> register(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
+    public <T> PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> register(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
         return register(name, () -> {
             PortDataComponentType.PortBuilder<T> builder = new PortDataComponentType.PortBuilder<>();
             consumer.accept(builder);

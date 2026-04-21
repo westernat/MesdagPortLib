@@ -1,5 +1,6 @@
 package org.mesdag.portlib.network.codec;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Registry;
@@ -74,5 +75,9 @@ public interface PortByteBufCodecs {
 
     static PortStreamCodec<ByteBuf, Tag> tagCodec(Supplier<NbtAccounter> accounter) {
         return PortStreamCodec.wrap(ByteBufCodecs.tagCodec(accounter));
+    }
+
+    static <B extends ByteBuf, L, R> PortStreamCodec<B, Either<L, R>> either(PortStreamCodec<? super B, L> leftCodec, PortStreamCodec<? super B, R> rightCodec) {
+        return PortStreamCodec.wrap(ByteBufCodecs.either(leftCodec.unwrap(), rightCodec.unwrap()));
     }
 }

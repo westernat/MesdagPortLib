@@ -7,18 +7,14 @@ import org.mesdag.portlib.diff.Diff;
 public class PortDamageContainer {
     private final DamageContainer container;
 
-    private PortDamageContainer(DamageContainer container) {
+    @Diff
+    public PortDamageContainer(DamageContainer container) {
         this.container = container;
     }
 
     @Diff
     public DamageContainer unwrap() {
         return container;
-    }
-
-    @Diff
-    public static PortDamageContainer wrap(DamageContainer container) {
-        return new PortDamageContainer(container);
     }
 
     public float getOriginalDamage() {
@@ -81,18 +77,6 @@ public class PortDamageContainer {
                 case MOB_EFFECTS -> DamageContainer.Reduction.MOB_EFFECTS;
                 case ABSORPTION -> DamageContainer.Reduction.ABSORPTION;
                 case INNATE_RESISTANCE -> DamageContainer.Reduction.INNATE_RESISTANCE;
-            };
-        }
-
-        @Diff
-        public static PortReduction wrap(DamageContainer.Reduction reduction) {
-            return switch (reduction) {
-                case INVULNERABILITY -> PortReduction.INVULNERABILITY;
-                case ARMOR -> PortReduction.ARMOR;
-                case ENCHANTMENTS -> PortReduction.ENCHANTMENTS;
-                case MOB_EFFECTS -> PortReduction.MOB_EFFECTS;
-                case ABSORPTION -> PortReduction.ABSORPTION;
-                case INNATE_RESISTANCE -> PortReduction.INNATE_RESISTANCE;
             };
         }
     }

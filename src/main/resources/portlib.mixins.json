@@ -6,6 +6,7 @@
         "AbstractArrowAccessor",
         "ILivingEntityExtensionMixin",
         "IMobEffectExtensionMixin",
+        "ItemMixin",
         "ServerPlayerMixin"
     ],
     "injectors": {

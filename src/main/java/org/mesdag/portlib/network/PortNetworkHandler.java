@@ -40,19 +40,19 @@ public class PortNetworkHandler {
         handlers.add(this);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, handler, PortNetworkDirection.PLAY_TO_CLIENT, null);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, handler, PortNetworkDirection.PLAY_TO_SERVER, null);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, handler, PortNetworkDirection.LOGIN_TO_CLIENT, null);
     }
 
-    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <B extends ByteBuf, P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super B, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, handler, PortNetworkDirection.LOGIN_TO_SERVER, null);
     }
 

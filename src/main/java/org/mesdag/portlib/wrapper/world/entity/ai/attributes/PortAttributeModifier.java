@@ -10,11 +10,6 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
         return new AttributeModifier(id, amount, operation.unwrap());
     }
 
-    @Diff
-    public static PortAttributeModifier wrap(AttributeModifier modifier) {
-        return new PortAttributeModifier(modifier.id().wrap(), modifier.amount(), PortOperation.wrap(modifier.operation()));
-    }
-
     public enum PortOperation {
         ADD_VALUE,
         ADD_MULTIPLIED_BASE,
@@ -28,16 +23,6 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
                 return AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
             }
             return AttributeModifier.Operation.ADD_VALUE;
-        }
-
-        @Diff
-        public static PortOperation wrap(AttributeModifier.Operation operation) {
-            if (operation == AttributeModifier.Operation.ADD_MULTIPLIED_BASE) {
-                return ADD_MULTIPLIED_BASE;
-            } else if (operation == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
-                return ADD_MULTIPLIED_TOTAL;
-            }
-            return ADD_VALUE;
         }
     }
 }

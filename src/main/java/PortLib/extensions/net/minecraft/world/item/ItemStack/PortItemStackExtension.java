@@ -142,6 +142,14 @@ public class PortItemStackExtension {
         }
     }
 
+    public static PortItemAttributeModifiers getPortAttributeModifiers(@This ItemStack thiz) {
+        return thiz.getAttributeModifiers().wrap();
+    }
+
+    public static void setPortAttributeModifiers(@This ItemStack thiz, PortItemAttributeModifiers value) {
+        thiz.set(DataComponents.ATTRIBUTE_MODIFIERS, value.unwrap());
+    }
+
     public static boolean getShowUnbreakableTooltip(@This ItemStack thiz) {
         Unbreakable unbreakable = thiz.get(DataComponents.UNBREAKABLE);
         return unbreakable == null || unbreakable.showInTooltip();

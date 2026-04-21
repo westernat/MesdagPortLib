@@ -15,7 +15,7 @@ public class PortLivingIncomingDamageEvent extends PortLivingEvent<LivingIncomin
     }
 
     public PortDamageContainer getContainer() {
-        return PortDamageContainer.wrap(e.getContainer());
+        return e.getContainer().wrap();
     }
 
     public DamageSource getSource() {

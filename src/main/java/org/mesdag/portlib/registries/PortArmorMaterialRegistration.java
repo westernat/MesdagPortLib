@@ -15,19 +15,21 @@ public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMat
     private final DeferredRegister<ArmorMaterial> register;
 
     PortArmorMaterialRegistration(String namespace) {
-        super(namespace, PortRegistries.Keys.ARMOR_MATERIALS);
+        super(namespace, PortRegistries.Keys.ARMOR_MATERIALS, false);
         this.register = DeferredRegister.create(Registries.ARMOR_MATERIAL, namespace);
         register.register(PortBus.MOD.unwrap(namespace));
     }
 
     @Override
-    public <R extends PortArmorMaterial> PortRegistryEntry<R> register(String name, Supplier<R> valueSupplier) {
+    public <R extends PortArmorMaterial> PortRegistryEntry<PortArmorMaterial, R> register(String name, Supplier<R> valueSupplier) {
         Supplier<R> memoize = Suppliers.memoize(valueSupplier);
         register.register(name, () -> memoize.get().unwrap());
-        return new PortRegistryEntry.Memoized<>(namespace, name, memoize);
+        PortRegistryEntry.Memoized<PortArmorMaterial, R> entry = new PortRegistryEntry.Memoized<>(namespace, name, memoize);
+        entries.add(entry);
+        return entry;
     }
 
-    public PortRegistryEntry<PortArmorMaterial> register(PortArmorMaterial.Settings settings) {
+    public PortRegistryEntry<PortArmorMaterial, PortArmorMaterial> register(PortArmorMaterial.Settings settings) {
         Objects.requireNonNull(settings.name, "ArmorMaterial name must not be null for registration!");
         int idx = settings.name.indexOf(':');
         if (idx != -1) {

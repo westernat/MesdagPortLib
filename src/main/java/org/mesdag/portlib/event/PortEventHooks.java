@@ -92,7 +92,7 @@ public class PortEventHooks {
             throw new IllegalStateException("Unable to determine caller class");
         }
         if (!PortEvent.class.isAssignableFrom(caller)) {
-            throw new IllegalArgumentException(String.format("Cannot register non-PortEvent class: %s.register() must be called from a static block of a PortEvent subclass.", caller.getName()));
+            throw new IllegalArgumentException(String.format("Cannot register non-PortEvent class: %s register() must be called from a static block of a PortEvent subclass.", caller.getName()));
         }
         @SuppressWarnings("unchecked")
         Class<? extends PortEvent<?>> eventClass = (Class<? extends PortEvent<?>>) caller;

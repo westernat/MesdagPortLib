@@ -18,7 +18,7 @@ public abstract class PortLivingDamageEvent<E extends LivingDamageEvent> extends
         }
 
         public PortDamageContainer getContainer() {
-            return PortDamageContainer.wrap(e.getContainer());
+            return e.getContainer().wrap();
         }
 
         public DamageSource getSource() {

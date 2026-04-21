@@ -13,14 +13,13 @@ public class PortAttributeRegistration extends PortRegistration<Attribute> {
         super(namespace, Registries.ATTRIBUTE);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Attribute> PortRegistryEntry<T> register(String name, Supplier<T> valueSupplier, Consumer<PortAttributeMaker> consumer) {
-        PortRegistryEntry<T> entry = new PortRegistryEntry<>(asId(name), () -> {
+    public <T extends Attribute> PortRegistryEntry<Attribute, T> register(String name, Supplier<T> valueSupplier, Consumer<PortAttributeMaker> consumer) {
+        PortRegistryEntry<Attribute, T> entry = new PortRegistryEntry<>(asId(name), () -> {
             T t = valueSupplier.get();
             consumer.accept(new PortAttributeMaker(t));
             return t;
         });
-        entry.object = (DeferredHolder<T, ? extends T>) DeferredHolder.create(registryKey, entry.identifier);
+        entry.object = DeferredHolder.create(registryKey, entry.identifier);
         entries.add(entry);
         return entry;
     }

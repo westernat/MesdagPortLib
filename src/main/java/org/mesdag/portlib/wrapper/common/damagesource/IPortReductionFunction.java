@@ -9,12 +9,7 @@ public interface IPortReductionFunction {
 
     @Diff
     default IReductionFunction unwrap() {
-        return (container, reductionIn) -> modify(PortDamageContainer.wrap(container), reductionIn);
-    }
-
-    @Diff
-    static IPortReductionFunction wrap(IReductionFunction delegate) {
-        return new Delegate(delegate);
+        return (container, reductionIn) -> modify(container.wrap(), reductionIn);
     }
 
     @Diff

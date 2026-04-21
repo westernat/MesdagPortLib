@@ -9,52 +9,52 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public interface IPortAttachmentHolder {
-    boolean hasAttachments();
+    boolean hasAttaches();
 
-    boolean hasData(PortAttachmentType<?> type);
+    boolean hasAttach(PortAttachmentType<?> type);
 
-    default <T> boolean hasData(Supplier<PortAttachmentType<T>> type) {
-        return hasData(type.get());
+    default <T> boolean hasAttach(Supplier<PortAttachmentType<T>> type) {
+        return hasAttach(type.get());
     }
 
-    <T> T getData(PortAttachmentType<T> type);
+    <T> T getAttach(PortAttachmentType<T> type);
 
-    default <T> T getData(Supplier<PortAttachmentType<T>> type) {
-        return getData(type.get());
+    default <T> T getAttach(Supplier<PortAttachmentType<T>> type) {
+        return getAttach(type.get());
     }
 
-    default <T> Optional<T> getExistingData(PortAttachmentType<T> type) {
-        return Optional.ofNullable(getExistingDataOrNull(type));
+    default <T> Optional<T> getExistingAttach(PortAttachmentType<T> type) {
+        return Optional.ofNullable(getExistingAttachOrNull(type));
     }
 
-    default <T> Optional<T> getExistingData(Supplier<PortAttachmentType<T>> type) {
-        return getExistingData(type.get());
+    default <T> Optional<T> getExistingAttach(Supplier<PortAttachmentType<T>> type) {
+        return getExistingAttach(type.get());
     }
 
-    default <T> @Nullable T getExistingDataOrNull(PortAttachmentType<T> type) {
-        return getExistingData(type).orElse(null);
+    default <T> @Nullable T getExistingAttachOrNull(PortAttachmentType<T> type) {
+        return getExistingAttach(type).orElse(null);
     }
 
-    default <T> @Nullable T getExistingDataOrNull(Supplier<PortAttachmentType<T>> type) {
-        return getExistingDataOrNull(type.get());
+    default <T> @Nullable T getExistingAttachOrNull(Supplier<PortAttachmentType<T>> type) {
+        return getExistingAttachOrNull(type.get());
     }
 
-    <T> @Nullable T setData(PortAttachmentType<T> type, T data);
+    <T> @Nullable T setAttach(PortAttachmentType<T> type, T data);
 
-    default <T> @Nullable T setData(Supplier<PortAttachmentType<T>> type, T data) {
-        return setData(type.get(), data);
+    default <T> @Nullable T setAttach(Supplier<PortAttachmentType<T>> type, T data) {
+        return setAttach(type.get(), data);
     }
 
-    <T> @Nullable T removeData(PortAttachmentType<T> type);
+    <T> @Nullable T removeAttach(PortAttachmentType<T> type);
 
-    default <T> @Nullable T removeData(Supplier<PortAttachmentType<T>> type) {
-        return removeData(type.get());
+    default <T> @Nullable T removeAttach(Supplier<PortAttachmentType<T>> type) {
+        return removeAttach(type.get());
     }
 
-    default void syncData(PortAttachmentType<?> type) {}
+    default void syncAttach(PortAttachmentType<?> type) {}
 
-    default void syncData(Supplier<? extends PortAttachmentType<?>> type) {
-        syncData(type.get());
+    default void syncAttach(Supplier<? extends PortAttachmentType<?>> type) {
+        syncAttach(type.get());
     }
 
     @Diff
@@ -62,32 +62,32 @@ public interface IPortAttachmentHolder {
         return new IAttachmentHolder() {
             @Override
             public boolean hasAttachments() {
-                return IPortAttachmentHolder.this.hasAttachments();
+                return IPortAttachmentHolder.this.hasAttaches();
             }
 
             @Override
             public boolean hasData(AttachmentType<?> type) {
-                return IPortAttachmentHolder.this.hasData(PortAttachmentType.wrap(type));
+                return IPortAttachmentHolder.this.hasAttach(type.wrap());
             }
 
             @Override
             public <T> T getData(AttachmentType<T> type) {
-                return IPortAttachmentHolder.this.getData(PortAttachmentType.wrap(type));
+                return IPortAttachmentHolder.this.getAttach(type.wrap());
             }
 
             @Override
             public <T> @Nullable T setData(AttachmentType<T> type, T data) {
-                return IPortAttachmentHolder.this.setData(PortAttachmentType.wrap(type), data);
+                return IPortAttachmentHolder.this.setAttach(type.wrap(), data);
             }
 
             @Override
             public <T> @Nullable T removeData(AttachmentType<T> type) {
-                return IPortAttachmentHolder.this.removeData(PortAttachmentType.wrap(type));
+                return IPortAttachmentHolder.this.removeAttach(type.wrap());
             }
 
             @Override
             public void syncData(AttachmentType<?> type) {
-                IPortAttachmentHolder.this.syncData(PortAttachmentType.wrap(type));
+                IPortAttachmentHolder.this.syncAttach(type.wrap());
             }
         };
     }
@@ -100,32 +100,32 @@ public interface IPortAttachmentHolder {
     @Diff
     record Delegate(IAttachmentHolder delegate) implements IPortAttachmentHolder {
         @Override
-        public boolean hasAttachments() {
+        public boolean hasAttaches() {
             return delegate.hasAttachments();
         }
 
         @Override
-        public boolean hasData(PortAttachmentType<?> type) {
+        public boolean hasAttach(PortAttachmentType<?> type) {
             return delegate.hasData(type.unwrap());
         }
 
         @Override
-        public <T> T getData(PortAttachmentType<T> type) {
+        public <T> T getAttach(PortAttachmentType<T> type) {
             return delegate.getData(type.unwrap());
         }
 
         @Override
-        public <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
+        public <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
             return delegate.setData(type.unwrap(), data);
         }
 
         @Override
-        public <T> @Nullable T removeData(PortAttachmentType<T> type) {
+        public <T> @Nullable T removeAttach(PortAttachmentType<T> type) {
             return delegate.removeData(type.unwrap());
         }
 
         @Override
-        public void syncData(PortAttachmentType<?> type) {
+        public void syncAttach(PortAttachmentType<?> type) {
             delegate.syncData(type.unwrap());
         }
 

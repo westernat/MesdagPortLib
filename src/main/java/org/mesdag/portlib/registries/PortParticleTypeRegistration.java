@@ -15,7 +15,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         super(namespace, Registries.PARTICLE_TYPE);
     }
 
-    public <T extends PortParticleOptions> PortRegistryEntry<ParticleType<T>> registerTyped(String name, boolean overrideLimiter, MapCodec<T> codec, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+    public <T extends PortParticleOptions> PortRegistryEntry<ParticleType<?>, ParticleType<T>> registerTyped(String name, boolean overrideLimiter, MapCodec<T> codec, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
         return register(name, () -> new ParticleType<>(overrideLimiter) {
             @SuppressWarnings("unchecked")
             private final StreamCodec<? super RegistryFriendlyByteBuf, T> _streamCodec = (StreamCodec<? super RegistryFriendlyByteBuf, T>) streamCodec.unwrap();
@@ -32,7 +32,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         });
     }
 
-    public PortRegistryEntry<SimpleParticleType> register(String name, boolean overrideLimiter) {
+    public PortRegistryEntry<ParticleType<?>, SimpleParticleType> register(String name, boolean overrideLimiter) {
         return register(name, () -> new SimpleParticleType(overrideLimiter));
     }
 }

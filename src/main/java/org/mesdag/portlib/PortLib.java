@@ -3,7 +3,6 @@ package org.mesdag.portlib;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.Mod;
-import org.mesdag.portlib.attachment.PortAttachmentHolder;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.test.TestAttachment;
@@ -40,14 +39,12 @@ public class PortLib {
                 ItemStack stack = event.getItemStack();
                 if (!stack.isEmpty()) {
                     if (!event.getLevel().isClientSide) {
-                        TestAttachment data = PortAttachmentHolder.of(event.getTarget()).getData(testAttachment);
+                        TestAttachment data = event.getEntity().getAttach(testAttachment);
                         data.setStack(stack);
 
                         stack.setData(testDataComponent, new TestComponent(1));
                     }
                     event.setCancellationResult(InteractionResult.SUCCESS);
-
-                    stack.getItem().helloWorld(event.getEntity());
                 }
             });
         }

@@ -9,7 +9,6 @@ import org.mesdag.portlib.registries.callback.PortBakeCallback;
 import org.mesdag.portlib.registries.callback.PortClearCallback;
 import org.mesdag.portlib.registries.callback.PortRegistryCallback;
 
-@SuppressWarnings("all")
 public class PortRegistryMaker<T> {
     @Diff
     public RegistryBuilder<T> builder;

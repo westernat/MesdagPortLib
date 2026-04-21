@@ -49,16 +49,17 @@ public class PortRegisterHandler {
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (RegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            List<PortRegistryEntry<?>> entries = PortRegistration.registrations.get(registryKey);
-            if (entries == null) return;
-            for (PortRegistryEntry<?> entry : entries) {
-                event.register(
-                    (ResourceKey<R>) registryKey,
-                    entry.identifier,
-                    (Supplier<T>) entry.valueSupplier
-                );
-                entry.get(); // bind
-                entry.valueSupplier = null;
+            for (List<PortRegistryEntry<?, ?>> entries : PortRegistration.registrations.get(registryKey)) {
+                if (entries == null) continue;
+                for (PortRegistryEntry<?, ?> entry : entries) {
+                    event.register(
+                            (ResourceKey<R>) registryKey,
+                            entry.identifier,
+                            (Supplier<T>) entry.valueSupplier
+                    );
+                    entry.get(); // bind
+                    entry.valueSupplier = null;
+                }
             }
         });
     }

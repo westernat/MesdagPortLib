@@ -14,7 +14,7 @@ public class PortLivingShieldBlockEvent extends PortLivingEvent<LivingShieldBloc
     }
 
     public PortDamageContainer getDamageContainer() {
-        return PortDamageContainer.wrap(e.getDamageContainer());
+        return e.getDamageContainer().wrap();
     }
 
     public DamageSource getDamageSource() {
