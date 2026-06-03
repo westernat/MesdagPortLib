@@ -12,6 +12,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -26,7 +27,6 @@ import org.mesdag.portlib.network.PortFriendlyByteBuf;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,15 +35,15 @@ import java.util.Map;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public record PortRegistryDataMapSyncPayload<T>(
         ResourceKey<? extends Registry<T>> registryKey,
-        Map<PortIdentifier, Map<ResourceKey<T>, ?>> dataMaps
+        Map<ResourceLocation, Map<ResourceKey<T>, ?>> dataMaps
 ) implements IPortPacket.S2C {
-    public static final PortIdentifier IDENTIFIER = PortLib.asResource("registry_data_map_sync");
+    public static final ResourceLocation IDENTIFIER = PortLib.asResource("registry_data_map_sync");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortRegistryDataMapSyncPayload<?>> STREAM_CODEC = PortStreamCodec.ofMember(
             PortRegistryDataMapSyncPayload::write, PortRegistryDataMapSyncPayload::decode);
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) PortFriendlyByteBuf.readRegistryKey(buf);
-        final Map<PortIdentifier, Map<ResourceKey<T>, ?>> attach = buf.readMap(PortByteBufCodecs.IDENTIFIER, (b1, key) -> {
+        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = buf.readMap(PortByteBufCodecs.IDENTIFIER, (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             return b1.readMap(bf -> bf.readResourceKey(registryKey), bf -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
@@ -92,7 +92,7 @@ public record PortRegistryDataMapSyncPayload<T>(
     public void work(Player player) {}
 
     @Override
-    public PortIdentifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

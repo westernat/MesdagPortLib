@@ -23,6 +23,7 @@
         "ExplosionMixin",
         "FoodPropertiesMixin",
         "ForgeModelBlockRendererAccessor",
+        "ForgeRegistryAccessor",
         "InventoryMixin",
         "ItemEntityMixin",
         "ItemMixin",

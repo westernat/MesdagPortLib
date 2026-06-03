@@ -5,10 +5,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +35,8 @@ public class PortRegistration<T> {
         this(namespace, registryKey, true);
     }
 
-    protected PortIdentifier asId(String name) {
-        return PortIdentifier.fromNamespaceAndPath(namespace, name);
+    protected ResourceLocation asId(String name) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, name);
     }
 
     public <R extends T> PortRegistryEntry<T, R> register(String name, Supplier<R> valueSupplier) {
@@ -50,7 +50,7 @@ public class PortRegistration<T> {
         return registryKey;
     }
 
-    public void addAlias(PortIdentifier from, PortIdentifier to) {
+    public void addAlias(ResourceLocation from, ResourceLocation to) {
         if (registry == null) {
             this.registry = RegistryManager.ACTIVE.getRegistry(registryKey);
         }

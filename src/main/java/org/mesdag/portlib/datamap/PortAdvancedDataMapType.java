@@ -3,8 +3,8 @@ package org.mesdag.portlib.datamap;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Objects;
 
@@ -12,7 +12,7 @@ public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemo
     private final Codec<VR> remover;
     private final PortDataMapValueMerger<R, T> merger;
 
-    private PortAdvancedDataMapType(ResourceKey<Registry<R>> registryKey, PortIdentifier id, Codec<T> codec, @Nullable Codec<T> networkCodec, boolean mandatorySync, Codec<VR> remover, PortDataMapValueMerger<R, T> merger) {
+    private PortAdvancedDataMapType(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec, @Nullable Codec<T> networkCodec, boolean mandatorySync, Codec<VR> remover, PortDataMapValueMerger<R, T> merger) {
         super(registryKey, id, codec, networkCodec, mandatorySync);
         this.remover = Objects.requireNonNull(remover, "remover must not be null");
         this.merger = Objects.requireNonNull(merger, "merger must not be null");
@@ -26,7 +26,7 @@ public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemo
         return merger;
     }
 
-    public static <T, R> PortBuilder<T, R, PortDataMapValueRemover.PortDefault<T, R>> builder(PortIdentifier id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
+    public static <T, R> PortBuilder<T, R, PortDataMapValueRemover.PortDefault<T, R>> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
         return new PortBuilder<>(registry, id, codec).remover(PortDataMapValueRemover.PortDefault.codec());
     }
 
@@ -34,7 +34,7 @@ public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemo
         private Codec<VR> remover;
         private PortDataMapValueMerger<R, T> merger = PortDataMapValueMerger.defaultMerger();
 
-        PortBuilder(ResourceKey<Registry<R>> registryKey, PortIdentifier id, Codec<T> codec) {
+        PortBuilder(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec) {
             super(registryKey, id, codec);
         }
 

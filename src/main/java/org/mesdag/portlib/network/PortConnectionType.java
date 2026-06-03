@@ -14,4 +14,12 @@ public enum PortConnectionType {
             case VANILLA -> ConnectionType.VANILLA;
         };
     }
+
+    public boolean isModded() {
+        return this == MODDED;
+    }
+
+    public boolean isVanilla() {
+        return this == VANILLA;
+    }
 }

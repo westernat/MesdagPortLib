@@ -2,22 +2,22 @@ package org.mesdag.portlib.event.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PortRegisterDataMapTypesEvent extends Event implements IModBusEvent {
-    private final Map<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> attachments;
+    private final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> attachments;
 
     @ApiStatus.Internal
-    public PortRegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<PortIdentifier, PortDataMapType<?, ?>>> attachments) {
+    public PortRegisterDataMapTypesEvent(Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> attachments) {
         this.attachments = attachments;
     }
 

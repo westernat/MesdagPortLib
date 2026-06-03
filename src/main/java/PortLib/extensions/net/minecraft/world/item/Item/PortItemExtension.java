@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortItem;
-import org.mesdag.portlib.wrapper.common.extension.IPortItemExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemExtension;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
 import java.util.function.Supplier;

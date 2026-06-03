@@ -1,6 +1,7 @@
 package org.mesdag.portlib.event.client;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import org.mesdag.portlib.client.GuiLayer;
 import org.mesdag.portlib.client.PortDeltaTicker;
@@ -8,10 +9,9 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> extends PortEvent<E> {
-    private PortIdentifier identifier;
+    private ResourceLocation identifier;
     private GuiLayer layer;
 
     @Diff
@@ -27,9 +27,9 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
         return PortDeltaTicker.INSTANCE;
     }
 
-    public PortIdentifier getName() {
+    public ResourceLocation getName() {
         if (identifier == null) {
-            this.identifier = e.getOverlay().id().wrap();
+            this.identifier = e.getOverlay().id();
         }
         return identifier;
     }

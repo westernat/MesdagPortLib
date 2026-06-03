@@ -3,13 +3,13 @@ package org.mesdag.portlib.network;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.function.Consumer;
 
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public interface IPortPacket {
     void handle(Context context);
 
-    PortIdentifier identifier();
+    ResourceLocation identifier();
 
     interface C2S extends IPortPacket {
         @Override

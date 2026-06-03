@@ -1,4 +1,4 @@
-package org.mesdag.portlib.wrapper.common.extension;
+package org.mesdag.portlib.wrapper.common.extensions;
 
 
 import net.minecraft.world.item.Item;

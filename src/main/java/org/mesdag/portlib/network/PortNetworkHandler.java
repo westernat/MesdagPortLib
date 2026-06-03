@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,14 +34,14 @@ import java.util.function.Supplier;
 public class PortNetworkHandler {
     //    private static final List<PortNetworkHandler> handlers = new ArrayList<>();
     private final SimpleChannel channel;
-    private static final Map<PortIdentifier, PortStreamCodec<?, ?>> codecMap = new HashMap<>();
+    private static final Map<ResourceLocation, PortStreamCodec<?, ?>> codecMap = new HashMap<>();
     private int packetId;
 //    private final List<Consumer<IPortCustomLoginTask>> tasks = new ArrayList<>();
 
     /// 务必在类初始化时创建
     public PortNetworkHandler(String namespace, String version) {
         this.channel = NetworkRegistry.newSimpleChannel(
-                PortIdentifier.fromNamespaceAndPath(namespace, "main"),
+                ResourceLocation.fromNamespaceAndPath(namespace, "main"),
                 () -> version,
                 version::equals,
                 version::equals
@@ -57,29 +57,29 @@ public class PortNetworkHandler {
 //        handlers.add(this);
     }
 
-    public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_SERVER);
     }
 
-    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_CLIENT);
     }
 
-    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
     }
 
 //    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
-//            PortIdentifier identifier,
+//            ResourceLocation identifier,
 //            Consumer<IPortCustomLoginTask> consumer,
-//            PortIdentifier s2cIdentifier,
+//            ResourceLocation s2cIdentifier,
 //            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
 //            BiConsumer<S2C, IPortPacket.Context> s2cHandler,
-//            @Nullable PortIdentifier c2sIdentifier,
+//            @Nullable ResourceLocation c2sIdentifier,
 //            @Nullable PortStreamCodec<? super FriendlyByteBuf, C2S> c2sCodec,
 //            @Nullable BiConsumer<C2S, IPortPacket.Context> c2sHandler
 //    ) {
@@ -117,9 +117,9 @@ public class PortNetworkHandler {
 //    }
 //
 //    public <S2C extends PortLoginPacket & IPortPacket.S2C> void addLoginTask(
-//            PortIdentifier identifier,
+//            ResourceLocation identifier,
 //            Consumer<IPortCustomLoginTask> consumer,
-//            PortIdentifier s2cIdentifier,
+//            ResourceLocation s2cIdentifier,
 //            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
 //            BiConsumer<S2C, IPortPacket.Context> s2cHandler
 //    ) {
@@ -140,7 +140,7 @@ public class PortNetworkHandler {
         context.setPacketHandled(true);
     }
 
-    private <P extends IPortPacket> void register(PortIdentifier identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
+    private <P extends IPortPacket> void register(ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
         channel.registerMessage(
                 packetId++, (Class<P>) packetClass,
                 (v, b) -> codec.encode(b.wrap(), v), b -> codec.decode(b.wrap()),
@@ -191,7 +191,7 @@ public class PortNetworkHandler {
     }
 
     @Diff
-    public static <P extends IPortPacket> PortStreamCodec<? super FriendlyByteBuf, P> getPacketCodec(PortIdentifier identifier) {
+    public static <P extends IPortPacket> PortStreamCodec<? super FriendlyByteBuf, P> getPacketCodec(ResourceLocation identifier) {
         PortStreamCodec codec = codecMap.get(identifier);
         if (codec == null) {
             throw new IllegalStateException("Packet not registered: " + identifier);

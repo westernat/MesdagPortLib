@@ -56,6 +56,27 @@ public interface PortStreamCodec<B, V> extends PortStreamDecoder<B, V>, PortStre
         };
     }
 
+    default <U> PortStreamCodec<B, U> dispatch(
+            final Function<? super U, ? extends V> keyGetter, final Function<? super V, ? extends PortStreamCodec<? super B, ? extends U>> codecGetter
+    ) {
+        return new PortStreamCodec<>() {
+            @Override
+            public U decode(B buffer) {
+                V v = PortStreamCodec.this.decode(buffer);
+                PortStreamCodec<? super B, ? extends U> streamcodec = codecGetter.apply(v);
+                return streamcodec.decode(buffer);
+            }
+
+            @Override
+            public void encode(B buffer, U value) {
+                V v = keyGetter.apply(value);
+                PortStreamCodec<B, U> streamcodec = (PortStreamCodec<B, U>) codecGetter.apply(v);
+                PortStreamCodec.this.encode(buffer, v);
+                streamcodec.encode(buffer, value);
+            }
+        };
+    }
+
     static <B, C, T1, T2> PortStreamCodec<B, C> composite(
             PortStreamCodec<? super B, T1> codec1,
             Function<C, T1> getter1,

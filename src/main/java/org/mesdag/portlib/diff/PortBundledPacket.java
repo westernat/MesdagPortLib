@@ -1,11 +1,11 @@
 package org.mesdag.portlib.diff;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Diff
 @SuppressWarnings("all")
 public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map) implements IPortPacket {
-    public static final PortIdentifier IDENTIFIER = PortLib.asResource("bundled");
+    public static final ResourceLocation IDENTIFIER = PortLib.asResource("bundled");
     public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(FriendlyByteBuf buffer, PortBundledPacket packet) {
@@ -23,7 +23,7 @@ public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPor
                 buffer.writeUtf(namespace.getKey());
                 buffer.writeVarInt(namespace.getValue().size());
                 for (Map.Entry<String, IPortPacket> path : namespace.getValue().entrySet()) {
-                    PortIdentifier identifier = PortIdentifier.fromNamespaceAndPath(namespace.getKey(), path.getKey());
+                    ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace.getKey(), path.getKey());
                     buffer.writeUtf(path.getKey());
                     PortNetworkHandler.getPacketCodec(identifier).encode(buffer, path.getValue());
                 }
@@ -39,7 +39,7 @@ public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPor
                 int k = buffer.readVarInt();
                 for (int l = 0; l < k; l++) {
                     String path = buffer.readUtf();
-                    PortIdentifier identifier = PortIdentifier.fromNamespaceAndPath(namespace, path);
+                    ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace, path);
                     IPortPacket packet = PortNetworkHandler.getPacketCodec(identifier).decode(buffer);
                     map.computeIfAbsent(namespace, s -> new LinkedHashMap<>()).put(path, packet);
                 }
@@ -54,7 +54,7 @@ public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPor
     }
 
     @Override
-    public PortIdentifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

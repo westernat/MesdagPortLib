@@ -10,7 +10,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -22,7 +21,7 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
     }
 
     @Diff
-    public <T> void register(ResourceKey<? extends Registry<T>> registryKey, PortIdentifier name, Supplier<T> valueSupplier) {
+    public <T> void register(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation name, Supplier<T> valueSupplier) {
         e.register(registryKey, name, valueSupplier);
     }
 
@@ -46,14 +45,14 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
     public interface PortRegisterHelper<T> {
         default void register(ResourceKey<T> key, T value) {
             ResourceLocation name = key.location();
-            register(PortIdentifier.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
+            register(ResourceLocation.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
         }
 
-        void register(PortIdentifier name, T value);
+        void register(ResourceLocation name, T value);
 
         @Diff
         default RegisterEvent.RegisterHelper<T> unwrap() {
-            return (name, value) -> register(PortIdentifier.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
+            return (name, value) -> register(ResourceLocation.fromNamespaceAndPath(name.getNamespace(), name.getPath()), value);
         }
 
         @Diff
@@ -64,7 +63,7 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
         @Diff
         record Delegate<T>(RegisterEvent.RegisterHelper<T> delegate) implements PortRegisterHelper<T> {
             @Override
-            public void register(PortIdentifier name, T value) {
+            public void register(ResourceLocation name, T value) {
                 delegate.register(name, value);
             }
 

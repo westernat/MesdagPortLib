@@ -5,6 +5,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -13,7 +14,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> {
     @Diff
@@ -67,7 +67,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
             super(e);
         }
 
-        public PortStage register(PortIdentifier name, @Nullable RenderType renderType) throws IllegalArgumentException {
+        public PortStage register(ResourceLocation name, @Nullable RenderType renderType) throws IllegalArgumentException {
             return e.register(name, renderType).wrap();
         }
 

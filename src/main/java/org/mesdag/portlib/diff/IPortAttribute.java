@@ -6,9 +6,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.TooltipFlag;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
-import org.mesdag.portlib.wrapper.common.PortPercentageAttribute;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 @Diff
 public interface IPortAttribute extends PortSelfGetter<Attribute> {
@@ -20,20 +19,20 @@ public interface IPortAttribute extends PortSelfGetter<Attribute> {
         return (IPortAttribute) attribute;
     }
 
-    static <E> E fromElement(E e, Attribute a, AttributeModifier m, TooltipFlag f, boolean p) {
+    static <E> E fromElement(E element, Attribute attribute, AttributeModifier modifier, TooltipFlag flag) {
         MutableComponent component;
-        if (a instanceof PortPercentageAttribute attribute) {
-            component = attribute.toValueComponent(PortAttributeModifier.PortOperation.wrap(m.getOperation()), m.getAmount(), f);
-        } else if (e instanceof MutableComponent c) {
+        if (attribute instanceof IPortAttributeExtension extension) {
+            component = extension.toComponent(modifier.wrap(), flag);
+        } else if (element instanceof MutableComponent c) {
             component = c;
-        } else if (e instanceof Component c) {
+        } else if (element instanceof Component c) {
             component = c.copy();
         } else {
-            return e;
+            return element;
         }
-        PortAttribute.PortSentiment sentiment = of(a).portlib$getSentiment();
+        PortAttribute.PortSentiment sentiment = of(attribute).portlib$getSentiment();
         if (sentiment != PortAttribute.PortSentiment.POSITIVE) {
-            component.withStyle(sentiment.getStyle(p));
+            component.withStyle(sentiment.getStyle(modifier.getAmount() > 0));
         }
         return (E) component;
     }

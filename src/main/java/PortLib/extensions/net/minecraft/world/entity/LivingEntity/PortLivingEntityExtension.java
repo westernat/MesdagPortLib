@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
-import org.mesdag.portlib.wrapper.common.extension.IPortLivingEntityExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 
 @Extension
 public class PortLivingEntityExtension {

@@ -13,4 +13,12 @@ public class PortPlayerExtension {
     public static boolean hasCorrectToolForDrops(@This Player thiz, BlockState state, Level level, BlockPos pos) {
         return PortPlayerEvent.PortHarvestCheck.doPlayerHarvestCheck(thiz, state, level, pos, thiz.hasCorrectToolForDrops(state));
     }
+
+    public static double blockInteractionRange(@This Player thiz) {
+        return thiz.getBlockReach();
+    }
+
+    public static double entityInteractionRange(@This Player thiz) {
+        return thiz.getEntityReach();
+    }
 }

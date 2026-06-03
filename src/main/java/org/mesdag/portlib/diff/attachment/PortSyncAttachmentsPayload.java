@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff.attachment;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -12,7 +13,6 @@ import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public record PortSyncAttachmentsPayload(
         List<PortAttachmentType<?>> types,
         byte[] syncPayload
 ) implements IPortPacket.S2C {
-    public static final PortIdentifier IDENTIFIER = PortLib.asResource("sync_attachments");
+    public static final ResourceLocation IDENTIFIER = PortLib.asResource("sync_attachments");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncAttachmentsPayload> STREAM_CODEC = PortStreamCodec.composite(
             Target.STREAM_CODEC, PortSyncAttachmentsPayload::target,
             PortByteBufCodecs.registry(PortAttachmentSync.SYNCED_ATTACHMENT_TYPES.key()).apply(PortByteBufCodecs.list()), PortSyncAttachmentsPayload::types,
@@ -60,7 +60,7 @@ public record PortSyncAttachmentsPayload(
     }
 
     @Override
-    public PortIdentifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

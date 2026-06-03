@@ -42,8 +42,7 @@ public abstract class PlayerMixin implements IPortPlayer {
     public abstract Inventory getInventory();
 
     @Shadow
-    @Nullable
-    public abstract ItemEntity drop(ItemStack itemStack, boolean includeThrowerName);
+    public abstract @Nullable ItemEntity drop(ItemStack itemStack, boolean includeThrowerName);
 
     @Shadow
     public abstract void setAbsorptionAmount(float amount);
@@ -175,5 +174,10 @@ public abstract class PlayerMixin implements IPortPlayer {
     @ModifyVariable(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getFireAspect(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "flag3")
     private boolean fireSweepAttack(boolean original, @Local(argsOnly = true) Entity target) {
         return PortEventHandler.postEventWithReturn(new PortSweepAttackEvent(portlib$self(), target, original)).isSweeping();
+    }
+
+    @ModifyExpressionValue(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"))
+    private boolean skipCheck(boolean original) {
+        return false;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Diff
 public class PortRegistryDataMapNegotiation {
-//    public static final PortIdentifier IDENTIFIER = PortLib.asResource("registry_data_map_negotiation");
+//    public static final ResourceLocation IDENTIFIER = PortLib.asResource("registry_data_map_negotiation");
 //
 //    public static void handle(IPortCustomLoginTask task) {
 //        final Map<ResourceKey<? extends Registry<?>>, List<PortKnownRegistryDataMapsPayload.KnownDataMap>> dataMaps = new HashMap<>();

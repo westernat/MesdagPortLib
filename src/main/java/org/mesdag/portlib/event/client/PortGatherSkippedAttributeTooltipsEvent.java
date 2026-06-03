@@ -3,6 +3,7 @@ package org.mesdag.portlib.event.client;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -11,7 +12,6 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
@@ -23,7 +23,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
     protected final ItemStack stack;
     protected final PortAttributeTooltipContext ctx;
 
-    private @Nullable Set<PortIdentifier> skippedIds = null;
+    private @Nullable Set<ResourceLocation> skippedIds = null;
     private @Nullable Set<PortEquipmentSlotGroup> skippedGroups = null;
     private boolean skipAll = false;
 
@@ -41,7 +41,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
         return stack;
     }
 
-    public void skipId(PortIdentifier id) {
+    public void skipId(ResourceLocation id) {
         getSkippedIds().add(id);
     }
 
@@ -49,7 +49,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
         getSkippedGroups().add(group);
     }
 
-    public boolean isSkipped(PortIdentifier id) {
+    public boolean isSkipped(ResourceLocation id) {
         return skipAll || (skippedIds != null && skippedIds.contains(id));
     }
 
@@ -65,7 +65,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
         return skipAll;
     }
 
-    protected Set<PortIdentifier> getSkippedIds() {
+    protected Set<ResourceLocation> getSkippedIds() {
         if (this.skippedIds == null) {
             this.skippedIds = new HashSet<>();
         }
@@ -93,7 +93,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
     public boolean isSkipped(AttributeModifier modifier) {
         if (skipAll) return true;
         if (skippedIds == null) return false;
-        PortIdentifier id = PortAttributeModifier.toId(modifier.getId(), modifier.getName());
+        ResourceLocation id = PortAttributeModifier.toId(modifier.getId(), modifier.getName());
         return skippedIds.contains(id);
     }
 

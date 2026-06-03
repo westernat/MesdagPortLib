@@ -1,6 +1,7 @@
 package org.mesdag.portlib.event.other;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -13,7 +14,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 public class PortAddPackFindersEvent extends PortEvent<AddPackFindersEvent> implements IPortModBusEvent {
     @Diff
@@ -29,7 +29,7 @@ public class PortAddPackFindersEvent extends PortEvent<AddPackFindersEvent> impl
         return e.getPackType();
     }
 
-    public void addPackFinders(PortIdentifier packLocation, PackType packType, Component packNameDisplay, PackSource packSource, boolean alwaysActive, Pack.Position packPosition) {
+    public void addPackFinders(ResourceLocation packLocation, PackType packType, Component packNameDisplay, PackSource packSource, boolean alwaysActive, Pack.Position packPosition) {
         if (getPackType() == packType) {
             IModInfo modInfo = ModList.get().getModContainerById(packLocation.getNamespace()).orElseThrow(() -> new IllegalArgumentException("Mod not found: " + packLocation.getNamespace())).getModInfo();
 

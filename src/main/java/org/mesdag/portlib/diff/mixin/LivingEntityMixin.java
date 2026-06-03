@@ -27,7 +27,7 @@ import org.mesdag.portlib.event.entity.living.*;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
-import org.mesdag.portlib.wrapper.common.extension.IPortLivingEntityExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortLivingEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

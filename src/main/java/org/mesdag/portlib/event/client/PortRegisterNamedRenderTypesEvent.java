@@ -1,11 +1,11 @@
 package org.mesdag.portlib.event.client;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 public class PortRegisterNamedRenderTypesEvent extends PortEvent<RegisterNamedRenderTypesEvent> {
     @Diff
@@ -13,11 +13,11 @@ public class PortRegisterNamedRenderTypesEvent extends PortEvent<RegisterNamedRe
         super(e);
     }
 
-    public void register(PortIdentifier key, RenderType blockRenderType, RenderType entityRenderType) {
+    public void register(ResourceLocation key, RenderType blockRenderType, RenderType entityRenderType) {
         e.register(key.getPath(), blockRenderType, entityRenderType);
     }
 
-    public void register(PortIdentifier key, RenderType blockRenderType, RenderType entityRenderType, RenderType fabulousEntityRenderType) {
+    public void register(ResourceLocation key, RenderType blockRenderType, RenderType entityRenderType, RenderType fabulousEntityRenderType) {
         e.register(key.getPath(), blockRenderType, entityRenderType, fabulousEntityRenderType);
     }
 

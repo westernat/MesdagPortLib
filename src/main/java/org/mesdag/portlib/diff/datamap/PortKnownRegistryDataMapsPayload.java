@@ -8,19 +8,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.network.login.PortLoginPacket;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements IPortPacket.S2C {
-    public static final PortIdentifier IDENTIFIER = PortLib.asResource("known_registry_data_maps");
+    public static final ResourceLocation IDENTIFIER = PortLib.asResource("known_registry_data_maps");
     public static final PortStreamCodec<FriendlyByteBuf, PortKnownRegistryDataMapsPayload> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize, PortByteBufCodecs.registryKey(),
@@ -41,7 +41,7 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
 
     @Override
     public void handle(Context context) {
-        record MandatoryEntry(ResourceKey<? extends Registry<?>> registry, PortIdentifier id) {}
+        record MandatoryEntry(ResourceKey<? extends Registry<?>> registry, ResourceLocation id) {}
         Set<MandatoryEntry> ourMandatory = new HashSet<>();
         PortDataMapLoader.getDataMaps().forEach((reg, values) -> values.values().forEach(attach -> {
             if (attach.mandatorySync()) {
@@ -85,7 +85,7 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
             return;
         }
 
-        var known = new HashMap<ResourceKey<? extends Registry<?>>, Collection<PortIdentifier>>();
+        var known = new HashMap<ResourceKey<? extends Registry<?>>, Collection<ResourceLocation>>();
         PortDataMapLoader.getDataMaps().forEach((key, vals) -> known.put(key, vals.keySet()));
         context.reply(new PortKnownRegistryDataMapsReplyPayload(known));
     }
@@ -94,11 +94,11 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
     public void work(Player player) {}
 
     @Override
-    public PortIdentifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 
-    public record KnownDataMap(PortIdentifier id, boolean mandatory) {
+    public record KnownDataMap(ResourceLocation id, boolean mandatory) {
         public static final PortStreamCodec<FriendlyByteBuf, KnownDataMap> STREAM_CODEC = PortStreamCodec.composite(
                 PortByteBufCodecs.IDENTIFIER, KnownDataMap::id,
                 PortByteBufCodecs.BOOL, KnownDataMap::mandatory,

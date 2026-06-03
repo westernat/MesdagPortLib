@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
@@ -16,7 +17,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.registries.PortRegistryEntry;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Map;
 import java.util.Objects;
@@ -111,7 +111,7 @@ public class PortPatchedDataComponentMap {
     public void deserializeNBT(RegistryAccess provider, CompoundTag tag) {
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         for (var key : tag.getAllKeys()) {
-            PortIdentifier keyLocation = PortIdentifier.tryParse(key);
+            ResourceLocation keyLocation = ResourceLocation.tryParse(key);
             if (keyLocation == null) {
                 PortLib.LOGGER.error("Encountered invalid data component key {}. Skipping.", key);
                 continue;

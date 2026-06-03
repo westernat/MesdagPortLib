@@ -1,12 +1,12 @@
 package org.mesdag.portlib.wrapper.world.entity.ai.attributes;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.UUID;
 
-public record PortAttributeModifier(PortIdentifier id, double amount, PortOperation operation) {
+public record PortAttributeModifier(ResourceLocation id, double amount, PortOperation operation) {
     private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
 
     @Diff
@@ -15,9 +15,9 @@ public record PortAttributeModifier(PortIdentifier id, double amount, PortOperat
     }
 
     @Diff
-    public static PortIdentifier toId(UUID uuid, String name) {
+    public static ResourceLocation toId(UUID uuid, String name) {
         String namespace = toHex16(uuid.getMostSignificantBits()) + toHex16(uuid.getLeastSignificantBits());
-        return PortIdentifier.fromNamespaceAndPath(namespace, name);
+        return ResourceLocation.fromNamespaceAndPath(namespace, name);
     }
 
     private static String toHex16(long value) {

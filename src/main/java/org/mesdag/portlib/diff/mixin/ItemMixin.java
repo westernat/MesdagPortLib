@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
-import org.mesdag.portlib.wrapper.common.extension.IPortItemExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

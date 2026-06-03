@@ -5,20 +5,28 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.IdMap;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.holdersets.HolderSetType;
+import net.minecraftforge.registries.holdersets.ICustomHolderSet;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.mesdag.portlib.diff.PortRegistryManager;
 import org.mesdag.portlib.network.*;
-import org.mesdag.portlib.wrapper.core.PortIdMap;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -157,7 +165,7 @@ public interface PortByteBufCodecs {
             PortFriendlyByteBuf.writeVector4f(buffer, value);
         }
     };
-    PortStreamCodec<ByteBuf, PortIdentifier> IDENTIFIER = STRING_UTF8.map(PortIdentifier::parse, PortIdentifier::toString);
+    PortStreamCodec<ByteBuf, ResourceLocation> IDENTIFIER = STRING_UTF8.map(ResourceLocation::parse, ResourceLocation::toString);
 
     static <B extends ByteBuf, K, V, M extends Map<K, V>> PortStreamCodec<B, M> map(
             IntFunction<? extends M> factory, PortStreamCodec<? super B, K> keyCodec, PortStreamCodec<? super B, V> valueCodec
@@ -206,9 +214,7 @@ public interface PortByteBufCodecs {
         };
     }
 
-    private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(
-            final ResourceKey<? extends Registry<T>> registryKey, final Function<Registry<T>, IdMap<R>> idGetter
-    ) {
+    private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(ResourceKey<? extends Registry<T>> registryKey, Function<Registry<T>, IdMap<R>> idGetter) {
         return new PortStreamCodec<>() {
             private IdMap<R> getRegistryOrThrow(PortRegistryFriendlyByteBuf p_330361_) {
                 var registry = p_330361_.registryAccess().registryOrThrow(registryKey);
@@ -224,7 +230,7 @@ public interface PortByteBufCodecs {
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, R value) {
-                int i = PortIdMap.getIdOrThrow(getRegistryOrThrow(buffer), value);
+                int i = getRegistryOrThrow(buffer).getIdOrThrow(value);
                 buffer.writeVarInt(i);
             }
         };
@@ -232,6 +238,10 @@ public interface PortByteBufCodecs {
 
     static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, T> registry(ResourceKey<? extends Registry<T>> registryKey) {
         return registry(registryKey, registry -> registry);
+    }
+
+    static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, Holder<T>> holderRegistry(ResourceKey<? extends Registry<T>> registryKey) {
+        return registry(registryKey, Registry::asHolderIdMap);
     }
 
     static <B extends ByteBuf, V> PortStreamCodec.PortCodecOperation<B, V, List<V>> list() {
@@ -363,6 +373,92 @@ public interface PortByteBufCodecs {
                     buffer.writeBoolean(false);
                     rightCodec.encode(buffer, right);
                 });
+            }
+        };
+    }
+
+    static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, HolderSet<T>> holderSet(ResourceKey<? extends Registry<T>> registryKey) {
+        return new PortStreamCodec<>() {
+            private static final int NAMED_SET = -1;
+            private final PortStreamCodec<PortRegistryFriendlyByteBuf, Holder<T>> holderCodec = PortByteBufCodecs.holderRegistry(registryKey);
+            private final Map<HolderSetType, PortStreamCodec<PortRegistryFriendlyByteBuf, ? extends ICustomHolderSet<T>>> holderSetCodecs = new ConcurrentHashMap<>();
+
+            private PortStreamCodec<PortRegistryFriendlyByteBuf, ? extends ICustomHolderSet<T>> holderSetCodec(HolderSetType type) {
+                return holderSetCodecs.computeIfAbsent(type, key -> {
+                    Codec<? extends ICustomHolderSet<T>> codec = key.makeCodec(registryKey, RegistryFixedCodec.create(registryKey), false);
+                    return new PortStreamCodec<>() {
+                        @Override
+                        public ICustomHolderSet<T> decode(PortRegistryFriendlyByteBuf buffer) {
+                            return buffer.readJsonWithCodec(codec);
+                        }
+
+                        @Override
+                        public void encode(PortRegistryFriendlyByteBuf buffer, ICustomHolderSet<T> value) {
+                            buffer.writeJsonWithCodec(codec, cast(value));
+                        }
+                    };
+                });
+            }
+
+            private <H extends ICustomHolderSet<T>> H cast(ICustomHolderSet<T> holderSet) {
+                return (H) holderSet;
+            }
+
+            @Override
+            public HolderSet<T> decode(PortRegistryFriendlyByteBuf buffer) {
+                int i = PortVarInt.read(buffer) - 1;
+                if (i < -1) {
+                    return holderSetCodec(((ForgeRegistry<HolderSetType>) ForgeRegistries.HOLDER_SET_TYPES.get()).byIdOrThrow(-2 - i)).decode(buffer);
+                }
+                if (i == -1) {
+                    Registry<T> registry = buffer.registryAccess().registryOrThrow(registryKey);
+                    return registry.getTag(TagKey.create(registryKey, ResourceLocation.streamCodec().decode(buffer))).orElseThrow();
+                }
+                List<Holder<T>> list = new ArrayList<>(Math.min(i, 65536));
+
+                for (int j = 0; j < i; j++) {
+                    list.add(holderCodec.decode(buffer));
+                }
+
+                return HolderSet.direct(list);
+            }
+
+            @Override
+            public void encode(PortRegistryFriendlyByteBuf buffer, HolderSet<T> value) {
+                if (buffer.getConnectionType().isModded() && value instanceof ICustomHolderSet<T> customHolderSet) {
+                    PortVarInt.write(buffer, -1 - ((ForgeRegistry<HolderSetType>) ForgeRegistries.HOLDER_SET_TYPES.get()).getID(customHolderSet.type()));
+                    holderSetCodec(customHolderSet.type()).encode(buffer, cast(customHolderSet));
+                    return;
+                }
+                Optional<TagKey<T>> optional = value.unwrapKey();
+                if (optional.isPresent()) {
+                    PortVarInt.write(buffer, 0);
+                    ResourceLocation.streamCodec().encode(buffer, optional.get().location());
+                    return;
+                }
+                PortVarInt.write(buffer, value.size() + 1);
+                for (Holder<T> holder : value) {
+                    holderCodec.encode(buffer, holder);
+                }
+            }
+        };
+    }
+
+    static <B extends ByteBuf, V> PortStreamCodec<B, Optional<V>> optional(PortStreamCodec<B, V> codec) {
+        return new PortStreamCodec<>() {
+            @Override
+            public Optional<V> decode(B buffer) {
+                return buffer.readBoolean() ? Optional.of(codec.decode(buffer)) : Optional.empty();
+            }
+
+            @Override
+            public void encode(B buffer, Optional<V> value) {
+                if (value.isPresent()) {
+                    buffer.writeBoolean(true);
+                    codec.encode(buffer, value.get());
+                } else {
+                    buffer.writeBoolean(false);
+                }
             }
         };
     }

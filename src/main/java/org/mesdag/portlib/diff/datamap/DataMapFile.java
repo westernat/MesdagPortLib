@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -16,7 +17,6 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortWithConditions;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.List;
 import java.util.Map;
@@ -75,9 +75,9 @@ public record DataMapFile<T, R>(
 
     public static <R> Either<TagKey<R>, ResourceKey<R>> readTagOrValue(ResourceKey<Registry<R>> registryKey, String value) {
         if (value.startsWith("#")) {
-            return Either.left(TagKey.create(registryKey, PortIdentifier.parse(value.substring(1))));
+            return Either.left(TagKey.create(registryKey, ResourceLocation.parse(value.substring(1))));
         } else {
-            return Either.right(ResourceKey.create(registryKey, PortIdentifier.parse(value)));
+            return Either.right(ResourceKey.create(registryKey, ResourceLocation.parse(value)));
         }
     }
 }

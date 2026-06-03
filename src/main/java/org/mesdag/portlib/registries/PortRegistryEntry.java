@@ -9,24 +9,23 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.resources.PortIdentifier;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class PortRegistryEntry<R, T extends R> implements Holder<R> {
-    final PortIdentifier identifier;
+    final ResourceLocation identifier;
     RegistryObject<T> object;
     Supplier<T> valueSupplier;
 
-    public PortRegistryEntry(PortIdentifier identifier, Supplier<T> valueSupplier) {
+    public PortRegistryEntry(ResourceLocation identifier, Supplier<T> valueSupplier) {
         this.identifier = identifier;
         this.valueSupplier = valueSupplier;
     }
 
     @Diff
-    public static <R, T extends R> PortRegistryEntry<R, T> wrap(PortIdentifier identifier, RegistryObject<T> object) {
+    public static <R, T extends R> PortRegistryEntry<R, T> wrap(ResourceLocation identifier, RegistryObject<T> object) {
         PortRegistryEntry<R, T> entry = new PortRegistryEntry<>(identifier, object::get);
         entry.object = object;
         return entry;
@@ -41,7 +40,7 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
         return object.get();
     }
 
-    public PortIdentifier getId() {
+    public ResourceLocation getId() {
         return identifier;
     }
 
@@ -111,7 +110,7 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
 
     static class Memoized<R, T extends R> extends PortRegistryEntry<R, T> {
         public Memoized(String namespace, String name, Supplier<T> valueSupplier) {
-            super(PortIdentifier.fromNamespaceAndPath(namespace, name), valueSupplier);
+            super(ResourceLocation.fromNamespaceAndPath(namespace, name), valueSupplier);
         }
 
         @Override

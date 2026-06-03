@@ -169,12 +169,12 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @ModifyArg(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 8))
     private <E> E modifyPositive(E e, @Local(name = "entry") Map.Entry<Attribute, AttributeModifier> entry, @Local(argsOnly = true) TooltipFlag tooltipFlag) {
-        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag, true);
+        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag);
     }
 
     @ModifyArg(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 9))
     private <E> E modifyNegative(E e, @Local(name = "entry") Map.Entry<Attribute, AttributeModifier> entry, @Local(argsOnly = true) TooltipFlag tooltipFlag) {
-        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag, false);
+        return IPortAttribute.fromElement(e, entry.getKey(), entry.getValue(), tooltipFlag);
     }
 
     @ModifyExpressionValue(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EquipmentSlot;values()[Lnet/minecraft/world/entity/EquipmentSlot;"))
