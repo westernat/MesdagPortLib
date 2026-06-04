@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.client.event.RenderBlockScreenEffectEvent.PortRenderBlockScreenEffectEventExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +26,7 @@ public class PortRenderBlockScreenEffectEvent extends PortEvent<RenderBlockScree
     }
 
     public PortOverlayType getOverlayType() {
-        return e.getOverlayType().wrap();
+        return PortRenderBlockScreenEffectEventExtension.OverlayType.wrap(e.getOverlayType());
     }
 
     public BlockState getBlockState() {

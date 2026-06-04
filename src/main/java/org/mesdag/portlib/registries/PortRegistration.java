@@ -1,8 +1,7 @@
 package org.mesdag.portlib.registries;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -12,10 +11,11 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PortRegistration<T> {
-    static final Multimap<ResourceKey<? extends Registry<?>>, List<PortRegistryEntry<?, ?>>> registrations = HashMultimap.create();
+    static final Map<ResourceKey<? extends Registry<?>>, List<List<PortRegistryEntry<?, ?>>>> registrations = new Reference2ObjectOpenHashMap<>();
     final String namespace;
     final ResourceKey<? extends Registry<T>> registryKey;
     final List<PortRegistryEntry<?, ?>> entries;
@@ -27,7 +27,7 @@ public class PortRegistration<T> {
         this.registryKey = registryKey;
         this.entries = new ArrayList<>();
         if (registerEntries) {
-            registrations.put(registryKey, entries);
+            registrations.computeIfAbsent(registryKey, key -> new ArrayList<>()).add(entries);
         }
     }
 

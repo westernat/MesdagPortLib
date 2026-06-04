@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.effect.MobEffect.PortMobEffectExtension;
 import com.google.common.collect.Sets;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -32,7 +33,7 @@ public abstract class MobEffectInstanceMixin implements IPortMobEffectInstance {
 
     @Inject(method = "<init>(Lnet/minecraft/world/effect/MobEffect;IIZZZLnet/minecraft/world/effect/MobEffectInstance;Ljava/util/Optional;)V", at = @At("TAIL"))
     private void fillEffectCures(CallbackInfo ci, @Local(argsOnly = true) MobEffect effect) {
-        effect.fillPortEffectCures(portlib$cures, portlib$self());
+        PortMobEffectExtension.fillPortEffectCures(effect, portlib$cures, portlib$self());
     }
 
     @Inject(method = "setDetailsFrom", at = @At("TAIL"))

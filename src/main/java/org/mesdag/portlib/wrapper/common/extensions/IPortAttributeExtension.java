@@ -1,5 +1,6 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
@@ -32,7 +33,7 @@ public interface IPortAttributeExtension {
         Attribute attr = self();
         double value = modif.amount();
         String key = value > 0 ? "portlib.modifier.plus" : "portlib.modifier.take";
-        ChatFormatting color = attr.getStyle(value > 0);
+        ChatFormatting color = PortAttributeExtension.getStyle(attr, value > 0);
 
         Component attrDesc = Component.translatable(attr.getDescriptionId());
         Component valueComp = toValueComponent(modif.operation(), value, flag);

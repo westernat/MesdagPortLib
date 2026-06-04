@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.client.gui.overlay.IGuiOverlay.PortIGuiOverlayExtension;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -36,7 +37,7 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
 
     public GuiLayer getLayer() {
         if (layer == null) {
-            this.layer = e.getOverlay().overlay().wrap();
+            this.layer = PortIGuiOverlayExtension.wrap(e.getOverlay().overlay());
         }
         return layer;
     }

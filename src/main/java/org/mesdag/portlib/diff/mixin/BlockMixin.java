@@ -13,8 +13,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.IPortBlock;
 import org.mesdag.portlib.event.level.PortBlockDropsEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(Block.class)
-public abstract class BlockMixin {
+public abstract class BlockMixin implements IPortBlock {
+    @Shadow(remap = false)
+    private Object renderProperties;
     @Unique
     private static @Nullable List<ItemEntity> portlib$capturedDrops = null;
 
@@ -38,6 +42,11 @@ public abstract class BlockMixin {
         List<ItemEntity> drops = portlib$capturedDrops;
         portlib$capturedDrops = null;
         return drops;
+    }
+
+    @Override
+    public void portlib$setRenderPropertiesInternal(Object properties) {
+        this.renderProperties = properties;
     }
 
     @WrapOperation(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))

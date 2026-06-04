@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.eventbus.api.Event.PortEventExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -54,7 +55,7 @@ public class PortRenderNameTagEvent extends PortEvent<RenderNameTagEvent> {
     }
 
     public PortTriState canRender() {
-        return e.getResult().wrap();
+        return PortEventExtension.Result.wrap(e.getResult());
     }
 
     public void setCanRender(PortTriState canRender) {

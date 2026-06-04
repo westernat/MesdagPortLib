@@ -1,5 +1,11 @@
 package org.mesdag.portlib.wrapper.world.item.component;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -32,7 +38,7 @@ public class PortItemAttributeModifiers {
         } else {
             this.listTag = new ListTag();
         }
-        this.showInTooltip = stack.getShowAttributeModifiersTooltip();
+        this.showInTooltip = PortItemStackExtension.getShowAttributeModifiersTooltip(stack);
     }
 
     @Diff
@@ -57,7 +63,7 @@ public class PortItemAttributeModifiers {
 
     @Diff
     public static void addModifier(Holder<Attribute> attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group, ListTag listTag) {
-        String attributeName = attribute.getRegisteredName();
+        String attributeName = PortHolderExtension.getRegisteredName(attribute);
         if (group != null && group != PortEquipmentSlotGroup.ANY) {
             Arrays.stream(EquipmentSlot.values()).filter(group::test).forEach(slot -> {
                 CompoundTag tag = new AttributeModifier(modifier.id().getPath(), modifier.amount(), modifier.operation().unwrap()).save();
@@ -80,7 +86,7 @@ public class PortItemAttributeModifiers {
                 if (attribute == null) continue;
                 AttributeModifier modifier = AttributeModifier.load(tag);
                 if (modifier != null && modifier.getId().getLeastSignificantBits() != 0L && modifier.getId().getMostSignificantBits() != 0L) {
-                    action.accept(attribute.wrap(), modifier.wrap());
+                    action.accept(PortAttributeExtension.wrap(attribute), PortAttributeModifierExtension.wrap(modifier));
                 }
             }
         }
@@ -115,7 +121,16 @@ public class PortItemAttributeModifiers {
     public void applyTo(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         tag.put("AttributeModifiers", listTag);
-        stack.setShowAttributeModifiersTooltip(showInTooltip);
+        PortItemStackExtension.setShowAttributeModifiersTooltip(stack, showInTooltip);
+    }
+
+    @Diff
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        forEach(slot, (h, m) -> {
+            builder.put(h.value(), m.unwrap());
+        });
+        return builder.build();
     }
 
     public static PortBuilder builder() {

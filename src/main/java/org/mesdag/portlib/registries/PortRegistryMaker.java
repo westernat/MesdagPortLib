@@ -1,5 +1,6 @@
 package org.mesdag.portlib.registries;
 
+import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -31,13 +32,13 @@ public class PortRegistryMaker<T> {
 
     public PortRegistryMaker<T> callback(PortRegistryCallback<T> inst) {
         if (inst instanceof PortAddCallback<T> callback) {
-            builder.onAdd((owner, stage, id, key, obj, oldObj) -> callback.onAdd((PortRegistry<T>) owner.wrap(), id, key, obj));
+            builder.onAdd((owner, stage, id, key, obj, oldObj) -> callback.onAdd((PortRegistry<T>) PortIForgeRegistryExtension.wrap(owner), id, key, obj));
         }
         if (inst instanceof PortBakeCallback<T> callback) {
-            builder.onBake((owner, stage) -> callback.onBake((PortRegistry<T>) owner.wrap()));
+            builder.onBake((owner, stage) -> callback.onBake((PortRegistry<T>) PortIForgeRegistryExtension.wrap(owner)));
         }
         if (inst instanceof PortClearCallback<T> callback) {
-            builder.onClear((owner, stage) -> callback.onClear((PortRegistry<T>) owner.wrap()));
+            builder.onClear((owner, stage) -> callback.onClear((PortRegistry<T>) PortIForgeRegistryExtension.wrap(owner)));
         }
         return this;
     }

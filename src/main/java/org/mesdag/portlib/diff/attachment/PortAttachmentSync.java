@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.attachment;
 
+import PortLib.extensions.net.minecraft.server.level.ChunkMap.PortChunkMapExtension;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentSyncHandler;
@@ -52,6 +54,7 @@ public final class PortAttachmentSync {
         }
     };
 
+    @ApiStatus.Internal
     @Diff
     public static void init() {
         PortEventHandler.addListener((PortChunkWatchEvent.Sent event) -> {
@@ -131,7 +134,7 @@ public final class PortAttachmentSync {
         if (type.syncHandler == null || !(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        var players = serverLevel.getChunkSource().chunkMap.getPlayersWatching(entity);
+        var players = PortChunkMapExtension.getPlayersWatching(serverLevel.getChunkSource().chunkMap, entity);
         if (entity instanceof ServerPlayer serverPlayer) {
             var newPlayers = new ArrayList<ServerPlayer>(players.size() + 1);
             newPlayers.addAll(players);

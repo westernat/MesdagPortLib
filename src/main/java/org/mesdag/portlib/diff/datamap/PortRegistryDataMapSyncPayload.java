@@ -1,5 +1,8 @@
 package org.mesdag.portlib.diff.datamap;
 
+import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
+import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
+import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -43,18 +46,18 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) PortFriendlyByteBuf.readRegistryKey(buf);
-        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = buf.readMap(PortByteBufCodecs.IDENTIFIER, (b1, key) -> {
+        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = PortFriendlyByteBufExtension.readMap(buf, PortByteBufCodecs.IDENTIFIER, (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            return b1.readMap(bf -> bf.readResourceKey(registryKey), bf -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
+            return (Map) PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
         return new PortRegistryDataMapSyncPayload<>(registryKey, attach);
     }
 
     public void write(PortRegistryFriendlyByteBuf buf) {
         buf.writeResourceKey(registryKey);
-        buf.writeMap(dataMaps, PortByteBufCodecs.IDENTIFIER, (b1, key, attach) -> {
+        PortFriendlyByteBufExtension.writeMap(buf, dataMaps, PortByteBufCodecs.IDENTIFIER, (b1, key, attach) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            b1.writeMap(attach, FriendlyByteBuf::writeResourceKey, (bf, value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
+            PortFriendlyByteBufExtension.<ResourceKey<T>, Object>writeMap(b1, (Map) attach, (FriendlyByteBuf b2, ResourceKey<T> rk) -> b2.writeResourceKey(rk), (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), (Object) value));
         });
     }
 
@@ -62,13 +65,13 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     private static <T> T readJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec) {
         JsonElement jsonelement = GsonHelper.fromJson(GSON, buf.readUtf(), JsonElement.class);
-        DataResult<T> dataresult = codec.parse(buf.registryAccess().createSerializationContext(JsonOps.INSTANCE), jsonelement);
-        return dataresult.getOrThrow(name -> new DecoderException("Failed to decode json: " + name));
+        DataResult<T> dataresult = codec.parse(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), jsonelement);
+        return PortDataResultExtension.getOrThrow(dataresult, name -> new DecoderException("Failed to decode json: " + name));
     }
 
     private static <T> void writeJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec, T value) {
-        DataResult<JsonElement> dataresult = codec.encodeStart(buf.registryAccess().createSerializationContext(JsonOps.INSTANCE), value);
-        buf.writeUtf(GSON.toJson(dataresult.getOrThrow(message -> new EncoderException("Failed to encode: " + message + " " + value))));
+        DataResult<JsonElement> dataresult = codec.encodeStart(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), value);
+        buf.writeUtf(GSON.toJson(PortDataResultExtension.getOrThrow(dataresult, message -> new EncoderException("Failed to encode: " + message + " " + value))));
     }
 
     @Override

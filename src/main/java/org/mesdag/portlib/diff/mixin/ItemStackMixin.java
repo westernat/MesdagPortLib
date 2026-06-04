@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -115,21 +116,21 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "getTooltipLines", at = @At("HEAD"), cancellable = true)
     private void hideTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir) {
-        if (!isAdvanced.isCreative() && !portlib$self().getShowTooltip()) {
+        if (!isAdvanced.isCreative() && !PortItemStackExtension.getShowTooltip(portlib$self())) {
             cir.setReturnValue(List.of());
         }
     }
 
     @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shouldShowInTooltip(ILnet/minecraft/world/item/ItemStack$TooltipPart;)Z", ordinal = 2))
     private void hideStoredEnchantmentsTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local(name = "list") List<Component> list) {
-        if (portlib$self().getShowStoredEnchantmentsTooltip()) {
+        if (PortItemStackExtension.getShowStoredEnchantmentsTooltip(portlib$self())) {
             ItemStack.appendEnchantmentNames(list, EnchantedBookItem.getEnchantments(portlib$self()));
         }
     }
 
     @Inject(method = "hasFoil", at = @At("HEAD"), cancellable = true)
     private void override(CallbackInfoReturnable<Boolean> cir) {
-        if (portlib$self().getEnchantmentGlintOverride()) {
+        if (PortItemStackExtension.getEnchantmentGlintOverride(portlib$self())) {
             cir.setReturnValue(true);
         }
     }

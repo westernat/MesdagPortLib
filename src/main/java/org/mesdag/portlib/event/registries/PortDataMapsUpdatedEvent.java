@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.registries;
 
+import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +19,7 @@ public class PortDataMapsUpdatedEvent extends Event {
     @Diff
     public PortDataMapsUpdatedEvent(RegistryAccess registryAccess, IForgeRegistry<?> registry, PortUpdateCause cause) {
         this.registryAccess = registryAccess;
-        this.registry = registry.wrap();
+        this.registry = PortIForgeRegistryExtension.wrap(registry);
         this.cause = cause;
     }
 

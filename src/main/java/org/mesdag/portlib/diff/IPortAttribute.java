@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -22,7 +23,7 @@ public interface IPortAttribute extends PortSelfGetter<Attribute> {
     static <E> E fromElement(E element, Attribute attribute, AttributeModifier modifier, TooltipFlag flag) {
         MutableComponent component;
         if (attribute instanceof IPortAttributeExtension extension) {
-            component = extension.toComponent(modifier.wrap(), flag);
+            component = extension.toComponent(PortAttributeModifierExtension.wrap(modifier), flag);
         } else if (element instanceof MutableComponent c) {
             component = c;
         } else if (element instanceof Component c) {

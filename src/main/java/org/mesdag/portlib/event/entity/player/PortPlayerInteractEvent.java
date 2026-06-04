@@ -1,5 +1,7 @@
 package org.mesdag.portlib.event.entity.player;
 
+import PortLib.extensions.net.minecraftforge.eventbus.api.Event.PortEventExtension;
+import PortLib.extensions.net.minecraftforge.fml.LogicalSide.PortLogicalSideExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +46,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
     }
 
     public PortLogicalSide getSide() {
-        return e.getSide().wrap();
+        return PortLogicalSideExtension.wrap(e.getSide());
     }
 
     public static class PortEntityInteractSpecific extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteractSpecific> implements IPortCancellableEvent {
@@ -103,11 +105,11 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         public PortTriState getUseBlock() {
-            return e.getUseBlock().wrap();
+            return PortEventExtension.Result.wrap(e.getUseBlock());
         }
 
         public PortTriState getUseItem() {
-            return e.getUseItem().wrap();
+            return PortEventExtension.Result.wrap(e.getUseItem());
         }
 
         public BlockHitResult getHitVec() {
@@ -172,11 +174,11 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
 
         public PortTriState getUseBlock() {
-            return e.getUseBlock().wrap();
+            return PortEventExtension.Result.wrap(e.getUseBlock());
         }
 
         public PortTriState getUseItem() {
-            return e.getUseItem().wrap();
+            return PortEventExtension.Result.wrap(e.getUseItem());
         }
 
         public PortAction getAction() {

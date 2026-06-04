@@ -27,6 +27,18 @@ public interface PortStreamCodec<B, V> extends PortStreamDecoder<B, V>, PortStre
         };
     }
 
+    static <B,V>PortStreamCodec<B,V> unit(V instance) {
+        return new PortStreamCodec<>() {
+            @Override
+            public V decode(B buffer) {
+                return instance;
+            }
+
+            @Override
+            public void encode(B buffer, V value) {}
+        };
+    }
+
     static <B, V> PortStreamCodec<B, V> ofMember(PortStreamMemberEncoder<B, V> encoder, PortStreamDecoder<B, V> decoder) {
         return new PortStreamCodec<>() {
             @Override

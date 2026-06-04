@@ -1,8 +1,6 @@
 package PortLib.extensions.net.minecraft.network.FriendlyByteBuf;
 
 import com.google.common.collect.Maps;
-import manifold.ext.rt.api.Extension;
-import manifold.ext.rt.api.This;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.mesdag.portlib.diff.Diff;
@@ -15,9 +13,8 @@ import org.mesdag.portlib.wrapper.PortEnvironment;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-@Extension
 public class PortFriendlyByteBufExtension {
-    public static <K, V> Map<K, V> readMap(@This FriendlyByteBuf thiz, PortStreamDecoder<? super FriendlyByteBuf, K> keyReader, BiFunction<FriendlyByteBuf, K, V> valueReader) {
+    public static <K, V> Map<K, V> readMap(FriendlyByteBuf thiz, PortStreamDecoder<? super FriendlyByteBuf, K> keyReader, BiFunction<FriendlyByteBuf, K, V> valueReader) {
         int size = thiz.readVarInt();
         Map<K, V> map = Maps.newHashMapWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
@@ -27,7 +24,7 @@ public class PortFriendlyByteBufExtension {
         return map;
     }
 
-    public static <K, V> void writeMap(@This FriendlyByteBuf thiz, Map<K, V> map, PortStreamEncoder<? super FriendlyByteBuf, K> keyWriter, TriConsumer<FriendlyByteBuf, K, V> valueWriter) {
+    public static <K, V> void writeMap(FriendlyByteBuf thiz, Map<K, V> map, PortStreamEncoder<? super FriendlyByteBuf, K> keyWriter, TriConsumer<FriendlyByteBuf, K, V> valueWriter) {
         thiz.writeVarInt(map.size());
         map.forEach((key, value) -> {
             keyWriter.encode(thiz, key);
@@ -36,7 +33,7 @@ public class PortFriendlyByteBufExtension {
     }
 
     @Diff
-    public static PortRegistryFriendlyByteBuf wrap(@This FriendlyByteBuf thiz) {
+    public static PortRegistryFriendlyByteBuf wrap(FriendlyByteBuf thiz) {
         return new PortRegistryFriendlyByteBuf(thiz, PortEnvironment.registryAccess(), PortConnectionType.MODDED);
     }
 }

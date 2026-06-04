@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.entity.player;
 
+import PortLib.extensions.net.minecraftforge.eventbus.api.Event.PortEventExtension;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
         }
 
         public PortTriState canPickup() {
-            return e.getResult().wrap();
+            return PortEventExtension.Result.wrap(e.getResult());
         }
 
         static {

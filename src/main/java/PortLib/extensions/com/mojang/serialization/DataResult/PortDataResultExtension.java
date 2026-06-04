@@ -2,14 +2,11 @@ package PortLib.extensions.com.mojang.serialization.DataResult;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.DataResult;
-import manifold.ext.rt.api.Extension;
-import manifold.ext.rt.api.This;
 
 import java.util.function.Function;
 
-@Extension
 public class PortDataResultExtension {
-    public static <R, E extends Throwable> R getOrThrow(@This DataResult<R> thiz, Function<String, E> exceptionSupplier) throws E {
+    public static <R, E extends Throwable> R getOrThrow(DataResult<R> thiz, Function<String, E> exceptionSupplier) throws E {
         Either<R, DataResult.PartialResult<R>> either = thiz.get();
         if (either.left().isPresent()) {
             return either.left().get();
@@ -17,7 +14,7 @@ public class PortDataResultExtension {
         throw exceptionSupplier.apply(either.right().map(DataResult.PartialResult::message).orElse("Unknown problem"));
     }
 
-    public static <R, E extends Throwable> R getOrThrow(@This DataResult<R> thiz) {
-        return thiz.getOrThrow(IllegalStateException::new);
+    public static <R, E extends Throwable> R getOrThrow(DataResult<R> thiz) {
+        return getOrThrow(thiz, IllegalStateException::new);
     }
 }

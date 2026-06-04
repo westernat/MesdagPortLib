@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.entity.living;
 
+import PortLib.extensions.net.minecraft.world.effect.MobEffectInstance.PortMobEffectInstanceExtension;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +22,7 @@ public class PortEffectParticleModificationEvent extends LivingEvent {
         super(entity);
         this.effect = effect;
         this.isVisible = effect.isVisible();
-        this.originalOptions = effect.getParticleOptions();
+        this.originalOptions = PortMobEffectInstanceExtension.getParticleOptions(effect);
         this.options = originalOptions;
     }
 

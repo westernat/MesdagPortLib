@@ -11,19 +11,27 @@ import java.util.Set;
 public interface PortDataComponentMap {
     PortDataComponentMap EMPTY = new PortDataComponentMap() {
         @Override
-        public <T> @Nullable T get(PortDataComponentType<T> type) {
+        public <T> @Nullable T portlib$get(PortDataComponentType<T> type) {
             return null;
         }
 
         @Override
-        public Set<PortDataComponentType<?>> keySet() {
+        public Set<PortDataComponentType<?>> portlib$keySet() {
             return Set.of();
         }
     };
 
-    <T> @Nullable T get(PortDataComponentType<T> type);
+    <T> @Nullable T portlib$get(PortDataComponentType<T> type);
 
-    Set<PortDataComponentType<?>> keySet();
+    default <T> @Nullable T get(PortDataComponentType<T> type) {
+        return portlib$get(type);
+    }
+
+    Set<PortDataComponentType<?>> portlib$keySet();
+
+    default Set<PortDataComponentType<?>> keySet() {
+        return portlib$keySet();
+    }
 
     static PortBuilder builder() {
         return new PortBuilder();

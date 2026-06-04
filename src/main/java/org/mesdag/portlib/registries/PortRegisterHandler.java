@@ -3,6 +3,7 @@ package org.mesdag.portlib.registries;
 import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
@@ -44,13 +45,13 @@ public class PortRegisterHandler {
         return new PortParticleTypeRegistration(namespace);
     }
 
+    @ApiStatus.Internal
     @Diff
     @SuppressWarnings("unchecked")
     public static <T, R extends Registry<T>> void init() {
         PortEventHandler.addListener(PortEventPriority.LOW, (PortRegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            for (List<PortRegistryEntry<?, ?>> entries : PortRegistration.registrations.get(registryKey)) {
-                if (entries == null) continue;
+            for (List<PortRegistryEntry<?, ?>> entries : PortRegistration.registrations.getOrDefault(registryKey, List.of())) {
                 for (PortRegistryEntry<?, ?> entry : entries) {
                     event.register(
                             (ResourceKey<R>) registryKey,

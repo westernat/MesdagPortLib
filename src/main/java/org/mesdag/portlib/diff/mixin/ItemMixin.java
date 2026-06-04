@@ -13,6 +13,7 @@ import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemExtension;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,6 +26,8 @@ import java.util.Set;
 
 @Mixin(Item.class)
 public abstract class ItemMixin implements IPortItem, IPortItemExtension {
+    @Shadow(remap = false)
+    private Object renderProperties;
     @Unique
     private @Nullable Map<PortDataComponentType<?>, Optional<?>> portlib$prototype;
 
@@ -39,18 +42,23 @@ public abstract class ItemMixin implements IPortItem, IPortItemExtension {
     }
 
     @Override
-    public <T> T get(PortDataComponentType<T> type) {
+    public void portlib$setRenderPropertiesInternal(Object properties) {
+        this.renderProperties = properties;
+    }
+
+    @Override
+    public <T> T portlib$get(PortDataComponentType<T> type) {
         if (portlib$prototype == null) return null;
         return (T) portlib$prototype.get(type);
     }
 
     @Override
-    public Set<PortDataComponentType<?>> keySet() {
+    public Set<PortDataComponentType<?>> portlib$keySet() {
         if (portlib$prototype == null) return Set.of();
         return portlib$prototype.keySet();
     }
 
-    @Inject(method = "<init>",at=@At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"))
     private void setup(Item.Properties properties, CallbackInfo ci) {
         PortBuilder builder = IPortProperties.of(properties).portlib$get();
         if (builder != null) {

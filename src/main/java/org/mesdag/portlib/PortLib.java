@@ -1,5 +1,7 @@
 package org.mesdag.portlib;
 
+import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +31,6 @@ import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
-import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
@@ -42,6 +43,7 @@ public class PortLib {
     public static final Logger LOGGER = LoggerFactory.getLogger("PortLib");
     @Diff
     public static final PortNetworkHandler NETWORK_HANDLER = new PortNetworkHandler(MODID, "1");
+    public static final boolean DEBUG = Boolean.getBoolean("portlib.debug");
 
     private static final PortAttributeRegistration ATTRIBUTES = PortRegisterHandler.attribute(MODID);
     public static final PortRegistryEntry<Attribute, RangedAttribute> BLOCK_BREAK_SPEED = ATTRIBUTES.register(
@@ -150,7 +152,7 @@ public class PortLib {
             event.add(EntityType.PLAYER, CREATIVE_FLIGHT);
         });
 
-        if (PortEnvironment.isDeveloper()) {
+        if (DEBUG) {
             PortAttachmentRegistration attachment = PortRegisterHandler.attachment(MODID);
             PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
 
@@ -161,12 +163,13 @@ public class PortLib {
                 ItemStack stack = event.getItemStack();
                 if (!stack.isEmpty()) {
                     if (!event.getLevel().isClientSide) {
-                        TestAttachment data = event.getTarget().getAttach(testAttachment::get);
+                        TestAttachment data = PortEntityExtension.getAttach(event.getTarget(), testAttachment);
                         data.setStack(stack);
 
-                        stack.setData(testDataComponent, new TestComponent(1));
+                        PortItemStackExtension.setData(stack, testDataComponent, new TestComponent(1));
                     }
                     event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.getEntity().swing(event.getHand(), true);
                 }
             });
 

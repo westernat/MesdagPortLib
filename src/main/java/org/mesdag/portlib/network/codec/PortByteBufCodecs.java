@@ -1,5 +1,10 @@
 package org.mesdag.portlib.network.codec;
 
+import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
+import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
+import PortLib.extensions.net.minecraft.core.IdMap.PortIdMapExtension;
+import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
+import PortLib.extensions.net.minecraftforge.registries.ForgeRegistry.PortForgeRegistryExtension;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -226,11 +231,13 @@ public interface PortByteBufCodecs {
 
             public R decode(PortRegistryFriendlyByteBuf buffer) {
                 int i = buffer.readVarInt();
-                return getRegistryOrThrow(buffer).byIdOrThrow(i);
+                R value = getRegistryOrThrow(buffer).byId(i);
+                if (value == null) throw new IllegalStateException("No value for id: " + i);
+                return value;
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, R value) {
-                int i = getRegistryOrThrow(buffer).getIdOrThrow(value);
+                int i = PortIdMapExtension.getIdOrThrow(getRegistryOrThrow(buffer), value);
                 buffer.writeVarInt(i);
             }
         };
@@ -305,13 +312,13 @@ public interface PortByteBufCodecs {
         return new PortStreamCodec<>() {
             public T decode(PortRegistryFriendlyByteBuf buffer) {
                 Tag tag = streamcodec.decode(buffer);
-                RegistryOps<Tag> registryops = buffer.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-                return codec.parse(registryops, tag).getOrThrow(message -> new DecoderException("Failed to decode: " + message + " " + tag));
+                RegistryOps<Tag> registryops = PortHolderLookupExtension.Provider.createSerializationContext(buffer.registryAccess(), NbtOps.INSTANCE);
+                return PortDataResultExtension.getOrThrow(codec.parse(registryops, tag), message -> new DecoderException("Failed to decode: " + message + " " + tag));
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, T value) {
-                RegistryOps<Tag> registryops = buffer.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-                Tag tag = codec.encodeStart(registryops, value).getOrThrow(message -> new EncoderException("Failed to encode: " + message + " " + value));
+                RegistryOps<Tag> registryops = PortHolderLookupExtension.Provider.createSerializationContext(buffer.registryAccess(), NbtOps.INSTANCE);
+                Tag tag = PortDataResultExtension.getOrThrow(codec.encodeStart(registryops, value), message -> new EncoderException("Failed to encode: " + message + " " + value));
                 streamcodec.encode(buffer, tag);
             }
         };
@@ -408,11 +415,11 @@ public interface PortByteBufCodecs {
             public HolderSet<T> decode(PortRegistryFriendlyByteBuf buffer) {
                 int i = PortVarInt.read(buffer) - 1;
                 if (i < -1) {
-                    return holderSetCodec(((ForgeRegistry<HolderSetType>) ForgeRegistries.HOLDER_SET_TYPES.get()).byIdOrThrow(-2 - i)).decode(buffer);
+                    return holderSetCodec(PortForgeRegistryExtension.byIdOrThrow((ForgeRegistry<HolderSetType>) ForgeRegistries.HOLDER_SET_TYPES.get(), -2 - i)).decode(buffer);
                 }
                 if (i == -1) {
                     Registry<T> registry = buffer.registryAccess().registryOrThrow(registryKey);
-                    return registry.getTag(TagKey.create(registryKey, ResourceLocation.streamCodec().decode(buffer))).orElseThrow();
+                    return registry.getTag(TagKey.create(registryKey, PortResourceLocationExtension.streamCodec().decode(buffer))).orElseThrow();
                 }
                 List<Holder<T>> list = new ArrayList<>(Math.min(i, 65536));
 
@@ -433,7 +440,7 @@ public interface PortByteBufCodecs {
                 Optional<TagKey<T>> optional = value.unwrapKey();
                 if (optional.isPresent()) {
                     PortVarInt.write(buffer, 0);
-                    ResourceLocation.streamCodec().encode(buffer, optional.get().location());
+                    PortResourceLocationExtension.streamCodec().encode(buffer, optional.get().location());
                     return;
                 }
                 PortVarInt.write(buffer, value.size() + 1);

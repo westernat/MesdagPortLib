@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.component;
 
+import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.RegistryAccess;
@@ -21,7 +22,6 @@ import org.mesdag.portlib.registries.PortRegistryEntry;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @Diff
 @SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ public class PortPatchedDataComponentMap {
         return t == null ? defaultValue : t;
     }
 
-    public <T> T getOrDefault(Supplier<PortDataComponentType<? extends T>> type, T defaultValue) {
+    public <T> T getOrDefault(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T defaultValue) {
         return getOrDefault(type.get(), defaultValue);
     }
 
@@ -94,7 +94,7 @@ public class PortPatchedDataComponentMap {
 
     public CompoundTag serializeNBT(RegistryAccess provider) {
         CompoundTag tag = new CompoundTag();
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
         for (Map.Entry<PortDataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
             var type = entry.getKey();
             var key = PortRegistries.DATA_COMPONENTS.getKey(type);
@@ -109,7 +109,7 @@ public class PortPatchedDataComponentMap {
     }
 
     public void deserializeNBT(RegistryAccess provider, CompoundTag tag) {
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
         for (var key : tag.getAllKeys()) {
             ResourceLocation keyLocation = ResourceLocation.tryParse(key);
             if (keyLocation == null) {

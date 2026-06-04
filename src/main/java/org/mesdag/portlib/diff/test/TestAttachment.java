@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.test;
 
+import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +50,7 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
         nbt.putFloat("f", f);
         nbt.putDouble("d", d);
         nbt.putString("str", str);
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
         ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(tag -> nbt.put("stack", tag));
         return nbt;
     }
@@ -64,7 +65,7 @@ public class TestAttachment implements IPortNBTSerializable<CompoundTag> {
         this.f = nbt.getFloat("f");
         this.d = nbt.getDouble("d");
         this.str = nbt.getString("str");
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
         ItemStack.CODEC.parse(ops, nbt.get("stack")).result().ifPresent(result -> this.stack = result);
     }
 }

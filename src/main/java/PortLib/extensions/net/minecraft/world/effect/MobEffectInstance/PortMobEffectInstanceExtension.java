@@ -4,8 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import manifold.ext.rt.api.Extension;
-import manifold.ext.rt.api.This;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +20,6 @@ import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Set;
 
-@Extension
 public class PortMobEffectInstanceExtension {
     private static final Codec<MobEffectInstance> CODEC = new Codec<>() {
         @Override
@@ -45,21 +42,19 @@ public class PortMobEffectInstanceExtension {
     };
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, MobEffectInstance> STREAM_CODEC = PortByteBufCodecs.fromCodecWithRegistries(CODEC);
 
-    public static Set<PortEffectCure> getPortCures(@This MobEffectInstance thiz) {
+    public static Set<PortEffectCure> getPortCures(MobEffectInstance thiz) {
         return IPortMobEffectInstance.of(thiz).portlib$getCures();
     }
 
-    @Extension
     public static Codec<MobEffectInstance> codec() {
         return CODEC;
     }
 
-    @Extension
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, MobEffectInstance> streamCodec() {
         return STREAM_CODEC;
     }
 
-    public static ParticleOptions getParticleOptions(@This MobEffectInstance thiz) {
+    public static ParticleOptions getParticleOptions(MobEffectInstance thiz) {
         MobEffect effect = thiz.getEffect();
         if (effect instanceof PortMobEffect port) {
             return port.createParticleOptions(thiz);

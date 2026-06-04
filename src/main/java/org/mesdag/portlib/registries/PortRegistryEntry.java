@@ -1,5 +1,6 @@
 package org.mesdag.portlib.registries;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import com.google.common.base.Supplier;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
@@ -76,9 +77,8 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
         return asHolder().is(tagKey);
     }
 
-    @Override
     public boolean is(Holder<R> holder) {
-        return asHolder().is(holder);
+        return PortHolderExtension.is(asHolder(), holder);
     }
 
     @Override

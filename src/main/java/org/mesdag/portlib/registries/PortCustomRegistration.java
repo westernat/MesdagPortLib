@@ -20,7 +20,7 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
     final java.util.function.Supplier<IForgeRegistry<T>> registry;
 
     PortCustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
-        super(namespace, registryKey);
+        super(namespace, registryKey, false);
         DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
         this.maker = new PortRegistryMaker<>();
         this.registry = register.makeRegistry(() -> {

@@ -2,16 +2,7 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev.legacyforge' version '2.0.134'
-}
-
-tasks.named('wrapper', Wrapper).configure {
-    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
-    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
-    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
-    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
-    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
-    distributionType = Wrapper.DistributionType.BIN
+    id 'net.neoforged.moddev.legacyforge' version '2.0.141'
 }
 
 version = mod_version
@@ -117,41 +108,26 @@ obfuscation {
     createRemappingConfiguration(configurations.localRuntime)
 }
 
+boolean slim = true
+
 dependencies {
-    jarJar "systems.manifold:manifold-rt:${manifold_version}"
-    jarJar "systems.manifold:manifold-util:${manifold_version}"
-    compileOnly "systems.manifold:manifold-ext-rt:${manifold_version}"
-    runtimeOnly "systems.manifold:manifold-ext-rt:${manifold_version}"
-    additionalRuntimeClasspath "systems.manifold:manifold-ext-rt:${manifold_version}"
-    annotationProcessor group: 'systems.manifold', name: 'manifold-ext', version: "${manifold_version}"
-
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.3"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.3"))
-}
-
-if (JavaVersion.current() != JavaVersion.VERSION_1_8 &&
-        sourceSets.main.allJava.files.any { it.name == "module-info.java" }) {
-    tasks.withType(JavaCompile) {
-        // if you DO define a module-info.java file:
-        options.compilerArgs += ['-Xplugin:Manifold', '--module-path', it.classpath.asPath]
+    if (slim) {
+        implementation("io.github.llamalad7:mixinextras-forge:0.5.3")
+    } else {
+        implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.3"))
     }
-} else {
-    tasks.withType(JavaCompile) {
-        // If you DO NOT define a module-info.java file:
-        options.compilerArgs += ['-Xplugin:Manifold']
-    }
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
-    from(rootDir) {
+    from(projectDir) {
         include 'LICENSE', 'NOTICE'
         into 'META-INF'
     }
 
     manifest.attributes([
-            "MixinConfigs": "${mod_id}.mixins.json",
-            'Contains-Sources': 'java,class'
+            "MixinConfigs": "${mod_id}.mixins.json"
     ])
 }
 

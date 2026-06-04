@@ -1,12 +1,10 @@
 package PortLib.extensions.net.minecraft.world.item.crafting.Recipe;
 
-import manifold.ext.rt.api.Extension;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 import net.minecraft.world.item.crafting.Recipe;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
-@Extension
 public class PortRecipeExtension {
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, Recipe<?>> STREAM_CODEC = new PortStreamCodec<>() {
         @Override
@@ -20,7 +18,6 @@ public class PortRecipeExtension {
         }
     };
 
-    @Extension
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, Recipe<?>> streamCodec() {
         return STREAM_CODEC;
     }

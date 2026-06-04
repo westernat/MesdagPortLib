@@ -11,6 +11,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.client.PortRegisterMenuScreensEvent;
@@ -32,6 +33,7 @@ public class PortEventHooks {
     private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new Reference2ObjectOpenHashMap<>();
     private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Predicate<? extends Event>> predicates = HashBasedTable.create();
 
+    @ApiStatus.Internal
     @Diff
     public static void init() {
         PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());

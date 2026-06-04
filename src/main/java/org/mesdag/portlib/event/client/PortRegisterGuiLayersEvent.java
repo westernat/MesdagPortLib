@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.client.gui.overlay.IGuiOverlay.PortIGuiOverlayExtension;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -49,7 +50,7 @@ public class PortRegisterGuiLayersEvent extends PortEvent<RegisterGuiOverlaysEve
         if (overlay != null) {
             int i = accessor.getOrderedOverlays().indexOf(id);
             if (i > 0) {
-                var wrapped = wrapper.apply(overlay.wrap());
+                var wrapped = wrapper.apply(PortIGuiOverlayExtension.wrap(overlay));
                 Objects.requireNonNull(wrapped, "wrapping layer must not be null");
                 accessor.getOverlays().put(id, wrapped.unwrap());
             }

@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.client.model.lighting.QuadLighter.PortQuadLighterExtension;
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -74,7 +75,7 @@ public class PortAddSectionGeometryEvent extends Event {
 
         public PortQuadLighter getQuadLighter(boolean smooth) {
             var renderer = (ForgeModelBlockRendererAccessor) Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-            return (smooth ? renderer.getSmoothLighter() : renderer.getFlatLighter()).get().wrap();
+            return PortQuadLighterExtension.wrap((smooth ? renderer.getSmoothLighter() : renderer.getFlatLighter()).get());
         }
 
         public PoseStack getPoseStack() {

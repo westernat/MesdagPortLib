@@ -37,6 +37,11 @@ public final class PortBuildCreativeModeTabContentsEvent extends PortEvent<Build
         return e.hasPermissions();
     }
 
+    @Diff
+    public MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility> getEntries() {
+        return e.getEntries();
+    }
+
 //    public Iterable<ItemStack> getParentEntries() {
 //        return Iterables.unmodifiableIterable(Iterables.transform(Iterables.filter(e.getEntries(), entry -> entry.getValue() == CreativeModeTab.TabVisibility.PARENT_TAB_ONLY), Map.Entry::getKey));
 //    }
@@ -77,11 +82,13 @@ public final class PortBuildCreativeModeTabContentsEvent extends PortEvent<Build
         e.getEntries().remove(existingEntry);
     }
 
-    static boolean isParentTab(CreativeModeTab.TabVisibility visibility) {
+    @Diff
+    public static boolean isParentTab(CreativeModeTab.TabVisibility visibility) {
         return visibility == CreativeModeTab.TabVisibility.PARENT_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
     }
 
-    static boolean isSearchTab(CreativeModeTab.TabVisibility visibility) {
+    @Diff
+    public static boolean isSearchTab(CreativeModeTab.TabVisibility visibility) {
         return visibility == CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
     }
 

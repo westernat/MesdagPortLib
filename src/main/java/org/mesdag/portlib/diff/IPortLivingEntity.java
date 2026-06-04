@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
@@ -27,6 +28,7 @@ public interface IPortLivingEntity extends PortSelfGetter<LivingEntity> {
         return (IPortLivingEntity) living;
     }
 
+    @ApiStatus.Internal
     static void init() {
         PortLib.NETWORK_HANDLER.registerInGameS2C(
                 PortSyncEffectParticlesS2C.class,

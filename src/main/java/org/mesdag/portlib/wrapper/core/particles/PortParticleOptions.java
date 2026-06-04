@@ -1,5 +1,7 @@
 package org.mesdag.portlib.wrapper.core.particles;
 
+import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
+import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -31,7 +33,7 @@ public class PortParticleOptions implements ParticleOptions {
     @ApiStatus.NonExtendable
     @Override
     public void writeToNetwork(FriendlyByteBuf buffer) {
-        streamCodec.encode(buffer.wrap(), this);
+        streamCodec.encode(PortFriendlyByteBufExtension.wrap(buffer), this);
     }
 
     @Diff
@@ -39,7 +41,7 @@ public class PortParticleOptions implements ParticleOptions {
     @Override
     public String writeToString() {
         NbtOps ops = NbtOps.INSTANCE;
-        return codec.encode(this, ops, codec.compressedBuilder(ops)).build(ops.empty())
-                .getOrThrow().getAsString();
+        return PortDataResultExtension.getOrThrow(codec.encode(this, ops, codec.compressedBuilder(ops)).build(ops.empty()))
+                .getAsString();
     }
 }

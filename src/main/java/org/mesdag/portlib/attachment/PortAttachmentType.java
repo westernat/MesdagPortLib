@@ -1,5 +1,7 @@
 package org.mesdag.portlib.attachment;
 
+import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
+import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.google.common.base.Predicates;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -115,8 +117,8 @@ public class PortAttachmentType<T> {
             return serialize(new IPortAttachmentSerializer<>() {
                 @Override
                 public T read(IPortAttachmentHolder holder, Tag tag, HolderLookup.Provider provider) {
-                    DataResult<T> parsingResult = codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag);
-                    return parsingResult.getOrThrow(msg -> buildException("read", msg));
+                    DataResult<T> parsingResult = codec.parse(PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE), tag);
+                    return PortDataResultExtension.getOrThrow(parsingResult, msg -> buildException("read", msg));
                 }
 
                 @Nullable
@@ -125,8 +127,8 @@ public class PortAttachmentType<T> {
                     if (!shouldSerialize.test(attachment)) {
                         return null;
                     }
-                    DataResult<Tag> encodingResult = codec.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment);
-                    return encodingResult.getOrThrow(msg -> buildException("write", msg));
+                    DataResult<Tag> encodingResult = codec.encodeStart(PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE), attachment);
+                    return PortDataResultExtension.getOrThrow(encodingResult, msg -> buildException("write", msg));
                 }
 
                 private IllegalStateException buildException(String operation, String error) {

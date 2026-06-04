@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.registries;
 
+import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +21,7 @@ public class PortModifyRegistriesEvent extends Event implements IModBusEvent {
         return BuiltInRegistries.REGISTRY.registryKeySet().stream()
                 .map(key -> RegistryManager.ACTIVE.getRegistry(key.location()))
                 .filter(Objects::nonNull)
-                .<PortRegistry<?>>map(IForgeRegistry::wrap)
+                .<PortRegistry<?>>map(PortIForgeRegistryExtension::wrap)
                 .toList();
     }
 
@@ -29,6 +30,6 @@ public class PortModifyRegistriesEvent extends Event implements IModBusEvent {
         if (registry == null) {
             throw new IllegalArgumentException("No registry with key " + key);
         }
-        return (PortRegistry<T>) registry.wrap();
+        return (PortRegistry<T>) PortIForgeRegistryExtension.wrap(registry);
     }
 }

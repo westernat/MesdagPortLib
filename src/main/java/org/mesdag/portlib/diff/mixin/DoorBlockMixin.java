@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.entity.player.Player.PortPlayerExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
@@ -20,6 +21,6 @@ public abstract class DoorBlockMixin {
             @Local(argsOnly = true) BlockState state,
             @Local(argsOnly = true) Player player
     ) {
-        return player.isCreative() || !player.hasCorrectToolForDrops(state, level, pos);
+        return player.isCreative() || !PortPlayerExtension.hasCorrectToolForDrops(player, state, level, pos);
     }
 }

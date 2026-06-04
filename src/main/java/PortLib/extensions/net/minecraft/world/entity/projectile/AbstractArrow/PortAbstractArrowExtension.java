@@ -1,7 +1,6 @@
 package PortLib.extensions.net.minecraft.world.entity.projectile.AbstractArrow;
 
-import manifold.ext.rt.api.Extension;
-import manifold.ext.rt.api.This;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -11,19 +10,18 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAbstractArrow;
 import org.mesdag.portlib.diff.mixin.AbstractArrowAccessor;
 
-@Extension
 public class PortAbstractArrowExtension {
     public static void setup(
-            @This AbstractArrow thiz,
+            AbstractArrow thiz,
             ItemStack pickupItemStack,
             @Nullable ItemStack firedFromWeapon
     ) {
         IPortAbstractArrow iArrow = IPortAbstractArrow.of(thiz);
         iArrow.portlib$setPickupItem(pickupItemStack);
 
-        thiz.setCustomName(pickupItemStack.getCustomName());
-        boolean intangible = pickupItemStack.getIntangibleProjectile();
-        pickupItemStack.setIntangibleProjectile(false);
+        thiz.setCustomName(PortItemStackExtension.getCustomName(pickupItemStack));
+        boolean intangible = PortItemStackExtension.getIntangibleProjectile(pickupItemStack);
+        PortItemStackExtension.setIntangibleProjectile(pickupItemStack, false);
         if (intangible) {
             thiz.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         }
@@ -43,19 +41,19 @@ public class PortAbstractArrowExtension {
         }
     }
 
-    public static ItemStack pickupItem(@This AbstractArrow thiz) {
-        return thiz.pickupItemStackOrigin().copy();
+    public static ItemStack pickupItem(AbstractArrow thiz) {
+        return pickupItemStackOrigin(thiz).copy();
     }
 
-    public static ItemStack pickupItemStackOrigin(@This AbstractArrow thiz) {
+    public static ItemStack pickupItemStackOrigin(AbstractArrow thiz) {
         return IPortAbstractArrow.of(thiz).portlib$getPickupItem();
     }
 
-    public static ItemStack defaultPickupItem(@This AbstractArrow thiz) {
+    public static ItemStack defaultPickupItem(AbstractArrow thiz) {
         return ((AbstractArrowAccessor) thiz).callGetPickupItem();
     }
 
-    public static ItemStack weaponItem(@This AbstractArrow thiz) {
+    public static ItemStack weaponItem(AbstractArrow thiz) {
         return IPortAbstractArrow.of(thiz).portlib$getFiredFromWeapon();
     }
 }

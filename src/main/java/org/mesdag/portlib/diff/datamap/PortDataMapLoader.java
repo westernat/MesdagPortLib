@@ -1,5 +1,7 @@
 package org.mesdag.portlib.diff.datamap;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
+import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
@@ -22,6 +24,7 @@ import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.tags.ITagManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.datamap.PortAdvancedDataMapType;
@@ -58,7 +61,8 @@ public class PortDataMapLoader implements PreparableReloadListener {
         this.registryAccess = registryAccess;
     }
 
-    public static <T> void init() {
+    @ApiStatus.Internal
+    public static void init() {
         PortRegistryDataMapNegotiation.init();
         PortLib.NETWORK_HANDLER.registerInGameS2C(
                 (Class) PortRegistryDataMapSyncPayload.class,
@@ -142,12 +146,12 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
                 resolve(registry, tKey, true, holder -> {
                     var newValue = value.get().carrier();
-                    var key = holder.getKey();
+                    var key = PortHolderExtension.getKey(holder);
                     var oldValue = result.get(key);
                     if (oldValue == null || newValue.replace()) {
                         result.put(key, new WithSource<>(newValue.value(), tKey));
                     } else {
-                        result.put(key, new WithSource<>(merger.merge((PortRegistry<R>) registry.wrap(), oldValue.source(), oldValue.attachment(), tKey, newValue.value()), tKey));
+                        result.put(key, new WithSource<>(merger.merge((PortRegistry<R>) PortIForgeRegistryExtension.wrap(registry), oldValue.source(), oldValue.attachment(), tKey, newValue.value()), tKey));
                     }
                 });
             });
@@ -159,7 +163,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                         var key = PortHolder.getKey(holder);
                         var oldValue = result.get(key);
                         if (oldValue != null) {
-                            var newValue = remover.remove(oldValue.attachment(), (PortRegistry<R>) registry.wrap(), oldValue.source(), holder.value());
+                            var newValue = remover.remove(oldValue.attachment(), (PortRegistry<R>) PortIForgeRegistryExtension.wrap(registry), oldValue.source(), holder.value());
                             if (newValue.isEmpty()) {
                                 result.remove(key);
                             } else {

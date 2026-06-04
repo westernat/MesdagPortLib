@@ -1,5 +1,6 @@
 package org.mesdag.portlib.network;
 
+import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -19,6 +20,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
@@ -143,7 +145,7 @@ public class PortNetworkHandler {
     private <P extends IPortPacket> void register(ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
         channel.registerMessage(
                 packetId++, (Class<P>) packetClass,
-                (v, b) -> codec.encode(b.wrap(), v), b -> codec.decode(b.wrap()),
+                (v, b) -> codec.encode(PortFriendlyByteBufExtension.wrap(b), v), b -> codec.decode(PortFriendlyByteBufExtension.wrap(b)),
                 handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
         codecMap.put(identifier, codec);
     }
@@ -199,6 +201,7 @@ public class PortNetworkHandler {
         return codec;
     }
 
+    @ApiStatus.Internal
     public static void init() {
 //        PortEventHandler.addListener((PlayerNegotiationEvent event) -> {
 //            for (PortNetworkHandler handler : handlers) {

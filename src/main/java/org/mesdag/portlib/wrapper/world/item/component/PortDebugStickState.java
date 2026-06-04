@@ -1,5 +1,6 @@
 package org.mesdag.portlib.wrapper.world.item.component;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -20,14 +21,14 @@ public record PortDebugStickState(ItemStack debugStack) {
         CompoundTag tag = debugStack.getTagElement("DebugProperty");
         if (tag != null) {
             StateDefinition<Block, BlockState> stateDefinition = block.value().getStateDefinition();
-            return stateDefinition.getProperty(tag.getString(block.getRegisteredName()));
+            return stateDefinition.getProperty(tag.getString(PortHolderExtension.getRegisteredName(block)));
         }
         return null;
     }
 
     public PortDebugStickState withProperty(BlockHolder block, Property<?> property) {
         CompoundTag tag = debugStack.getOrCreateTagElement("DebugProperty");
-        tag.putString(block.getRegisteredName(), property.getName());
+        tag.putString(PortHolderExtension.getRegisteredName(block), property.getName());
         return this;
     }
 

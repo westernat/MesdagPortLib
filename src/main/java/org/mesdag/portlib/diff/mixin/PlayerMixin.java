@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -161,7 +162,7 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER))
     private void onDamageTaken(CallbackInfo ci) {
-        portlib$self().onDamageTaken(IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek());
+        PortLivingEntityExtension.onDamageTaken(portlib$self(), IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek());
     }
 
     // endregion actuallyHurt

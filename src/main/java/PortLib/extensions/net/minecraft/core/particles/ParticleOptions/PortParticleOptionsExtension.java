@@ -1,7 +1,6 @@
 package PortLib.extensions.net.minecraft.core.particles.ParticleOptions;
 
 import com.mojang.brigadier.StringReader;
-import manifold.ext.rt.api.Extension;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
@@ -10,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
-@Extension
 public class PortParticleOptionsExtension {
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ParticleOptions> STREAM_CODEC = new PortStreamCodec<>() {
         @Override
@@ -29,7 +27,6 @@ public class PortParticleOptionsExtension {
         }
     };
 
-    @Extension
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, ParticleOptions> streamCodec() {
         return STREAM_CODEC;
     }

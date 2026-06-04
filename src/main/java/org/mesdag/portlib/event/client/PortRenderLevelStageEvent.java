@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.client;
 
+import PortLib.extensions.net.minecraftforge.client.event.RenderLevelStageEvent.PortRenderLevelStageEventExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -22,7 +23,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
     }
 
     public PortStage getStage() {
-        return e.getStage().wrap();
+        return PortRenderLevelStageEventExtension.Stage.wrap(e.getStage());
     }
 
     public LevelRenderer getLevelRenderer() {
@@ -68,7 +69,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         }
 
         public PortStage register(ResourceLocation name, @Nullable RenderType renderType) throws IllegalArgumentException {
-            return e.register(name, renderType).wrap();
+            return PortRenderLevelStageEventExtension.Stage.wrap(e.register(name, renderType));
         }
 
         static {
@@ -77,17 +78,17 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
     }
 
     public static class PortStage {
-        public static final PortStage AFTER_SKY = RenderLevelStageEvent.Stage.AFTER_SKY.wrap();
-        public static final PortStage AFTER_SOLID_BLOCKS = RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS.wrap();
-        public static final PortStage AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS.wrap();
-        public static final PortStage AFTER_CUTOUT_BLOCKS = RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS.wrap();
-        public static final PortStage AFTER_ENTITIES = RenderLevelStageEvent.Stage.AFTER_ENTITIES.wrap();
-        public static final PortStage AFTER_BLOCK_ENTITIES = RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES.wrap();
-        public static final PortStage AFTER_TRANSLUCENT_BLOCKS = RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS.wrap();
-        public static final PortStage AFTER_TRIPWIRE_BLOCKS = RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS.wrap();
-        public static final PortStage AFTER_PARTICLES = RenderLevelStageEvent.Stage.AFTER_PARTICLES.wrap();
-        public static final PortStage AFTER_WEATHER = RenderLevelStageEvent.Stage.AFTER_WEATHER.wrap();
-        public static final PortStage AFTER_LEVEL = RenderLevelStageEvent.Stage.AFTER_LEVEL.wrap();
+        public static final PortStage AFTER_SKY = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SKY);
+        public static final PortStage AFTER_SOLID_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
+        public static final PortStage AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS);
+        public static final PortStage AFTER_CUTOUT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS);
+        public static final PortStage AFTER_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_ENTITIES);
+        public static final PortStage AFTER_BLOCK_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES);
+        public static final PortStage AFTER_TRANSLUCENT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS);
+        public static final PortStage AFTER_TRIPWIRE_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
+        public static final PortStage AFTER_PARTICLES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_PARTICLES);
+        public static final PortStage AFTER_WEATHER = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_WEATHER);
+        public static final PortStage AFTER_LEVEL = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_LEVEL);
 
         private final RenderLevelStageEvent.Stage delegate;
 
@@ -112,7 +113,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         }
 
         public static @Nullable PortRenderLevelStageEvent.PortStage fromRenderType(RenderType renderType) {
-            return RenderLevelStageEvent.Stage.fromRenderType(renderType).wrap();
+            return PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.fromRenderType(renderType));
         }
     }
 }
