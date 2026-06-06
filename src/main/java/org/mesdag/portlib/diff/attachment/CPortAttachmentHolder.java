@@ -99,7 +99,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
 
     @Override
     @MustBeInvokedByOverriders
-    default <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
+    default <T> @Nullable T portlib$setAttach(PortAttachmentType<T> type, T data) {
         validateAttachmentType(type);
         Objects.requireNonNull(data);
         var previousData = (T) getAttachmentMap().put(type, data);
@@ -109,7 +109,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
 
     @Override
     @MustBeInvokedByOverriders
-    default <T> @Nullable T removeAttach(PortAttachmentType<T> type) {
+    default <T> @Nullable T portlib$removeAttach(PortAttachmentType<T> type) {
         validateAttachmentType(type);
         if (portlib$attachments() == null) {
             return null;

@@ -12,6 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PortRegistration<T> {
@@ -40,8 +41,17 @@ public class PortRegistration<T> {
     }
 
     public <R extends T> PortRegistryEntry<T, R> register(String name, Supplier<R> valueSupplier) {
-        PortRegistryEntry<T, R> entry = new PortRegistryEntry<>(asId(name), valueSupplier);
-        entry.object = RegistryObject.create(entry.identifier, registryKey, namespace);
+        ResourceLocation id = asId(name);
+        PortRegistryEntry<T, R> entry = new PortRegistryEntry<>(id, valueSupplier);
+        entry.object = RegistryObject.create(id, registryKey, namespace);
+        entries.add(entry);
+        return entry;
+    }
+
+    public <R extends T> PortRegistryEntry<T, R> register(String name, Function<ResourceLocation, R> valueFunction) {
+        ResourceLocation id = asId(name);
+        PortRegistryEntry<T, R> entry = new PortRegistryEntry<>(id, () -> valueFunction.apply(id));
+        entry.object = RegistryObject.create(id, registryKey, namespace);
         entries.add(entry);
         return entry;
     }

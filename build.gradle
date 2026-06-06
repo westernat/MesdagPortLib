@@ -121,11 +121,6 @@ dependencies {
 }
 
 jar {
-    from(projectDir) {
-        include 'LICENSE', 'NOTICE'
-        into 'META-INF'
-    }
-
     manifest.attributes([
             "MixinConfigs": "${mod_id}.mixins.json"
     ])

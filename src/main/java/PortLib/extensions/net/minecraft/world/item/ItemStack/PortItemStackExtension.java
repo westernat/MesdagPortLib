@@ -1,13 +1,24 @@
 package PortLib.extensions.net.minecraft.world.item.ItemStack;
 
+import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Lifecycle;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -26,6 +37,9 @@ import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
+import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
+import org.mesdag.portlib.network.codec.PortByteBufCodecs;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
@@ -35,8 +49,141 @@ import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PortItemStackExtension {
+    private static final Codec<Holder<Item>> ITEM_NON_AIR_CODEC = PortCodecExtension.validate(BuiltInRegistries.ITEM.holderByNameCodec(), holder -> PortHolderExtension.is(holder, Items.AIR.builtInRegistryHolder())
+            ? DataResult.error(() -> "Item must not be minecraft:air")
+            : DataResult.success(holder));
+    private static final Codec<ItemStack> CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<ItemStack, T>> decode(DynamicOps<T> ops, T input) {
+            Tag u = ops.convertTo(NbtOps.INSTANCE, input);
+            if (u instanceof CompoundTag tag) {
+                return DataResult.success(new Pair<>(ItemStack.of(tag), input), Lifecycle.stable());
+            }
+            return DataResult.error(() -> "Unable to decode item stack");
+        }
+
+        @Override
+        public <T> DataResult<T> encode(ItemStack input, DynamicOps<T> ops, T prefix) {
+            return DataResult.success(NbtOps.INSTANCE.convertTo(ops, input.save(new CompoundTag())), Lifecycle.stable());
+        }
+    };
+    private static final Codec<ItemStack> SINGLE_ITEM_CODEC = CODEC.mapResult(new Codec.ResultFunction<>() {
+        @Override
+        public <T> DataResult<Pair<ItemStack, T>> apply(DynamicOps<T> ops, T input, DataResult<Pair<ItemStack, T>> a) {
+            return a.map(pair -> {
+                ItemStack stack = pair.getFirst();
+                stack.setCount(1);
+                return new Pair<>(stack, pair.getSecond());
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> coApply(DynamicOps<T> ops, ItemStack input, DataResult<T> t) {
+            return t.map(t1 -> ops.set(t1, "Count", ops.createInt(1)));
+        }
+    });
+    private static final Codec<ItemStack> STRICT_CODEC = PortCodecExtension.validate(CODEC, PortItemStackExtension::validateStrict);
+    private static final Codec<ItemStack> STRICT_SINGLE_ITEM_CODEC = PortCodecExtension.validate(SINGLE_ITEM_CODEC, PortItemStackExtension::validateStrict);
+    private static final Codec<ItemStack> OPTIONAL_CODEC = PortCodecExtension.optionalEmptyMap(CODEC).xmap(optional -> optional.orElse(ItemStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+    private static final Codec<ItemStack> SIMPLE_ITEM_CODEC = ITEM_NON_AIR_CODEC.xmap(ItemStack::new, ItemStack::getItemHolder);
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ItemStack> OPTIONAL_STREAM_CODEC = new PortStreamCodec<>() {
+        public ItemStack decode(PortRegistryFriendlyByteBuf buffer) {
+            return ItemStack.of(buffer.readAnySizeNbt());
+        }
+
+        public void encode(PortRegistryFriendlyByteBuf buffer, ItemStack value) {
+            buffer.writeNbt(value.save(new CompoundTag()));
+        }
+    };
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ItemStack> STREAM_CODEC = new PortStreamCodec<>() {
+        public ItemStack decode(PortRegistryFriendlyByteBuf buffer) {
+            ItemStack stack = OPTIONAL_STREAM_CODEC.decode(buffer);
+            if (stack.isEmpty()) {
+                throw new DecoderException("Empty ItemStack not allowed");
+            }
+            return stack;
+        }
+
+        public void encode(PortRegistryFriendlyByteBuf buffer, ItemStack value) {
+            if (value.isEmpty()) {
+                throw new EncoderException("Empty ItemStack not allowed");
+            }
+            OPTIONAL_STREAM_CODEC.encode(buffer, value);
+        }
+    };
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> OPTIONAL_LIST_STREAM_CODEC = OPTIONAL_STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> LIST_STREAM_CODEC = STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
+
+    public static Codec<Holder<Item>> itemNonAirCodec() {
+        return ITEM_NON_AIR_CODEC;
+    }
+
+    public static Codec<ItemStack> codec() {
+        return CODEC;
+    }
+
+    public static Codec<ItemStack> singleItemCodec() {
+        return SINGLE_ITEM_CODEC;
+    }
+
+    public static Codec<ItemStack> strictCodec() {
+        return STRICT_CODEC;
+    }
+
+    public static Codec<ItemStack> strictSingleItemCodec() {
+        return STRICT_SINGLE_ITEM_CODEC;
+    }
+
+    public static Codec<ItemStack> optionalCodec() {
+        return OPTIONAL_CODEC;
+    }
+
+    public static Codec<ItemStack> simpleItemCodec() {
+        return SIMPLE_ITEM_CODEC;
+    }
+
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, ItemStack> optionalStreamCodec() {
+        return OPTIONAL_STREAM_CODEC;
+    }
+
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, ItemStack> streamCodec() {
+        return STREAM_CODEC;
+    }
+
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> optionalListStreamCodec() {
+        return OPTIONAL_LIST_STREAM_CODEC;
+    }
+
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> listStreamCodec() {
+        return LIST_STREAM_CODEC;
+    }
+
+    private static DataResult<ItemStack> validateStrict(ItemStack stack) {
+        if (stack.isDamageableItem() && stack.getMaxStackSize() > 1) {
+            return DataResult.error(() -> "Item cannot be both damageable and stackable");
+        }
+        CompoundTag data = getBlockEntityData(stack, false);
+        if (data != null && data.contains("Items", 9)) {
+            ListTag items = data.getList("Items", 10);
+            for (Tag item : items) {
+                if (item instanceof CompoundTag tag) {
+                    ItemStack itemStack = ItemStack.of(tag);
+                    int i = itemStack.getCount();
+                    int j = itemStack.getMaxStackSize();
+                    if (i > j) {
+                        return DataResult.error(() -> "Item stack with count of " + i + " was larger than maximum: " + j);
+                    }
+                }
+            }
+        }
+        return stack.getCount() > stack.getMaxStackSize()
+                ? DataResult.error(() -> "Item stack with stack size of " + stack.getCount() + " was larger than maximum: " + stack.getMaxStackSize())
+                : DataResult.success(stack);
+    }
+
     private static @Nullable CompoundTag getCustomData(ItemStack stack, boolean orDefault, boolean copy, String key) {
         CompoundTag data = orDefault ? stack.getOrCreateTagElement(key) : stack.getTagElement(key);
         if (data == null) return null;

@@ -10,7 +10,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -30,6 +29,7 @@ import org.mesdag.portlib.network.PortFriendlyByteBuf;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 
 import java.util.Collections;
 import java.util.Map;
@@ -78,9 +78,9 @@ public record PortRegistryDataMapSyncPayload<T>(
     public void handle(Context context) {
         context.enqueueWork(() -> {
             try {
-                var regAccess = Minecraft.getInstance().level.registryAccess();
-                IForgeRegistry registry = RegistryManager.ACTIVE.getRegistry(registryKey);
-                Map innerMap = PortDataMapLoader.INSTANCE.getInnerMap(registry);
+                var regAccess = PortEnvironment.registryAccess();
+                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryKey);
+                Map innerMap = PortDataMapLoader.INSTANCE.getInnerMap(registryKey);
                 innerMap.clear();
                 dataMaps.forEach((attachKey, maps) -> innerMap.put(PortDataMapLoader.getDataMap(registryKey, attachKey), Collections.unmodifiableMap(maps)));
                 PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(regAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.CLIENT_SYNC));

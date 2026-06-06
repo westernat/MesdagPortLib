@@ -5,6 +5,7 @@ import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForg
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -52,7 +53,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
     private final ICondition.IContext conditionContext;
     private final RegistryAccess registryAccess;
-    private final Map<IForgeRegistry<?>, Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>>> byRegistries = new IdentityHashMap<>();
+    private final Map<ResourceKey<? extends Registry<?>>, Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>>> byRegistries = new Reference2ObjectOpenHashMap<>();
 
     private Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> results;
 
@@ -106,7 +107,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         attachments.forEach(key -> {
             var attach = getDataMap(registryKey, key);
             if (attach == null || attach.networkCodec() == null) return;
-            att.put(key, INSTANCE.getDataMap(registry, attach));
+            att.put(key, INSTANCE.getDataMap(registryKey, attach));
         });
         if (!att.isEmpty()) {
             PortLib.NETWORK_HANDLER.sendToPlayer(player, new PortRegistryDataMapSyncPayload(registryKey, att));
@@ -126,9 +127,12 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     private <T> void apply(IForgeRegistry<T> registry, LoadResult<T> result) {
-        clear(registry);
-        result.results().forEach((key, entries) -> getInnerMap(registry).put(
-                key, this.buildDataMap(registry, key, (List) entries)));
+        ResourceKey<Registry<T>> registryKey = registry.getRegistryKey();
+        clear(registryKey);
+        result.results().forEach((key, entries) -> {
+            Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> innerMap = getInnerMap(registryKey);
+            innerMap.put(key, this.buildDataMap(registry, key, (List) entries));
+        });
         PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
     }
 
@@ -244,27 +248,28 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
     private record LoadResult<T>(Map<PortDataMapType<T, ?>, List<DataMapFile<?, T>>> results) {}
 
-    <T> void clear(IForgeRegistry<T> registry) {
-        Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>> map = byRegistries.get(registry);
+    void clear(ResourceKey<? extends Registry<?>> registryKey) {
+        Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>> map = byRegistries.get(registryKey);
         if (map != null) {
             map.clear();
         }
     }
 
-    public <T, A> @Nullable A getData(IForgeRegistry<T> registry, PortDataMapType<T, A> type, ResourceKey<T> key) {
-        Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>> map = byRegistries.get(registry);
+    public <T, A> @Nullable A getData(ResourceKey<? extends Registry<?>> registryKey, PortDataMapType<T, A> type, ResourceKey<T> key) {
+        Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>> map = byRegistries.get(registryKey);
         if (map == null) return null;
         Map<ResourceKey<?>, ?> map1 = map.get(type);
         if (map1 == null) return null;
         return (A) map1.get(key);
     }
 
-    public <T, A> Map<ResourceKey<T>, A> getDataMap(IForgeRegistry<T> registry, PortDataMapType<T, A> type) {
-        return (Map<ResourceKey<T>, A>) getInnerMap(registry).getOrDefault(type, Map.of());
+    public <T, A> Map<ResourceKey<T>, A> getDataMap(ResourceKey<Registry<T>> registryKey, PortDataMapType<T, A> type) {
+        Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> innerMap = getInnerMap(registryKey);
+        return (Map<ResourceKey<T>, A>) innerMap.getOrDefault(type, Map.of());
     }
 
-    <T> Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> getInnerMap(IForgeRegistry<T> registry) {
-        return (Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>>) (Map) byRegistries.computeIfAbsent(registry, r -> new IdentityHashMap<>());
+    <T> Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> getInnerMap(ResourceKey<? extends Registry<?>> registryKey) {
+        return (Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>>) (Map) byRegistries.computeIfAbsent(registryKey, r -> new IdentityHashMap<>());
     }
 
     public static <R> @Nullable PortDataMapType<R, ?> getDataMap(ResourceKey<? extends Registry<R>> registry, ResourceLocation key) {
@@ -282,5 +287,9 @@ public class PortDataMapLoader implements PreparableReloadListener {
         dataMaps = new IdentityHashMap<>();
         dataMapTypes.forEach((key, values) -> dataMaps.put(key, Collections.unmodifiableMap(values)));
         dataMaps = Collections.unmodifiableMap(dataMapTypes);
+    }
+
+    public static PortDataMapLoader getInstance() {
+        return INSTANCE;
     }
 }

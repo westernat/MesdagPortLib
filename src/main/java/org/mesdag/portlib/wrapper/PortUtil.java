@@ -2,6 +2,7 @@ package org.mesdag.portlib.wrapper;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -18,5 +19,24 @@ public class PortUtil {
 
     public static <K, V> Map<K, V> copyAndPut(Map<K, V> map, K key, V value) {
         return ImmutableMap.<K, V>builderWithExpectedSize(map.size() + 1).putAll(map).put(key, value).buildKeepingLast();
+    }
+
+    public static <T> boolean isSymmetrical(int width, int height, List<T> list) {
+        if (width == 1) return true;
+        int i = width / 2;
+        for (int j = 0; j < height; j++) {
+            for (int k = 0; k < i; k++) {
+                int l = width - 1 - k;
+                T t = list.get(k + j * width);
+                T t1 = list.get(l + j * width);
+                if (t.equals(t1)) continue;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static ResourceLocation asGuiSprite(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, "textures/gui/sprites/" + path + ".png");
     }
 }

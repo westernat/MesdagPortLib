@@ -18,7 +18,7 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
         return super.register(name, valueSupplier);
     }
 
-    public <T> PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> register(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
+    public <T> PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> builder(String name, Consumer<PortDataComponentType.PortBuilder<T>> consumer) {
         return register(name, () -> {
             PortDataComponentType.PortBuilder<T> builder = new PortDataComponentType.PortBuilder<>();
             consumer.accept(builder);

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MobEffect.class)
 public abstract class MobEffectMixin implements IPortMobEffect {
-    @Shadow
+    @Shadow(remap = false)
     private Object effectRenderer;
 
     @Override

@@ -36,7 +36,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         private final PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec;
 
         PortLibParticleType(boolean overrideLimiter, MapCodec<T> codec, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
-            super(overrideLimiter, new Deserializer<>() {
+            super(overrideLimiter, new ParticleOptions.Deserializer<>() {
                 @Override
                 public T fromCommand(ParticleType<T> type, StringReader reader) throws CommandSyntaxException {
                     return PortDataResultExtension.getOrThrow(codec.compressedDecode(NbtOps.INSTANCE, TagParser.parseTag(reader.getString())));

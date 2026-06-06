@@ -8,17 +8,32 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import org.mesdag.portlib.diff.IPortServerPlayer;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.event.entity.player.PortCanPlayerSleepEvent;
-import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin implements PortSelfGetter<ServerPlayer> {
+public abstract class ServerPlayerMixin implements IPortServerPlayer {
+    @Unique
+    private Vec3 portlib$lastKnownClientMovement = Vec3.ZERO;
+
+    @Override
+    public Vec3 portlib$getKnownMovement() {
+        return portlib$lastKnownClientMovement;
+    }
+
+    @Override
+    public void portlib$setKnownMovement(Vec3 knownMovement) {
+        this.portlib$lastKnownClientMovement = knownMovement;
+    }
+
     @Inject(method = "changeDimension", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerPlayer;lastSentFood:I", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
     private void syncInitialPlayerAttachments(CallbackInfoReturnable<Entity> cir) {
         PortAttachmentSync.syncInitialPlayerAttachments(portlib$self());
@@ -33,5 +48,10 @@ public abstract class ServerPlayerMixin implements PortSelfGetter<ServerPlayer> 
 //            original = Either.right(Unit.INSTANCE);
 //        }
         return PortCanPlayerSleepEvent.canPlayerStartSleeping(portlib$self(), at, original);
+    }
+
+    @Inject(method = "startRiding", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;positionRider(Lnet/minecraft/world/entity/Entity;)V"))
+    private void resetKnownMovement(CallbackInfoReturnable<Boolean> cir) {
+        portlib$setKnownMovement(Vec3.ZERO);
     }
 }

@@ -157,7 +157,7 @@ public class PortLib {
             PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
 
             PortDataComponentRegistration dataComponent = PortRegisterHandler.dataComponent(MODID);
-            PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<TestComponent>> testDataComponent = dataComponent.register("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
+            PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<TestComponent>> testDataComponent = dataComponent.builder("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
 
             PortEventHandler.addListener((PlayerInteractEvent.EntityInteract event) -> {
                 ItemStack stack = event.getItemStack();

@@ -6,8 +6,6 @@ import com.electronwill.nightconfig.toml.TomlFormat;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.wrapper.PortPaths;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
@@ -58,7 +56,7 @@ public final class PortConfigSpec {
     }
 
     public static Builder builder(String modId) {
-        return new Builder(modId, "startup.toml");
+        return new Builder(modId, modId + "-startup.toml");
     }
 
     public static Builder builder(String modId, String fileName) {
@@ -67,14 +65,7 @@ public final class PortConfigSpec {
 
     public void load() {
         if (loaded) return;
-        Path dir = PortPaths.configdir().resolve(modId);
-        Path file = dir.resolve(fileName);
-        try {
-            Files.createDirectories(dir);
-        } catch (IOException e) {
-            PortLib.LOGGER.error("Failed to create config directory: {}", dir, e);
-            return;
-        }
+        Path file = PortPaths.configdir().resolve(fileName);
         fileConfig = CommentedFileConfig.builder(file, TomlFormat.instance())
                 .autosave()
                 .preserveInsertionOrder()

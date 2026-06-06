@@ -38,6 +38,12 @@ public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemo
             super(registryKey, id, codec);
         }
 
+        @Override
+        public PortBuilder<T, R, VR> synced(Codec<T> networkCodec, boolean mandatory) {
+            super.synced(networkCodec, mandatory);
+            return this;
+        }
+
         public <VR1 extends PortDataMapValueRemover<R, T>> PortBuilder<T, R, VR1> remover(Codec<VR1> remover) {
             this.remover = (Codec) remover;
             return (PortBuilder<T, R, VR1>) this;

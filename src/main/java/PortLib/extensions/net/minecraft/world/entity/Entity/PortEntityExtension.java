@@ -2,8 +2,12 @@ package PortLib.extensions.net.minecraft.world.entity.Entity;
 
 import com.google.common.base.Supplier;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.IPortServerPlayer;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.registries.PortRegistryEntry;
@@ -82,5 +86,25 @@ public class PortEntityExtension {
 
     public static RegistryAccess registryAccess(Entity thiz) {
         return thiz.level().registryAccess();
+    }
+
+    public static void igniteForTicks(Entity thiz, int ticks) {
+        if (thiz.getRemainingFireTicks() < ticks) {
+            thiz.setRemainingFireTicks(ticks);
+        }
+    }
+
+    public static Vec3 getKnownMovement(Entity thiz) {
+        if (thiz.getControllingPassenger() instanceof ServerPlayer player && thiz.isAlive()) {
+            Entity entity = thiz.getVehicle();
+            return entity != null && entity.getControllingPassenger() != thiz
+                    ? getKnownMovement(entity)
+                    : IPortServerPlayer.of(player).portlib$getKnownMovement();
+        }
+        return thiz.getDeltaMovement();
+    }
+
+    public static BlockState getInBlockState(Entity thiz) {
+        return thiz.getFeetBlockState();
     }
 }

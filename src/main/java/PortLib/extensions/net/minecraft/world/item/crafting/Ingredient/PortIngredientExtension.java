@@ -4,6 +4,9 @@ import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.*;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
@@ -101,5 +104,15 @@ public class PortIngredientExtension {
                 return prefix;
             }
         };
+    }
+
+    public static boolean hasNoItems(Ingredient thiz) {
+        ItemStack[] items = thiz.getItems();
+        if (items.length == 0) return true;
+        if (items.length == 1) {
+            ItemStack item = items[0];
+            return item.getItem() == Items.BARRIER && item.getHoverName() instanceof MutableComponent hoverName && hoverName.getString().startsWith("Empty Tag: ");
+        }
+        return false;
     }
 }

@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 public interface PortByteBufCodecs {
     PortStreamCodec<ByteBuf, Boolean> BOOL = new PortStreamCodec<>() {
@@ -466,6 +467,20 @@ public interface PortByteBufCodecs {
                 } else {
                     buffer.writeBoolean(false);
                 }
+            }
+        };
+    }
+
+    static <T> PortStreamCodec<ByteBuf, T> idMapper(IntFunction<T> idLookup, ToIntFunction<T> idGetter) {
+        return new PortStreamCodec<>() {
+            public T decode(ByteBuf buffer) {
+                int i = PortVarInt.read(buffer);
+                return idLookup.apply(i);
+            }
+
+            public void encode(ByteBuf buffer, T value) {
+                int i = idGetter.applyAsInt(value);
+                PortVarInt.write(buffer, i);
             }
         };
     }

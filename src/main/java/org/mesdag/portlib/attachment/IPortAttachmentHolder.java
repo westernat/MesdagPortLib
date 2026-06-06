@@ -2,6 +2,7 @@ package org.mesdag.portlib.attachment;
 
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.registries.PortRegistryEntry;
+import org.mesdag.portlib.util.Final;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -37,19 +38,34 @@ public interface IPortAttachmentHolder {
         return getExistingAttachOrNull(type.get());
     }
 
-    <T> @Nullable T setAttach(PortAttachmentType<T> type, T data);
+    <T> @Nullable T portlib$setAttach(PortAttachmentType<T> type, T data);
+
+    @Final
+    default <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
+        return portlib$setAttach(type, data);
+    }
 
     default <T> @Nullable T setAttach(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type, T data) {
         return setAttach(type.get(), data);
     }
 
-    <T> @Nullable T removeAttach(PortAttachmentType<T> type);
+    <T> @Nullable T portlib$removeAttach(PortAttachmentType<T> type);
+
+    @Final
+    default <T> @Nullable T removeAttach(PortAttachmentType<T> type) {
+        return portlib$removeAttach(type);
+    }
 
     default <T> @Nullable T removeAttach(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return removeAttach(type.get());
     }
 
-    default void syncAttach(PortAttachmentType<?> type) {}
+    void portlib$syncAttach(PortAttachmentType<?> type);
+
+    @Final
+    default void syncAttach(PortAttachmentType<?> type) {
+        portlib$syncAttach(type);
+    }
 
     default void syncAttach(Supplier<? extends PortAttachmentType<?>> type) {
         syncAttach(type.get());

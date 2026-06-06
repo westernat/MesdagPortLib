@@ -45,19 +45,19 @@ public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSel
 
     @Final
     @Override
-    public <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
+    public <T> @Nullable T portlib$setAttach(PortAttachmentType<T> type, T data) {
         setChanged();
-        return CPortAttachmentHolder.super.setAttach(type, data);
+        return CPortAttachmentHolder.super.portlib$setAttach(type, data);
     }
 
     @Override
-    public <T> @Nullable T removeAttach(PortAttachmentType<T> type) {
+    public <T> @Nullable T portlib$removeAttach(PortAttachmentType<T> type) {
         setChanged();
-        return CPortAttachmentHolder.super.removeAttach(type);
+        return CPortAttachmentHolder.super.portlib$removeAttach(type);
     }
 
     @Override
-    public void syncAttach(PortAttachmentType<?> type) {
+    public void portlib$syncAttach(PortAttachmentType<?> type) {
         PortAttachmentSync.syncBlockEntityUpdate(portlib$self(), type);
     }
 

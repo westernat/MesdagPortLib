@@ -132,6 +132,10 @@ public class PortArmorMaterial {
             this.outerTexture = this.resolveTexture(false);
         }
 
+        public PortLayer(ResourceLocation assetName) {
+            this(assetName, "", false);
+        }
+
         private ResourceLocation resolveTexture(boolean innerTexture) {
             return this.assetName
                     .withPath(p_324187_ -> "textures/models/armor/" + this.assetName.getPath() + "_layer_" + (innerTexture ? 2 : 1) + this.suffix + ".png");

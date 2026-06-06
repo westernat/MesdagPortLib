@@ -11,13 +11,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
-import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.IPortEntity;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
-import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,11 +28,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGetter<Entity> {
+public abstract class EntityMixin implements IPortEntity {
     @Shadow
     private Level level;
     @Unique
-    private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments = null;
+    private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments;
 
     @Override
     public @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments() {
@@ -47,13 +46,13 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
 
     @Final
     @Override
-    public <T> @Nullable T setAttach(PortAttachmentType<T> type, T data) {
-        return CPortAttachmentHolder.super.setAttach(type, data);
+    public <T> @Nullable T portlib$setAttach(PortAttachmentType<T> type, T data) {
+        return IPortEntity.super.portlib$setAttach(type, data);
     }
 
     @Final
     @Override
-    public void syncAttach(PortAttachmentType<?> type) {
+    public void portlib$syncAttach(PortAttachmentType<?> type) {
         PortAttachmentSync.syncEntityUpdate(portlib$self(), type);
     }
 
@@ -77,7 +76,7 @@ public abstract class EntityMixin implements CPortAttachmentHolder, PortSelfGett
         return PortEventHandler.postEventWithReturn(new PortEntityInvulnerabilityCheckEvent(portlib$self(), source, original)).isInvulnerable();
     }
 
-    @WrapOperation(method = "rideTick",at= @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+    @WrapOperation(method = "rideTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
     private void fireEntityTick(Entity instance, Operation<Void> original) {
         if (!PortEventHandler.postEventWithReturn(new PortEntityTickEvent.PortPre(instance)).isCanceled()) {
             original.call(instance);

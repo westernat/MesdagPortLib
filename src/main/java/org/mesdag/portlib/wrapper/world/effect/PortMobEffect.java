@@ -1,10 +1,15 @@
 package org.mesdag.portlib.wrapper.world.effect;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.util.function.Function;
 
@@ -23,5 +28,11 @@ public class PortMobEffect extends MobEffect {
 
     public ParticleOptions createParticleOptions(MobEffectInstance instance) {
         return particleFactory.apply(instance);
+    }
+
+    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
+        AttributeModifier attributemodifier = new AttributeModifier(PortAttributeModifier.namespaceToUUID(id.getNamespace()), id.getPath(), amount, operation.unwrap());
+        getAttributeModifiers().put(attribute.value(), attributemodifier);
+        return this;
     }
 }

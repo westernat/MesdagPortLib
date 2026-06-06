@@ -31,7 +31,7 @@ public abstract class ServerLevelMixin implements CPortAttachmentHolder, PortSel
     private List<CustomSpawner> customSpawners;
 
     @Override
-    public void syncAttach(PortAttachmentType<?> type) {
+    public void portlib$syncAttach(PortAttachmentType<?> type) {
         PortAttachmentSync.syncLevelUpdate(portlib$self(), type);
     }
 

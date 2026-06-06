@@ -4,6 +4,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.datamap.PortDataMapType;
+import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
 
 public class PortHolderExtension {
     public static <T> boolean is(Holder<T> thiz, Holder<T> holder) {
@@ -25,5 +27,12 @@ public class PortHolderExtension {
         return thiz instanceof Holder.Reference<T> ref
                 ? ref.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null
                 : null;
+    }
+
+    public static <T, A> @Nullable A getData(Holder<T> thiz, PortDataMapType<T, A> type) {
+        if (thiz instanceof Holder.Reference<T> reference && reference.owner instanceof HolderLookup.RegistryLookup<T> lookup) {
+            return PortDataMapLoader.getInstance().getData(lookup.key(), type, getKey(thiz));
+        }
+        return null;
     }
 }

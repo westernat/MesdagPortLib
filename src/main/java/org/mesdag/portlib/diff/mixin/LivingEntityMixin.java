@@ -29,7 +29,6 @@ import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
-import org.mesdag.portlib.wrapper.world.entity.PortLivingEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -274,7 +273,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
 
     @WrapOperation(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;removeAllEffects()Z"))
     private boolean replace(LivingEntity instance, Operation<Boolean> original) {
-        return PortLivingEntity.removeEffectsCuredBy(instance, PortEffectCures.PROTECTED_BY_TOTEM);
+        return PortLivingEntityExtension.removeEffectsCuredBy(instance, PortEffectCures.PROTECTED_BY_TOTEM);
     }
 
     @ModifyReturnValue(method = "checkBedExists", at = @At("RETURN"))
