@@ -12,7 +12,6 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -42,7 +41,6 @@ import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,9 +168,12 @@ public class PortLib {
                 }
             });
             for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
-                event.add(EntityType.PLAYER, entry);
+                if (FLYING_SPEED.equals(entry)) {
+                    event.add(EntityType.PLAYER, entry, 1.0);
+                } else {
+                    event.add(EntityType.PLAYER, entry);
+                }
             }
-            event.add(EntityType.PLAYER, new AttributeHolder(Attributes.JUMP_STRENGTH), 0.42); // todo 换掉
         });
 
         if (DEBUG) {
