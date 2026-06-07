@@ -1,0 +1,18 @@
+{
+  "attribute.name.generic.burning_time": "燃烧时间",
+  "attribute.name.generic.explosion_knockback_resistance": "爆炸击退抗性",
+  "attribute.name.generic.fall_damage_multiplier": "摔落伤害倍率",
+  "attribute.name.generic.flying_speed": "飞行速度",
+  "attribute.name.generic.max_absorption": "最大伤害吸收",
+  "attribute.name.generic.movement_efficiency": "移动效率",
+  "attribute.name.generic.oxygen_bonus": "氧气加成",
+  "attribute.name.generic.safe_fall_distance": "安全摔落距离",
+  "attribute.name.generic.scale": "体型缩放",
+  "attribute.name.generic.water_movement_efficiency": "水中移动效率",
+  "attribute.name.player.block_break_speed": "方块破坏速度",
+  "attribute.name.player.creative_flight": "创造飞行",
+  "attribute.name.player.mining_efficiency": "挖掘效率",
+  "attribute.name.player.sneaking_speed": "潜行速度",
+  "attribute.name.player.submerged_mining_speed": "水下挖掘速度",
+  "attribute.name.player.sweeping_damage_ratio": "横扫伤害比例"
+}

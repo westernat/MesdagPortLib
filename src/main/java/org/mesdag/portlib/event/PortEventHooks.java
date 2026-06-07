@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
@@ -147,7 +148,7 @@ public class PortEventHooks {
                 } else {
                     PortBus bus = IModBusEvent.class.isAssignableFrom(rawFrom) ? PortBus.MOD : PortBus.GAME;
                     Predicate<F> predicate = (Predicate<F>) predicates.get(rawFrom, from);
-                    bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
+                    bus.unwrap(getCallerModId()).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
                         if (predicate == null || predicate.test(raw)) {
                             consumer.accept((F) wrapper.apply(raw));
                         }
@@ -156,12 +157,21 @@ public class PortEventHooks {
             }
         } else {
             PortBus bus = IModBusEvent.class.isAssignableFrom(from) ? PortBus.MOD : PortBus.GAME;
-            bus.unwrap(PortLib.MODID).addListener(priority.unwrap(), receiveCancelled, from, consumer);
+            bus.unwrap(getCallerModId()).addListener(priority.unwrap(), receiveCancelled, from, consumer);
         }
     }
 
     @Diff
     public static void fireChunkSent(ServerPlayer entity, LevelChunk chunk, ServerLevel level) {
         PortEventHandler.postEvent(new PortChunkWatchEvent.Sent(entity, chunk, level));
+    }
+
+    @SuppressWarnings("removal")
+    private static String getCallerModId() {
+        try {
+            return ModLoadingContext.get().getContainer().getModId();
+        } catch (Exception e) {
+            return PortLib.MODID;
+        }
     }
 }

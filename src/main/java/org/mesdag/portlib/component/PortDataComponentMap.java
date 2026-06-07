@@ -1,11 +1,11 @@
 package org.mesdag.portlib.component;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 
-import java.util.IdentityHashMap;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public interface PortDataComponentMap {
@@ -38,18 +38,18 @@ public interface PortDataComponentMap {
     }
 
     class PortBuilder {
-        private final Map<PortDataComponentType<?>, Optional<?>> map = new IdentityHashMap<>();
+        private final Map<PortDataComponentType<?>, Object> map = new Reference2ObjectOpenHashMap<>();
 
         PortBuilder() {}
 
         public <T> PortBuilder set(PortDataComponentType<T> component, T value) {
-            map.put(component, Optional.of(value));
+            map.put(component, value);
             return this;
         }
 
         @Diff
-        public Map<PortDataComponentType<?>, Optional<?>> getMap() {
-            return map;
+        public Map<PortDataComponentType<?>, Object> getMap() {
+            return Collections.unmodifiableMap(map);
         }
     }
 }

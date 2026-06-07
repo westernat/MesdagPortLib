@@ -8,6 +8,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.AbstractIngredient;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -52,6 +53,9 @@ public abstract class PortCustomIngredient extends AbstractIngredient {
     public JsonElement toJson() {
         MapCodec<PortCustomIngredient> codec = (MapCodec<PortCustomIngredient>) getIngredientType().codec();
         DynamicOps<JsonElement> ops = JsonOps.INSTANCE;
-        return codec.encode(this, ops, codec.compressedBuilder(ops)).build(ops.empty()).result().orElseGet(JsonObject::new);
+        JsonObject json = codec.encode(this, ops, codec.compressedBuilder(ops))
+                .build(ops.empty()).result().orElseGet(JsonObject::new).getAsJsonObject();
+        json.addProperty("type", CraftingHelper.getID(getSerializer()).toString());
+        return json;
     }
 }

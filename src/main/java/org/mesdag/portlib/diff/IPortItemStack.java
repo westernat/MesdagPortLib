@@ -5,6 +5,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
 
@@ -21,6 +22,10 @@ public interface IPortItemStack extends PortSelfGetter<ItemStack> {
     void portlib$setTool(@Nullable PortTool tool, boolean encode);
 
     PortPatchedDataComponentMap portlib$patch();
+
+    default void updateTag() {
+        portlib$self().getOrCreateTag().put(DATA_COMPONENTS, portlib$patch().serializeNBT(PortEnvironment.registryAccess()));
+    }
 
     static IPortItemStack of(ItemStack stack) {
         return (IPortItemStack) (Object) stack;

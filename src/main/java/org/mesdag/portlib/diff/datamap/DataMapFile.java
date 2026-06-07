@@ -34,16 +34,15 @@ public record DataMapFile<T, R>(
 
     public static <T, R> DataMapFile<T, R> read(ResourceKey<Registry<R>> registryKey, JsonObject json, PortDataMapType<R, T> dataMap) {
         boolean replace = GsonHelper.getAsBoolean(json, "replace", false);
-
         ImmutableMap.Builder<Either<TagKey<R>, ResourceKey<R>>, Optional<PortWithConditions<DataMapEntry<T>>>> valuesBuilder = ImmutableMap.builder();
-        for (JsonElement valuesElement : GsonHelper.getAsJsonArray(json, "values")) {
-            JsonObject valuesObject = valuesElement.getAsJsonObject();
-            for (Map.Entry<String, JsonElement> entry : valuesObject.asMap().entrySet()) {
-                JsonElement valueElement = entry.getValue();
-                List<ICondition> conditions;
-                if (valueElement.isJsonObject()) {
+        JsonObject valuesObject = GsonHelper.getAsJsonObject(json, "values");
+        for (Map.Entry<String, JsonElement> entry : valuesObject.asMap().entrySet()) {
+            JsonElement valueElement = entry.getValue();
+            List<ICondition> conditions = null;
+            if (valueElement.isJsonObject()) {
+                JsonObject valueObject = valueElement.getAsJsonObject();
+                if (valueObject.has("forge:conditions")) {
                     ImmutableList.Builder<ICondition> conditionBuilder = ImmutableList.builder();
-                    JsonObject valueObject = valueElement.getAsJsonObject();
                     JsonArray conditionsArray = GsonHelper.getAsJsonArray(valueObject, "forge:conditions");
                     for (JsonElement conditionElement : conditionsArray) {
                         if (!conditionElement.isJsonObject()) {
@@ -53,15 +52,15 @@ public record DataMapFile<T, R>(
                         conditionBuilder.add(condition);
                     }
                     conditions = conditionBuilder.build();
-                } else {
-                    conditions = List.of();
                 }
-                Either<TagKey<R>, ResourceKey<R>> key = readTagOrValue(registryKey, entry.getKey());
-                DataMapEntry<T> value = DataMapEntry.read(valueElement, dataMap.codec());
-                valuesBuilder.put(key, Optional.of(new PortWithConditions<>(conditions, value)));
             }
+            if (conditions == null) {
+                conditions = List.of();
+            }
+            Either<TagKey<R>, ResourceKey<R>> key = readTagOrValue(registryKey, entry.getKey());
+            DataMapEntry<T> value = DataMapEntry.read(valueElement, dataMap.codec());
+            valuesBuilder.put(key, Optional.of(new PortWithConditions<>(conditions, value)));
         }
-
         ImmutableList.Builder<DataMapEntry.Removal<T, R>> removalsBuilder = ImmutableList.builder();
         JsonArray removeArray = GsonHelper.getAsJsonArray(json, "remove", null);
         if (removeArray != null) {
@@ -69,7 +68,6 @@ public record DataMapFile<T, R>(
                 removalsBuilder.add(DataMapEntry.Removal.read(registryKey, removeElement.getAsJsonObject(), dataMap));
             }
         }
-
         return new DataMapFile<>(replace, valuesBuilder.build(), removalsBuilder.build());
     }
 

@@ -43,8 +43,8 @@ public final class PortConfigSpec {
     private final ConfigSpec spec;
     private final List<ConfigValue<?>> values;
     private final Map<String, String> comments;
-    private CommentedFileConfig fileConfig;
-    private boolean loaded;
+    private volatile CommentedFileConfig fileConfig;
+    private volatile boolean loaded;
 
     private PortConfigSpec(String modId, String fileName, ConfigSpec spec,
                            List<ConfigValue<?>> values, Map<String, String> comments) {
@@ -63,7 +63,7 @@ public final class PortConfigSpec {
         return new Builder(modId, fileName);
     }
 
-    public void load() {
+    public synchronized void load() {
         if (loaded) return;
         Path file = PortPaths.configdir().resolve(fileName);
         fileConfig = CommentedFileConfig.builder(file, TomlFormat.instance())
@@ -241,7 +241,7 @@ public final class PortConfigSpec {
     public static abstract class ConfigValue<T> implements Supplier<T> {
         protected final String path;
         protected final T defaultValue;
-        protected CommentedFileConfig config;
+        protected volatile CommentedFileConfig config;
 
         ConfigValue(String path, T defaultValue) {
             this.path = path;

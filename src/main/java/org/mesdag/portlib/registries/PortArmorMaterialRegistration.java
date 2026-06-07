@@ -21,9 +21,9 @@ public class PortArmorMaterialRegistration extends PortRegistration<PortArmorMat
 
     public PortRegistryEntry<PortArmorMaterial, PortArmorMaterial> register(PortArmorMaterial.Settings settings) {
         Objects.requireNonNull(settings.name, "ArmorMaterial name must not be null for registration!");
-        if (settings.name.indexOf(':') == -1) {
-            settings.name = namespace + ':' + settings.name; // with namespace
-        }
+//        if (settings.name.indexOf(':') == -1) {
+//            settings.name = namespace + ':' + settings.name; // with namespace
+//        }
         return register(settings.name, () -> new PortArmorMaterial(settings));
     }
 }

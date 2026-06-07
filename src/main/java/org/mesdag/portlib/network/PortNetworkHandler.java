@@ -64,7 +64,7 @@ public class PortNetworkHandler {
     }
 
     public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, IPortPacket.S2C::handle), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
+        registerInGameS2C(clazz, identifier, codec, IPortPacket.S2C::handle);
     }
 
     public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
@@ -72,7 +72,7 @@ public class PortNetworkHandler {
     }
 
     public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, IPortPacket.C2S::handle), clazz, PortNetworkDirection.PLAY_TO_SERVER);
+        registerInGameC2S(clazz, identifier, codec, IPortPacket.C2S::handle);
     }
 
 //    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
@@ -84,13 +84,17 @@ public class PortNetworkHandler {
 //    }
 
     public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
-        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_SERVER);
+        register(identifier, codec, (p, s) -> {
+            if (s.get().getDirection().getOriginationSide().isServer()) {
+                s2c(p, s, handler);
+            } else {
+                c2s(p, s, handler);
+            }
+        }, clazz, null);
     }
 
     public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
-        register(identifier, codec, (p, s) -> s2c(p, s, IPortPacket::handle), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
-        register(identifier, codec, (p, s) -> c2s(p, s, IPortPacket::handle), clazz, PortNetworkDirection.PLAY_TO_SERVER);
+        registerInGameBidirectional(clazz, identifier, codec, IPortPacket::handle);
     }
 
 //    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(

@@ -4,16 +4,14 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
-import org.mesdag.portlib.diff.mixin.IPortClientExtensionsSetter;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Diff
 public interface IPortItem extends PortDataComponentMap, IPortClientExtensionsSetter {
-    Map<PortDataComponentType<?>, Optional<?>> portlib$getComponents();
+    Map<PortDataComponentType<?>, Object> portlib$getComponents();
 
-    void portlib$setComponents(Map<PortDataComponentType<?>, Optional<?>> map);
+    void portlib$setComponents(Map<PortDataComponentType<?>, Object> map);
 
     static IPortItem of(Item item) {
         return (IPortItem) item;

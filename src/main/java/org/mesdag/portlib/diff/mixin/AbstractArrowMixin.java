@@ -14,12 +14,15 @@ public abstract class AbstractArrowMixin implements IPortAbstractArrow {
     protected abstract ItemStack getPickupItem();
 
     @Unique
-    private ItemStack portlib$pickupItemStack = getPickupItem();
+    private ItemStack portlib$pickupItemStack;
     @Unique
     private @Nullable ItemStack portlib$firedFromWeapon;
 
     @Override
     public ItemStack portlib$getPickupItem() {
+        if (portlib$pickupItemStack == null) {
+            portlib$pickupItemStack = getPickupItem();
+        }
         return portlib$pickupItemStack;
     }
 

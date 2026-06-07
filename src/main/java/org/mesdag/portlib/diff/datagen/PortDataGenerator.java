@@ -23,5 +23,7 @@ public class PortDataGenerator {
         ExistingFileHelper helper = event.getExistingFileHelper();
 
         generator.addProvider(event.includeServer(), new PortDamageTypeTagsProvider(output, provider, helper));
+        generator.addProvider(event.includeClient(), new PortLanguageProvider(output, "en_us"));
+        generator.addProvider(event.includeClient(), new PortLanguageProvider(output, "zh_cn"));
     }
 }

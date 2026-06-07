@@ -75,6 +75,10 @@ public abstract class PortRenderTooltipEvent<E extends RenderTooltipEvent> exten
         public void setMaxWidth(int maxWidth) {
             e.setMaxWidth(maxWidth);
         }
+
+        static {
+            PortEventHooks.register();
+        }
     }
 
     public static class PortPre extends PortRenderTooltipEvent<RenderTooltipEvent.Pre> implements IPortCancellableEvent {

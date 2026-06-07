@@ -675,23 +675,29 @@ public class PortItemStackExtension {
     }
 
     public static <T> @Nullable T getData(ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return IPortItemStack.of(thiz).portlib$patch().get(type);
+        return getData(thiz, type.get());
     }
 
     public static <T> @Nullable T setData(ItemStack thiz, PortDataComponentType<T> type, T value) {
-        return IPortItemStack.of(thiz).portlib$patch().set(type, value);
+        IPortItemStack i = IPortItemStack.of(thiz);
+        T t = i.portlib$patch().set(type, value);
+        i.updateTag();
+        return t;
     }
 
     public static <T> @Nullable T setData(ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
-        return IPortItemStack.of(thiz).portlib$patch().set(type, value);
+        return setData(thiz, type.get(), value);
     }
 
     public static <T> @Nullable T removeData(ItemStack thiz, PortDataComponentType<T> type) {
-        return IPortItemStack.of(thiz).portlib$patch().remove(type);
+        IPortItemStack i = IPortItemStack.of(thiz);
+        T t = i.portlib$patch().remove(type);
+        i.updateTag();
+        return t;
     }
 
     public static <T> @Nullable T removeData(ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return IPortItemStack.of(thiz).portlib$patch().remove(type);
+        return removeData(thiz, type.get());
     }
 
     public static <T> T getDataOrDefault(ItemStack thiz, PortDataComponentType<? extends T> type, T defaultValue) {
@@ -699,7 +705,7 @@ public class PortItemStackExtension {
     }
 
     public static <T> T getDataOrDefault(ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T defaultValue) {
-        return IPortItemStack.of(thiz).portlib$patch().getOrDefault(type, defaultValue);
+        return getDataOrDefault(thiz, type.get(), defaultValue);
     }
 
     public static <T> boolean hasData(ItemStack thiz, PortDataComponentType<T> type) {
@@ -707,7 +713,7 @@ public class PortItemStackExtension {
     }
 
     public static <T> boolean hasData(ItemStack thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return IPortItemStack.of(thiz).portlib$patch().has(type);
+        return hasData(thiz, type.get());
     }
 
     public static PortDataComponentMap getPrototypeData(ItemStack thiz) {

@@ -25,8 +25,11 @@ public record DataMapEntry<T>(T value, boolean replace) {
     public static <T> DataMapEntry<T> read(JsonElement json, Codec<T> codec) {
         if (json.isJsonObject()) {
             JsonObject object = json.getAsJsonObject();
-            T value = codec.parse(JsonOps.INSTANCE, object.get("value")).result().orElseThrow();
-            return new DataMapEntry<>(value, GsonHelper.getAsBoolean(object, "replace", false));
+            if (object.has("value")) {
+                T value = codec.parse(JsonOps.INSTANCE, object.get("value")).result().orElseThrow();
+                return new DataMapEntry<>(value, GsonHelper.getAsBoolean(object, "replace", false));
+            }
+            return new DataMapEntry<>(codec.parse(JsonOps.INSTANCE, object).result().orElseThrow(), false);
         }
         return new DataMapEntry<>(codec.parse(JsonOps.INSTANCE, json).result().orElseThrow(), false);
     }

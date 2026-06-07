@@ -2,6 +2,7 @@ package org.mesdag.portlib;
 
 import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -9,12 +10,19 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
@@ -29,10 +37,12 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
+import org.mesdag.portlib.loot.AddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +79,11 @@ public class PortLib {
     public static final PortRegistryEntry<Attribute, RangedAttribute> FLYING_SPEED = ATTRIBUTES.register(
             "generic.flying_speed",
             () -> new RangedAttribute("attribute.name.generic.flying_speed", 0.4, 0.0, 1024.0),
+            maker -> maker.setSyncable(true)
+    );
+    public static final PortRegistryEntry<Attribute, RangedAttribute> JUMP_STRENGTH = ATTRIBUTES.register(
+            "generic.jump_strength",
+            () -> new RangedAttribute("attribute.name.generic.jump_strength", 0.42F, 0.0, 32.0),
             maker -> maker.setSyncable(true)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> MAX_ABSORPTION = ATTRIBUTES.register(
@@ -117,8 +132,8 @@ public class PortLib {
             maker -> maker.setSyncable(true)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> WATER_MOVEMENT_EFFICIENCY = ATTRIBUTES.register(
-            "player.water_movement_efficiency",
-            () -> new RangedAttribute("attribute.name.player.water_movement_efficiency", 0.0, 0.0, 1.0),
+            "generic.water_movement_efficiency",
+            () -> new RangedAttribute("attribute.name.generic.water_movement_efficiency", 0.0, 0.0, 1.0),
             maker -> maker.setSyncable(true)
     );
     public static final PortRegistryEntry<Attribute, PortBooleanAttribute> CREATIVE_FLIGHT = ATTRIBUTES.register(
@@ -127,7 +142,10 @@ public class PortLib {
             maker -> maker.setSyncable(true)
     );
 
-    public PortLib() {
+    private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+    public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
+
+    public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init();
         PortRegistries.init();
         PortAttachmentSync.init();
@@ -136,6 +154,7 @@ public class PortLib {
         PortDataMapLoader.init();
         PortNetworkHandler.init();
         IPortLivingEntity.init();
+        GLOBAL_LOOT_MODIFIERS.register(context.getModEventBus());
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForgeChunkManager
             PortDataMapLoader.initDataMaps();
@@ -144,12 +163,16 @@ public class PortLib {
         });
 
         PortEventHandler.addListener((PortEntityAttributeModificationEvent event) -> {
-            event.add(EntityType.PLAYER, BLOCK_BREAK_SPEED);
-            event.add(EntityType.PLAYER, SUBMERGED_MINING_SPEED);
-            event.add(EntityType.PLAYER, SNEAKING_SPEED);
-            event.add(EntityType.PLAYER, MINING_EFFICIENCY);
-            event.add(EntityType.PLAYER, SWEEPING_DAMAGE_RATIO);
-            event.add(EntityType.PLAYER, CREATIVE_FLIGHT);
+            ATTRIBUTES.getEntries().stream().filter(entry -> entry.getId().getPath().startsWith("generic.")).forEach(entry -> {
+                for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+                    if (type == EntityType.PLAYER) continue;
+                    event.add(type, entry);
+                }
+            });
+            for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
+                event.add(EntityType.PLAYER, entry);
+            }
+            event.add(EntityType.PLAYER, new AttributeHolder(Attributes.JUMP_STRENGTH), 0.42); // todo 换掉
         });
 
         if (DEBUG) {

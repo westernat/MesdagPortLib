@@ -16,8 +16,9 @@ import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItem;
+import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.PortRegistries;
-import org.mesdag.portlib.registries.PortRegistryEntry;
+import org.mesdag.portlib.wrapper.PortEnvironment;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +27,18 @@ import java.util.Optional;
 @Diff
 @SuppressWarnings("unchecked")
 public class PortPatchedDataComponentMap {
+    public static final PortPatchedDataComponentMap EMPTY = new PortPatchedDataComponentMap(null) {
+        @Override
+        public <T> @Nullable T set(PortDataComponentType<T> type, T value) {
+            return null;
+        }
+
+        @Override
+        public <T> @Nullable T remove(PortDataComponentType<T> type) {
+            return null;
+        }
+    };
+
     private final PortDataComponentMap prototype;
     private final Map<PortDataComponentType<?>, Optional<?>> patch;
 
@@ -37,10 +50,6 @@ public class PortPatchedDataComponentMap {
     public <T> @Nullable T get(PortDataComponentType<T> type) {
         Optional<? extends T> optional = (Optional<? extends T>) patch.get(type);
         return optional == null ? prototype.get(type) : optional.orElse(null);
-    }
-
-    public <T> @Nullable T get(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return get(type.get());
     }
 
     public <T> @Nullable T set(PortDataComponentType<T> type, T value) {
@@ -55,10 +64,6 @@ public class PortPatchedDataComponentMap {
         return optional == null ? t : optional.orElse(t);
     }
 
-    public <T> @Nullable T set(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
-        return set(type.get(), value);
-    }
-
     public <T> @Nullable T remove(PortDataComponentType<T> type) {
         T t = prototype.get(type);
         Optional<? extends T> optional;
@@ -71,25 +76,13 @@ public class PortPatchedDataComponentMap {
         return optional == null ? t : optional.orElse(null);
     }
 
-    public <T> @Nullable T remove(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return remove(type.get());
-    }
-
     public <T> T getOrDefault(PortDataComponentType<? extends T> type, T defaultValue) {
         T t = get(type);
         return t == null ? defaultValue : t;
     }
 
-    public <T> T getOrDefault(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T defaultValue) {
-        return getOrDefault(type.get(), defaultValue);
-    }
-
     public <T> boolean has(PortDataComponentType<T> type) {
         return get(type) != null;
-    }
-
-    public <T> boolean has(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return has(type.get());
     }
 
     public CompoundTag serializeNBT(RegistryAccess provider) {
@@ -128,6 +121,12 @@ public class PortPatchedDataComponentMap {
             } catch (Exception exception) {
                 PortLib.LOGGER.error("Failed to deserialize data component {}. Skipping.", key, exception);
             }
+        }
+    }
+
+    public void load(CompoundTag tag) {
+        if (tag.contains(IPortItemStack.DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
+            deserializeNBT(PortEnvironment.registryAccess(), tag.getCompound(IPortItemStack.DATA_COMPONENTS));
         }
     }
 

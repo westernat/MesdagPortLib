@@ -4,11 +4,12 @@ import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtens
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -57,17 +58,22 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Nullable
     public abstract CompoundTag getTag();
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
-    @Deprecated
-    @javax.annotation.Nullable
-    private Item item;
+    @Nullable
+    private Holder.@Nullable Reference<Item> delegate;
     @Unique
     private @Nullable FoodProperties portlib$food;
     @Unique
     private @Nullable PortTool portlib$tool;
     @Unique
-    private final PortPatchedDataComponentMap portlib$patch = new PortPatchedDataComponentMap(item);
+    private PortPatchedDataComponentMap portlib$patch = PortPatchedDataComponentMap.EMPTY;
+
+    @Inject(method = "forgeInit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;gatherCapabilities(Ljava/util/function/Supplier;)V"), remap = false)
+    private void init(CallbackInfo ci) {
+        assert delegate != null;
+        this.portlib$patch = new PortPatchedDataComponentMap(delegate.value());
+    }
 
     @Override
     public PortPatchedDataComponentMap portlib$patch() {
@@ -138,14 +144,31 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Inject(method = "save", at = @At("HEAD"))
     private void save(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
         if (portlib$patch.isEmpty()) return;
-        compoundTag.put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
+        getOrCreateTag().put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
     }
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
-    private void load(CompoundTag compoundTag, CallbackInfo ci) {
-        if (compoundTag.contains(DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
-            portlib$patch.deserializeNBT(PortEnvironment.registryAccess(), compoundTag.getCompound(DATA_COMPONENTS));
+    private void load1(CallbackInfo ci) {
+        CompoundTag tag = getTag();
+        if (tag != null) {
+            portlib$patch.load(tag);
         }
+    }
+
+    @Inject(method = "setTag", at = @At("TAIL"))
+    private void load2(@Nullable CompoundTag compoundTag, CallbackInfo ci) {
+        if (compoundTag != null) {
+            portlib$patch.load(compoundTag);
+        }
+    }
+
+    @ModifyReturnValue(method = "copy", at = @At(value = "RETURN", ordinal = 1))
+    private ItemStack load3(ItemStack original) {
+        CompoundTag tag = original.getTag();
+        if (tag != null) {
+            IPortItemStack.of(original).portlib$patch().load(tag);
+        }
+        return original;
     }
 
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
@@ -158,8 +181,8 @@ public abstract class ItemStackMixin implements IPortItemStack {
     }
 
     @Inject(method = "onItemUseFirst", at = @At("HEAD"), cancellable = true, remap = false)
-    private void itemBeforeUseBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        PortUseItemOnBlockEvent event = new PortUseItemOnBlockEvent(context, PortUseItemOnBlockEvent.PortUsePhase.ITEM_BEFORE_BLOCK);
+    private void itemBeforeUseBlock(UseOnContext p_41662_, CallbackInfoReturnable<InteractionResult> cir) {
+        PortUseItemOnBlockEvent event = new PortUseItemOnBlockEvent(p_41662_, PortUseItemOnBlockEvent.PortUsePhase.ITEM_BEFORE_BLOCK);
         PortEventHandler.postEvent(event);
         if (event.isCanceled()) {
             cir.setReturnValue(event.getCancellationResult().result());
@@ -201,11 +224,11 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @ModifyExpressionValue(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getAttributeModifiers(Lnet/minecraft/world/entity/EquipmentSlot;)Lcom/google/common/collect/Multimap;"))
     private Multimap<Attribute, AttributeModifier> checkSkip(
             Multimap<Attribute, AttributeModifier> original,
-            @Local(name = "equipmentslot") EquipmentSlot slot,
+            @Local(name = "equipmentslot") EquipmentSlot equipmentslot,
             @Share("event") LocalRef<PortGatherSkippedAttributeTooltipsEvent> evt
     ) {
         var event = evt.get();
-        if (event.isSkipped(slot)) {
+        if (event.isSkipped(equipmentslot)) {
             return PortGatherSkippedAttributeTooltipsEvent.EMPTY;
         }
         if (event.hasSkippedIds()) {

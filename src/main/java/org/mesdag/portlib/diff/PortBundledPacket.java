@@ -2,7 +2,6 @@ package org.mesdag.portlib.diff;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
@@ -14,7 +13,7 @@ import java.util.Map;
 @Diff
 @SuppressWarnings("all")
 public record PortBundledPacket(LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map) implements IPortPacket {
-    public static final ResourceLocation IDENTIFIER = PortLib.asResource("bundled");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("portlib", "bundled");
     public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(FriendlyByteBuf buffer, PortBundledPacket packet) {

@@ -2,12 +2,14 @@ package PortLib.extensions.net.minecraft.world.item.crafting.Ingredient;
 
 import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.*;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.crafting.AbstractIngredient;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
@@ -95,10 +97,15 @@ public class PortIngredientExtension {
 
             @Override
             public <T> RecordBuilder<T> encode(Ingredient input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-                if (input.values.length != 1) {
+                JsonObject object;
+                if (input instanceof AbstractIngredient ingredient) {
+                    object = ingredient.toJson().getAsJsonObject();
+                } else if (input.values.length != 1) {
                     throw new IllegalStateException("Only single ingredient value are supported");
+                } else {
+                    object = input.values[0].serialize();
                 }
-                for (Map.Entry<String, JsonElement> entry : input.values[0].serialize().asMap().entrySet()) {
+                for (Map.Entry<String, JsonElement> entry : object.asMap().entrySet()) {
                     prefix.add(entry.getKey(), JsonOps.INSTANCE.convertTo(ops, entry.getValue()));
                 }
                 return prefix;

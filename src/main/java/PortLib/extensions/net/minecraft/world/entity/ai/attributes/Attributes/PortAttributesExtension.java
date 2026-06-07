@@ -1,34 +1,37 @@
 package PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes;
 
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
-import cpw.mods.util.Lazy;
+import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.common.ForgeMod;
 import org.mesdag.portlib.PortLib;
 
+import java.util.function.Supplier;
+
 public class PortAttributesExtension {
-    private static final Lazy<Holder<Attribute>> BLOCK_BREAK_SPEED = Lazy.of(() -> PortLib.BLOCK_BREAK_SPEED);
-    private static final Lazy<Holder<Attribute>> BLOCK_INTERACTION_RANGE = Lazy.of(() -> PortAttributeExtension.wrap(ForgeMod.BLOCK_REACH.get()));
-    private static final Lazy<Holder<Attribute>> BURNING_TIME = Lazy.of(() -> PortLib.BURNING_TIME);
-    private static final Lazy<Holder<Attribute>> EXPLOSION_KNOCKBACK_RESISTANCE = Lazy.of(() -> PortLib.EXPLOSION_KNOCKBACK_RESISTANCE);
-    private static final Lazy<Holder<Attribute>> ENTITY_INTERACTION_RANGE = Lazy.of(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_REACH.get()));
-    private static final Lazy<Holder<Attribute>> FALL_DAMAGE_MULTIPLIER = Lazy.of(() -> PortLib.FALL_DAMAGE_MULTIPLIER);
-    private static final Lazy<Holder<Attribute>> FLYING_SPEED = Lazy.of(() -> PortLib.FLYING_SPEED);
-    private static final Lazy<Holder<Attribute>> GRAVITY = Lazy.of(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_GRAVITY.get()));
-    private static final Lazy<Holder<Attribute>> MAX_ABSORPTION = Lazy.of(() -> PortLib.MAX_ABSORPTION);
-    private static final Lazy<Holder<Attribute>> MINING_EFFICIENCY = Lazy.of(() -> PortLib.MINING_EFFICIENCY);
-    private static final Lazy<Holder<Attribute>> MOVEMENT_EFFICIENCY = Lazy.of(() -> PortLib.MOVEMENT_EFFICIENCY);
-    private static final Lazy<Holder<Attribute>> OXYGEN_BONUS = Lazy.of(() -> PortLib.OXYGEN_BONUS);
-    private static final Lazy<Holder<Attribute>> SAFE_FALL_DISTANCE = Lazy.of(() -> PortLib.SAFE_FALL_DISTANCE);
-    private static final Lazy<Holder<Attribute>> SCALE = Lazy.of(() -> PortLib.SCALE);
-    private static final Lazy<Holder<Attribute>> SNEAKING_SPEED = Lazy.of(() -> PortLib.SNEAKING_SPEED);
-    private static final Lazy<Holder<Attribute>> STEP_HEIGHT = Lazy.of(() -> PortAttributeExtension.wrap(ForgeMod.SWIM_SPEED.get()));
-    private static final Lazy<Holder<Attribute>> SUBMERGED_MINING_SPEED = Lazy.of(() -> PortLib.SUBMERGED_MINING_SPEED);
-    private static final Lazy<Holder<Attribute>> SWEEPING_DAMAGE_RATIO = Lazy.of(() -> PortLib.SWEEPING_DAMAGE_RATIO);
-    private static final Lazy<Holder<Attribute>> WATER_MOVEMENT_EFFICIENCY = Lazy.of(() -> PortLib.WATER_MOVEMENT_EFFICIENCY);
-    private static final Lazy<Holder<Attribute>> SWIM_SPEED = Lazy.of(() -> PortAttributeExtension.wrap(ForgeMod.SWIM_SPEED.get()));
-    private static final Lazy<Holder<Attribute>> CREATIVE_FLIGHT = Lazy.of(() -> PortLib.CREATIVE_FLIGHT);
+    private static final Supplier<Holder<Attribute>> BLOCK_BREAK_SPEED = Suppliers.memoize(() -> PortLib.BLOCK_BREAK_SPEED);
+    private static final Supplier<Holder<Attribute>> BLOCK_INTERACTION_RANGE = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.BLOCK_REACH.get()));
+    private static final Supplier<Holder<Attribute>> BURNING_TIME = Suppliers.memoize(() -> PortLib.BURNING_TIME);
+    private static final Supplier<Holder<Attribute>> EXPLOSION_KNOCKBACK_RESISTANCE = Suppliers.memoize(() -> PortLib.EXPLOSION_KNOCKBACK_RESISTANCE);
+    private static final Supplier<Holder<Attribute>> ENTITY_INTERACTION_RANGE = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_REACH.get()));
+    private static final Supplier<Holder<Attribute>> FALL_DAMAGE_MULTIPLIER = Suppliers.memoize(() -> PortLib.FALL_DAMAGE_MULTIPLIER);
+    private static final Supplier<Holder<Attribute>> FLYING_SPEED = Suppliers.memoize(() -> PortLib.FLYING_SPEED);
+    private static final Supplier<Holder<Attribute>> JUMP_STRENGTH = Suppliers.memoize(() -> PortLib.JUMP_STRENGTH);
+    private static final Supplier<Holder<Attribute>> GRAVITY = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_GRAVITY.get()));
+    private static final Supplier<Holder<Attribute>> MAX_ABSORPTION = Suppliers.memoize(() -> PortLib.MAX_ABSORPTION);
+    private static final Supplier<Holder<Attribute>> MINING_EFFICIENCY = Suppliers.memoize(() -> PortLib.MINING_EFFICIENCY);
+    private static final Supplier<Holder<Attribute>> MOVEMENT_EFFICIENCY = Suppliers.memoize(() -> PortLib.MOVEMENT_EFFICIENCY);
+    private static final Supplier<Holder<Attribute>> OXYGEN_BONUS = Suppliers.memoize(() -> PortLib.OXYGEN_BONUS);
+    private static final Supplier<Holder<Attribute>> SAFE_FALL_DISTANCE = Suppliers.memoize(() -> PortLib.SAFE_FALL_DISTANCE);
+    private static final Supplier<Holder<Attribute>> SCALE = Suppliers.memoize(() -> PortLib.SCALE);
+    private static final Supplier<Holder<Attribute>> SNEAKING_SPEED = Suppliers.memoize(() -> PortLib.SNEAKING_SPEED);
+    private static final Supplier<Holder<Attribute>> STEP_HEIGHT = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+    private static final Supplier<Holder<Attribute>> SUBMERGED_MINING_SPEED = Suppliers.memoize(() -> PortLib.SUBMERGED_MINING_SPEED);
+    private static final Supplier<Holder<Attribute>> SWEEPING_DAMAGE_RATIO = Suppliers.memoize(() -> PortLib.SWEEPING_DAMAGE_RATIO);
+    private static final Supplier<Holder<Attribute>> WATER_MOVEMENT_EFFICIENCY = Suppliers.memoize(() -> PortLib.WATER_MOVEMENT_EFFICIENCY);
+    private static final Supplier<Holder<Attribute>> SWIM_SPEED = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.SWIM_SPEED.get()));
+    private static final Supplier<Holder<Attribute>> CREATIVE_FLIGHT = Suppliers.memoize(() -> PortLib.CREATIVE_FLIGHT);
 
     public static Holder<Attribute> blockBreakSpeed() {
         return BLOCK_BREAK_SPEED.get();
@@ -56,6 +59,10 @@ public class PortAttributesExtension {
 
     public static Holder<Attribute> flyingSpeed() {
         return FLYING_SPEED.get();
+    }
+
+    public static Holder<Attribute> jumpStrength() {
+        return JUMP_STRENGTH.get();
     }
 
     public static Holder<Attribute> gravity() {

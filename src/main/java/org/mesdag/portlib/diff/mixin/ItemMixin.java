@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @Mixin(Item.class)
@@ -29,15 +28,15 @@ public abstract class ItemMixin implements IPortItem, IPortItemExtension {
     @Shadow(remap = false)
     private Object renderProperties;
     @Unique
-    private @Nullable Map<PortDataComponentType<?>, Optional<?>> portlib$prototype;
+    private Map<PortDataComponentType<?>, Object> portlib$prototype = Map.of();
 
     @Override
-    public Map<PortDataComponentType<?>, Optional<?>> portlib$getComponents() {
+    public Map<PortDataComponentType<?>, Object> portlib$getComponents() {
         return portlib$prototype;
     }
 
     @Override
-    public void portlib$setComponents(Map<PortDataComponentType<?>, Optional<?>> map) {
+    public void portlib$setComponents(Map<PortDataComponentType<?>, Object> map) {
         this.portlib$prototype = map;
     }
 
@@ -46,15 +45,14 @@ public abstract class ItemMixin implements IPortItem, IPortItemExtension {
         this.renderProperties = properties;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T portlib$get(PortDataComponentType<T> type) {
-        if (portlib$prototype == null) return null;
         return (T) portlib$prototype.get(type);
     }
 
     @Override
     public Set<PortDataComponentType<?>> portlib$keySet() {
-        if (portlib$prototype == null) return Set.of();
         return portlib$prototype.keySet();
     }
 
