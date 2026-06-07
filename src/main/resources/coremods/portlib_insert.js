@@ -21,10 +21,10 @@ function initializeCoreMod() {
             },
             'transformer': function (node) {
                 // Transform:
-                //   if (isEyeInFluid(FluidTags.WATER) && !hasAquaAffinity(this)) { f /= 5.0F; }
+                //   if (this.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(this)) { f /= 5.0F; }
                 // into:
-                //   if (isEyeInFluid(FluidTags.WATER)) {
-                //       float speed = (float) getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
+                //   if (this.isEyeInFluid(FluidTags.WATER)) {
+                //       float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
                 //       if (EnchantmentHelper.hasAquaAffinity(this)) { speed = Math.min(speed * 5.0F, 1.0F); }
                 //       f *= speed;
                 //   }
