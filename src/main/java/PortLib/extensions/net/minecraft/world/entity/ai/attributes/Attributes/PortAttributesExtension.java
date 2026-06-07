@@ -101,6 +101,7 @@ public class PortAttributesExtension {
         return STEP_HEIGHT.get();
     }
 
+    // Invoked through coremod
     public static Holder<Attribute> submergedMiningSpeed() {
         return SUBMERGED_MINING_SPEED.get();
     }

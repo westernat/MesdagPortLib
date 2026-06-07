@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -8,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
@@ -22,6 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -83,4 +86,16 @@ public abstract class EntityMixin implements IPortEntity {
             PortEventHandler.postEvent(new PortEntityTickEvent.PortPost(instance));
         }
     }
+
+    // region attributes
+
+    @ModifyVariable(method = "setRemainingFireTicks", at = @At("HEAD"), argsOnly = true)
+    private int applyBurningTime(int ticks) {
+        if (portlib$self() instanceof LivingEntity living) {
+            return (int) (ticks * living.getAttributeValue(PortAttributesExtension.burningTime()));
+        }
+        return ticks;
+    }
+
+    // endregion attributes
 }

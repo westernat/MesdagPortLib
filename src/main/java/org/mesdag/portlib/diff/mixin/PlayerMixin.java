@@ -1,6 +1,7 @@
 package org.mesdag.portlib.diff.mixin;
 
 import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -27,6 +28,7 @@ import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.world.entity.player.PortPlayer;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -177,8 +179,32 @@ public abstract class PlayerMixin implements IPortPlayer {
         return PortEventHandler.postEventWithReturn(new PortSweepAttackEvent(portlib$self(), target, original)).isSweeping();
     }
 
-    @ModifyExpressionValue(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"))
-    private boolean skipCheck(boolean original) {
-        return false;
+    // region attributes
+
+    @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getBlockEfficiency(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "f")
+    private float miningEfficiency(float f) {
+        return f + (float) portlib$self().getAttributeValue(PortAttributesExtension.miningEfficiency());
     }
+
+    @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"), name = "f")
+    private float blockBreakSpeed(float f) {
+        return f * (float) portlib$self().getAttributeValue(PortAttributesExtension.blockBreakSpeed());
+    }
+
+    @ModifyExpressionValue(method = "travel", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;flying:Z", opcode = Opcodes.GETFIELD))
+    private boolean allowCreativeFlight(boolean original) {
+        return original || portlib$self().getAttributeValue(PortAttributesExtension.creativeFlight()) > 0;
+    }
+
+    @ModifyReturnValue(method = "getFlyingSpeed", at = @At("RETURN"))
+    private float applyFlyingSpeed(float original) {
+        return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.flyingSpeed()));
+    }
+
+    @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getSweepingDamageRatio(Lnet/minecraft/world/entity/LivingEntity;)F"))
+    private float applySweepingDamageRatio(float original) {
+        return (float) (original + portlib$self().getAttributeValue(PortAttributesExtension.sweepingDamageRatio()));
+    }
+
+    // endregion attributes
 }

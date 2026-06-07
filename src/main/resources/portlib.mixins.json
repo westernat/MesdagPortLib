@@ -9,6 +9,7 @@
         "AttributeMixin",
         "BlockBehaviourMixin",
         "BlockBehaviourMixin$BlockStateBaseMixin",
+
         "BlockEntityMixin",
         "BlockEntityTypeAccessor",
         "BlockMixin",

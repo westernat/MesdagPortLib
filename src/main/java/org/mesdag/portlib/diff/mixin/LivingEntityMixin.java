@@ -1,6 +1,7 @@
 package org.mesdag.portlib.diff.mixin;
 
 import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -13,6 +14,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.Util;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -317,4 +319,57 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
     }
 
     // endregion effect particles
+
+    // region attributes
+
+    @WrapOperation(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getDepthStrider(Lnet/minecraft/world/entity/LivingEntity;)I"))
+    private int applyWaterMovementEfficiency(LivingEntity entity, Operation<Integer> original) {
+        return (int) (original.call(entity) * entity.getAttributeValue(PortAttributesExtension.waterMovementEfficiency()));
+    }
+
+    @ModifyReturnValue(method = "getBlockSpeedFactor", at = @At("RETURN"))
+    private float applyMovementEfficiency(float original) {
+        return Mth.lerp((float) portlib$self().getAttributeValue(PortAttributesExtension.movementEfficiency()), original, 1.0F);
+    }
+
+    @ModifyArg(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
+    private float applyFallDamageMultiplier(float damage) {
+        return (float) (damage * portlib$self().getAttributeValue(PortAttributesExtension.fallDamageMultiplier()));
+    }
+
+    @ModifyExpressionValue(method = "calculateFallDamage", at = @At(value = "CONSTANT", args = "floatValue=3.0"))
+    private float applySafeFallDistance(float original) {
+        return (float) portlib$self().getAttributeValue(PortAttributesExtension.safeFallDistance());
+    }
+
+    @ModifyReturnValue(method = "increaseAirSupply", at = @At("RETURN"))
+    private int applyOxygenBonus(int original) {
+        return Math.min(original + (int) portlib$self().getAttributeValue(PortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
+    }
+
+    @ModifyVariable(method = "setAbsorptionAmount", at = @At("HEAD"), argsOnly = true)
+    private float capAbsorption(float amount) {
+        float max = (float) portlib$self().getAttributeValue(PortAttributesExtension.maxAbsorption());
+        return max > 0 ? Math.min(amount, max) : amount;
+    }
+
+    @ModifyReturnValue(method = "getScale", at = @At("RETURN"))
+    private float applyScale(float original) {
+        return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.scale()));
+    }
+
+    @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
+    private float applyJumpStrength(float original) {
+        return (float) portlib$self().getAttributeValue(PortAttributesExtension.jumpStrength());
+    }
+
+    @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
+    private float applySneakingSpeed(float original) {
+        if (portlib$self().isCrouching()) {
+            return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.sneakingSpeed()));
+        }
+        return original;
+    }
+
+    // endregion attributes
 }

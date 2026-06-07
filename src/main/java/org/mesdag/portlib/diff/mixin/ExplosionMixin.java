@@ -1,10 +1,12 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
@@ -31,10 +33,17 @@ public abstract class ExplosionMixin implements PortSelfGetter<Explosion> {
     private ExplosionDamageCalculator damageCalculator;
 
     @ModifyVariable(method = "explode", at = @At(value = "STORE"), name = "vec31")
-    private Vec3 getExplosionKnockback(Vec3 original, @Local(name = "entity") Entity entity) {
-        PortExplosionKnockbackEvent event = new PortExplosionKnockbackEvent(level, portlib$self(), entity, original);
+    private Vec3 getExplosionKnockback(Vec3 vec31, @Local(name = "entity") Entity entity) {
+        PortExplosionKnockbackEvent event = new PortExplosionKnockbackEvent(level, portlib$self(), entity, vec31);
         PortEventHandler.postEvent(event);
-        return event.getKnockbackVelocity();
+        Vec3 result = event.getKnockbackVelocity();
+        if (entity instanceof LivingEntity living) {
+            double resistance = living.getAttributeValue(PortAttributesExtension.explosionKnockbackResistance());
+            if (resistance > 0) {
+                result = result.scale(1.0 - resistance);
+            }
+        }
+        return result;
     }
 
     @WrapOperation(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
