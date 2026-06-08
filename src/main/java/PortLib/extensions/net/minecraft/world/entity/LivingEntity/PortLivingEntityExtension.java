@@ -2,9 +2,11 @@ package PortLib.extensions.net.minecraft.world.entity.LivingEntity;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.diff.mixin.LivingEntityAccessor;
@@ -41,5 +43,10 @@ public class PortLivingEntityExtension {
             }
         }
         return ret;
+    }
+
+    /// @see PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension#getWeaponItem(Entity) super.getWeaponItem
+    public static ItemStack getWeaponItem(LivingEntity thiz) {
+        return thiz.getMainHandItem();
     }
 }

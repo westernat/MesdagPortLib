@@ -9,7 +9,6 @@
         "AttributeMixin",
         "BlockBehaviourMixin",
         "BlockBehaviourMixin$BlockStateBaseMixin",
-
         "BlockEntityMixin",
         "BlockEntityTypeAccessor",
         "BlockMixin",
@@ -42,6 +41,7 @@
         "MobMixin",
         "PlayerListMixin",
         "PlayerMixin",
+        "ProjectileMixin",
         "RegisterGuiOverlaysEventAccessor",
         "ServerEntityMixin",
         "ServerGamePacketListenerImplMixin",

@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
 import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -62,6 +63,10 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Final
     @Nullable
     private Holder.@Nullable Reference<Item> delegate;
+
+    @Shadow
+    public abstract Item getItem();
+
     @Unique
     private @Nullable FoodProperties portlib$food;
     @Unique
@@ -253,6 +258,14 @@ public abstract class ItemStackMixin implements IPortItemStack {
         if (ctx.get() != null) {
             PortEventHandler.postEvent(new PortAddAttributeTooltipsEvent(portlib$self(), list::add, ctx.get()));
         }
+    }
+
+    @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
+    private Multimap<Attribute, AttributeModifier> withNewDefaultAttributeModifiers(Multimap<Attribute, AttributeModifier> original, @Local(argsOnly = true) EquipmentSlot slot) {
+        if (original.isEmpty()) {
+            return PortItemExtension.getDefaultPortAttributeModifiers(getItem(), portlib$self()).getAttributeModifiers(slot);
+        }
+        return original;
     }
 
     // endregion AttributeModifier

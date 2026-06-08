@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import org.mesdag.portlib.PortLib;
 
@@ -37,6 +38,14 @@ public class PortTags {
 
         private static TagKey<Item> common(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
+        }
+    }
+
+    public static class EntityTypes {
+        public static final TagKey<EntityType<?>> DEFLECTS_PROJECTILES = mc("deflects_projectiles");
+
+        private static TagKey<EntityType<?>> mc(String name) {
+            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace(name));
         }
     }
 }

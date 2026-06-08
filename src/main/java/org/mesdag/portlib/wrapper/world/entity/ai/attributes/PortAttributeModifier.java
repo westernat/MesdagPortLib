@@ -33,13 +33,12 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
 
     @Diff
     public AttributeModifier unwrap() {
-        return new AttributeModifier(namespaceToUUID(id.getNamespace()), id.getPath(), amount, operation.unwrap());
+        return new AttributeModifier(RL2UUID(id), id.getPath(), amount, operation.unwrap());
     }
 
     @Diff
-    public static ResourceLocation toId(UUID uuid, String name) {
-        String namespace = toHex16(uuid.getMostSignificantBits()) + toHex16(uuid.getLeastSignificantBits());
-        return ResourceLocation.fromNamespaceAndPath(namespace, name);
+    public static ResourceLocation UUID2RL(UUID uuid) {
+        return ResourceLocation.fromNamespaceAndPath(toHex16(uuid.getMostSignificantBits()), toHex16(uuid.getLeastSignificantBits()));
     }
 
     private static String toHex16(long value) {
@@ -52,13 +51,13 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
     }
 
     @Diff
-    public static UUID namespaceToUUID(String namespace) {
+    public static UUID RL2UUID(ResourceLocation id) {
         try {
-            long mostSig = Long.parseUnsignedLong(namespace.substring(0, 16), 16);
-            long leastSig = Long.parseUnsignedLong(namespace.substring(16, 32), 16);
+            long mostSig = Long.parseUnsignedLong(id.getNamespace(), 16);
+            long leastSig = Long.parseUnsignedLong(id.getPath(), 16);
             return new UUID(mostSig, leastSig);
         } catch (Throwable e) {
-            return UUID.nameUUIDFromBytes(namespace.getBytes());
+            return UUID.nameUUIDFromBytes((id.getNamespace() + id.getPath()).getBytes());
         }
     }
 

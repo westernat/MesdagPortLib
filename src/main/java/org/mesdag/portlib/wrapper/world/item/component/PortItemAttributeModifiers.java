@@ -17,11 +17,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.mutable.MutableDouble;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -29,6 +31,8 @@ public class PortItemAttributeModifiers {
     public static final PortItemAttributeModifiers EMPTY = new PortItemAttributeModifiers(new ListTag(), true);
     private final ListTag listTag;
     private final boolean showInTooltip;
+
+    private @Nullable EnumMap<EquipmentSlot, Multimap<Attribute, AttributeModifier>> cache;
 
     @Diff
     public PortItemAttributeModifiers(ItemStack stack) {
@@ -66,7 +70,7 @@ public class PortItemAttributeModifiers {
         String attributeName = PortHolderExtension.getRegisteredName(attribute);
         if (group != null && group != PortEquipmentSlotGroup.ANY) {
             Arrays.stream(EquipmentSlot.values()).filter(group::test).forEach(slot -> {
-                CompoundTag tag = new AttributeModifier(modifier.id().getPath(), modifier.amount(), modifier.operation().unwrap()).save();
+                CompoundTag tag = modifier.unwrap().save();
                 tag.putString("AttributeName", attributeName);
                 tag.putString("Slot", slot.getName());
                 listTag.add(tag);
@@ -126,11 +130,15 @@ public class PortItemAttributeModifiers {
 
     @Diff
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        forEach(slot, (h, m) -> {
-            builder.put(h.value(), m.unwrap());
+        if (isEmpty()) return ImmutableMultimap.of();
+        if (cache == null) {
+            cache = new EnumMap<>(EquipmentSlot.class);
+        }
+        return cache.computeIfAbsent(slot, s -> {
+            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+            forEach(slot, (h, m) -> builder.put(h.value(), m.unwrap()));
+            return builder.build();
         });
-        return builder.build();
     }
 
     public static PortBuilder builder() {

@@ -25,6 +25,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
@@ -206,7 +208,10 @@ public class PortItemStackExtension {
 
     public static boolean getUnbreakable(ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
-        return tag != null && tag.getBoolean("Unbreakable");
+        if (tag != null && tag.contains("Unbreakable", Tag.TAG_BYTE)) {
+            return tag.getBoolean("Unbreakable");
+        }
+        return IPortItem.of(thiz.getItem()).portlib$defaultUnbreakable();
     }
 
     public static void setCustomName(ItemStack thiz, @Nullable Component name) {
@@ -728,4 +733,15 @@ public class PortItemStackExtension {
     }
 
     // endregion DataComponentHolder
+
+    public static void hurtAndBreak(ItemStack thiz, int amount, LivingEntity entity, EquipmentSlot slot) {
+        thiz.hurtAndBreak(amount, entity, living -> living.level().broadcastEntityEvent(living, (byte) switch (slot) {
+            case MAINHAND -> 47;
+            case OFFHAND -> 48;
+            case HEAD -> 49;
+            case FEET -> 52;
+            case LEGS -> 51;
+            default -> 50;
+        }));
+    }
 }

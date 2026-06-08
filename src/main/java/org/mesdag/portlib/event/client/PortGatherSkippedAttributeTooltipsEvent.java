@@ -93,7 +93,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
     public boolean isSkipped(AttributeModifier modifier) {
         if (skipAll) return true;
         if (skippedIds == null) return false;
-        ResourceLocation id = PortAttributeModifier.toId(modifier.getId(), modifier.getName());
+        ResourceLocation id = PortAttributeModifier.UUID2RL(modifier.getId());
         return skippedIds.contains(id);
     }
 
@@ -108,14 +108,6 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
         if (skippedGroups.contains(PortEquipmentSlotGroup.ARMOR)) {
             return slot.isArmor();
         }
-        return skippedGroups.contains(switch (slot) {
-            case MAINHAND -> PortEquipmentSlotGroup.MAINHAND;
-            case OFFHAND -> PortEquipmentSlotGroup.OFFHAND;
-            case FEET -> PortEquipmentSlotGroup.FEET;
-            case LEGS -> PortEquipmentSlotGroup.LEGS;
-            case CHEST -> PortEquipmentSlotGroup.CHEST;
-            case HEAD -> PortEquipmentSlotGroup.HEAD;
-            default -> null;
-        });
+        return skippedGroups.contains(PortEquipmentSlotGroup.fromSlot(slot));
     }
 }

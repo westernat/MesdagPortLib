@@ -5,7 +5,7 @@ import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifi
 
 public class PortAttributeModifierExtension {
     public static PortAttributeModifier wrap(AttributeModifier thiz) {
-        return new PortAttributeModifier(PortAttributeModifier.toId(thiz.getId(), thiz.getName()), thiz.getAmount(), Operation.wrap(thiz.getOperation()));
+        return new PortAttributeModifier(PortAttributeModifier.UUID2RL(thiz.getId()), thiz.getAmount(), Operation.wrap(thiz.getOperation()));
     }
 
     public static class Operation {

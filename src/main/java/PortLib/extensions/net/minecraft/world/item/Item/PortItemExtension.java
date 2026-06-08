@@ -2,6 +2,7 @@ package PortLib.extensions.net.minecraft.world.item.Item;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
@@ -17,13 +18,17 @@ public class PortItemExtension {
     }
 
     public static class Properties {
-        public static <T> Item.Properties component(Item.Properties thiz, PortDataComponentType<T> type, T value) {
+        private static PortDataComponentMap.@NotNull PortBuilder getOrCreateBuilder(Item.Properties thiz) {
             IPortItem.IPortProperties port = IPortItem.IPortProperties.of(thiz);
-            PortDataComponentMap.PortBuilder builder = port.portlib$get();
+            PortDataComponentMap.PortBuilder builder = port.portlib$getBuilder();
             if (builder == null) {
                 port.portlib$set(builder = PortDataComponentMap.builder());
             }
-            builder.set(type, value);
+            return builder;
+        }
+
+        public static <T> Item.Properties component(Item.Properties thiz, PortDataComponentType<T> type, T value) {
+            getOrCreateBuilder(thiz).set(type, value);
             return thiz;
         }
 
@@ -34,8 +39,7 @@ public class PortItemExtension {
         @SuppressWarnings("unchecked")
         @Diff
         public static <T> @Nullable T getComponent(Item.Properties thiz, PortDataComponentType<T> type) {
-            IPortItem.IPortProperties port = IPortItem.IPortProperties.of(thiz);
-            PortDataComponentMap.PortBuilder builder = port.portlib$get();
+            PortDataComponentMap.PortBuilder builder = IPortItem.IPortProperties.of(thiz).portlib$getBuilder();
             if (builder == null) return null;
             return (T) builder.getMap().get(type);
         }
@@ -43,6 +47,17 @@ public class PortItemExtension {
         @Diff
         public static <T> @Nullable T getComponent(Item.Properties thiz, PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
             return getComponent(thiz, type.get());
+        }
+
+        @Diff
+        public static Item.Properties unbreakable(Item.Properties thiz) {
+            getOrCreateBuilder(thiz).unbreakable();
+            return thiz;
+        }
+
+        public static Item.Properties attributes(Item.Properties thiz, PortItemAttributeModifiers modifiers) {
+            getOrCreateBuilder(thiz).setModifiers(modifiers);
+            return thiz;
         }
     }
 }

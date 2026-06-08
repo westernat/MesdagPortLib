@@ -1,5 +1,6 @@
 package org.mesdag.portlib.registries;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -78,5 +79,9 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
 
     public boolean containsValue(T value) {
         return registry.get().containsValue(value);
+    }
+
+    public Codec<T> byNameCodec() {
+        return ResourceLocation.CODEC.xmap(this::get, this::getKey);
     }
 }

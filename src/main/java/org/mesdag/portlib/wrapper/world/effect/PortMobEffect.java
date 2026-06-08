@@ -31,7 +31,7 @@ public class PortMobEffect extends MobEffect {
     }
 
     public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
-        AttributeModifier attributemodifier = new AttributeModifier(PortAttributeModifier.namespaceToUUID(id.getNamespace()), id.getPath(), amount, operation.unwrap());
+        AttributeModifier attributemodifier = new AttributeModifier(PortAttributeModifier.RL2UUID(id), id.getPath(), amount, operation.unwrap());
         getAttributeModifiers().put(attribute.value(), attributemodifier);
         return this;
     }

@@ -3,6 +3,7 @@ package org.mesdag.portlib.component;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
 import java.util.Collections;
 import java.util.Map;
@@ -39,6 +40,8 @@ public interface PortDataComponentMap {
 
     class PortBuilder {
         private final Map<PortDataComponentType<?>, Object> map = new Reference2ObjectOpenHashMap<>();
+        private boolean unbreakable;
+        private PortItemAttributeModifiers modifiers = PortItemAttributeModifiers.EMPTY;
 
         PortBuilder() {}
 
@@ -48,8 +51,29 @@ public interface PortDataComponentMap {
         }
 
         @Diff
+        public PortBuilder unbreakable() {
+            this.unbreakable = true;
+            return this;
+        }
+
+        @Diff
+        public void setModifiers(PortItemAttributeModifiers modifiers) {
+            this.modifiers = modifiers;
+        }
+
+        @Diff
         public Map<PortDataComponentType<?>, Object> getMap() {
             return Collections.unmodifiableMap(map);
+        }
+
+        @Diff
+        public boolean isUnbreakable() {
+            return unbreakable;
+        }
+
+        @Diff
+        public PortItemAttributeModifiers getModifiers() {
+            return modifiers;
         }
     }
 }

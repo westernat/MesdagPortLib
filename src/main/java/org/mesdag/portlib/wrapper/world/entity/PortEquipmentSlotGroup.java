@@ -2,6 +2,7 @@ package org.mesdag.portlib.wrapper.world.entity;
 
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
@@ -27,6 +28,18 @@ public enum PortEquipmentSlotGroup implements StringRepresentable {
 
     PortEquipmentSlotGroup(String key, EquipmentSlot slot) {
         this(key, s -> s == slot);
+    }
+
+    public static @Nullable PortEquipmentSlotGroup fromSlot(EquipmentSlot slot) {
+        return switch (slot) {
+            case MAINHAND -> PortEquipmentSlotGroup.MAINHAND;
+            case OFFHAND -> PortEquipmentSlotGroup.OFFHAND;
+            case FEET -> PortEquipmentSlotGroup.FEET;
+            case LEGS -> PortEquipmentSlotGroup.LEGS;
+            case CHEST -> PortEquipmentSlotGroup.CHEST;
+            case HEAD -> PortEquipmentSlotGroup.HEAD;
+            default -> null;
+        };
     }
 
     @Override

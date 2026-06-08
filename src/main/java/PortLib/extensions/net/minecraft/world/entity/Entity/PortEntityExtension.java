@@ -3,16 +3,20 @@ package PortLib.extensions.net.minecraft.world.entity.Entity;
 import com.google.common.base.Supplier;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortServerPlayer;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.registries.PortRegistryEntry;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class PortEntityExtension {
@@ -106,5 +110,16 @@ public class PortEntityExtension {
 
     public static BlockState getInBlockState(Entity thiz) {
         return thiz.getFeetBlockState();
+    }
+
+    public static RandomSource getRandom(Entity thiz) {
+        return thiz.random;
+    }
+
+    public static @Nullable ItemStack getWeaponItem(Entity thiz) {
+        if (thiz instanceof LivingEntity living) {
+            return living.getMainHandItem();
+        }
+        return IPortEntityExtension.of(thiz).getWeaponItem();
     }
 }
