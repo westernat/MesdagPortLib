@@ -22,8 +22,13 @@ public class PortDataGenerator {
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         ExistingFileHelper helper = event.getExistingFileHelper();
 
-        generator.addProvider(event.includeServer(), new PortDamageTypeTagsProvider(output, provider, helper));
-        generator.addProvider(event.includeClient(), new PortLanguageProvider(output, "en_us"));
-        generator.addProvider(event.includeClient(), new PortLanguageProvider(output, "zh_cn"));
+        boolean server = event.includeServer();
+        generator.addProvider(server, new PortDamageTypeTagsProvider(output, provider, helper));
+        PortBlockTagsProvider blockTagsProvider = generator.addProvider(server, new PortBlockTagsProvider(output, provider, helper));
+        generator.addProvider(server, new PortItemTagsProvider(output, provider, blockTagsProvider.contentsGetter(), helper));
+
+        boolean client = event.includeClient();
+        generator.addProvider(client, new PortLanguageProvider(output, "en_us"));
+        generator.addProvider(client, new PortLanguageProvider(output, "zh_cn"));
     }
 }

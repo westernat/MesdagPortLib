@@ -41,4 +41,24 @@ public class PortListExtension {
             thiz.add(e);
         }
     }
+
+    public static <E> E removeFirst(List<E> thiz) {
+        if (thiz instanceof LinkedList<E> linkedList) {
+            return linkedList.removeFirst();
+        }
+        if (thiz.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return thiz.remove(0);
+    }
+
+    public static <E> E removeLast(List<E> thiz) {
+        if (thiz instanceof LinkedList<E> linkedList) {
+            return linkedList.removeLast();
+        }
+        if (thiz.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return thiz.remove(thiz.size() - 1);
+    }
 }

@@ -32,9 +32,11 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
@@ -718,6 +720,11 @@ public class PortItemStackExtension {
 
     public static PortDataComponentMap getPrototypeData(ItemStack thiz) {
         return IPortItemStack.of(thiz).portlib$patch().getPrototype();
+    }
+
+    @Diff
+    public static boolean is(ItemStack thiz, RegistryObject<? extends Item> holder) {
+        return thiz.is(holder.get());
     }
 
     // endregion DataComponentHolder

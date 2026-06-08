@@ -6,6 +6,7 @@ import net.minecraft.util.FastColor;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.mesdag.portlib.diff.Diff;
 
 import java.util.function.Consumer;
 
@@ -71,9 +72,17 @@ public class PortVertexConsumerExtension {
         return thiz.normal(pose.normal(), normalX, normalY, normalZ);
     }
 
+    @Diff
     public static void vertex(VertexConsumer thiz, PoseStack.Pose pose, float x, float y, float z, Consumer<VertexConsumer> builder) {
-        VertexConsumer v = addVertex(thiz, pose, x, y, z);
-        builder.accept(v);
-        v.endVertex();
+        addVertex(thiz, pose, x, y, z);
+        builder.accept(thiz);
+        thiz.endVertex();
+    }
+
+    @Diff
+    public static void vertex(VertexConsumer thiz, Matrix4f pose, float x, float y, float z, Consumer<VertexConsumer> builder) {
+        addVertex(thiz, pose, x, y, z);
+        builder.accept(thiz);
+        thiz.endVertex();
     }
 }
