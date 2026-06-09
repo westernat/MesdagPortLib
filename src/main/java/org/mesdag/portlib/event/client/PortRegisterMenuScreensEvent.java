@@ -6,9 +6,10 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.IModBusEvent;
 import org.mesdag.portlib.diff.Diff;
 
-public class PortRegisterMenuScreensEvent extends Event {
+public class PortRegisterMenuScreensEvent extends Event implements IModBusEvent {
     @Diff
     public PortRegisterMenuScreensEvent() {}
 

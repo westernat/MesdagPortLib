@@ -1,3 +1,6 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
     id 'idea'
     id 'java-library'
@@ -180,4 +183,36 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+def refmapPath = layout.buildDirectory.file("mixin/${mod_id}.refmap.json")
+
+tasks.register('patchRefmap') {
+    dependsOn compileJava
+    doLast {
+        def refmapFile = refmapPath.get().asFile
+        if (!refmapFile.exists()) {
+            logger.warn("Refmap file not found at ${refmapFile.absolutePath}, skipping patch")
+            return
+        }
+
+        def json = new JsonSlurper().parse(refmapFile) as Map
+
+        def insertRefMap = { String m, String meth, String map ->
+            if (!json.mappings[m]) json.mappings[m] = [:]
+            if (!json.data.searge[m]) json.data.searge[m] = [:]
+            json.mappings[m][meth] = map
+            json.data.searge[m][meth] = map
+        }
+
+        insertRefMap('org/mesdag/portlib/diff/mixin/EnchantmentMenuMixin', 'lambda$clickMenuButton$1', 'Lnet/minecraft/world/inventory/EnchantmentMenu;m_39475_(Lnet/minecraft/world/item/ItemStack;ILnet/minecraft/world/entity/player/Player;ILnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V')
+        insertRefMap('org/mesdag/portlib/diff/mixin/RenderBuffersMixin', 'lambda$new$1', 'Lnet/minecraft/client/renderer/RenderBuffers;m_268794_(Lit/unimi/dsi/fastutil/objects/Object2ObjectLinkedOpenHashMap;)V')
+
+        refmapFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(json))
+        logger.lifecycle('Patched refmap')
+    }
+}
+
+tasks.named('jar') {
+    dependsOn patchRefmap
 }

@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PortDataResultExtension {
@@ -22,5 +23,15 @@ public class PortDataResultExtension {
 
     public static <V, K> Optional<Pair<K, V>> resultOrPartial(DataResult<Pair<K, V>> thiz) {
         return thiz.get().map(Optional::of, r -> Optional.empty());
+    }
+
+    public static <R> DataResult<R> ifSuccess(DataResult<R> thiz, Consumer<R> action) {
+        thiz.result().ifPresent(action);
+        return thiz;
+    }
+
+    public static <R> DataResult<R> ifError(DataResult<R> thiz, Consumer<String> action) {
+        thiz.error().ifPresent(r -> action.accept(r.message()));
+        return thiz;
     }
 }

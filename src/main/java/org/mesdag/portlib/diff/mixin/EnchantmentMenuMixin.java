@@ -16,8 +16,9 @@ import java.util.List;
 
 @Mixin(EnchantmentMenu.class)
 public abstract class EnchantmentMenuMixin {
+    // refmap in build gradle
     @SuppressWarnings("UnresolvedLocalCapture")
-    @Inject(method = "lambda$clickMenuButton$1(Lnet/minecraft/world/item/ItemStack;ILnet/minecraft/world/entity/player/Player;ILnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getAbilities()Lnet/minecraft/world/entity/player/Abilities;"))
+    @Inject(method = "lambda$clickMenuButton$1", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getAbilities()Lnet/minecraft/world/entity/player/Abilities;", remap = true), remap = false)
     private void postEvent(CallbackInfo ci, @Local(argsOnly = true) Player player, @Local(index = 8) ItemStack itemstack2, @Local(index = 9) List<EnchantmentInstance> list) {
         PortEventHandler.postEvent(new PortPlayerEnchantItemEvent(player, itemstack2, list));
     }
