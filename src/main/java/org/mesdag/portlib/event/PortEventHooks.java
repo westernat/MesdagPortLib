@@ -16,6 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.client.PortRegisterMenuScreensEvent;
+import org.mesdag.portlib.event.client.extensions.common.PortRegisterClientExtensionsEvent;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
 import org.mesdag.portlib.event.other.PortBlockEntityTypeAddBlocksEvent;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
@@ -40,6 +41,10 @@ public class PortEventHooks {
         PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
         PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
         PortEventHandler.wrapEvent(false, RegisterClientReloadListenersEvent.class, e -> new PortRegisterMenuScreensEvent());
+        PortEventHandler.addListener((RegisterClientReloadListenersEvent event) -> {
+            PortEventHandler.postEvent(new PortRegisterClientExtensionsEvent());
+            PortEventHandler.postEvent(new PortRegisterMenuScreensEvent());
+        });
     }
 
     private static void validateIfAbstract(Class<? extends Event> clazz) {

@@ -1,6 +1,8 @@
 package PortLib.extensions.net.minecraft.world.entity.player.Player;
 
+import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,5 +19,10 @@ public class PortPlayerExtension {
 
     public static double entityInteractionRange(Player thiz) {
         return thiz.getEntityReach();
+    }
+
+    /// [PortLivingEntityExtension#hasInfiniteMaterials(LivingEntity)] super.hasInfiniteMaterials
+    public static boolean hasInfiniteMaterials(Player thiz) {
+        return thiz.getAbilities().instabuild;
     }
 }

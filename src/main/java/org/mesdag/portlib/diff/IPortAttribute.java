@@ -11,7 +11,7 @@ import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 
 @Diff
-public interface IPortAttribute extends PortSelfGetter<Attribute> {
+public interface IPortAttribute extends PortSelfGetter<Attribute>, IPortAttributeExtension {
     void portlib$setSentiment(PortAttribute.PortSentiment sentiment);
 
     PortAttribute.PortSentiment portlib$getSentiment();

@@ -1,16 +1,22 @@
 package PortLib.extensions.net.minecraft.world.entity.LivingEntity;
 
+import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
+import PortLib.extensions.net.minecraft.world.entity.player.Player.PortPlayerExtension;
 import net.minecraft.core.Holder;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.diff.mixin.LivingEntityAccessor;
 import org.mesdag.portlib.event.entity.living.PortMobEffectEvent;
+import org.mesdag.portlib.util.Static;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
@@ -45,8 +51,20 @@ public class PortLivingEntityExtension {
         return ret;
     }
 
-    /// @see PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension#getWeaponItem(Entity) super.getWeaponItem
+    /// @see PortEntityExtension#getWeaponItem(Entity) super.getWeaponItem
     public static ItemStack getWeaponItem(LivingEntity thiz) {
         return thiz.getMainHandItem();
+    }
+
+    @Static
+    public static EquipmentSlot getSlotForHand(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+    }
+
+    public static boolean hasInfiniteMaterials(LivingEntity thiz) {
+        if (thiz instanceof Player player) {
+            return PortPlayerExtension.hasInfiniteMaterials(player);
+        }
+        return false;
     }
 }
