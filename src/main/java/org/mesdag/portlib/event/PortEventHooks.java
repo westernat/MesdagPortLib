@@ -40,7 +40,6 @@ public class PortEventHooks {
     public static void init() {
         PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
         PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
-        PortEventHandler.wrapEvent(false, RegisterClientReloadListenersEvent.class, e -> new PortRegisterMenuScreensEvent());
         PortEventHandler.addListener((RegisterClientReloadListenersEvent event) -> {
             PortEventHandler.postEvent(new PortRegisterClientExtensionsEvent());
             PortEventHandler.postEvent(new PortRegisterMenuScreensEvent());

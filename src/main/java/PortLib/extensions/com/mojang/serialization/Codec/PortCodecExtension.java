@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import org.joml.Vector4f;
 import org.mesdag.portlib.diff.MemoizeCodec;
+import org.mesdag.portlib.util.Static;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class PortCodecExtension {
         return VECTOR4F;
     }
 
+    @Static
     public static <A> Codec<A> lazyInitialized(Supplier<Codec<A>> delegate) {
         return new MemoizeCodec<>(delegate::get);
     }
@@ -50,22 +52,27 @@ public class PortCodecExtension {
         );
     }
 
+    @Static
     public static <T> Codec<T> withAlternative(Codec<T> primary, Codec<? extends T> alternative) {
         return Codec.either(primary, alternative).xmap(PortEitherExtension::unwrap, Either::left);
     }
 
+    @Static
     public static <T, U> Codec<T> withAlternative(Codec<T> primary, Codec<U> alternative, Function<U, T> converter) {
         return Codec.either(primary, alternative).xmap(either -> either.map(v -> v, converter), Either::left);
     }
 
+    @Static
     public static <K, V> StrictUnboundedMapCodec<K, V> strictUnboundedMap(Codec<K> key, Codec<V> value) {
         return new StrictUnboundedMapCodec<>(key, value);
     }
 
+    @Static
     public static <K, V> Codec<Map<K, V>> dispatchedMap(Codec<K> keyCodec, Function<K, Codec<? extends V>> valueCodecFunction) {
         return new DispatchedMapCodec<>(keyCodec, valueCodecFunction);
     }
 
+    @Static
     public static <A> Codec<Optional<A>> optionalEmptyMap(Codec<A> codec) {
         return new Codec<>() {
             @Override
@@ -80,6 +87,26 @@ public class PortCodecExtension {
                 return input.isEmpty() ? DataResult.success(ops.emptyMap()) : codec.encode(input.get(), ops, prefix);
             }
         };
+    }
+
+    @Static
+    public static <A> Codec<List<A>> listWithOptionalElements(Codec<Optional<A>> elementCodec) {
+        return listWithoutEmpty(elementCodec.listOf());
+    }
+
+    @Static
+    public static <A> Codec<List<A>> listWithoutEmpty(Codec<List<Optional<A>>> codec) {
+        return codec.xmap(
+                list -> list.stream().filter(Optional::isPresent).map(Optional::get).toList(),
+                list -> list.stream().map(Optional::of).toList()
+        );
+    }
+
+    @Static
+    public static <A> Codec<A> decodeOnly(Decoder<A> decoder) {
+        return Codec.of(Codec.unit(() -> {
+            throw new UnsupportedOperationException("Cannot encode with decode-only codec! Decoder:" + decoder);
+        }), decoder, "DecodeOnly[" + decoder + "]");
     }
 
     public record StrictUnboundedMapCodec<K, V>(

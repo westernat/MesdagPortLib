@@ -1,15 +1,20 @@
 package org.mesdag.portlib.diff.datamap;
 
+import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
 import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +41,7 @@ import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
+import org.mesdag.portlib.wrapper.common.conditions.PortConditionalOps;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.core.PortRegistry;
 
@@ -48,6 +54,7 @@ import java.util.function.Consumer;
 @Diff
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PortDataMapLoader implements PreparableReloadListener {
+    public static final String PATH = "data_maps";
     static PortDataMapLoader INSTANCE;
     private static Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> dataMaps = Map.of();
 
@@ -136,7 +143,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
     }
 
-    private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<DataMapFile<T, R>> entries) {
+    private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<PortDataMapFile<T, R>> entries) {
         record WithSource<T, R>(T attachment, Either<TagKey<R>, ResourceKey<R>> source) {}
         Map<ResourceKey<R>, WithSource<T, R>> result = new IdentityHashMap<>();
         PortDataMapValueMerger<R, T> merger = attachment instanceof PortAdvancedDataMapType<R, T, ?> adv ? adv.merger() : PortDataMapValueMerger.defaultMerger();
@@ -206,6 +213,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     private static Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> load(ResourceManager manager, ProfilerFiller profiler, RegistryAccess access, ICondition.IContext context) {
+        RegistryOps<JsonElement> ops = new PortConditionalOps<>(RegistryOps.create(JsonOps.INSTANCE, access), context);
         Map<ResourceKey<? extends Registry<?>>, LoadResult<?>> values = new HashMap<>();
         access.registries().forEach(registryEntry -> {
             var registryKey = registryEntry.key();
@@ -221,7 +229,8 @@ public class PortDataMapLoader implements PreparableReloadListener {
                 }
                 profiler.popPush("registry_data_maps/" + registryKey.location() + "/" + attachmentId + "/loading");
                 values.computeIfAbsent(registryKey, k -> new LoadResult<>(new HashMap<>())).results.put(attachment, readData(
-                        attachment, (ResourceKey) registryKey, entry.getValue()));
+                        ops, attachment, (ResourceKey) registryKey, entry.getValue())
+                );
             }
             profiler.pop();
         });
@@ -233,12 +242,13 @@ public class PortDataMapLoader implements PreparableReloadListener {
         return (registryId.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) ? "" : registryId.getNamespace() + "/") + registryId.getPath();
     }
 
-    private static <A, T> List<DataMapFile<A, T>> readData(PortDataMapType<T, A> attachmentType, ResourceKey<Registry<T>> registryKey, List<Resource> resources) {
-        final List<DataMapFile<A, T>> entries = new LinkedList<>();
-        for (final Resource resource : resources) {
+    private static <A, T> List<PortDataMapFile<A, T>> readData(RegistryOps<JsonElement> ops, PortDataMapType<T, A> attachmentType, ResourceKey<Registry<T>> registryKey, List<Resource> resources) {
+        Codec<PortDataMapFile<A, T>> codec = PortDataMapFile.codec(registryKey, attachmentType);
+        List<PortDataMapFile<A, T>> entries = new LinkedList<>();
+        for (Resource resource : resources) {
             try (Reader reader = resource.openAsReader()) {
-                JsonObject jsonelement = JsonParser.parseReader(reader).getAsJsonObject();
-                entries.add(DataMapFile.read(registryKey, jsonelement, attachmentType));
+                JsonObject object = JsonParser.parseReader(reader).getAsJsonObject();
+                entries.add(PortDataResultExtension.getOrThrow(codec.decode(ops, object)).getFirst());
             } catch (Exception exception) {
                 PortLib.LOGGER.error("Could not read data map of type {} for registry {}", attachmentType.id(), registryKey, exception);
             }
@@ -246,7 +256,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         return entries;
     }
 
-    private record LoadResult<T>(Map<PortDataMapType<T, ?>, List<DataMapFile<?, T>>> results) {}
+    private record LoadResult<T>(Map<PortDataMapType<T, ?>, List<PortDataMapFile<?, T>>> results) {}
 
     void clear(ResourceKey<? extends Registry<?>> registryKey) {
         Map<PortDataMapType<?, ?>, Map<ResourceKey<?>, ?>> map = byRegistries.get(registryKey);

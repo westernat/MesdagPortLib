@@ -19,7 +19,7 @@ public abstract class BowItemMixin implements IPortBowItemExtension {
         projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + angle, 0.0F, velocity, inaccuracy);
     }
 
-    @ModifyExpressionValue(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;customArrow(Lnet/minecraft/world/entity/projectile/AbstractArrow;)Lnet/minecraft/world/entity/projectile/AbstractArrow;"))
+    @ModifyExpressionValue(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;customArrow(Lnet/minecraft/world/entity/projectile/AbstractArrow;)Lnet/minecraft/world/entity/projectile/AbstractArrow;", remap = false))
     private AbstractArrow wrap(AbstractArrow original, @Local(argsOnly = true) ItemStack stack, @Local(name = "itemstack") ItemStack itemstack) {
         return customArrow(original, itemstack, stack);
     }

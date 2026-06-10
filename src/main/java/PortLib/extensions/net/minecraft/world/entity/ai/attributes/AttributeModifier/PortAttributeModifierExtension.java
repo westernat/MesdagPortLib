@@ -12,7 +12,7 @@ import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifi
 
 public class PortAttributeModifierExtension {
     private static final Codec<AttributeModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            UUIDUtil.CODEC.fieldOf("id").forGetter(AttributeModifier::getId),
+            UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(AttributeModifier::getId),
             Codec.STRING.fieldOf("name").forGetter(AttributeModifier::getName),
             Codec.DOUBLE.fieldOf("amount").forGetter(AttributeModifier::getAmount),
             Operation.codec().fieldOf("operation").forGetter(AttributeModifier::getOperation)

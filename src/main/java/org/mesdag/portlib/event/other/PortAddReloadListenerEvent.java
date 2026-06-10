@@ -3,11 +3,11 @@ package org.mesdag.portlib.event.other;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.wrapper.common.conditions.IPortCondition;
 
 import java.util.List;
 
@@ -29,8 +29,8 @@ public class PortAddReloadListenerEvent extends PortEvent<AddReloadListenerEvent
         return e.getServerResources();
     }
 
-    public IPortCondition.IPortContext getConditionContext() {
-        return IPortCondition.IPortContext.wrap(e.getConditionContext());
+    public ICondition.IContext getConditionContext() {
+        return e.getConditionContext();
     }
 
     public RegistryAccess getRegistryAccess() {
