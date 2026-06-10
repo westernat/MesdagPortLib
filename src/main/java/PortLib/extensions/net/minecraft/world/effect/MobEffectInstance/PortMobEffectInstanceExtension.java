@@ -19,6 +19,7 @@ import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class PortMobEffectInstanceExtension {
     private static final Codec<MobEffectInstance> CODEC = new Codec<>() {
@@ -60,5 +61,9 @@ public class PortMobEffectInstanceExtension {
             return port.createParticleOptions(thiz);
         }
         return thiz.isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
+    }
+
+    public static boolean is(MobEffectInstance thiz, Supplier<MobEffect> love) {
+        return thiz.getEffect() == love.get();
     }
 }

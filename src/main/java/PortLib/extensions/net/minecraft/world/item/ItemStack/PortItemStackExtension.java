@@ -53,6 +53,7 @@ import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PortItemStackExtension {
@@ -743,5 +744,34 @@ public class PortItemStackExtension {
             case LEGS -> 51;
             default -> 50;
         }));
+    }
+
+    // true static
+    public static int hashItemAndComponents(@Nullable ItemStack stack) {
+        if (stack != null) {
+            int i = 31 + stack.getItem().hashCode();
+            return 31 * i + Objects.hashCode(stack.getTag());
+        }
+        return 0;
+    }
+
+    public static int hashStackList(List<ItemStack> list) {
+        int i = 0;
+        for (ItemStack itemstack : list) {
+            i = i * 31 + hashItemAndComponents(itemstack);
+        }
+        return i;
+    }
+
+    public static boolean listMatches(List<ItemStack> list, List<ItemStack> other) {
+        if (list.size() != other.size()) {
+            return false;
+        }
+        for (int i = 0; i < list.size(); i++) {
+            if (!ItemStack.matches(list.get(i), other.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -93,7 +93,7 @@ public class PortGatherSkippedAttributeTooltipsEvent extends Event {
     public boolean isSkipped(AttributeModifier modifier) {
         if (skipAll) return true;
         if (skippedIds == null) return false;
-        ResourceLocation id = PortAttributeModifier.UUID2RL(modifier.getId());
+        ResourceLocation id = PortAttributeModifier.uuid2rl(modifier.getId());
         return skippedIds.contains(id);
     }
 

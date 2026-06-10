@@ -1,0 +1,55 @@
+{
+    "block.tuff_bricks.break": {
+        "sounds": [
+            "portlib:block/tuff_bricks/place1",
+            "portlib:block/tuff_bricks/place2",
+            "portlib:block/tuff_bricks/place3",
+            "portlib:block/tuff_bricks/place4",
+            "portlib:block/tuff_bricks/place5"
+        ],
+        "subtitle": "subtitles.block.generic.break"
+    },
+    "block.tuff_bricks.fall": {
+        "sounds": [
+            "portlib:block/tuff_bricks/step1",
+            "portlib:block/tuff_bricks/step2",
+            "portlib:block/tuff_bricks/step3",
+            "portlib:block/tuff_bricks/step4",
+            "portlib:block/tuff_bricks/step5",
+            "portlib:block/tuff_bricks/step6"
+        ],
+        "subtitle": "subtitles.block.generic.fall"
+    },
+    "block.tuff_bricks.hit": {
+        "sounds": [
+            "portlib:block/tuff_bricks/step1",
+            "portlib:block/tuff_bricks/step2",
+            "portlib:block/tuff_bricks/step3",
+            "portlib:block/tuff_bricks/step4",
+            "portlib:block/tuff_bricks/step5",
+            "portlib:block/tuff_bricks/step6"
+        ],
+        "subtitle": "subtitles.block.generic.hit"
+    },
+    "block.tuff_bricks.place": {
+        "sounds": [
+            "portlib:block/tuff_bricks/place1",
+            "portlib:block/tuff_bricks/place2",
+            "portlib:block/tuff_bricks/place3",
+            "portlib:block/tuff_bricks/place4",
+            "portlib:block/tuff_bricks/place5"
+        ],
+        "subtitle": "subtitles.block.generic.place"
+    },
+    "block.tuff_bricks.step": {
+        "sounds": [
+            "portlib:block/tuff_bricks/step1",
+            "portlib:block/tuff_bricks/step2",
+            "portlib:block/tuff_bricks/step3",
+            "portlib:block/tuff_bricks/step4",
+            "portlib:block/tuff_bricks/step5",
+            "portlib:block/tuff_bricks/step6"
+        ],
+        "subtitle": "subtitles.block.generic.footsteps"
+    }
+}

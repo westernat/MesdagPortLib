@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -142,6 +143,18 @@ public class PortLib {
 
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
+
+    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, MODID);
+    public static final RegistryObject<SoundEvent> TUFF_BRICKS_BREAK = registerSound("block.tuff_bricks.break");
+    public static final RegistryObject<SoundEvent> TUFF_BRICKS_FALL = registerSound("block.tuff_bricks.fall");
+    public static final RegistryObject<SoundEvent> TUFF_BRICKS_HIT = registerSound("block.tuff_bricks.hit");
+    public static final RegistryObject<SoundEvent> TUFF_BRICKS_PLACE = registerSound("block.tuff_bricks.place");
+    public static final RegistryObject<SoundEvent> TUFF_BRICKS_STEP = registerSound("block.tuff_bricks.step");
+
+    private static RegistryObject<SoundEvent> registerSound(String name) {
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.withDefaultNamespace(name)));
+    }
+
 
     public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init();

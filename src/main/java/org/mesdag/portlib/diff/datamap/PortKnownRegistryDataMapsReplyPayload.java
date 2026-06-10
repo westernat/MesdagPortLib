@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.datamap;
 
+import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.google.common.collect.Maps;
 import io.netty.util.AttributeKey;
 import net.minecraft.core.Registry;
@@ -25,7 +26,7 @@ public class PortKnownRegistryDataMapsReplyPayload extends PortLoginPacket imple
             PortByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize,
                     PortByteBufCodecs.registryKey(),
-                    PortByteBufCodecs.IDENTIFIER.apply(PortByteBufCodecs.collection(ArrayList::new))
+                    PortResourceLocationExtension.streamCodec().apply(PortByteBufCodecs.collection(ArrayList::new))
             ), PortKnownRegistryDataMapsReplyPayload::dataMaps,
             PortKnownRegistryDataMapsReplyPayload::new
     );

@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.datamap;
 
+import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
@@ -100,7 +101,7 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
 
     public record KnownDataMap(ResourceLocation id, boolean mandatory) {
         public static final PortStreamCodec<FriendlyByteBuf, KnownDataMap> STREAM_CODEC = PortStreamCodec.composite(
-                PortByteBufCodecs.IDENTIFIER, KnownDataMap::id,
+                PortResourceLocationExtension.streamCodec(), KnownDataMap::id,
                 PortByteBufCodecs.BOOL, KnownDataMap::mandatory,
                 KnownDataMap::new
         );

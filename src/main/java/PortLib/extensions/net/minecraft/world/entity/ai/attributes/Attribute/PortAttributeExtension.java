@@ -15,8 +15,14 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 
 public class PortAttributeExtension {
+    private static final Codec<Attribute> DIRECT_CODEC = BuiltInRegistries.ATTRIBUTE.byNameCodec();
     private static final Codec<Holder<Attribute>> CODEC = BuiltInRegistries.ATTRIBUTE.holderByNameCodec();
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, Holder<Attribute>> STREAM_CODEC = PortByteBufCodecs.holderRegistry(Registries.ATTRIBUTE);
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, Attribute> DIRECT_STREAM_CODEC = PortByteBufCodecs.registry(Registries.ATTRIBUTE);
+
+    public static Codec<Attribute> directCodec() {
+        return DIRECT_CODEC;
+    }
 
     public static Codec<Holder<Attribute>> codec() {
         return CODEC;
@@ -24,6 +30,10 @@ public class PortAttributeExtension {
 
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, Holder<Attribute>> streamCodec() {
         return STREAM_CODEC;
+    }
+
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, Attribute> directStreamCodec() {
+        return DIRECT_STREAM_CODEC;
     }
 
     private static final TextColor MERGED_RED = TextColor.fromRgb(0xF93131);

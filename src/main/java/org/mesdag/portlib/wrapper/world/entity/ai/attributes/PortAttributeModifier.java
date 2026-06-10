@@ -33,11 +33,11 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
 
     @Diff
     public AttributeModifier unwrap() {
-        return new AttributeModifier(RL2UUID(id), id.getPath(), amount, operation.unwrap());
+        return new AttributeModifier(rl2uuid(id), id.getPath(), amount, operation.unwrap());
     }
 
     @Diff
-    public static ResourceLocation UUID2RL(UUID uuid) {
+    public static ResourceLocation uuid2rl(UUID uuid) {
         return ResourceLocation.fromNamespaceAndPath(toHex16(uuid.getMostSignificantBits()), toHex16(uuid.getLeastSignificantBits()));
     }
 
@@ -51,7 +51,7 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
     }
 
     @Diff
-    public static UUID RL2UUID(ResourceLocation id) {
+    public static UUID rl2uuid(ResourceLocation id) {
         try {
             long mostSig = Long.parseUnsignedLong(id.getNamespace(), 16);
             long leastSig = Long.parseUnsignedLong(id.getPath(), 16);

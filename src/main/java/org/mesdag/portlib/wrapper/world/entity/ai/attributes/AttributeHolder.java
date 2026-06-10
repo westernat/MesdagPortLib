@@ -25,6 +25,11 @@ public class AttributeHolder implements PortHolder<Attribute> {
         return new AttributeHolder(delegate);
     }
 
+    @Diff
+    public static AttributeHolder wrap(Attribute delegate) {
+        return new AttributeHolder(delegate);
+    }
+
     @Override
     public Holder<Attribute> delegate() {
         return delegate;

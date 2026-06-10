@@ -19,7 +19,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -171,7 +170,17 @@ public interface PortByteBufCodecs {
             PortFriendlyByteBuf.writeVector4f(buffer, value);
         }
     };
-    PortStreamCodec<ByteBuf, ResourceLocation> IDENTIFIER = STRING_UTF8.map(ResourceLocation::parse, ResourceLocation::toString);
+    PortStreamCodec<FriendlyByteBuf, UUID> UUID = new PortStreamCodec<>() {
+        @Override
+        public UUID decode(FriendlyByteBuf buffer) {
+            return buffer.readUUID();
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buffer, UUID value) {
+            buffer.writeUUID(value);
+        }
+    };
 
     static <B extends ByteBuf, K, V, M extends Map<K, V>> PortStreamCodec<B, M> map(
             IntFunction<? extends M> factory, PortStreamCodec<? super B, K> keyCodec, PortStreamCodec<? super B, V> valueCodec
@@ -222,8 +231,8 @@ public interface PortByteBufCodecs {
 
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(ResourceKey<? extends Registry<T>> registryKey, Function<Registry<T>, IdMap<R>> idGetter) {
         return new PortStreamCodec<>() {
-            private IdMap<R> getRegistryOrThrow(PortRegistryFriendlyByteBuf p_330361_) {
-                var registry = p_330361_.registryAccess().registryOrThrow(registryKey);
+            private IdMap<R> getRegistryOrThrow(PortRegistryFriendlyByteBuf buffer) {
+                var registry = buffer.registryAccess().registryOrThrow(registryKey);
                 if (PortRegistryManager.isNonSyncedBuiltInRegistry(registry)) {
                     throw new IllegalStateException("Cannot use ID syncing for non-synced built-in registry: " + registry.key());
                 }
