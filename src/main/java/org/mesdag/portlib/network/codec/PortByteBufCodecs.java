@@ -313,6 +313,10 @@ public interface PortByteBufCodecs {
         };
     }
 
+    static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, T> fromCodecWithRegistriesTrusted(Codec<T> codec) {
+        return fromCodecWithRegistries(codec, () -> new NbtAccounter(Long.MAX_VALUE));
+    }
+
     static <T> PortStreamCodec<PortRegistryFriendlyByteBuf, T> fromCodecWithRegistries(Codec<T> codec) {
         return fromCodecWithRegistries(codec, () -> new NbtAccounter(2097152L));
     }

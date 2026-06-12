@@ -65,7 +65,8 @@ public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damag
         return false;
     }
 
-    public record PortRule(HolderSet<Block> blocks, Optional<Float> speed, Optional<Boolean> correctForDrops) {
+    public record PortRule(HolderSet<Block> blocks, Optional<Float> speed,
+                           Optional<Boolean> correctForDrops) {
         @Diff
         public static final Codec<PortRule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("blocks").forGetter(PortRule::blocks),

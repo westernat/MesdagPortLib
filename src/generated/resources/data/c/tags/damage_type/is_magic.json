@@ -1,8 +1,8 @@
 {
-  "values": [
-    "minecraft:magic",
-    "minecraft:indirect_magic",
-    "minecraft:thorns",
-    "minecraft:dragon_breath"
-  ]
+    "values": [
+        "minecraft:magic",
+        "minecraft:indirect_magic",
+        "minecraft:thorns",
+        "minecraft:dragon_breath"
+    ]
 }

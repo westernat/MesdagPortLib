@@ -75,6 +75,7 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
             PortEventHooks.register();
         }
     }
+
     public static class PortEntityInteract extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteract> implements IPortCancellableEvent {
         @Diff
         public PortEntityInteract(PlayerInteractEvent.EntityInteract e) {

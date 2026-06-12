@@ -1,14 +1,9 @@
 package org.mesdag.portlib.wrapper.world.item;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.component.PortDataComponentMap;
-import org.mesdag.portlib.diff.IPortItem;
-
-import java.util.function.Consumer;
 
 public class PortItem {
     public interface PortTooltipContext {

@@ -61,7 +61,8 @@ public class PortRegisterEvent extends PortEvent<RegisterEvent> implements IPort
         }
 
         @Diff
-        record Delegate<T>(RegisterEvent.RegisterHelper<T> delegate) implements PortRegisterHelper<T> {
+        record Delegate<T>(
+                RegisterEvent.RegisterHelper<T> delegate) implements PortRegisterHelper<T> {
             @Override
             public void register(ResourceLocation name, T value) {
                 delegate.register(name, value);

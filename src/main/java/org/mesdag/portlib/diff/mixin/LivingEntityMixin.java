@@ -181,12 +181,12 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
 
     /// ```java
     /// damageAmount = this.getDamageAfterArmorAbsorb(damageSource, damageAmount);
-    ///```
+    /// ```
     /// ↓
     /// ```java
     /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - this.getDamageAfterArmorAbsorb(damageSrc, this.damageContainers.peek().getNewDamage()));
     /// this.getDamageAfterMagicAbsorb(damageSrc, this.damageContainers.peek().getNewDamage());
-    ///```
+    /// ```
     @WrapOperation(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float setArmorReduction(LivingEntity instance, DamageSource damageSource, float damageAmount, Operation<Float> original) {
         PortDamageContainer container = portlib$damageContainers.peek();
@@ -196,14 +196,14 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
 
     /// ```java
     /// damageAmount = this.getDamageAfterMagicAbsorb(damageSource, damageAmount);
-    ///```
+    /// ```
     /// ↓
     /// ```java
     /// float damage = net.neoforged.neoforge.common.CommonHooks.onLivingDamagePre(this, this.damageContainers.peek());
     /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION, Math.min(this.getAbsorptionAmount(), damage));
     /// float absorbed = Math.min(damage, this.damageContainers.peek().getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION));
     /// this.setAbsorptionAmount(Math.max(0, this.getAbsorptionAmount() - absorbed));
-    ///```
+    /// ```
     @ModifyExpressionValue(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float onLivingDamagePre(float ignored, @Share("absorbed") LocalFloatRef absorbed) {
         PortDamageContainer container = portlib$damageContainers.peek();
@@ -216,11 +216,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
 
     /// ```java
     /// float f1 = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
-    ///```
+    /// ```
     /// ↓
     /// ```java
     /// float f1 = this.damageContainers.peek().getNewDamage();
-    ///```
+    /// ```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f1")
     private float modifyF1(float original) {
         return portlib$damageContainers.peek().getNewDamage();
@@ -233,11 +233,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, IPortLivin
 
     /// ```java
     /// float f = damageAmount - f1;
-    ///```
+    /// ```
     /// ↓
     /// ```java
     /// float f = absorbed;
-    ///```
+    /// ```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f")
     private float modifyF(float original, @Share("absorbed") LocalFloatRef absorbed) {
         return absorbed.get();

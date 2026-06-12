@@ -41,7 +41,8 @@ public class PortLivingChangeTargetEvent extends PortLivingEvent<LivingChangeTar
         }
 
         @Diff
-        record Delegate(LivingChangeTargetEvent.ILivingTargetType delegate) implements IPortLivingTargetType {
+        record Delegate(
+                LivingChangeTargetEvent.ILivingTargetType delegate) implements IPortLivingTargetType {
             @Override
             public LivingChangeTargetEvent.ILivingTargetType unwrap() {
                 return delegate;

@@ -24,7 +24,7 @@ public class PortVarLong {
         byte b0;
         do {
             b0 = buffer.readByte();
-            i |= (long)(b0 & 127) << j++ * 7;
+            i |= (long) (b0 & 127) << j++ * 7;
             if (j > 10) {
                 throw new RuntimeException("VarLong too big");
             }
@@ -35,11 +35,11 @@ public class PortVarLong {
 
     public static ByteBuf write(ByteBuf buffer, long value) {
         while ((value & -128L) != 0L) {
-            buffer.writeByte((int)(value & 127L) | 128);
+            buffer.writeByte((int) (value & 127L) | 128);
             value >>>= 7;
         }
 
-        buffer.writeByte((int)value);
+        buffer.writeByte((int) value);
         return buffer;
     }
 }

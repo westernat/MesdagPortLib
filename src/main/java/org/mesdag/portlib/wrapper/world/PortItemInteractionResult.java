@@ -23,7 +23,8 @@ public enum PortItemInteractionResult {
             case SUCCESS -> InteractionResult.SUCCESS;
             case CONSUME -> InteractionResult.CONSUME;
             case CONSUME_PARTIAL -> InteractionResult.CONSUME_PARTIAL;
-            case PASS_TO_DEFAULT_BLOCK_INTERACTION, SKIP_DEFAULT_BLOCK_INTERACTION -> InteractionResult.PASS;
+            case PASS_TO_DEFAULT_BLOCK_INTERACTION, SKIP_DEFAULT_BLOCK_INTERACTION ->
+                    InteractionResult.PASS;
             case FAIL -> InteractionResult.FAIL;
         };
     }

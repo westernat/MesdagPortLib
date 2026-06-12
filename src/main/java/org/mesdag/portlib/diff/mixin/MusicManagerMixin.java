@@ -18,7 +18,7 @@ public abstract class MusicManagerMixin {
     @Nullable
     private SoundInstance currentMusic;
 
-    @ModifyExpressionValue(method = "tick",at= @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getSituationalMusic()Lnet/minecraft/sounds/Music;"))
+    @ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getSituationalMusic()Lnet/minecraft/sounds/Music;"))
     private Music selectMusic(Music original) {
         var event = new PortSelectMusicEvent(original, currentMusic);
         PortEventHandler.postEvent(event);

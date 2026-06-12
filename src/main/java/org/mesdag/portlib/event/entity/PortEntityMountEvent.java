@@ -13,9 +13,11 @@ public class PortEntityMountEvent extends PortEntityEvent<EntityMountEvent> impl
     public PortEntityMountEvent(EntityMountEvent e) {
         super(e);
     }
+
     public boolean isMounting() {
         return e.isMounting();
     }
+
     public boolean isDismounting() {
         return e.isDismounting();
     }

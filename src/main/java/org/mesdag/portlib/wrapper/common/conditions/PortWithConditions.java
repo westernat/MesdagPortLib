@@ -19,6 +19,7 @@ public record PortWithConditions<A>(List<ICondition> conditions, A carrier) {
     public static <A> Builder<A> builder(A carrier) {
         return new Builder<A>().withCarrier(carrier);
     }
+
     public static class Builder<T> {
         private final List<ICondition> conditions = new ArrayList<>();
         private T carrier;

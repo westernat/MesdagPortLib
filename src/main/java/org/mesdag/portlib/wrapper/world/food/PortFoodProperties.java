@@ -70,7 +70,8 @@ public class PortFoodProperties {
         return data;
     }
 
-    public record PortPossibleEffect(Supplier<MobEffectInstance> effectSupplier, float probability) {
+    public record PortPossibleEffect(Supplier<MobEffectInstance> effectSupplier,
+                                     float probability) {
         public MobEffectInstance effect() {
             return new MobEffectInstance(this.effectSupplier.get());
         }

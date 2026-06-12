@@ -15,7 +15,7 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
     private final ItemEntity item;
 
     @Diff
-    public PortItemEntityPickupEvent(E e, ItemEntity item){
+    public PortItemEntityPickupEvent(E e, ItemEntity item) {
         super(e);
         this.item = item;
     }

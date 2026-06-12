@@ -27,7 +27,8 @@ public class PortModifyDefaultComponentsEvent extends Event implements IModBusEv
         patch.accept(builder);
         var compPatch = builder.build();
         if (!compPatch.isEmpty()) {
-            if (!canModifyComponents()) throw new IllegalStateException("Default components cannot be modified now!");
+            if (!canModifyComponents())
+                throw new IllegalStateException("Default components cannot be modified now!");
             var builder2 = PortDataComponentMap.builder();
             IPortItem portItem = IPortItem.of(item.asItem());
             for (Map.Entry<PortDataComponentType<?>, Object> entry : portItem.portlib$getComponents().entrySet()) {
