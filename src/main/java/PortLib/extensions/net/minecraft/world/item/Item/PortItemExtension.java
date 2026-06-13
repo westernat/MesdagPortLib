@@ -17,6 +17,11 @@ public class PortItemExtension {
         return IPortItemExtension.of(thiz).getDefaultPortAttributeModifiers(stack);
     }
 
+    @SuppressWarnings("deprecation")
+    public static int getDefaultMaxStackSize(Item thiz) {
+        return thiz.getMaxStackSize();
+    }
+
     public static class Properties {
         private static PortDataComponentMap.@NotNull PortBuilder getOrCreateBuilder(Item.Properties thiz) {
             IPortItem.IPortProperties port = IPortItem.IPortProperties.of(thiz);

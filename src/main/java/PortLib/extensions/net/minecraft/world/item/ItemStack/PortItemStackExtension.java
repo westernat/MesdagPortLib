@@ -31,6 +31,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraftforge.registries.RegistryObject;
@@ -786,5 +787,17 @@ public class PortItemStackExtension {
         PortPatchedDataComponentMap patchA = IPortItemStack.of(stack).portlib$patch();
         PortPatchedDataComponentMap patchB = IPortItemStack.of(other).portlib$patch();
         return Objects.equals(patchA, patchB);
+    }
+
+    public static ItemStack transmuteCopy(ItemStack thiz, ItemLike item) {
+        return null;
+    }
+
+    public static ItemStack transmuteCopy(ItemStack thiz, ItemLike item, int count) {
+        return thiz.isEmpty() ? ItemStack.EMPTY : transmuteCopyIgnoreEmpty(thiz, item, count);
+    }
+
+    private static ItemStack transmuteCopyIgnoreEmpty(ItemStack thiz, ItemLike item, int count) {
+        return new ItemStack(item, count, thiz.getTag());
     }
 }

@@ -5,8 +5,12 @@ import net.minecraftforge.common.ToolAction;
 import org.mesdag.portlib.diff.Diff;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PortItemAbility {
+    private static final Map<ToolAction, PortItemAbility> wrapper = new ConcurrentHashMap<>();
+
     private final ToolAction delegate;
 
     private PortItemAbility(ToolAction delegate) {
@@ -28,10 +32,20 @@ public class PortItemAbility {
 
     @Diff
     public static PortItemAbility wrap(ToolAction delegate) {
-        return new PortItemAbility(delegate);
+        return wrapper.computeIfAbsent(delegate, PortItemAbility::new);
     }
 
     public String name() {
         return delegate.name();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || (obj instanceof PortItemAbility ability && ability.delegate == delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
     }
 }

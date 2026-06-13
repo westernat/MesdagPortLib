@@ -20,12 +20,11 @@ public class PortDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(PortTags.DamageTypes.IS_MAGIC)
-                .add(
-                        DamageTypes.MAGIC,
-                        DamageTypes.INDIRECT_MAGIC,
-                        DamageTypes.THORNS,
-                        DamageTypes.DRAGON_BREATH
-                );
+        tag(PortTags.DamageTypes.IS_MAGIC).add(
+                DamageTypes.MAGIC,
+                DamageTypes.INDIRECT_MAGIC,
+                DamageTypes.THORNS,
+                DamageTypes.DRAGON_BREATH
+        );
     }
 }

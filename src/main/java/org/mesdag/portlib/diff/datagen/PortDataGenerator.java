@@ -26,6 +26,8 @@ public class PortDataGenerator {
         generator.addProvider(server, new PortDamageTypeTagsProvider(output, provider, helper));
         PortBlockTagsProvider blockTagsProvider = generator.addProvider(server, new PortBlockTagsProvider(output, provider, helper));
         generator.addProvider(server, new PortItemTagsProvider(output, provider, blockTagsProvider.contentsGetter(), helper));
+        generator.addProvider(server, new PortBiomeTagsProvider(output, provider, helper));
+        generator.addProvider(server, new PortEntityTypeTagsProvider(output, provider, helper));
 
         boolean client = event.includeClient();
         generator.addProvider(client, new PortLanguageProvider(output, "en_us"));

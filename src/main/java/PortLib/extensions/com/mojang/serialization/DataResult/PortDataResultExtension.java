@@ -34,4 +34,11 @@ public class PortDataResultExtension {
         thiz.error().ifPresent(r -> action.accept(r.message()));
         return thiz;
     }
+
+    public static <R, T> T mapOrElse(DataResult<R> thiz, Function<? super R, ? extends T> successFunction, Function<? super DataResult.PartialResult<R>, ? extends T> errorFunction) {
+        if (thiz.result().isPresent()) {
+            return successFunction.apply(thiz.result().get());
+        }
+        return errorFunction.apply(thiz.error().orElseThrow());
+    }
 }

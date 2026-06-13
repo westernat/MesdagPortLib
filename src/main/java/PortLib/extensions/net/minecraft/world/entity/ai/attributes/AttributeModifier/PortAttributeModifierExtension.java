@@ -1,6 +1,7 @@
 package PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
@@ -11,12 +12,13 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 public class PortAttributeModifierExtension {
-    private static final Codec<AttributeModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    private static final MapCodec<AttributeModifier> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(AttributeModifier::getId),
             Codec.STRING.fieldOf("name").forGetter(AttributeModifier::getName),
             Codec.DOUBLE.fieldOf("amount").forGetter(AttributeModifier::getAmount),
             Operation.codec().fieldOf("operation").forGetter(AttributeModifier::getOperation)
     ).apply(instance, AttributeModifier::new));
+    private static final Codec<AttributeModifier> CODEC = MAP_CODEC.codec();
     private static final PortStreamCodec<FriendlyByteBuf, AttributeModifier> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.UUID, AttributeModifier::getId,
             PortByteBufCodecs.STRING_UTF8, AttributeModifier::getName,
@@ -24,6 +26,10 @@ public class PortAttributeModifierExtension {
             Operation.streamCodec(), AttributeModifier::getOperation,
             AttributeModifier::new
     );
+
+    public static MapCodec<AttributeModifier> mapCodec() {
+        return MAP_CODEC;
+    }
 
     public static Codec<AttributeModifier> codec() {
         return CODEC;

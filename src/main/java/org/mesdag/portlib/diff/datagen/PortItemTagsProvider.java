@@ -3,12 +3,12 @@ package org.mesdag.portlib.diff.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
@@ -23,13 +23,13 @@ public class PortItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(PortTags.Items.TOOLS_SHIELD).add(Items.SHIELD);
-        tag(PortTags.Items.TOOLS_BOW).add(Items.BOW);
+        tag(Tags.Items.TOOLS_SHIELDS, PortTags.Items.TOOLS_SHIELD).add(Items.SHIELD);
+        tag(Tags.Items.TOOLS_BOWS, PortTags.Items.TOOLS_BOW).add(Items.BOW);
         tag(PortTags.Items.TOOLS_BRUSH).add(Items.BRUSH);
-        tag(PortTags.Items.TOOLS_CROSSBOW).add(Items.CROSSBOW);
-        tag(PortTags.Items.TOOLS_FISHING_ROD).add(Items.FISHING_ROD);
+        tag(Tags.Items.TOOLS_CROSSBOWS, PortTags.Items.TOOLS_CROSSBOW).add(Items.CROSSBOW);
+        tag(Tags.Items.TOOLS_FISHING_RODS, PortTags.Items.TOOLS_FISHING_ROD).add(Items.FISHING_ROD);
         tag(PortTags.Items.TOOLS_SHEAR).add(Items.SHEARS);
-        tag(PortTags.Items.TOOLS_SPEAR).add(Items.TRIDENT);
+        tag(Tags.Items.TOOLS_TRIDENTS, PortTags.Items.TOOLS_SPEAR).add(Items.TRIDENT);
         tag(PortTags.Items.TOOLS_IGNITER).add(Items.FLINT_AND_STEEL);
         tag(PortTags.Items.TOOLS_WRENCH);
         tag(PortTags.Items.MINING_TOOL_TOOLS).add(Items.WOODEN_PICKAXE, Items.STONE_PICKAXE, Items.GOLDEN_PICKAXE, Items.IRON_PICKAXE, Items.DIAMOND_PICKAXE, Items.NETHERITE_PICKAXE);
@@ -38,17 +38,23 @@ public class PortItemTagsProvider extends ItemTagsProvider {
                 Items.WOODEN_SWORD, Items.STONE_SWORD, Items.GOLDEN_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD,
                 Items.WOODEN_AXE, Items.STONE_AXE, Items.GOLDEN_AXE, Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE);
         tag(PortTags.Items.RANGED_WEAPON_TOOLS).add(Items.BOW, Items.CROSSBOW, Items.TRIDENT);
-        tag(PortTags.Items.TOOLS)
+        tag(Tags.Items.TOOLS, PortTags.Items.TOOLS)
                 .addTags(ItemTags.AXES, ItemTags.HOES, ItemTags.PICKAXES, ItemTags.SHOVELS, ItemTags.SWORDS)
                 .addTags(PortTags.Items.TOOLS_BOW, PortTags.Items.TOOLS_BRUSH, PortTags.Items.TOOLS_CROSSBOW, PortTags.Items.TOOLS_FISHING_ROD,
                         PortTags.Items.TOOLS_IGNITER, PortTags.Items.TOOLS_SHEAR, PortTags.Items.TOOLS_SHIELD, PortTags.Items.TOOLS_SPEAR,
                         PortTags.Items.TOOLS_WRENCH,
                         PortTags.Items.MINING_TOOL_TOOLS, PortTags.Items.MELEE_WEAPON_TOOLS, PortTags.Items.RANGED_WEAPON_TOOLS);
+
+        tag(Tags.Items.SEEDS, PortTags.Items.SEEDS).addTags(Tags.Items.SEEDS_BEETROOT, Tags.Items.SEEDS_MELON, Tags.Items.SEEDS_PUMPKIN, Tags.Items.SEEDS_TORCHFLOWER, Tags.Items.SEEDS_WHEAT);
+        tag(Tags.Items.SEEDS_BEETROOT, PortTags.Items.SEEDS_BEETROOT).add(Items.BEETROOT_SEEDS);
+        tag(Tags.Items.SEEDS_MELON, PortTags.Items.SEEDS_MELON).add(Items.MELON_SEEDS);
+        tag(Tags.Items.SEEDS_PUMPKIN, PortTags.Items.SEEDS_PUMPKIN).add(Items.PUMPKIN_SEEDS);
+        tag(PortTags.Items.SEEDS_TORCHFLOWER).add(Items.TORCHFLOWER_SEEDS);
+        tag(Tags.Items.SEEDS_WHEAT, PortTags.Items.SEEDS_WHEAT).add(Items.WHEAT_SEEDS);
     }
 
-    @Override
-    protected IntrinsicTagAppender<Item> tag(TagKey<Item> tag) {
-        super.tag(TagKey.create(tag.registry(), ResourceLocation.fromNamespaceAndPath("forge", tag.location().getPath()))).addTag(tag);
-        return super.tag(tag);
+    protected IntrinsicTagAppender<Item> tag(TagKey<Item> forgeTag, TagKey<Item> commonTag) {
+        super.tag(forgeTag).addTag(commonTag);
+        return super.tag(commonTag);
     }
 }

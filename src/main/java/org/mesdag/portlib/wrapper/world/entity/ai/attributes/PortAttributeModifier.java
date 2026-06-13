@@ -2,6 +2,7 @@ package org.mesdag.portlib.wrapper.world.entity.ai.attributes;
 
 import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -17,17 +18,22 @@ import java.util.UUID;
 import java.util.function.IntFunction;
 
 public record PortAttributeModifier(ResourceLocation id, double amount, PortOperation operation) {
-    public static final Codec<PortAttributeModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<PortAttributeModifier> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(PortAttributeModifier::id),
             Codec.DOUBLE.fieldOf("amount").forGetter(PortAttributeModifier::amount),
             PortOperation.CODEC.fieldOf("operation").forGetter(PortAttributeModifier::operation)
     ).apply(instance, PortAttributeModifier::new));
+    public static final Codec<PortAttributeModifier> CODEC = MAP_CODEC.codec();
     public static final PortStreamCodec<ByteBuf, PortAttributeModifier> STREAM_CODEC = PortStreamCodec.composite(
             PortResourceLocationExtension.streamCodec(), PortAttributeModifier::id,
             PortByteBufCodecs.DOUBLE, PortAttributeModifier::amount,
             PortOperation.STREAM_CODEC, PortAttributeModifier::operation,
             PortAttributeModifier::new
     );
+
+    public boolean is(ResourceLocation id) {
+        return id.equals(this.id);
+    }
 
     private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
 

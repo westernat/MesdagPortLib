@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.item.alchemy;
 
-import com.google.common.collect.Lists;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -8,8 +7,8 @@ import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
+import net.minecraftforge.common.brewing.IBrewingRecipe;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.common.brewing.IPortBrewingRecipe;
 
 import java.util.List;
 
@@ -46,8 +45,8 @@ public class PortPotionBrewing {
         return isValidInput(stack) || PotionBrewing.ALLOWED_CONTAINER.test(stack);
     }
 
-    public List<IPortBrewingRecipe> getRecipes() {
-        return Lists.transform(BrewingRecipeRegistry.getRecipes(), IPortBrewingRecipe::wrap);
+    public List<IBrewingRecipe> getRecipes() {
+        return BrewingRecipeRegistry.getRecipes();
     }
 
     public boolean isContainerIngredient(ItemStack stack) {
@@ -115,8 +114,8 @@ public class PortPotionBrewing {
             BrewingRecipeRegistry.addRecipe(input, ingredient, output);
         }
 
-        public void addRecipe(IPortBrewingRecipe recipe) {
-            BrewingRecipeRegistry.addRecipe(recipe.unwrap());
+        public void addRecipe(IBrewingRecipe recipe) {
+            BrewingRecipeRegistry.addRecipe(recipe);
         }
     }
 }
