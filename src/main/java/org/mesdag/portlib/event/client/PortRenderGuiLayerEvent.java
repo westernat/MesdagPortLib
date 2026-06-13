@@ -4,8 +4,8 @@ import PortLib.extensions.net.minecraftforge.client.gui.overlay.IGuiOverlay.Port
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import org.mesdag.portlib.client.GuiLayer;
 import org.mesdag.portlib.client.PortDeltaTicker;
+import org.mesdag.portlib.client.PortGuiLayer;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
@@ -13,7 +13,7 @@ import org.mesdag.portlib.event.PortEventHooks;
 
 public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> extends PortEvent<E> {
     private ResourceLocation identifier;
-    private GuiLayer layer;
+    private PortGuiLayer layer;
 
     @Diff
     public PortRenderGuiLayerEvent(E e) {
@@ -35,7 +35,7 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
         return identifier;
     }
 
-    public GuiLayer getLayer() {
+    public PortGuiLayer getLayer() {
         if (layer == null) {
             this.layer = PortIGuiOverlayExtension.wrap(e.getOverlay().overlay());
         }

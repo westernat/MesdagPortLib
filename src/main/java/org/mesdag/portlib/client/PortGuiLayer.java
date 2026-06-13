@@ -6,7 +6,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.mesdag.portlib.diff.Diff;
 
-public interface GuiLayer {
+public interface PortGuiLayer {
     void render(GuiGraphics guiGraphics, PortDeltaTicker ticker);
 
     @Diff
@@ -16,7 +16,7 @@ public interface GuiLayer {
     }
 
     @Diff
-    record Delegate(IGuiOverlay delegate) implements GuiLayer {
+    record Delegate(IGuiOverlay delegate) implements PortGuiLayer {
         @Override
         public void render(GuiGraphics guiGraphics, PortDeltaTicker ticker) {
             delegate.render(

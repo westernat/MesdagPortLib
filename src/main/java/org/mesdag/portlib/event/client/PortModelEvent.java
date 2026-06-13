@@ -13,6 +13,8 @@ import org.mesdag.portlib.event.IPortModBusEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
+import java.util.Map;
+
 public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> {
     @Diff
     public PortModelEvent(E e) {
@@ -27,6 +29,11 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
 
         public @Nullable BakedModel getModel(ModelResourceLocation location) {
             return e.getModels().get(location);
+        }
+
+        @Diff
+        public Map<ResourceLocation, BakedModel> getModels() {
+            return e.getModels();
         }
 
         public @Nullable BakedModel setModel(ModelResourceLocation location, BakedModel model) {

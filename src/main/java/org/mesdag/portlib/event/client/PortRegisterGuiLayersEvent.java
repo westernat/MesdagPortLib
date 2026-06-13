@@ -4,7 +4,7 @@ import PortLib.extensions.net.minecraftforge.client.gui.overlay.IGuiOverlay.Port
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-import org.mesdag.portlib.client.GuiLayer;
+import org.mesdag.portlib.client.PortGuiLayer;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.mixin.RegisterGuiOverlaysEventAccessor;
 import org.mesdag.portlib.event.IPortModBusEvent;
@@ -20,27 +20,27 @@ public class PortRegisterGuiLayersEvent extends PortEvent<RegisterGuiOverlaysEve
         super(e);
     }
 
-    public void registerBelowAll(ResourceLocation id, GuiLayer layer) {
+    public void registerBelowAll(ResourceLocation id, PortGuiLayer layer) {
         e.registerBelowAll(id.getPath(), layer.unwrap());
     }
 
-    public void registerBelow(ResourceLocation other, ResourceLocation id, GuiLayer layer) {
+    public void registerBelow(ResourceLocation other, ResourceLocation id, PortGuiLayer layer) {
         e.registerBelow(other, id.getPath(), layer.unwrap());
     }
 
-    public void registerAbove(ResourceLocation other, ResourceLocation id, GuiLayer layer) {
+    public void registerAbove(ResourceLocation other, ResourceLocation id, PortGuiLayer layer) {
         e.registerAbove(other, id.getPath(), layer.unwrap());
     }
 
-    public void registerAboveAll(ResourceLocation id, GuiLayer layer) {
+    public void registerAboveAll(ResourceLocation id, PortGuiLayer layer) {
         e.registerAboveAll(id.getPath(), layer.unwrap());
     }
 
-    public void replaceLayer(ResourceLocation id, GuiLayer replacement) {
+    public void replaceLayer(ResourceLocation id, PortGuiLayer replacement) {
         wrapLayer(id, layer -> replacement);
     }
 
-    public void wrapLayer(ResourceLocation id, UnaryOperator<GuiLayer> wrapper) {
+    public void wrapLayer(ResourceLocation id, UnaryOperator<PortGuiLayer> wrapper) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(wrapper);
 
