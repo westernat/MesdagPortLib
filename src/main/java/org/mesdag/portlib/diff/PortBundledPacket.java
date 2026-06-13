@@ -13,7 +13,8 @@ import java.util.Map;
 @Diff
 @SuppressWarnings("all")
 public record PortBundledPacket(
-        LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map) implements IPortPacket {
+        LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map
+) implements IPortPacket {
     public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("portlib", "bundled");
     public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC = new PortStreamCodec<>() {
         @Override

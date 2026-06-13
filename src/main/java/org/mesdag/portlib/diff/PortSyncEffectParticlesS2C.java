@@ -12,8 +12,10 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 
 import java.util.List;
 
-public record PortSyncEffectParticlesS2C(int entityId,
-                                         List<ParticleOptions> list) implements IPortPacket.S2C {
+public record PortSyncEffectParticlesS2C(
+        int entityId,
+        List<ParticleOptions> list
+) implements IPortPacket.S2C {
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("sync_effect_particles");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncEffectParticlesS2C> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.VAR_INT, PortSyncEffectParticlesS2C::entityId,

@@ -22,16 +22,8 @@ public class PortComponentSerialization {
             return DataResult.success(JsonOps.INSTANCE.convertTo(ops, Component.Serializer.toJsonTree(input)), Lifecycle.stable());
         }
     };
-
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Component> STREAM_CODEC =
-            PortByteBufCodecs.fromCodecWithRegistries(CODEC);
-
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Optional<Component>> OPTIONAL_STREAM_CODEC =
-            STREAM_CODEC.apply(PortByteBufCodecs::optional);
-
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Component> TRUSTED_STREAM_CODEC =
-            PortByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
-
-    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Optional<Component>> TRUSTED_OPTIONAL_STREAM_CODEC =
-            TRUSTED_STREAM_CODEC.apply(PortByteBufCodecs::optional);
+    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Component> STREAM_CODEC = PortByteBufCodecs.fromCodecWithRegistries(CODEC);
+    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Optional<Component>> OPTIONAL_STREAM_CODEC = STREAM_CODEC.apply(PortByteBufCodecs::optional);
+    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Component> TRUSTED_STREAM_CODEC = PortByteBufCodecs.fromCodecWithRegistriesTrusted(CODEC);
+    public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Optional<Component>> TRUSTED_OPTIONAL_STREAM_CODEC = TRUSTED_STREAM_CODEC.apply(PortByteBufCodecs::optional);
 }

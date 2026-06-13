@@ -1,5 +1,6 @@
 package org.mesdag.portlib.event.other;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.eventbus.api.Event;
@@ -23,13 +24,14 @@ public class PortModifyDefaultComponentsEvent extends Event implements IModBusEv
     public PortModifyDefaultComponentsEvent() {}
 
     public void modify(ItemLike item, Consumer<PortDataComponentPatch.PortBuilder> patch) {
-        var builder = PortDataComponentPatch.builder();
+        PortDataComponentPatch.PortBuilder builder = PortDataComponentPatch.builder();
         patch.accept(builder);
-        var compPatch = builder.build();
+        Reference2ObjectMap<PortDataComponentType<?>, Optional<?>> compPatch = builder.build();
         if (!compPatch.isEmpty()) {
-            if (!canModifyComponents())
+            if (!canModifyComponents()) {
                 throw new IllegalStateException("Default components cannot be modified now!");
-            var builder2 = PortDataComponentMap.builder();
+            }
+            PortDataComponentMap.PortBuilder builder2 = PortDataComponentMap.builder();
             IPortItem portItem = IPortItem.of(item.asItem());
             for (Map.Entry<PortDataComponentType<?>, Object> entry : portItem.portlib$getComponents().entrySet()) {
                 builder2.set((PortDataComponentType) entry.getKey(), entry.getValue());

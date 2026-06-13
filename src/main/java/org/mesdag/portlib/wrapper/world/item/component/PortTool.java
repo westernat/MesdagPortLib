@@ -46,9 +46,9 @@ public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damag
     }
 
     public float getMiningSpeed(BlockState state) {
-        for (PortRule tool$rule : this.rules) {
-            if (tool$rule.speed.isPresent() && state.is(tool$rule.blocks)) {
-                return tool$rule.speed.get();
+        for (PortRule rule : rules) {
+            if (rule.speed.isPresent() && state.is(rule.blocks)) {
+                return rule.speed.get();
             }
         }
 
@@ -56,7 +56,7 @@ public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damag
     }
 
     public boolean isCorrectForDrops(BlockState state) {
-        for (PortRule rule : this.rules) {
+        for (PortRule rule : rules) {
             if (rule.correctForDrops.isPresent() && state.is(rule.blocks)) {
                 return rule.correctForDrops.get();
             }
@@ -65,8 +65,11 @@ public record PortTool(List<PortRule> rules, float defaultMiningSpeed, int damag
         return false;
     }
 
-    public record PortRule(HolderSet<Block> blocks, Optional<Float> speed,
-                           Optional<Boolean> correctForDrops) {
+    public record PortRule(
+            HolderSet<Block> blocks,
+            Optional<Float> speed,
+            Optional<Boolean> correctForDrops
+    ) {
         @Diff
         public static final Codec<PortRule> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("blocks").forGetter(PortRule::blocks),
