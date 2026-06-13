@@ -20,6 +20,6 @@ public class PortImageButton extends Button {
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         PortSprite sprite = sprites.get(isActive(), isHoveredOrFocused());
-        guiGraphics.blit(sprite.path(), getX(), getY(), 0, 0, sprite.width(), sprite.height());
+        guiGraphics.blit(sprite.path(), getX(), getY(), 0, 0, sprite.textureW(), sprite.textureH());
     }
 }

@@ -27,6 +27,6 @@ public class PortGuiGraphicsExtension {
             int width,
             int height
     ) {
-        thiz.blit(sprite.path(), x, y, 0, 0, width, height, sprite.width(), sprite.height());
+        thiz.blit(sprite.path(), x, y, 0, 0, width, height, sprite.textureW(), sprite.textureH());
     }
 }

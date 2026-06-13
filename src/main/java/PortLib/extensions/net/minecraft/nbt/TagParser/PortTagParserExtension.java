@@ -1,5 +1,6 @@
 package PortLib.extensions.net.minecraft.nbt.TagParser;
 
+import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
@@ -16,8 +17,13 @@ public class PortTagParserExtension {
             return DataResult.error(commandsyntaxexception::getMessage);
         }
     }, CompoundTag::toString);
+    private static final Codec<CompoundTag> LENIENT_CODEC = PortCodecExtension.withAlternative(AS_CODEC, CompoundTag.CODEC);
 
     public static Codec<CompoundTag> asCodec() {
         return AS_CODEC;
+    }
+
+    public static Codec<CompoundTag> lenientCodec() {
+        return LENIENT_CODEC;
     }
 }

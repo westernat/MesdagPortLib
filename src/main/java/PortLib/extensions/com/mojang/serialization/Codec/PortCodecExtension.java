@@ -14,6 +14,8 @@ import org.joml.Vector4f;
 import org.mesdag.portlib.diff.MemoizeCodec;
 import org.mesdag.portlib.util.Static;
 
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -107,6 +109,16 @@ public class PortCodecExtension {
         return Codec.of(Codec.unit(() -> {
             throw new UnsupportedOperationException("Cannot encode with decode-only codec! Decoder:" + decoder);
         }), decoder, "DecodeOnly[" + decoder + "]");
+    }
+
+    public static Codec<TemporalAccessor> temporalCodec(DateTimeFormatter dateTimeFormatter) {
+        return Codec.STRING.comapFlatMap(s -> {
+            try {
+                return DataResult.success(dateTimeFormatter.parse(s));
+            } catch (Exception exception) {
+                return DataResult.error(exception::getMessage);
+            }
+        }, dateTimeFormatter::format);
     }
 
     public record StrictUnboundedMapCodec<K, V>(
