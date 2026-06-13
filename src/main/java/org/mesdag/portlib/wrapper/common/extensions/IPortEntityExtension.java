@@ -1,5 +1,7 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
+import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +13,10 @@ import org.mesdag.portlib.wrapper.world.entity.projectile.PortProjectileDeflecti
 public interface IPortEntityExtension {
     private Entity self() {
         return (Entity) this;
+    }
+
+    default RandomSource getRandom() {
+        return PortEntityExtension.getRandom(self());
     }
 
     default double getDefaultGravity() {
