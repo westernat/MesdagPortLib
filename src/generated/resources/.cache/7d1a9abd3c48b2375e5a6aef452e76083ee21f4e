@@ -1,4 +1,10 @@
-// 1.20.1	2026-06-10T17:15:21.6559306	Tags for minecraft:item mod id portlib
+// 1.20.1	2026-06-14T17:23:19.8485808	Tags for minecraft:item mod id portlib
+fd38c5f23eb150e8e29262dd9a64cc8531f05fc3 data/c/tags/items/seeds.json
+6871b1830ee993998ede4d3c7d711d9b6a87da45 data/c/tags/items/seeds/beetroot.json
+e18010b7b33e33c79f0d5417dd5bb2bc8becd9df data/c/tags/items/seeds/melon.json
+ec4d4e5da2dc7272e7d62f0352e3344ecd4ad4c6 data/c/tags/items/seeds/pumpkin.json
+49731163f40c037fed63e50ebb86dc7fd3d2722b data/c/tags/items/seeds/torchflower.json
+7ac57902a3f34c01ee83f2494b639f97006fd03a data/c/tags/items/seeds/wheat.json
 53ac2ed636c63ad84ad6a88c6dde3afee4690a07 data/c/tags/items/tools.json
 0d7a4c11ebf0aae0af19bacbd70cea4cdca1a342 data/c/tags/items/tools/bow.json
 c55926aed5c1a08b4213a82c87157d41c236524b data/c/tags/items/tools/brush.json
@@ -12,16 +18,14 @@ a709d8f8d41f5742079c43262bdb0115f2c94cf4 data/c/tags/items/tools/ranged_weapon.j
 ea404a0ab7a6f867ef91e88ed35fb7429c480842 data/c/tags/items/tools/shield.json
 2bf3a7eafd69c022433bc4f2776944d90e7c7cbf data/c/tags/items/tools/spear.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/c/tags/items/tools/wrench.json
+788e6e34a201c014ae3783bc128afbd75443273b data/forge/tags/items/seeds.json
+4184ab77bf5dc2f813097068ed05bb14285c9fc7 data/forge/tags/items/seeds/beetroot.json
+e94d01327a91af0b9269ca00304b15b63d19a6a8 data/forge/tags/items/seeds/melon.json
+7f2d3271b2cf4b43aed0ef908c9399ec07e45f98 data/forge/tags/items/seeds/pumpkin.json
+ebb7288a8310ca6993643781a20c35b3b0e21f15 data/forge/tags/items/seeds/wheat.json
 efcb42d31e2831ec1e84fcb8b772621a665ca299 data/forge/tags/items/tools.json
-7425b018afe4c9dce3af0f6ff146b9eb092f862e data/forge/tags/items/tools/bow.json
-97702667db0ce600be298b669c82e872fe8e89ea data/forge/tags/items/tools/brush.json
-67546a11d5e109cd26c83facf966bddc4a56daf8 data/forge/tags/items/tools/crossbow.json
-d001ea966705c07ca0b05df91b9ae94ebf944bdd data/forge/tags/items/tools/fishing_rod.json
-2b4a1688e23305eaa49ff4596f5c22eb6051e07c data/forge/tags/items/tools/igniter.json
-1bea391a4356ee58811582c505694aa1c3cd584c data/forge/tags/items/tools/melee_weapon.json
-01e6d917c3e2219ccb301dd84ab1a8de715b7b46 data/forge/tags/items/tools/mining_tool.json
-0af6c953bad23689d207c1caf86170311282bfa4 data/forge/tags/items/tools/ranged_weapon.json
-06c10c0bf30184ff1fcfbf3b5f75bf9590edbfb8 data/forge/tags/items/tools/shear.json
-1f682ba07abf1279ecfe5260e0283610c2c1718f data/forge/tags/items/tools/shield.json
-cb0c598bfd1a71dcd0f10eba79896a736c7f6c0b data/forge/tags/items/tools/spear.json
-85434dfa942bd02b48f061627d567bca91caf436 data/forge/tags/items/tools/wrench.json
+7425b018afe4c9dce3af0f6ff146b9eb092f862e data/forge/tags/items/tools/bows.json
+67546a11d5e109cd26c83facf966bddc4a56daf8 data/forge/tags/items/tools/crossbows.json
+d001ea966705c07ca0b05df91b9ae94ebf944bdd data/forge/tags/items/tools/fishing_rods.json
+1f682ba07abf1279ecfe5260e0283610c2c1718f data/forge/tags/items/tools/shields.json
+cb0c598bfd1a71dcd0f10eba79896a736c7f6c0b data/forge/tags/items/tools/tridents.json

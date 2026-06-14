@@ -47,6 +47,22 @@ public class PortLanguageProvider extends LanguageProvider {
         addAttribute(PortLib.SWEEPING_DAMAGE_RATIO, "Sweeping Damage Ratio", "横扫伤害比例");
         addAttribute(PortLib.WATER_MOVEMENT_EFFICIENCY, "Water Movement Efficiency", "水中移动效率");
         addAttribute(PortLib.CREATIVE_FLIGHT, "Creative Flight", "创造飞行");
+
+        add("portlib.value.flat", "%s");
+        add("portlib.value.percent", "%s%%");
+        add("portlib.value.boolean.enabled", "Enabled");
+        add("portlib.value.boolean.disabled", "Disabled");
+        add("portlib.value.boolean.enable", "Enables");
+        add("portlib.value.boolean.disable", "Disables");
+        add("portlib.value.boolean.invalid", "Invalid");
+        add("portlib.modifier.plus", "+%s %s");
+        add("portlib.modifier.take", "%s %s");
+        add("portlib.modifier.bool", "%s %s");
+    }
+
+    @Override
+    public void add(String key, String value) {
+        add(key, value, value);
     }
 
     private void addAttribute(PortRegistryEntry<Attribute, ?> entry, String en, String zh) {
@@ -79,9 +95,9 @@ public class PortLanguageProvider extends LanguageProvider {
     }
 
     private void add(String key, String en, String zh) {
-        if (locale.equals("en_us") && !enData.containsKey(key)) {
+        if (locale.equals("en_us")) {
             enData.put(key, en);
-        } else if (locale.equals("zh_cn") && !zhData.containsKey(key)) {
+        } else if (locale.equals("zh_cn")) {
             zhData.put(key, zh);
         }
     }

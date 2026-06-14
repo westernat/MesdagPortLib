@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.EnumMap;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @Mixin(Inventory.class)
@@ -42,7 +41,11 @@ public abstract class InventoryMixin {
             @Local(name = "i") int i,
             @Share("actions") LocalRef<ItemStack$hurtAndBreakAction[]> actions
     ) {
-        Objects.requireNonNullElseGet(actions.get(), () -> new ItemStack$hurtAndBreakAction[armor.size()])[i] = new ItemStack$hurtAndBreakAction();
+        ItemStack$hurtAndBreakAction[] arr = actions.get();
+        if (arr == null) {
+            actions.set(arr = new ItemStack$hurtAndBreakAction[armor.size()]);
+        }
+        arr[i] = new ItemStack$hurtAndBreakAction();
     }
 
     @WrapOperation(method = "hurtArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hurtAndBreak(ILnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
@@ -56,7 +59,9 @@ public abstract class InventoryMixin {
             @Share("actions") LocalRef<ItemStack$hurtAndBreakAction[]> actions
     ) {
         if (instance.isEmpty()) return;
-        actions.get()[i].prepare(instance, amount, entity, onBroken, original);
+        ItemStack$hurtAndBreakAction[] arr = actions.get();
+        if (arr == null) return;
+        arr[i].prepare(instance, amount, entity, onBroken, original);
     }
 
     @Inject(method = "hurtArmor", at = @At("TAIL"))

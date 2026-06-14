@@ -1,1 +1,12 @@
-// 1.20.1	2026-06-10T17:15:21.6579292	Tags for minecraft:block mod id portlib
+// 1.20.1	2026-06-14T17:23:19.8505869	Tags for minecraft:block mod id portlib
+7dd295fc8a115963763baa20b60aa3166411582e data/c/tags/blocks/fences.json
+0226724312343e4e55cefb5d5c255fb4e2c78b0a data/c/tags/blocks/fences/nether_brick.json
+166f2b5d354148da6c0acf8d772e78b03079701c data/c/tags/blocks/fences/wooden.json
+e3d71c010074206cf4386948a2be0f51c7786365 data/c/tags/blocks/fence_gates.json
+ddb932414871cd0cbe76a9d74d02364db576af4f data/c/tags/blocks/fence_gates/wooden.json
+e77e0a3e4b5dd856d2c4e34a87b1918a558c7208 data/c/tags/blocks/stripped_logs.json
+f78912f9da23bd47b84f867d92ab9ca7488025bc data/forge/tags/blocks/fences.json
+c73a1605acddddd08b784568d392e7572f7d0b76 data/forge/tags/blocks/fences/nether_brick.json
+6bb7e594a168142be3629197838155e848d1f753 data/forge/tags/blocks/fences/wooden.json
+bb5f31c76fdb1d6a620aa466e6963a1d07fbb182 data/forge/tags/blocks/fence_gates.json
+e3d71c010074206cf4386948a2be0f51c7786365 data/forge/tags/blocks/fence_gates/wooden.json

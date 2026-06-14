@@ -1,0 +1,22 @@
+// 1.20.1	2026-06-14T17:23:19.8505869	Tags for minecraft:worldgen/biome mod id portlib
+93100f561b356a7487cd24c4d538ab11cbad7b21 data/c/tags/worldgen/biome/is_aquatic.json
+ec7bbb0c9b5fc5378f8716f54862806404f04360 data/c/tags/worldgen/biome/is_deep_ocean.json
+f3ef2895c49e29111297e950661e5bc71a79989e data/c/tags/worldgen/biome/is_desert.json
+5c3213c819535fe4489632f00a33ed84e34d6f98 data/c/tags/worldgen/biome/is_icy.json
+c3d4e55bd4ed5d178abb10df76626eccdab7c209 data/c/tags/worldgen/biome/is_jungle.json
+0f241c94b10e4b16b4304f66ad949bb089955b1e data/c/tags/worldgen/biome/is_lush.json
+61190ea4bb2aac2b31601d0c8d8a2c6d982fc650 data/c/tags/worldgen/biome/is_ocean.json
+92d2cbd84ddef8c77972b539dd8c7cffaa131aed data/c/tags/worldgen/biome/is_river.json
+123a8c4cf362352d397dc85738c4e8bb2ef2dc40 data/c/tags/worldgen/biome/is_savanna.json
+afff4f6ed9005eed29ee2bec0b622752dba359c6 data/c/tags/worldgen/biome/is_shallow_ocean.json
+1223f9d662b262b4e222d9b5d0a16881b26eb137 data/c/tags/worldgen/biome/is_snowy.json
+07ecd21cae8acc4735861c19ee51bbd8457289ae data/c/tags/worldgen/biome/is_taiga.json
+03d08b431bab8eb32092267d261f419cbfb44066 data/c/tags/worldgen/biome/is_tree/coniferous.json
+777b34fb376dad6647f6fc402daf23be1809599a data/c/tags/worldgen/biome/is_tree/deciduous.json
+1d55208258c7814c4d08871f414fc4881a47600d data/c/tags/worldgen/biome/is_tree/jungle.json
+1cd8ac8b4f64a360a8490205bfb452b25b61d9a1 data/c/tags/worldgen/biome/is_tree/savanna.json
+be9f6a39d683262a4408852464ff09b3ee10358b data/c/tags/worldgen/biome/is_underground.json
+98c40a2126e570e3f8487652d336ef244659db8a data/forge/tags/worldgen/biome/is_desert.json
+760f820891ee3f4632fc57a751728106638327cf data/forge/tags/worldgen/biome/is_lush.json
+a48029d72d285a436bb103f8d8bf49ac23feb122 data/forge/tags/worldgen/biome/is_snowy.json
+dad7cf766a255736b41f739e5a7bfe0d01fbec20 data/forge/tags/worldgen/biome/is_underground.json
