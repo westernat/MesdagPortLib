@@ -26,6 +26,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAttribute;
+import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.PortEventHandler;
@@ -78,6 +79,10 @@ public abstract class ItemStackMixin implements IPortItemStack {
     private void init(CallbackInfo ci) {
         assert delegate != null;
         this.portlib$patch = new PortPatchedDataComponentMap(delegate.value());
+        CompoundTag tag = IPortItem.of(getItem()).portlib$defaultTag();
+        if (tag != null) {
+            getOrCreateTag().merge(tag);
+        }
     }
 
     @Override

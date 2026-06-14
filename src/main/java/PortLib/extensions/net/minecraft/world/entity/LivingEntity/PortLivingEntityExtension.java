@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.diff.mixin.LivingEntityAccessor;
@@ -61,7 +62,7 @@ public class PortLivingEntityExtension {
         return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
     }
 
-    public static boolean hasInfiniteMaterials(LivingEntity thiz) {
+    public static boolean hasInfiniteMaterials(@NotNull LivingEntity thiz) {
         if (thiz instanceof Player player) {
             return PortPlayerExtension.hasInfiniteMaterials(player);
         }

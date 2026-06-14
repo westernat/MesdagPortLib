@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
@@ -14,7 +15,7 @@ public interface IPortItem extends PortDataComponentMap, IPortClientExtensionsSe
 
     void portlib$setComponents(Map<PortDataComponentType<?>, Object> map);
 
-    boolean portlib$defaultUnbreakable();
+    @Nullable CompoundTag portlib$defaultTag();
 
     static IPortItem of(Item item) {
         return (IPortItem) item;

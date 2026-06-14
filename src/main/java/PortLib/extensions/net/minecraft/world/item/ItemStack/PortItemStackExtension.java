@@ -2,6 +2,7 @@ package PortLib.extensions.net.minecraft.world.item.ItemStack;
 
 import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
+import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
@@ -39,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
@@ -214,7 +214,7 @@ public class PortItemStackExtension {
         if (tag != null && tag.contains("Unbreakable", Tag.TAG_BYTE)) {
             return tag.getBoolean("Unbreakable");
         }
-        return IPortItem.of(thiz.getItem()).portlib$defaultUnbreakable();
+        return false;
     }
 
     public static void setCustomName(ItemStack thiz, @Nullable Component name) {
@@ -799,5 +799,11 @@ public class PortItemStackExtension {
 
     private static ItemStack transmuteCopyIgnoreEmpty(ItemStack thiz, ItemLike item, int count) {
         return new ItemStack(item, count, thiz.getTag());
+    }
+
+    public static void consume(ItemStack thiz, int amount, @Nullable LivingEntity living) {
+        if (living == null || !PortLivingEntityExtension.hasInfiniteMaterials(living)) {
+            thiz.shrink(amount);
+        }
     }
 }

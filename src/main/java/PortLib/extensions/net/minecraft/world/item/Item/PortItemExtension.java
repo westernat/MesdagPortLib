@@ -64,5 +64,16 @@ public class PortItemExtension {
             getOrCreateBuilder(thiz).setModifiers(modifiers);
             return thiz;
         }
+
+        @Diff
+        public static PortItemAttributeModifiers getAttributes(Item.Properties thiz) {
+            return getOrCreateBuilder(thiz).getModifiers();
+        }
+
+        @Diff
+        public static Item.Properties dyedColor(Item.Properties thiz, int rgb, boolean showInTooltip) {
+            getOrCreateBuilder(thiz).dyedColor(rgb, showInTooltip);
+            return thiz;
+        }
     }
 }

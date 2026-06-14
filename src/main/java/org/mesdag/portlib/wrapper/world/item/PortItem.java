@@ -58,6 +58,12 @@ public class PortItem extends Item {
             super.durability(maxDamage);
             return this;
         }
+
+        @Override
+        public PortProperties stacksTo(int maxStackSize) {
+            super.stacksTo(maxStackSize);
+            return this;
+        }
     }
 
     public interface PortTooltipContext {

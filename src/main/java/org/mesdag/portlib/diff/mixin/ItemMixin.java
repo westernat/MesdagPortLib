@@ -3,6 +3,7 @@ package org.mesdag.portlib.diff.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Cancellable;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -30,9 +31,9 @@ public abstract class ItemMixin implements IPortItem {
     @Unique
     private Map<PortDataComponentType<?>, Object> portlib$prototype = Map.of();
     @Unique
-    private boolean portlib$defaultUnbreakable;
-    @Unique
     private PortItemAttributeModifiers portlib$defaultAttributeModifiers = PortItemAttributeModifiers.EMPTY;
+    @Unique
+    private @Nullable CompoundTag portlib$defaultTag;
 
     @Override
     public Map<PortDataComponentType<?>, Object> portlib$getComponents() {
@@ -50,8 +51,8 @@ public abstract class ItemMixin implements IPortItem {
     }
 
     @Override
-    public boolean portlib$defaultUnbreakable() {
-        return portlib$defaultUnbreakable;
+    public @Nullable CompoundTag portlib$defaultTag() {
+        return portlib$defaultTag;
     }
 
     @Override
@@ -75,8 +76,8 @@ public abstract class ItemMixin implements IPortItem {
         PortBuilder builder = IPortProperties.of(properties).portlib$getBuilder();
         if (builder != null) {
             this.portlib$prototype = builder.getMap();
-            this.portlib$defaultUnbreakable = builder.isUnbreakable();
             this.portlib$defaultAttributeModifiers = builder.getModifiers();
+            this.portlib$defaultTag = builder.getDefaultTag();
         }
     }
 

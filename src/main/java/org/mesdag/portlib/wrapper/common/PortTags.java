@@ -89,6 +89,7 @@ public class PortTags {
         public static final TagKey<Biome> IS_DEEP_OCEAN = common("is_deep_ocean");
         public static final TagKey<Biome> IS_SHALLOW_OCEAN = common("is_shallow_ocean");
         public static final TagKey<Biome> IS_LUSH = common("is_lush");
+        public static final TagKey<Biome> IS_STONY_SHORES = common("is_stony_shores");
 
         public static final TagKey<Biome> IS_CONIFEROUS_TREE = common("is_tree/coniferous");
         public static final TagKey<Biome> IS_SAVANNA_TREE = common("is_tree/savanna");

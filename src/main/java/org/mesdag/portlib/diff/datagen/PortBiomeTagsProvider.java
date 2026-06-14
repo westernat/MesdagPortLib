@@ -35,6 +35,7 @@ public class PortBiomeTagsProvider extends BiomeTagsProvider {
         tag(PortTags.Biomes.IS_SHALLOW_OCEAN).add(Biomes.OCEAN).add(Biomes.LUKEWARM_OCEAN).add(Biomes.WARM_OCEAN).add(Biomes.COLD_OCEAN).add(Biomes.FROZEN_OCEAN);
         tag(PortTags.Biomes.IS_DEEP_OCEAN).addTag(BiomeTags.IS_DEEP_OCEAN);
         tag(Tags.Biomes.IS_LUSH, PortTags.Biomes.IS_LUSH).add(Biomes.LUSH_CAVES);
+        tag(PortTags.Biomes.IS_STONY_SHORES).add(Biomes.STONY_SHORE);
 
         tag(PortTags.Biomes.IS_CONIFEROUS_TREE).addTag(PortTags.Biomes.IS_TAIGA).add(Biomes.GROVE);
         tag(PortTags.Biomes.IS_SAVANNA_TREE).addTag(PortTags.Biomes.IS_SAVANNA);
