@@ -15,15 +15,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 @SuppressWarnings("UnstableApiUsage")
-public class PortRegistration<T> {
+public class PortRegistration<R> {
     static final Map<ResourceKey<? extends Registry<?>>, List<List<PortRegistryEntry<?, ?>>>> registrations = new Reference2ObjectOpenHashMap<>();
     final String namespace;
-    final ResourceKey<? extends Registry<T>> registryKey;
+    final ResourceKey<? extends Registry<R>> registryKey;
     final List<PortRegistryEntry<?, ?>> entries;
 
-    private ForgeRegistry<T> registry;
+    private ForgeRegistry<R> registry;
 
-    PortRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, boolean registerEntries) {
+    PortRegistration(String namespace, ResourceKey<? extends Registry<R>> registryKey, boolean registerEntries) {
         this.namespace = namespace;
         this.registryKey = registryKey;
         this.entries = new ArrayList<>();
@@ -32,7 +32,7 @@ public class PortRegistration<T> {
         }
     }
 
-    PortRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey) {
+    PortRegistration(String namespace, ResourceKey<? extends Registry<R>> registryKey) {
         this(namespace, registryKey, true);
     }
 
@@ -40,23 +40,23 @@ public class PortRegistration<T> {
         return ResourceLocation.fromNamespaceAndPath(namespace, name);
     }
 
-    public <R extends T> PortRegistryEntry<T, R> register(String name, Supplier<R> valueSupplier) {
+    public <T extends R> PortRegistryEntry<R, T> register(String name, Supplier<T> valueSupplier) {
         ResourceLocation id = asId(name);
-        PortRegistryEntry<T, R> entry = new PortRegistryEntry<>(id, valueSupplier);
+        PortRegistryEntry<R, T> entry = new PortRegistryEntry<>(id, valueSupplier);
         entry.object = RegistryObject.create(id, registryKey, namespace);
         entries.add(entry);
         return entry;
     }
 
-    public <R extends T> PortRegistryEntry<T, R> register(String name, Function<ResourceLocation, R> valueFunction) {
+    public <T extends R> PortRegistryEntry<R, T> register(String name, Function<ResourceLocation, T> valueFunction) {
         ResourceLocation id = asId(name);
-        PortRegistryEntry<T, R> entry = new PortRegistryEntry<>(id, () -> valueFunction.apply(id));
+        PortRegistryEntry<R, T> entry = new PortRegistryEntry<>(id, () -> valueFunction.apply(id));
         entry.object = RegistryObject.create(id, registryKey, namespace);
         entries.add(entry);
         return entry;
     }
 
-    public ResourceKey<? extends Registry<T>> key() {
+    public ResourceKey<? extends Registry<R>> key() {
         return registryKey;
     }
 
@@ -71,7 +71,7 @@ public class PortRegistration<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public <R extends T> List<PortRegistryEntry<T, R>> getEntries() {
-        return (List<PortRegistryEntry<T, R>>) (List<?>) entries;
+    public <T extends R> List<PortRegistryEntry<R, T>> getEntries() {
+        return (List<PortRegistryEntry<R, T>>) (List<?>) entries;
     }
 }

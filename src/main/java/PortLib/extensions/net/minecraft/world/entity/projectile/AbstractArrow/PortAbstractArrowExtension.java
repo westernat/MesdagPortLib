@@ -53,7 +53,7 @@ public class PortAbstractArrowExtension {
         return ((AbstractArrowAccessor) thiz).callGetPickupItem();
     }
 
-    public static ItemStack weaponItem(AbstractArrow thiz) {
+    public static @Nullable ItemStack weaponItem(AbstractArrow thiz) {
         return IPortAbstractArrow.of(thiz).portlib$getFiredFromWeapon();
     }
 }

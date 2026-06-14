@@ -12,7 +12,7 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
 
     @ApiStatus.Internal
     @Override
-    public <R extends PortAttachmentType<?>> PortRegistryEntry<PortAttachmentType<?>, R> register(String name, Supplier<R> valueSupplier) {
+    public <T extends PortAttachmentType<?>> PortRegistryEntry<PortAttachmentType<?>, T> register(String name, Supplier<T> valueSupplier) {
         return super.register(name, valueSupplier);
     }
 

@@ -45,7 +45,7 @@ public class PortItemTagsProvider extends ItemTagsProvider {
                         PortTags.Items.TOOLS_WRENCH,
                         PortTags.Items.MINING_TOOL_TOOLS, PortTags.Items.MELEE_WEAPON_TOOLS, PortTags.Items.RANGED_WEAPON_TOOLS);
 
-        tag(Tags.Items.SEEDS, PortTags.Items.SEEDS).addTags(Tags.Items.SEEDS_BEETROOT, Tags.Items.SEEDS_MELON, Tags.Items.SEEDS_PUMPKIN, Tags.Items.SEEDS_TORCHFLOWER, Tags.Items.SEEDS_WHEAT);
+        tag(Tags.Items.SEEDS, PortTags.Items.SEEDS).addTags(Tags.Items.SEEDS_BEETROOT, Tags.Items.SEEDS_MELON, Tags.Items.SEEDS_PUMPKIN, PortTags.Items.SEEDS_TORCHFLOWER, Tags.Items.SEEDS_WHEAT);
         tag(Tags.Items.SEEDS_BEETROOT, PortTags.Items.SEEDS_BEETROOT).add(Items.BEETROOT_SEEDS);
         tag(Tags.Items.SEEDS_MELON, PortTags.Items.SEEDS_MELON).add(Items.MELON_SEEDS);
         tag(Tags.Items.SEEDS_PUMPKIN, PortTags.Items.SEEDS_PUMPKIN).add(Items.PUMPKIN_SEEDS);

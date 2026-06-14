@@ -16,13 +16,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnstableApiUsage")
-public class PortCustomRegistration<T> extends PortRegistration<T> {
-    final PortRegistryMaker<T> maker;
-    final java.util.function.Supplier<IForgeRegistry<T>> registry;
+public class PortCustomRegistration<R> extends PortRegistration<R> {
+    final PortRegistryMaker<R> maker;
+    final java.util.function.Supplier<IForgeRegistry<R>> registry;
 
-    PortCustomRegistration(String namespace, ResourceKey<? extends Registry<T>> registryKey, Consumer<PortRegistryMaker<T>> consumer) {
+    PortCustomRegistration(String namespace, ResourceKey<? extends Registry<R>> registryKey, Consumer<PortRegistryMaker<R>> consumer) {
         super(namespace, registryKey, false);
-        DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
+        DeferredRegister<R> register = DeferredRegister.create(registryKey, namespace);
         this.maker = new PortRegistryMaker<>();
         this.registry = register.makeRegistry(() -> {
             consumer.accept(maker);
@@ -31,12 +31,12 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
         register.register(PortBus.MOD.unwrap(namespace));
     }
 
-    public void addCallback(PortRegistryCallback<T> callback) {
+    public void addCallback(PortRegistryCallback<R> callback) {
         maker.callback(callback);
     }
 
-    public void register(ResourceLocation key, T value) {
-        if (registry.get() instanceof ForgeRegistry<T> registry1) {
+    public void register(ResourceLocation key, R value) {
+        if (registry.get() instanceof ForgeRegistry<R> registry1) {
             boolean locked = registry1.isLocked();
             if (locked) registry1.unfreeze();
             registry1.register(key, value);
@@ -44,20 +44,20 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
         }
     }
 
-    public @Nullable ResourceLocation getKey(T value) {
+    public @Nullable ResourceLocation getKey(R value) {
         return registry.get().getKey(value);
     }
 
-    public Optional<ResourceKey<T>> getResourceKey(T value) {
+    public Optional<ResourceKey<R>> getResourceKey(R value) {
         return registry.get().getResourceKey(value);
     }
 
-    public @Nullable T get(@Nullable ResourceKey<T> key) {
+    public @Nullable R get(@Nullable ResourceKey<R> key) {
         if (key == null) return null;
         return get(key.location());
     }
 
-    public @Nullable T get(@Nullable ResourceLocation name) {
+    public @Nullable R get(@Nullable ResourceLocation name) {
         return registry.get().getValue(name);
     }
 
@@ -65,23 +65,23 @@ public class PortCustomRegistration<T> extends PortRegistration<T> {
         return registry.get().containsKey(name);
     }
 
-    public boolean containsKey(ResourceKey<T> key) {
+    public boolean containsKey(ResourceKey<R> key) {
         return containsKey(key.location());
     }
 
-    public Optional<Holder.Reference<T>> getHolder(ResourceLocation location) {
+    public Optional<Holder.Reference<R>> getHolder(ResourceLocation location) {
         return registry.get().getDelegate(location);
     }
 
-    public Optional<Holder.Reference<T>> getHolder(ResourceKey<T> key) {
+    public Optional<Holder.Reference<R>> getHolder(ResourceKey<R> key) {
         return registry.get().getDelegate(key);
     }
 
-    public boolean containsValue(T value) {
+    public boolean containsValue(R value) {
         return registry.get().containsValue(value);
     }
 
-    public Codec<T> byNameCodec() {
+    public Codec<R> byNameCodec() {
         return ResourceLocation.CODEC.xmap(this::get, this::getKey);
     }
 }

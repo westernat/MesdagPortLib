@@ -45,6 +45,14 @@ public class PortRegisterHandler {
         return new PortParticleTypeRegistration(namespace);
     }
 
+    public static PortItemRegistration item(String namespace) {
+        return new PortItemRegistration(namespace);
+    }
+
+    public static PortBlockRegistration block(String namespace) {
+        return new PortBlockRegistration(namespace);
+    }
+
     @ApiStatus.Internal
     @Diff
     @SuppressWarnings("unchecked")

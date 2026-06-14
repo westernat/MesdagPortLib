@@ -14,7 +14,7 @@ public class PortDataComponentRegistration extends PortRegistration<PortDataComp
 
     @ApiStatus.Internal
     @Override
-    public <R extends PortDataComponentType<?>> PortRegistryEntry<PortDataComponentType<?>, R> register(String name, Supplier<R> valueSupplier) {
+    public <T extends PortDataComponentType<?>> PortRegistryEntry<PortDataComponentType<?>, T> register(String name, Supplier<T> valueSupplier) {
         return super.register(name, valueSupplier);
     }
 

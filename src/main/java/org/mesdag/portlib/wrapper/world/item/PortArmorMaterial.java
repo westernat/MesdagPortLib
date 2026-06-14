@@ -7,9 +7,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.sounds.SoundEventHolder;
 
 import java.util.EnumMap;
@@ -17,104 +16,102 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PortArmorMaterial {
-    private final ArmorMaterial delegate;
+public class PortArmorMaterial implements ArmorMaterial {
+    private final Map<ArmorItem.Type, Integer> defense;
+    private final int enchantmentValue;
     private final Holder<SoundEvent> equipSound;
+    private final Supplier<Ingredient> repairIngredient;
     private final List<PortLayer> layers;
+    private final float toughness;
+    private final float knockbackResistance;
 
-    private PortArmorMaterial(ArmorMaterial delegate) {
-        this.delegate = delegate;
-        this.equipSound = PortHolder.getDelegate(ForgeRegistries.SOUND_EVENTS, delegate.getEquipSound());
-        this.layers = List.of();
+    private @Nullable String name;
+
+    public PortArmorMaterial(
+            Map<ArmorItem.Type, Integer> defense,
+            int enchantmentValue,
+            Holder<SoundEvent> equipSound,
+            Supplier<Ingredient> repairIngredient,
+            List<PortLayer> layers,
+            float toughness,
+            float knockbackResistance
+    ) {
+        this.defense = defense;
+        this.enchantmentValue = enchantmentValue;
+        this.equipSound = equipSound;
+        this.repairIngredient = repairIngredient;
+        this.layers = layers;
+        this.toughness = toughness;
+        this.knockbackResistance = knockbackResistance;
     }
 
     public PortArmorMaterial(Settings settings) {
-        this.delegate = new ArmorMaterial() {
-            @Override
-            public int getDurabilityForType(ArmorItem.Type type) {
-                return switch (type) {
-                    case HELMET -> 11;
-                    case CHESTPLATE -> 16;
-                    case LEGGINGS -> 15;
-                    case BOOTS -> 13;
-                } * settings.durabilityFactor;
-            }
-
-            @Override
-            public int getDefenseForType(ArmorItem.Type type) {
-                return settings.defense.getOrDefault(type, 0);
-            }
-
-            @Override
-            public int getEnchantmentValue() {
-                return settings.enchantmentValue;
-            }
-
-            @Override
-            public SoundEvent getEquipSound() {
-                return settings.equipSound.value();
-            }
-
-            @Override
-            public Ingredient getRepairIngredient() {
-                return settings.repairIngredient.get();
-            }
-
-            @Override
-            public String getName() {
-                return settings.name;
-            }
-
-            @Override
-            public float getToughness() {
-                return settings.toughness;
-            }
-
-            @Override
-            public float getKnockbackResistance() {
-                return settings.knockbackResistance;
-            }
-        };
+        this.name = settings.name;
+        this.defense = settings.defense;
+        this.enchantmentValue = settings.enchantmentValue;
         this.equipSound = settings.equipSound;
+        this.repairIngredient = settings.repairIngredient;
         this.layers = settings.layers;
+        this.toughness = settings.toughness;
+        this.knockbackResistance = settings.knockbackResistance;
     }
 
-    @Diff
-    public ArmorMaterial unwrap() {
-        return delegate;
+    public PortArmorMaterial setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    @Diff
-    public static PortArmorMaterial wrap(ArmorMaterial delegate) {
-        return new PortArmorMaterial(delegate);
+    @Override
+    public int getDurabilityForType(ArmorItem.Type type) {
+        return switch (type) {
+            case HELMET -> 11;
+            case LEGGINGS -> 15;
+            case BOOTS -> 13;
+            default -> 16;
+        };
     }
 
-    public int getDefense(ArmorItem.Type type) {
-        return delegate.getDefenseForType(type);
+    @Override
+    public int getDefenseForType(ArmorItem.Type type) {
+        return defense.getOrDefault(type, 0);
     }
 
+    @Override
     public int getEnchantmentValue() {
-        return delegate.getEnchantmentValue();
+        return enchantmentValue;
     }
 
-    public Holder<SoundEvent> getEquipSound() {
-        return equipSound;
+    @Override
+    public SoundEvent getEquipSound() {
+        return equipSound.value();
     }
 
-    public Supplier<Ingredient> getRepairIngredient() {
-        return delegate::getRepairIngredient;
+    @Override
+    public Ingredient getRepairIngredient() {
+        return repairIngredient.get();
     }
 
+    @Override
+    public String getName() {
+        if (name != null) {
+            return name;
+        }
+        return layers.isEmpty() ? "empty" : layers.get(0).suffix;
+    }
+
+    // todo
     public List<PortLayer> getLayers() {
         return layers;
     }
 
+    @Override
     public float getToughness() {
-        return delegate.getToughness();
+        return toughness;
     }
 
+    @Override
     public float getKnockbackResistance() {
-        return delegate.getKnockbackResistance();
+        return knockbackResistance;
     }
 
     public static class PortLayer {
@@ -137,16 +134,15 @@ public class PortArmorMaterial {
         }
 
         private ResourceLocation resolveTexture(boolean innerTexture) {
-            return this.assetName
-                    .withPath(p_324187_ -> "textures/models/armor/" + this.assetName.getPath() + "_layer_" + (innerTexture ? 2 : 1) + this.suffix + ".png");
+            return assetName.withPath(path -> "textures/models/armor/" + path + "_layer_" + (innerTexture ? 2 : 1) + suffix + ".png");
         }
 
-        public ResourceLocation texture(boolean innerTexture) {
-            return innerTexture ? this.innerTexture : this.outerTexture;
+        public ResourceLocation texture(boolean inner) {
+            return inner ? innerTexture : outerTexture;
         }
 
         public boolean dyeable() {
-            return this.dyeable;
+            return dyeable;
         }
     }
 

@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     RegistryObject<T> object;
     Supplier<T> valueSupplier;
 
-    public PortRegistryEntry(ResourceLocation identifier, Supplier<T> valueSupplier) {
+    public PortRegistryEntry(ResourceLocation identifier, @Nullable Supplier<T> valueSupplier) {
         this.identifier = identifier;
         this.valueSupplier = valueSupplier;
     }
@@ -104,6 +105,10 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     @Override
     public boolean canSerializeIn(HolderOwner<R> owner) {
         return asHolder().canSerializeIn(owner);
+    }
+
+    public ResourceKey<R> getKey() {
+        return PortHolderExtension.getKey(this);
     }
 
     // endregion Holder

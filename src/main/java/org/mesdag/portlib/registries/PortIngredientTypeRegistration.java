@@ -12,9 +12,9 @@ public class PortIngredientTypeRegistration extends PortRegistration<PortIngredi
     }
 
     @Override
-    public <R extends PortIngredientType<?>> PortRegistryEntry<PortIngredientType<?>, R> register(String name, Supplier<R> valueSupplier) {
+    public <T extends PortIngredientType<?>> PortRegistryEntry<PortIngredientType<?>, T> register(String name, Supplier<T> valueSupplier) {
         return super.register(name, () -> {
-            R type = valueSupplier.get();
+            T type = valueSupplier.get();
             CraftingHelper.register(ResourceLocation.fromNamespaceAndPath(namespace, name), type.serializer());
             return type;
         });

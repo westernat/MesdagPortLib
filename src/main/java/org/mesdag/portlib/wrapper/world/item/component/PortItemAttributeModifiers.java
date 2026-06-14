@@ -25,6 +25,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.util.EnumMap;
@@ -195,6 +196,11 @@ public class PortItemAttributeModifiers {
         public PortBuilder add(Holder<Attribute> attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
             addModifier(attribute, modifier, group, listTag);
             return this;
+        }
+
+        @Diff
+        public PortBuilder add(Attribute attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
+            return add(AttributeHolder.wrap(attribute), modifier, group);
         }
 
         public PortItemAttributeModifiers build() {

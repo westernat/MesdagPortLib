@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff.mixin;
 
 import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
+import PortLib.extensions.net.minecraft.world.entity.player.Player.PortPlayerExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -27,7 +28,6 @@ import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
-import org.mesdag.portlib.wrapper.world.entity.player.PortPlayer;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,7 +67,7 @@ public abstract class PlayerMixin implements IPortPlayer {
         FoodProperties foodProperties = food.getFoodProperties(portlib$self());
         if (foodProperties != null) {
             ItemStack stack = IPortFoodProperties.of(foodProperties).portlib$getUsingConvertsTo();
-            if (stack != null && !PortPlayer.hasInfiniteMaterials(portlib$self())) {
+            if (stack != null && !PortPlayerExtension.hasInfiniteMaterials(portlib$self())) {
                 if (original.isEmpty()) {
                     return stack.copy();
                 }
@@ -87,12 +87,12 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     /// ```java
     /// damageAmount = this.getDamageAfterArmorAbsorb(damageSource, damageAmount);
-    /// ```
+    ///```
     /// ↓
     /// ```java
     /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - this.getDamageAfterArmorAbsorb(damageSrc, this.damageContainers.peek().getNewDamage()));
     /// this.getDamageAfterMagicAbsorb(damageSrc, this.damageContainers.peek().getNewDamage());
-    /// ```
+    ///```
     @WrapOperation(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float setArmorReduction(Player instance, DamageSource damageSource, float damageAmount, Operation<Float> original) {
         PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
@@ -102,14 +102,14 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     /// ```java
     /// damageAmount = this.getDamageAfterMagicAbsorb(damageSource, damageAmount);
-    /// ```
+    ///```
     /// ↓
     /// ```java
     /// float damage = net.neoforged.neoforge.common.CommonHooks.onLivingDamagePre(this, this.damageContainers.peek());
     /// this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION, Math.min(this.getAbsorptionAmount(), damage));
     /// float absorbed = Math.min(damage, this.damageContainers.peek().getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION));
     /// this.setAbsorptionAmount(Math.max(0, this.getAbsorptionAmount() - absorbed));
-    /// ```
+    ///```
     @ModifyExpressionValue(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float onLivingDamagePre(float original, @Share("absorbed") LocalFloatRef absorbed) {
         PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
@@ -122,11 +122,11 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     /// ```java
     /// float f1 = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
-    /// ```
+    ///```
     /// ↓
     /// ```java
     /// float f1 = this.damageContainers.peek().getNewDamage();
-    /// ```
+    ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f1")
     private float modifyF1(float original) {
         return IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek().getNewDamage();
@@ -139,11 +139,11 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     /// ```java
     /// float f = damageAmount - f1;
-    /// ```
+    ///```
     /// ↓
     /// ```java
     /// float f = absorbed;
-    /// ```
+    ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f")
     private float modifyF(float original, @Share("absorbed") LocalFloatRef absorbed) {
         return absorbed.get();
