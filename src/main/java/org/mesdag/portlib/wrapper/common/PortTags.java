@@ -8,18 +8,21 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import org.mesdag.portlib.PortLib;
 
 public class PortTags {
     public static class DamageTypes {
         public static final TagKey<DamageType> IS_MAGIC = common("is_magic");
-
-        private static TagKey<DamageType> portlib(String name) {
-            return TagKey.create(Registries.DAMAGE_TYPE, PortLib.asResource(name));
-        }
+        public static final TagKey<DamageType> PANIC_CAUSES = mc("panic_causes");
+        public static final TagKey<DamageType> PANIC_ENVIRONMENTAL_CAUSES = mc("panic_environmental_causes");
+        public static final TagKey<DamageType> IS_PLAYER_ATTACK = mc("is_player_attack");
+        public static final TagKey<DamageType> CAN_BREAK_ARMOR_STAND = mc("can_break_armor_stand");
 
         private static TagKey<DamageType> common(String name) {
             return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("c", name));
+        }
+
+        private static TagKey<DamageType> mc(String name) {
+            return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.withDefaultNamespace(name));
         }
     }
 

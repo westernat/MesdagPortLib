@@ -203,6 +203,16 @@ public class PortItemAttributeModifiers {
             return add(AttributeHolder.wrap(attribute), modifier, group);
         }
 
+        @Diff
+        public PortBuilder add(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
+            return add(attribute, new PortAttributeModifier(id, amount, operation), group);
+        }
+
+        @Diff
+        public PortBuilder add(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
+            return add(AttributeHolder.wrap(attribute), id, amount, operation, group);
+        }
+
         public PortItemAttributeModifiers build() {
             return new PortItemAttributeModifiers(listTag, true);
         }

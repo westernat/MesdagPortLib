@@ -128,12 +128,12 @@ public abstract class PlayerMixin implements IPortPlayer {
     /// float f1 = this.damageContainers.peek().getNewDamage();
     ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f1")
-    private float modifyF1(float original) {
+    private float modifyF1(float f1) {
         return IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek().getNewDamage();
     }
 
     @WrapWithCondition(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setAbsorptionAmount(F)V"))
-    private boolean deny(Player instance, float absorptionAmount) {
+    private boolean deny(Player instance, float amount) {
         return false;
     }
 
@@ -145,7 +145,7 @@ public abstract class PlayerMixin implements IPortPlayer {
     /// float f = absorbed;
     ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f")
-    private float modifyF(float original, @Share("absorbed") LocalFloatRef absorbed) {
+    private float modifyF(float f, @Share("absorbed") LocalFloatRef absorbed) {
         return absorbed.get();
     }
 
@@ -175,8 +175,8 @@ public abstract class PlayerMixin implements IPortPlayer {
     }
 
     @ModifyVariable(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getFireAspect(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "flag3")
-    private boolean fireSweepAttack(boolean original, @Local(argsOnly = true) Entity target) {
-        return PortEventHandler.postEventWithReturn(new PortSweepAttackEvent(portlib$self(), target, original)).isSweeping();
+    private boolean fireSweepAttack(boolean flag3, @Local(argsOnly = true) Entity target) {
+        return PortEventHandler.postEventWithReturn(new PortSweepAttackEvent(portlib$self(), target, flag3)).isSweeping();
     }
 
     // region attributes

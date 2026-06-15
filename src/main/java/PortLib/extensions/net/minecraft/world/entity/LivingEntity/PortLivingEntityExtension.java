@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.diff.mixin.LivingEntityAccessor;
 import org.mesdag.portlib.event.entity.living.PortMobEffectEvent;
-import org.mesdag.portlib.util.Static;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
@@ -57,7 +56,6 @@ public class PortLivingEntityExtension {
         return thiz.getMainHandItem();
     }
 
-    @Static
     public static EquipmentSlot getSlotForHand(InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
     }

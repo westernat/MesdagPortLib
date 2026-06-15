@@ -1,4 +1,4 @@
-// 1.20.1	2026-06-14T17:23:19.8505869	Tags for minecraft:worldgen/biome mod id portlib
+// 1.20.1	2026-06-14T23:56:03.184768	Tags for minecraft:worldgen/biome mod id portlib
 93100f561b356a7487cd24c4d538ab11cbad7b21 data/c/tags/worldgen/biome/is_aquatic.json
 ec7bbb0c9b5fc5378f8716f54862806404f04360 data/c/tags/worldgen/biome/is_deep_ocean.json
 f3ef2895c49e29111297e950661e5bc71a79989e data/c/tags/worldgen/biome/is_desert.json
@@ -10,6 +10,7 @@ c3d4e55bd4ed5d178abb10df76626eccdab7c209 data/c/tags/worldgen/biome/is_jungle.js
 123a8c4cf362352d397dc85738c4e8bb2ef2dc40 data/c/tags/worldgen/biome/is_savanna.json
 afff4f6ed9005eed29ee2bec0b622752dba359c6 data/c/tags/worldgen/biome/is_shallow_ocean.json
 1223f9d662b262b4e222d9b5d0a16881b26eb137 data/c/tags/worldgen/biome/is_snowy.json
+7631830440d86728f20bedb90ae3c06fd0d0fe8a data/c/tags/worldgen/biome/is_stony_shores.json
 07ecd21cae8acc4735861c19ee51bbd8457289ae data/c/tags/worldgen/biome/is_taiga.json
 03d08b431bab8eb32092267d261f419cbfb44066 data/c/tags/worldgen/biome/is_tree/coniferous.json
 777b34fb376dad6647f6fc402daf23be1809599a data/c/tags/worldgen/biome/is_tree/deciduous.json

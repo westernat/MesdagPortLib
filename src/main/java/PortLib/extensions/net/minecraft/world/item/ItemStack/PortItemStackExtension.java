@@ -98,7 +98,9 @@ public class PortItemStackExtension {
     private static final Codec<ItemStack> SIMPLE_ITEM_CODEC = ITEM_NON_AIR_CODEC.xmap(ItemStack::new, ItemStack::getItemHolder);
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ItemStack> OPTIONAL_STREAM_CODEC = new PortStreamCodec<>() {
         public ItemStack decode(PortRegistryFriendlyByteBuf buffer) {
-            return ItemStack.of(buffer.readAnySizeNbt());
+            CompoundTag tag = buffer.readAnySizeNbt();
+            if (tag == null) return ItemStack.EMPTY;
+            return ItemStack.of(tag);
         }
 
         public void encode(PortRegistryFriendlyByteBuf buffer, ItemStack value) {

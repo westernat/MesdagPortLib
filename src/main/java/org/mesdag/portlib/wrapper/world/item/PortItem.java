@@ -64,6 +64,12 @@ public class PortItem extends Item {
             super.stacksTo(maxStackSize);
             return this;
         }
+
+        @Diff
+        public PortProperties dyedColor(int rgb, boolean showInTooltip) {
+            PortItemExtension.Properties.dyedColor(this, rgb, showInTooltip);
+            return this;
+        }
     }
 
     public interface PortTooltipContext {
