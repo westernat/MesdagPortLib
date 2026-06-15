@@ -151,6 +151,13 @@ public class PortLib {
     public static final RegistryObject<SoundEvent> TUFF_BRICKS_PLACE = registerSound("block.tuff_bricks.place");
     public static final RegistryObject<SoundEvent> TUFF_BRICKS_STEP = registerSound("block.tuff_bricks.step");
 
+    public static final RegistryObject<SoundEvent> WET_SPONGE_BREAK = registerSound("block.wet_sponge.break");
+    public static final RegistryObject<SoundEvent> WET_SPONGE_DRIES = registerSound("block.wet_sponge.dries");
+    public static final RegistryObject<SoundEvent> WET_SPONGE_FALL = registerSound("block.wet_sponge.fall");
+    public static final RegistryObject<SoundEvent> WET_SPONGE_HIT = registerSound("block.wet_sponge.hit");
+    public static final RegistryObject<SoundEvent> WET_SPONGE_PLACE = registerSound("block.wet_sponge.place");
+    public static final RegistryObject<SoundEvent> WET_SPONGE_STEP = registerSound("block.wet_sponge.step");
+
     private static RegistryObject<SoundEvent> registerSound(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.withDefaultNamespace(name)));
     }

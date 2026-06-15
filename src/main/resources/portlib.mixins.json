@@ -43,6 +43,7 @@
         "MobEffectInstanceMixin",
         "MobEffectMixin",
         "MobMixin",
+        "PistonBaseBlockMixin",
         "PlayerListMixin",
         "PlayerMixin",
         "ProjectileMixin",
