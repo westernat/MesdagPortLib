@@ -66,4 +66,8 @@ public class PortMobEffectInstanceExtension {
     public static boolean is(MobEffectInstance thiz, Supplier<MobEffect> love) {
         return thiz.getEffect() == love.get();
     }
+
+    public static Set<PortEffectCure> getCures(MobEffectInstance thiz) {
+        return IPortMobEffectInstance.of(thiz).portlib$getCures();
+    }
 }

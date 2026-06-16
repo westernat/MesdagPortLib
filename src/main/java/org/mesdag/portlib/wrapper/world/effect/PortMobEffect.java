@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.effect;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import it.unimi.dsi.fastutil.ints.Int2DoubleFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -11,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,16 @@ public class PortMobEffect extends MobEffect {
         this.particleFactory = instance -> instance.isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
     }
 
+    public boolean applyEffectTick1211(LivingEntity living, int amplifier) {
+        applyEffectTick(living, amplifier);
+        return true;
+    }
+
     public void fillEffectCures(Set<PortEffectCure> cures, MobEffectInstance effectInstance) {}
+
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        return isDurationEffectTick(duration, amplifier);
+    }
 
     @Override
     public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {
@@ -52,28 +61,36 @@ public class PortMobEffect extends MobEffect {
         return particleFactory.apply(instance);
     }
 
-    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
-        AttributeModifier modifier = new AttributeModifier(PortAttributeModifier.rl2uuid(id), id.getPath(), amount, operation.unwrap());
-        getAttributeModifiers().put(attribute.value(), modifier);
+    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
+        getAttributeModifiers().put(attribute, new AttributeModifier(PortAttributeModifier.rl2uuid(id), id.getPath(), amount, operation.unwrap()));
         return this;
     }
 
-    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
+    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
         UUID uuid = PortAttributeModifier.rl2uuid(id);
-        AttributeModifier modifier = new AttributeModifier(uuid, id.getPath(), 0, operation.unwrap());
-        getAttributeModifiers().put(attribute.value(), modifier);
+        getAttributeModifiers().put(attribute, new AttributeModifier(uuid, id.getPath(), 0, operation.unwrap()));
+        putCurve(uuid, curve);
+        return this;
+    }
+
+    private void putCurve(UUID uuid, Int2DoubleFunction curve) {
         if (curves == null) {
             this.curves = new Object2ObjectOpenHashMap<>();
         }
         curves.put(uuid, curve);
+    }
+
+    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
+        return addAttributeModifier(attribute.value(), id, amount, operation);
+    }
+
+    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
+        return addAttributeModifier(attribute.value(), id, operation, curve);
+    }
+
+    public PortMobEffect addAttributeModifier(Attribute attribute, UUID uuid, String name, AttributeModifier.Operation operation, Int2DoubleFunction curve) {
+        getAttributeModifiers().put(attribute, new AttributeModifier(uuid, name, 0, operation));
+        putCurve(uuid, curve);
         return this;
-    }
-
-    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
-        return addAttributeModifier(PortAttributeExtension.wrap(attribute), id, amount, operation);
-    }
-
-    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
-        return addAttributeModifier(PortAttributeExtension.wrap(attribute), id, operation, curve);
     }
 }
