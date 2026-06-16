@@ -14,8 +14,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -32,6 +34,8 @@ public class PortMobEffect extends MobEffect {
         super(category, color);
         this.particleFactory = instance -> instance.isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
     }
+
+    public void fillEffectCures(Set<PortEffectCure> cures, MobEffectInstance effectInstance) {}
 
     @Override
     public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {

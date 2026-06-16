@@ -27,6 +27,11 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         private final @Nullable PortEffectCure cure;
 
         @Diff
+        public PortRemove(MobEffectEvent.Remove e) {
+            this(e, null);
+        }
+
+        @Diff
         public PortRemove(MobEffectEvent.Remove e, @Nullable PortEffectCure cure) {
             super(e);
             this.cure = cure;

@@ -12,6 +12,7 @@ import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
+import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Set;
 
@@ -24,6 +25,9 @@ public class PortMobEffectExtension {
         cures.addAll(PortEffectCures.DEFAULT_CURES);
         if (thiz == MobEffects.POISON) {
             cures.add(PortEffectCures.HONEY);
+        }
+        if (thiz instanceof PortMobEffect port) {
+            port.fillEffectCures(cures, effectInstance);
         }
     }
 
