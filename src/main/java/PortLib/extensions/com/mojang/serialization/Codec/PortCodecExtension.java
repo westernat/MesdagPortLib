@@ -8,7 +8,10 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.BaseMapCodec;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.Util;
 import org.joml.Vector4f;
 import org.mesdag.portlib.diff.MemoizeCodec;
@@ -119,6 +122,11 @@ public class PortCodecExtension {
                 return DataResult.error(exception::getMessage);
             }
         }, dateTimeFormatter::format);
+    }
+
+    @Static
+    public static <A> Codec<Object2BooleanMap<A>> object2BooleanMap(Codec<A> codec) {
+        return Codec.unboundedMap(codec, Codec.BOOL).xmap(Object2BooleanOpenHashMap::new, Object2ObjectOpenHashMap::new);
     }
 
     public record StrictUnboundedMapCodec<K, V>(

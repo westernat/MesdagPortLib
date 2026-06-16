@@ -7,6 +7,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import org.mesdag.portlib.wrapper.PortUtil;
 
 import java.util.List;
 
@@ -24,10 +25,7 @@ public class PortIConditionExtension {
         @Override
         public <T> DataResult<T> encode(ICondition input, DynamicOps<T> ops, T prefix) {
             try {
-                return ops.getMap(prefix).flatMap(preMap -> {
-                    T converted = JsonOps.INSTANCE.convertTo(ops, CraftingHelper.serialize(input));
-                    return ops.getMap(converted).flatMap(jsonMap -> ops.mergeToMap(prefix, jsonMap));
-                });
+                return PortUtil.encode(input, CraftingHelper::serialize, ops, prefix);
             } catch (Exception e) {
                 return DataResult.error(e::getMessage);
             }

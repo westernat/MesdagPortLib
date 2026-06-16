@@ -16,6 +16,7 @@ import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import java.util.Set;
 
 public class PortMobEffectExtension {
+    private static final Codec<MobEffect> DIRECT_CODEC = BuiltInRegistries.MOB_EFFECT.byNameCodec();
     private static final Codec<Holder<MobEffect>> CODEC = BuiltInRegistries.MOB_EFFECT.holderByNameCodec();
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, Holder<MobEffect>> STREAM_CODEC = PortByteBufCodecs.holderRegistry(Registries.MOB_EFFECT);
 
@@ -24,6 +25,10 @@ public class PortMobEffectExtension {
         if (thiz == MobEffects.POISON) {
             cures.add(PortEffectCures.HONEY);
         }
+    }
+
+    public static Codec<MobEffect> directCodec() {
+        return DIRECT_CODEC;
     }
 
     public static Codec<Holder<MobEffect>> codec() {

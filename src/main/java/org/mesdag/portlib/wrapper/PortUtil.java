@@ -2,10 +2,15 @@ package org.mesdag.portlib.wrapper;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings("all")
 public class PortUtil {
@@ -38,5 +43,12 @@ public class PortUtil {
 
     public static ResourceLocation asGuiSprite(String namespace, String path) {
         return ResourceLocation.fromNamespaceAndPath(namespace, "textures/gui/sprites/" + path + ".png");
+    }
+
+    public static <A, T> DataResult<T> encode(A input, Function<A, JsonElement> serializer, DynamicOps<T> ops, T prefix) {
+        return ops.getMap(prefix).flatMap(preMap -> {
+            T converted = JsonOps.INSTANCE.convertTo(ops, serializer.apply(input));
+            return ops.getMap(converted).flatMap(jsonMap -> ops.mergeToMap(prefix, jsonMap));
+        });
     }
 }

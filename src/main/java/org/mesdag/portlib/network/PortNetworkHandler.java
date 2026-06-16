@@ -83,8 +83,8 @@ public class PortNetworkHandler {
 //        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
 //    }
 
-    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> {
+    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> {
             if (s.get().getDirection().getOriginationSide().isServer()) {
                 s2c(p, s, handler);
             } else {
@@ -93,7 +93,7 @@ public class PortNetworkHandler {
         }, clazz, null);
     }
 
-    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
+    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
         registerInGameBidirectional(clazz, identifier, codec, IPortPacket::handle);
     }
 
