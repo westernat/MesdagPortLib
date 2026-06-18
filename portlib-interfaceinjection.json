@@ -1,0 +1,29 @@
+{
+    "net/minecraft/world/item/Item": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortItemExtension"
+    ],
+    "net/minecraft/world/entity/Entity": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEntityExtension"
+    ],
+    "net/minecraft/world/entity/LivingEntity": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortLivingEntityExtension"
+    ],
+    "net/minecraft/world/entity/projectile/Projectile": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortProjectileExtension"
+    ],
+    "net/minecraft/world/entity/ai/attributes/Attribute": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAttributeExtension"
+    ],
+    "net/minecraft/world/item/BowItem": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBowItemExtension"
+    ],
+    "net/minecraft/world/item/ArrowItem": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortArrowItemExtension"
+    ],
+    "net/minecraft/world/item/CrossbowItem": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortCrossbowItemExtension"
+    ],
+    "net/minecraft/world/item/ProjectileWeaponItem": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortProjectileWeaponItemExtension"
+    ]
+}

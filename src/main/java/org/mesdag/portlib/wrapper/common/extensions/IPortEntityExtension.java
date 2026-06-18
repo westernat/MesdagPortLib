@@ -7,6 +7,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.util.Final;
+import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.common.PortTags;
 import org.mesdag.portlib.wrapper.world.entity.projectile.PortProjectileDeflection;
 
@@ -19,6 +20,7 @@ public interface IPortEntityExtension {
         return PortEntityExtension.getRandom(self());
     }
 
+    @Protected
     default double getDefaultGravity() {
         return 0.0;
     }

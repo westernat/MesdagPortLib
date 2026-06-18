@@ -4,14 +4,14 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
-import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 
 import java.util.List;
 import java.util.Stack;
 
 @Diff
-public interface IPortLivingEntity extends PortSelfGetter<LivingEntity> {
+public interface IPortLivingEntity extends IPortLivingEntityExtension {
     void portlib$setDamageContainers(Stack<PortDamageContainer> damageContainers);
 
     Stack<PortDamageContainer> portlib$getDamageContainers();

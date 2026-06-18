@@ -19,6 +19,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
+import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements IPortEntity {
+public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity> {
     @Shadow
     private Level level;
     @Unique

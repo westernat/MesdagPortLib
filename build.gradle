@@ -164,12 +164,43 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             from components.java
+            artifact(file('portlib-interfaceinjection.json')) {
+                classifier 'interfaceinjection'
+                extension 'json'
+            }
         }
     }
     repositories {
+        mavenLocal()
         maven {
             url "file://${project.projectDir}/repo"
         }
+    }
+}
+
+// 为 Gradle Module Metadata 添加 interfaceinjection variant，
+// 使下游项目的 interfaceInjectionData 配置能通过 variant-aware 解析找到该构件
+tasks.withType(GenerateModuleMetadata).configureEach {
+    def jsonFile = project.layout.projectDirectory.file('portlib-interfaceinjection.json').asFile
+    def version = mod_version
+    doLast {
+        def file = outputFile.get().asFile
+        if (!file.exists()) return
+        def json = new JsonSlurper().parse(file) as Map
+        json.variants.add([
+            name     : 'interfaceInjectionVariant',
+            attributes: [
+                'org.gradle.category'           : 'interfaceinjection',
+                'org.gradle.dependency.bundling': 'external',
+                'org.gradle.usage'              : 'java-runtime'
+            ],
+            files: [[
+                name : "PortLib-${version}-interfaceinjection.json",
+                url  : "PortLib-${version}-interfaceinjection.json",
+                size : jsonFile.length()
+            ]]
+        ])
+        file.text = JsonOutput.prettyPrint(JsonOutput.toJson(json))
     }
 }
 
