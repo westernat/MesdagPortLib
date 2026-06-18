@@ -58,6 +58,8 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.modifier.plus", "+%s %s");
         add("portlib.modifier.take", "%s %s");
         add("portlib.modifier.bool", "%s %s");
+
+        add("portlib.network.advanced_add_entity.failed", "Failed to process advanced entity spawn data: %s", "处理高级实体生成数据失败：%s");
     }
 
     @Override

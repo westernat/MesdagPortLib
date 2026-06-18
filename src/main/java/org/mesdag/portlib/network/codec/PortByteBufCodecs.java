@@ -10,10 +10,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.IdMap;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.RegistryFixedCodec;
@@ -179,6 +176,17 @@ public interface PortByteBufCodecs {
         @Override
         public void encode(FriendlyByteBuf buffer, UUID value) {
             buffer.writeUUID(value);
+        }
+    };
+    PortStreamCodec<FriendlyByteBuf, BlockPos> BLOCK_POS = new PortStreamCodec<>() {
+        @Override
+        public BlockPos decode(FriendlyByteBuf buffer) {
+            return buffer.readBlockPos();
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buffer, BlockPos value) {
+            buffer.writeBlockPos(value);
         }
     };
 

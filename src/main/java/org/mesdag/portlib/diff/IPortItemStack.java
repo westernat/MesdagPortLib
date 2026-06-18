@@ -7,10 +7,11 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.item.component.PortTool;
 
 @Diff
-public interface IPortItemStack extends PortSelfGetter<ItemStack> {
+public interface IPortItemStack extends IPortItemStackExtension, PortSelfGetter<ItemStack> {
     String DATA_COMPONENTS = "portlib:data_components";
 
     @Nullable FoodProperties portlib$getFood(@Nullable LivingEntity living);

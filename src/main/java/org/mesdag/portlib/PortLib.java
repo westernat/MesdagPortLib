@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -41,6 +41,8 @@ import org.mesdag.portlib.loot.AddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
+import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
@@ -144,25 +146,6 @@ public class PortLib {
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
 
-    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, MODID);
-    public static final RegistryObject<SoundEvent> TUFF_BRICKS_BREAK = registerSound("block.tuff_bricks.break");
-    public static final RegistryObject<SoundEvent> TUFF_BRICKS_FALL = registerSound("block.tuff_bricks.fall");
-    public static final RegistryObject<SoundEvent> TUFF_BRICKS_HIT = registerSound("block.tuff_bricks.hit");
-    public static final RegistryObject<SoundEvent> TUFF_BRICKS_PLACE = registerSound("block.tuff_bricks.place");
-    public static final RegistryObject<SoundEvent> TUFF_BRICKS_STEP = registerSound("block.tuff_bricks.step");
-
-    public static final RegistryObject<SoundEvent> WET_SPONGE_BREAK = registerSound("block.wet_sponge.break");
-    public static final RegistryObject<SoundEvent> WET_SPONGE_DRIES = registerSound("block.wet_sponge.dries");
-    public static final RegistryObject<SoundEvent> WET_SPONGE_FALL = registerSound("block.wet_sponge.fall");
-    public static final RegistryObject<SoundEvent> WET_SPONGE_HIT = registerSound("block.wet_sponge.hit");
-    public static final RegistryObject<SoundEvent> WET_SPONGE_PLACE = registerSound("block.wet_sponge.place");
-    public static final RegistryObject<SoundEvent> WET_SPONGE_STEP = registerSound("block.wet_sponge.step");
-
-    private static RegistryObject<SoundEvent> registerSound(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.withDefaultNamespace(name)));
-    }
-
-
     public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init();
         PortRegistries.init();
@@ -172,7 +155,10 @@ public class PortLib {
         PortDataMapLoader.init();
         PortNetworkHandler.init();
         IPortLivingEntity.init();
-        GLOBAL_LOOT_MODIFIERS.register(context.getModEventBus());
+        IPortEntityExtension.init();
+        IEventBus eventBus = context.getModEventBus();
+        PortSoundEvents.register(eventBus);
+        GLOBAL_LOOT_MODIFIERS.register(eventBus);
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForgeChunkManager
             PortDataMapLoader.initDataMaps();

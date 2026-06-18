@@ -25,5 +25,11 @@
     ],
     "net/minecraft/world/item/ProjectileWeaponItem": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortProjectileWeaponItemExtension"
+    ],
+    "net/minecraft/world/item/ItemStack": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortItemStackExtension"
+    ],
+    "net/minecraft/client/renderer/blockentity/BlockEntityRenderer": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension<T>"
     ]
 }

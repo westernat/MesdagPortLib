@@ -20,6 +20,7 @@ public class PortBlockTagsProvider extends BlockTagsProvider {
         super(output, lookupProvider, PortLib.MODID, existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(Tags.Blocks.FENCE_GATES, PortTags.Blocks.FENCE_GATES).addTags(PortTags.Blocks.FENCE_GATES_WOODEN);
@@ -33,6 +34,11 @@ public class PortBlockTagsProvider extends BlockTagsProvider {
                 Blocks.STRIPPED_CHERRY_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.STRIPPED_JUNGLE_LOG,
                 Blocks.STRIPPED_MANGROVE_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.STRIPPED_SPRUCE_LOG,
                 Blocks.STRIPPED_CRIMSON_STEM, Blocks.STRIPPED_WARPED_STEM);
+
+        tag(PortTags.Blocks.GLASS_BLOCKS).addTags(PortTags.Blocks.GLASS_BLOCKS_COLORLESS, PortTags.Blocks.GLASS_BLOCKS_CHEAP, PortTags.Blocks.GLASS_BLOCKS_TINTED);
+        tag(PortTags.Blocks.GLASS_BLOCKS_COLORLESS).add(Blocks.GLASS);
+        tag(PortTags.Blocks.GLASS_BLOCKS_CHEAP).add(Blocks.GLASS, Blocks.WHITE_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS, Blocks.LIGHT_BLUE_STAINED_GLASS, Blocks.YELLOW_STAINED_GLASS, Blocks.LIME_STAINED_GLASS, Blocks.PINK_STAINED_GLASS, Blocks.GRAY_STAINED_GLASS, Blocks.LIGHT_GRAY_STAINED_GLASS, Blocks.CYAN_STAINED_GLASS, Blocks.PURPLE_STAINED_GLASS, Blocks.BLUE_STAINED_GLASS, Blocks.BROWN_STAINED_GLASS, Blocks.GREEN_STAINED_GLASS, Blocks.RED_STAINED_GLASS, Blocks.BLACK_STAINED_GLASS);
+        tag(PortTags.Blocks.GLASS_BLOCKS_TINTED).add(Blocks.TINTED_GLASS);
     }
 
     protected IntrinsicTagAppender<Block> tag(TagKey<Block> forgeTag, TagKey<Block> commonTag) {

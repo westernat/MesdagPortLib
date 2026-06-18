@@ -51,5 +51,168 @@
             "portlib:block/tuff_bricks/step6"
         ],
         "subtitle": "subtitles.block.generic.footsteps"
+    },
+    "block.wet_sponge.break": {
+        "sounds": [
+            "portlib:block/sponge/wet_sponge/break1",
+            "portlib:block/sponge/wet_sponge/break2",
+            "portlib:block/sponge/wet_sponge/break3",
+            "portlib:block/sponge/wet_sponge/break4"
+        ],
+        "subtitle": "subtitles.block.generic.break"
+    },
+    "block.wet_sponge.dries": {
+        "sounds": [
+            "random/fizz"
+        ],
+        "subtitle": "subtitles.block.wet_sponge.dries"
+    },
+    "block.wet_sponge.fall": {
+        "sounds": [
+            "portlib:block/sponge/wet_sponge/step1",
+            "portlib:block/sponge/wet_sponge/step2",
+            "portlib:block/sponge/wet_sponge/step3",
+            "portlib:block/sponge/wet_sponge/step4"
+        ],
+        "subtitle": "subtitles.block.generic.fall"
+    },
+    "block.wet_sponge.hit": {
+        "sounds": [
+            "portlib:block/sponge/wet_sponge/step1",
+            "portlib:block/sponge/wet_sponge/step2",
+            "portlib:block/sponge/wet_sponge/step3",
+            "portlib:block/sponge/wet_sponge/step4"
+        ],
+        "subtitle": "subtitles.block.generic.hit"
+    },
+    "block.wet_sponge.place": {
+        "sounds": [
+            "portlib:block/sponge/wet_sponge/break1",
+            "portlib:block/sponge/wet_sponge/break2",
+            "portlib:block/sponge/wet_sponge/break3",
+            "portlib:block/sponge/wet_sponge/break4"
+        ],
+        "subtitle": "subtitles.block.generic.place"
+    },
+    "block.wet_sponge.step": {
+        "sounds": [
+            "portlib:block/sponge/wet_sponge/step1",
+            "portlib:block/sponge/wet_sponge/step2",
+            "portlib:block/sponge/wet_sponge/step3",
+            "portlib:block/sponge/wet_sponge/step4"
+        ],
+        "subtitle": "subtitles.block.generic.footsteps"
+    },
+    "block.copper_bulb.break": {
+        "sounds": [
+            "portlib:block/copper_bulb/break1",
+            "portlib:block/copper_bulb/break2",
+            "portlib:block/copper_bulb/break3",
+            "portlib:block/copper_bulb/break4"
+        ],
+        "subtitle": "subtitles.block.generic.break"
+    },
+    "block.copper_bulb.fall": {
+        "sounds": [
+            "portlib:block/copper_bulb/step1",
+            "portlib:block/copper_bulb/step2",
+            "portlib:block/copper_bulb/step3",
+            "portlib:block/copper_bulb/step4",
+            "portlib:block/copper_bulb/step5",
+            "portlib:block/copper_bulb/step6"
+        ],
+        "subtitle": "subtitles.block.generic.fall"
+    },
+    "block.copper_bulb.hit": {
+        "sounds": [
+            "portlib:block/copper_bulb/step1",
+            "portlib:block/copper_bulb/step2",
+            "portlib:block/copper_bulb/step3",
+            "portlib:block/copper_bulb/step4",
+            "portlib:block/copper_bulb/step5",
+            "portlib:block/copper_bulb/step6"
+        ],
+        "subtitle": "subtitles.block.generic.hit"
+    },
+    "block.copper_bulb.place": {
+        "sounds": [
+            "portlib:block/copper_bulb/place1",
+            "portlib:block/copper_bulb/place2",
+            "portlib:block/copper_bulb/place3",
+            "portlib:block/copper_bulb/place4"
+        ],
+        "subtitle": "subtitles.block.generic.place"
+    },
+    "block.copper_bulb.step": {
+        "sounds": [
+            "portlib:block/copper_bulb/step1",
+            "portlib:block/copper_bulb/step2",
+            "portlib:block/copper_bulb/step3",
+            "portlib:block/copper_bulb/step4",
+            "portlib:block/copper_bulb/step5",
+            "portlib:block/copper_bulb/step6"
+        ],
+        "subtitle": "subtitles.block.generic.footsteps"
+    },
+    "block.copper_bulb.turn_off": {
+        "sounds": [
+            {
+                "attenuation_distance": 6,
+                "name": "portlib:block/copper_bulb/toggle",
+                "pitch": 0.75
+            }
+        ],
+        "subtitle": "subtitles.block.copper_bulb.turn_off"
+    },
+    "block.copper_bulb.turn_on": {
+        "sounds": [
+            {
+                "attenuation_distance": 6,
+                "name": "portlib:block/copper_bulb/toggle"
+            }
+        ],
+        "subtitle": "subtitles.block.copper_bulb.turn_on"
+    },
+    "block.copper_door.close": {
+        "sounds": [
+            "portlib:block/copper_door/toggle1",
+            "portlib:block/copper_door/toggle2",
+            "portlib:block/copper_door/toggle3"
+        ],
+        "subtitle": "subtitles.block.door.toggle"
+    },
+    "block.copper_door.open": {
+        "sounds": [
+            "portlib:block/copper_door/toggle1",
+            "portlib:block/copper_door/toggle2",
+            {
+                "name": "portlib:block/copper_door/toggle2",
+                "pitch": 1.1
+            },
+            "portlib:block/copper_door/toggle3",
+            {
+                "name": "portlib:block/copper_door/toggle3",
+                "pitch": 1.1
+            }
+        ],
+        "subtitle": "subtitles.block.door.toggle"
+    },
+    "block.copper_trapdoor.close": {
+        "sounds": [
+            "portlib:block/copper_trapdoor/toggle1",
+            "portlib:block/copper_trapdoor/toggle2",
+            "portlib:block/copper_trapdoor/toggle3",
+            "portlib:block/copper_trapdoor/toggle4"
+        ],
+        "subtitle": "subtitles.block.copper_trapdoor.close"
+    },
+    "block.copper_trapdoor.open": {
+        "sounds": [
+            "portlib:block/copper_trapdoor/toggle1",
+            "portlib:block/copper_trapdoor/toggle2",
+            "portlib:block/copper_trapdoor/toggle3",
+            "portlib:block/copper_trapdoor/toggle4"
+        ],
+        "subtitle": "subtitles.block.copper_trapdoor.open"
     }
 }

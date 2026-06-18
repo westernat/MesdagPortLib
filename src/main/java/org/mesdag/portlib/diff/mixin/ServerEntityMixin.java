@@ -12,6 +12,7 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.PortSyncEffectParticlesS2C;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -63,5 +64,10 @@ public abstract class ServerEntityMixin {
                 }
             }
         }
+    }
+
+    @Inject(method = "sendPairingData", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 0, shift = At.Shift.AFTER))
+    private void sendPairingAdvancedData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> consumer, CallbackInfo ci) {
+        IPortEntityExtension.of(entity).sendPairingData(player, consumer);
     }
 }

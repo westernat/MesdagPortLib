@@ -808,4 +808,10 @@ public class PortItemStackExtension {
             thiz.shrink(amount);
         }
     }
+
+    public static void limitSize(ItemStack thiz, int maxSize) {
+        if (!thiz.isEmpty() && thiz.getCount() > maxSize) {
+            thiz.setCount(maxSize);
+        }
+    }
 }

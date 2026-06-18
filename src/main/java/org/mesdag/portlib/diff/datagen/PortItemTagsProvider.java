@@ -21,6 +21,7 @@ public class PortItemTagsProvider extends ItemTagsProvider {
         super(output, lookupProvider, blockTags, PortLib.MODID, existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(Tags.Items.TOOLS_SHIELDS, PortTags.Items.TOOLS_SHIELD).add(Items.SHIELD);
@@ -51,6 +52,11 @@ public class PortItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.SEEDS_PUMPKIN, PortTags.Items.SEEDS_PUMPKIN).add(Items.PUMPKIN_SEEDS);
         tag(PortTags.Items.SEEDS_TORCHFLOWER).add(Items.TORCHFLOWER_SEEDS);
         tag(Tags.Items.SEEDS_WHEAT, PortTags.Items.SEEDS_WHEAT).add(Items.WHEAT_SEEDS);
+
+        copy(PortTags.Blocks.GLASS_BLOCKS, PortTags.Items.GLASS_BLOCKS);
+        copy(PortTags.Blocks.GLASS_BLOCKS_COLORLESS, PortTags.Items.GLASS_BLOCKS_COLORLESS);
+        copy(PortTags.Blocks.GLASS_BLOCKS_TINTED, PortTags.Items.GLASS_BLOCKS_TINTED);
+        copy(PortTags.Blocks.GLASS_BLOCKS_CHEAP, PortTags.Items.GLASS_BLOCKS_CHEAP);
     }
 
     protected IntrinsicTagAppender<Item> tag(TagKey<Item> forgeTag, TagKey<Item> commonTag) {

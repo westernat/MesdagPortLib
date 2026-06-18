@@ -15,7 +15,7 @@ public class PortCraftingInput implements PortRecipeInput {
     private final StackedContents stackedContents = new StackedContents();
     private final int ingredientCount;
 
-    private PortCraftingInput(int width, int height, List<ItemStack> item) {
+    public PortCraftingInput(int width, int height, List<ItemStack> item) {
         this.width = width;
         this.height = height;
         this.items = item;

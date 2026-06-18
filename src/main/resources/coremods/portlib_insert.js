@@ -179,6 +179,21 @@ function initializeCoreMod() {
                 return node
             }
         },
+        'insert_port_block_renderer_extension': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net/minecraft/client/renderer/blockentity/BlockEntityRenderer'
+            },
+            'transformer': function (node) {
+                if (!node.interfaces.contains('org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension')) {
+                    node.interfaces.add('org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension');
+                    if (node.signature != null) {
+                        node.signature = node.signature + 'Lorg/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension<TT;>;';
+                    }
+                }
+                return node;
+            }
+        },
         'modify_return_value_can_harvest_block': {
             'target': {
                 'type': 'METHOD',

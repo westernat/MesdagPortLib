@@ -25,7 +25,7 @@ public class PortDeferredItem<T extends Item> extends PortRegistryEntry<Item, T>
     }
 
     public ItemStack toStack(int count) {
-        ItemStack stack = get().getDefaultInstance();
+        ItemStack stack = asItem().getDefaultInstance();
         stack.setCount(count);
         return stack;
     }

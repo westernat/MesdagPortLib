@@ -48,6 +48,11 @@ public class PortTags {
         public static final TagKey<Item> SEEDS_TORCHFLOWER = common("seeds/torchflower");
         public static final TagKey<Item> SEEDS_WHEAT = common("seeds/wheat");
 
+        public static final TagKey<Item> GLASS_BLOCKS = common("glass_blocks");
+        public static final TagKey<Item> GLASS_BLOCKS_COLORLESS = common("glass_blocks/colorless");
+        public static final TagKey<Item> GLASS_BLOCKS_CHEAP = common("glass_blocks/cheap");
+        public static final TagKey<Item> GLASS_BLOCKS_TINTED = common("glass_blocks/tinted");
+
         private static TagKey<Item> common(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
         }
@@ -62,6 +67,11 @@ public class PortTags {
         public static final TagKey<Block> FENCE_GATES_WOODEN = common("fence_gates/wooden");
 
         public static final TagKey<Block> STRIPPED_LOGS = common("stripped_logs");
+
+        public static final TagKey<Block> GLASS_BLOCKS = common("glass_blocks");
+        public static final TagKey<Block> GLASS_BLOCKS_COLORLESS = common("glass_blocks/colorless");
+        public static final TagKey<Block> GLASS_BLOCKS_CHEAP = common("glass_blocks/cheap");
+        public static final TagKey<Block> GLASS_BLOCKS_TINTED = common("glass_blocks/tinted");
 
         private static TagKey<Block> common(String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));
