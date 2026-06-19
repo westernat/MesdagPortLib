@@ -1,3 +1,4 @@
 {
-    "portlib_insert": "coremods/portlib_insert.js"
+    "portlib_insert": "coremods/portlib_insert.js",
+    "portlib_extension_insert": "coremods/portlib_extension_insert.js"
 }

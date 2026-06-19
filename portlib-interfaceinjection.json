@@ -31,5 +31,8 @@
     ],
     "net/minecraft/client/renderer/blockentity/BlockEntityRenderer": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension<T>"
+    ],
+    "com/mojang/serialization/Codec": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension<A>"
     ]
 }

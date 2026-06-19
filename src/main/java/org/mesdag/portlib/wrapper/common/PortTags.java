@@ -73,6 +73,27 @@ public class PortTags {
         public static final TagKey<Block> GLASS_BLOCKS_CHEAP = common("glass_blocks/cheap");
         public static final TagKey<Block> GLASS_BLOCKS_TINTED = common("glass_blocks/tinted");
 
+        public static final TagKey<Block> ORE_BEARING_GROUND_DEEPSLATE = common("ore_bearing_ground/deepslate");
+        public static final TagKey<Block> ORE_BEARING_GROUND_NETHERRACK = common("ore_bearing_ground/netherrack");
+        public static final TagKey<Block> ORE_BEARING_GROUND_STONE = common("ore_bearing_ground/stone");
+        public static final TagKey<Block> ORE_RATES_DENSE = common("ore_rates/dense");
+        public static final TagKey<Block> ORE_RATES_SINGULAR = common("ore_rates/singular");
+        public static final TagKey<Block> ORE_RATES_SPARSE = common("ore_rates/sparse");
+        public static final TagKey<Block> ORES = common("ores");
+        public static final TagKey<Block> ORES_COAL = common("ores/coal");
+        public static final TagKey<Block> ORES_COPPER = common("ores/copper");
+        public static final TagKey<Block> ORES_DIAMOND = common("ores/diamond");
+        public static final TagKey<Block> ORES_EMERALD = common("ores/emerald");
+        public static final TagKey<Block> ORES_GOLD = common("ores/gold");
+        public static final TagKey<Block> ORES_IRON = common("ores/iron");
+        public static final TagKey<Block> ORES_LAPIS = common("ores/lapis");
+        public static final TagKey<Block> ORES_NETHERITE_SCRAP = common("ores/netherite_scrap");
+        public static final TagKey<Block> ORES_QUARTZ = common("ores/quartz");
+        public static final TagKey<Block> ORES_REDSTONE = common("ores/redstone");
+        public static final TagKey<Block> ORES_IN_GROUND_DEEPSLATE = common("ores_in_ground/deepslate");
+        public static final TagKey<Block> ORES_IN_GROUND_NETHERRACK = common("ores_in_ground/netherrack");
+        public static final TagKey<Block> ORES_IN_GROUND_STONE = common("ores_in_ground/stone");
+
         private static TagKey<Block> common(String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));
         }

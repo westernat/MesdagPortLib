@@ -1,16 +1,12 @@
 package PortLib.extensions.com.mojang.serialization.Codec;
 
 import PortLib.extensions.com.mojang.datafixers.util.Either.PortEitherExtension;
-import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.*;
-import com.mojang.serialization.codecs.BaseMapCodec;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.Util;
 import org.joml.Vector4f;
@@ -25,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class PortCodecExtension {
     private static final Codec<Vector4f> VECTOR4F = Codec.FLOAT.listOf().comapFlatMap(
@@ -37,7 +32,6 @@ public class PortCodecExtension {
         return VECTOR4F;
     }
 
-    @Static
     public static <A> Codec<A> lazyInitialized(Supplier<Codec<A>> delegate) {
         return new MemoizeCodec<>(delegate::get);
     }
@@ -94,12 +88,10 @@ public class PortCodecExtension {
         };
     }
 
-    @Static
     public static <A> Codec<List<A>> listWithOptionalElements(Codec<Optional<A>> elementCodec) {
         return listWithoutEmpty(elementCodec.listOf());
     }
 
-    @Static
     public static <A> Codec<List<A>> listWithoutEmpty(Codec<List<Optional<A>>> codec) {
         return codec.xmap(
                 list -> list.stream().filter(Optional::isPresent).map(Optional::get).toList(),
@@ -107,7 +99,6 @@ public class PortCodecExtension {
         );
     }
 
-    @Static
     public static <A> Codec<A> decodeOnly(Decoder<A> decoder) {
         return Codec.of(Codec.unit(() -> {
             throw new UnsupportedOperationException("Cannot encode with decode-only codec! Decoder:" + decoder);
@@ -129,105 +120,17 @@ public class PortCodecExtension {
         return Codec.unboundedMap(codec, Codec.BOOL).xmap(Object2BooleanOpenHashMap::new, Object2ObjectOpenHashMap::new);
     }
 
-    public record StrictUnboundedMapCodec<K, V>(
-            Codec<K> keyCodec,
-            Codec<V> elementCodec
-    ) implements Codec<Map<K, V>>, BaseMapCodec<K, V> {
-        @Override
-        public <T> DataResult<Map<K, V>> decode(DynamicOps<T> ops, MapLike<T> input) {
-            ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
-            for (Pair<T, T> pair : input.entries().toList()) {
-                DataResult<K> resultK = keyCodec().parse(ops, pair.getFirst());
-                DataResult<V> resultV = elementCodec().parse(ops, pair.getSecond());
-                DataResult<Pair<K, V>> resultKV = resultK.apply2stable(Pair::of, resultV);
-                Optional<DataResult.PartialResult<Pair<K, V>>> optional = resultKV.error();
-                if (optional.isPresent()) {
-                    String s = optional.get().message();
-                    return DataResult.error(() -> resultK.result().isPresent() ? "Map entry '" + resultK.result().get() + "' : " + s : s);
-                }
-                if (resultKV.result().isEmpty()) {
-                    return DataResult.error(() -> "Empty or invalid map contents are not allowed");
-                }
-                Pair<K, V> kv = resultKV.result().get();
-                builder.put(kv.getFirst(), kv.getSecond());
-            }
-            return DataResult.success(builder.build());
-        }
-
-        @Override
-        public <T> DataResult<Pair<Map<K, V>, T>> decode(DynamicOps<T> ops, T input) {
-            return ops.getMap(input)
-                    .setLifecycle(Lifecycle.stable())
-                    .flatMap(mapLike -> decode(ops, mapLike))
-                    .map(map -> Pair.of(map, input));
-        }
-
-        public <T> DataResult<T> encode(Map<K, V> input, DynamicOps<T> ops, T value) {
-            return encode(input, ops, ops.mapBuilder()).build(value);
-        }
-
-        @Override
-        public String toString() {
-            return "StrictUnboundedMapCodec[" + keyCodec + " -> " + elementCodec + "]";
-        }
-    }
-
-    public record DispatchedMapCodec<K, V>(
-            Codec<K> keyCodec,
-            Function<K, Codec<? extends V>> valueCodecFunction
-    ) implements Codec<Map<K, V>> {
-        @Override
-        public <T> DataResult<T> encode(Map<K, V> input, DynamicOps<T> ops, T prefix) {
-            RecordBuilder<T> mapBuilder = ops.mapBuilder();
-            for (Map.Entry<K, V> entry : input.entrySet()) {
-                mapBuilder.add(keyCodec.encodeStart(ops, entry.getKey()), encodeValue(valueCodecFunction.apply(entry.getKey()), entry.getValue(), ops));
-            }
-            return mapBuilder.build(prefix);
-        }
-
-        @SuppressWarnings("unchecked")
-        private <T, V2 extends V> DataResult<T> encodeValue(Codec<V2> codec, V input, DynamicOps<T> ops) {
-            return codec.encodeStart(ops, (V2) input);
-        }
-
-        @Override
-        public <T> DataResult<Pair<Map<K, V>, T>> decode(DynamicOps<T> ops, T input) {
-            return ops.getMap(input).flatMap(map -> {
-                Map<K, V> entries = new Object2ObjectArrayMap<>();
-                Stream.Builder<Pair<T, T>> failed = Stream.builder();
-
-                DataResult<Unit> finalResult = map.entries().reduce(
-                        DataResult.success(Unit.INSTANCE, Lifecycle.stable()),
-                        (result, entry) -> parseEntry(result, ops, entry, entries, failed),
-                        (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2)
-                );
-
-                Pair<Map<K, V>, T> pair = Pair.of(ImmutableMap.copyOf(entries), input);
-                T errors = ops.createMap(failed.build());
-
-                return finalResult.map(ignored -> pair).setPartial(pair).mapError(error -> error + " missed input: " + errors);
-            });
-        }
-
-        private <T> DataResult<Unit> parseEntry(DataResult<Unit> result, DynamicOps<T> ops, Pair<T, T> input, Map<K, V> entries, Stream.Builder<Pair<T, T>> failed) {
-            DataResult<K> keyResult = keyCodec.parse(ops, input.getFirst());
-            DataResult<V> valueResult = keyResult.map(valueCodecFunction).flatMap(valueCodec -> valueCodec.parse(ops, input.getSecond()).map(Function.identity()));
-            DataResult<Pair<K, V>> entryResult = keyResult.apply2stable(Pair::of, valueResult);
-
-            Optional<Pair<K, V>> entry = PortDataResultExtension.resultOrPartial(entryResult);
-            if (entry.isPresent()) {
-                K key = entry.get().getFirst();
-                V value = entry.get().getSecond();
-                if (entries.putIfAbsent(key, value) != null) {
-                    failed.add(input);
-                    return result.apply2stable((u, p) -> u, DataResult.error(() -> "Duplicate entry for key: '" + key + "'"));
-                }
-            }
-            if (entryResult.error().isPresent()) {
-                failed.add(input);
+    public static <A> Codec<A> json(Function<A, ? extends JsonElement> encoder, Function<? super JsonElement, A> decoder) {
+        return new Codec<>() {
+            @Override
+            public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input) {
+                return DataResult.success(new Pair<>(decoder.apply(ops.convertTo(JsonOps.INSTANCE, input)), input), Lifecycle.stable());
             }
 
-            return result.apply2stable((u, p) -> u, entryResult);
-        }
+            @Override
+            public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix) {
+                return DataResult.success(JsonOps.INSTANCE.convertTo(ops, encoder.apply(input)), Lifecycle.stable());
+            }
+        };
     }
 }

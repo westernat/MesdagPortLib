@@ -5,8 +5,10 @@ import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtens
 import PortLib.extensions.net.minecraft.core.IdMap.PortIdMapExtension;
 import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import PortLib.extensions.net.minecraftforge.registries.ForgeRegistry.PortForgeRegistryExtension;
+import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -492,16 +494,51 @@ public interface PortByteBufCodecs {
         };
     }
 
-    static <T> PortStreamCodec<ByteBuf, T> idMapper(IntFunction<T> idLookup, ToIntFunction<T> idGetter) {
+    static <V> PortStreamCodec<ByteBuf, V> idMapper(IntFunction<V> idLookup, ToIntFunction<V> idGetter) {
         return new PortStreamCodec<>() {
-            public T decode(ByteBuf buffer) {
+            public V decode(ByteBuf buffer) {
                 int i = PortVarInt.read(buffer);
                 return idLookup.apply(i);
             }
 
-            public void encode(ByteBuf buffer, T value) {
+            public void encode(ByteBuf buffer, V value) {
                 int i = idGetter.applyAsInt(value);
                 PortVarInt.write(buffer, i);
+            }
+        };
+    }
+
+    static <V> PortStreamCodec<FriendlyByteBuf, V> json(V defaultValue, Function<V, ? extends JsonElement> encoder, Function<? super JsonElement, V> decoder) {
+        return new PortStreamCodec<>() {
+            @Override
+            public V decode(FriendlyByteBuf buffer) {
+                CompoundTag nbt = buffer.readAnySizeNbt();
+                if (nbt == null) {
+                    return defaultValue;
+                }
+                if (buffer.readBoolean()) {
+                    Tag tag = nbt.get("value");
+                    if (tag == null) {
+                        return defaultValue;
+                    }
+                    return decoder.apply(NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag));
+                }
+                return decoder.apply(NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, nbt));
+            }
+
+            @Override
+            public void encode(FriendlyByteBuf buffer, V value) {
+                JsonElement element = encoder.apply(value);
+                Tag tag = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, element);
+                if (element.isJsonObject()) {
+                    buffer.writeNbt((CompoundTag) tag);
+                    buffer.writeBoolean(false);
+                } else {
+                    CompoundTag nbt = new CompoundTag();
+                    nbt.put("value", tag);
+                    buffer.writeNbt(nbt);
+                    buffer.writeBoolean(true);
+                }
             }
         };
     }
