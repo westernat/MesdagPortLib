@@ -207,7 +207,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     @ModifyExpressionValue(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float onLivingDamagePre(float ignored, @Share("absorbed") LocalFloatRef absorbed) {
         PortDamageContainer container = portlib$damageContainers.peek();
-        float damage = PortLivingDamageEvent.PortPre.onLivingDamagePre(portlib$self(), container);
+        float damage = PortLivingDamageEvent.Pre.onLivingDamagePre(portlib$self(), container);
         container.setReduction(PortDamageContainer.PortReduction.ABSORPTION, Math.min(getAbsorptionAmount(), damage));
         absorbed.set(Math.min(damage, container.getReduction(PortDamageContainer.PortReduction.ABSORPTION)));
         setAbsorptionAmount(Math.max(0, getAbsorptionAmount() - absorbed.get()));
@@ -252,7 +252,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     private void onLivingDamagePost(CallbackInfo ci, @Share("couldPost") LocalBooleanRef couldPost) {
         if (couldPost.get()) {
             PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
-            PortLivingDamageEvent.PortPost.onLivingDamagePost(portlib$self(), container);
+            PortLivingDamageEvent.Post.onLivingDamagePost(portlib$self(), container);
         }
     }
 
@@ -265,12 +265,12 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @ModifyExpressionValue(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;canBeAffected(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
     private boolean canMobEffectBeApplied1(boolean original, @Local(argsOnly = true) MobEffectInstance instance, @Local(argsOnly = true) @Nullable Entity entity) {
-        return original && PortMobEffectEvent.PortApplicable.canMobEffectBeApplied(portlib$self(), instance, entity);
+        return original && PortMobEffectEvent.Applicable.canMobEffectBeApplied(portlib$self(), instance, entity);
     }
 
     @ModifyExpressionValue(method = "forceAddEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;canBeAffected(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
     private boolean canMobEffectBeApplied2(boolean original, @Local(argsOnly = true) MobEffectInstance instance, @Local(argsOnly = true) @Nullable Entity entity) {
-        return original && PortMobEffectEvent.PortApplicable.canMobEffectBeApplied(portlib$self(), instance, entity);
+        return original && PortMobEffectEvent.Applicable.canMobEffectBeApplied(portlib$self(), instance, entity);
     }
 
     @WrapOperation(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;removeAllEffects()Z"))

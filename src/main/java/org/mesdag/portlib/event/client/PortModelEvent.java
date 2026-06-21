@@ -21,9 +21,9 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
         super(e);
     }
 
-    public static class PortModifyBakingResult extends PortModelEvent<ModelEvent.ModifyBakingResult> implements IPortModBusEvent {
+    public static class ModifyBakingResult extends PortModelEvent<ModelEvent.ModifyBakingResult> implements IPortModBusEvent {
         @Diff
-        public PortModifyBakingResult(ModelEvent.ModifyBakingResult e) {
+        public ModifyBakingResult(ModelEvent.ModifyBakingResult e) {
             super(e);
         }
 
@@ -62,9 +62,9 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortBakingCompleted extends PortModelEvent<ModelEvent.BakingCompleted> implements IPortModBusEvent {
+    public static class BakingCompleted extends PortModelEvent<ModelEvent.BakingCompleted> implements IPortModBusEvent {
         @Diff
-        public PortBakingCompleted(ModelEvent.BakingCompleted e) {
+        public BakingCompleted(ModelEvent.BakingCompleted e) {
             super(e);
         }
 
@@ -85,9 +85,9 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortRegisterAdditional extends PortModelEvent<ModelEvent.RegisterAdditional> implements IPortModBusEvent {
+    public static class RegisterAdditional extends PortModelEvent<ModelEvent.RegisterAdditional> implements IPortModBusEvent {
         @Diff
-        public PortRegisterAdditional(ModelEvent.RegisterAdditional e) {
+        public RegisterAdditional(ModelEvent.RegisterAdditional e) {
             super(e);
         }
 
@@ -100,9 +100,9 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortRegisterGeometryLoaders extends PortModelEvent<ModelEvent.RegisterGeometryLoaders> implements IPortModBusEvent {
+    public static class RegisterGeometryLoaders extends PortModelEvent<ModelEvent.RegisterGeometryLoaders> implements IPortModBusEvent {
         @Diff
-        public PortRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders e) {
+        public RegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders e) {
             super(e);
         }
 

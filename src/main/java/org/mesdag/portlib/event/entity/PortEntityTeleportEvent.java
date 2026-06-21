@@ -61,9 +61,9 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         return e.getPrev();
     }
 
-    public static class PortTeleportCommand extends PortEntityTeleportEvent<EntityTeleportEvent.TeleportCommand> implements IPortCancellableEvent {
+    public static class TeleportCommand extends PortEntityTeleportEvent<EntityTeleportEvent.TeleportCommand> implements IPortCancellableEvent {
         @Diff
-        public PortTeleportCommand(EntityTeleportEvent.TeleportCommand e) {
+        public TeleportCommand(EntityTeleportEvent.TeleportCommand e) {
             super(e);
         }
 
@@ -72,9 +72,9 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
     }
 
-    public static class PortSpreadPlayersCommand extends PortEntityTeleportEvent<EntityTeleportEvent.SpreadPlayersCommand> implements IPortCancellableEvent {
+    public static class SpreadPlayersCommand extends PortEntityTeleportEvent<EntityTeleportEvent.SpreadPlayersCommand> implements IPortCancellableEvent {
         @Diff
-        public PortSpreadPlayersCommand(EntityTeleportEvent.SpreadPlayersCommand e) {
+        public SpreadPlayersCommand(EntityTeleportEvent.SpreadPlayersCommand e) {
             super(e);
         }
 
@@ -83,9 +83,9 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
     }
 
-    public static class PortEnderEntity extends PortEntityTeleportEvent<EntityTeleportEvent.EnderEntity> implements IPortCancellableEvent {
+    public static class EnderEntity extends PortEntityTeleportEvent<EntityTeleportEvent.EnderEntity> implements IPortCancellableEvent {
         @Diff
-        public PortEnderEntity(EntityTeleportEvent.EnderEntity e) {
+        public EnderEntity(EntityTeleportEvent.EnderEntity e) {
             super(e);
         }
 
@@ -98,9 +98,9 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
     }
 
-    public static class PortEnderPearl extends PortEntityTeleportEvent<EntityTeleportEvent.EnderPearl> implements IPortCancellableEvent {
+    public static class EnderPearl extends PortEntityTeleportEvent<EntityTeleportEvent.EnderPearl> implements IPortCancellableEvent {
         @Diff
-        public PortEnderPearl(EntityTeleportEvent.EnderPearl e) {
+        public EnderPearl(EntityTeleportEvent.EnderPearl e) {
             super(e);
         }
 
@@ -129,9 +129,9 @@ public class PortEntityTeleportEvent<E extends EntityTeleportEvent> extends Port
         }
     }
 
-    public static class PortChorusFruit extends PortEntityTeleportEvent<EntityTeleportEvent.ChorusFruit> implements IPortCancellableEvent {
+    public static class ChorusFruit extends PortEntityTeleportEvent<EntityTeleportEvent.ChorusFruit> implements IPortCancellableEvent {
         @Diff
-        public PortChorusFruit(EntityTeleportEvent.ChorusFruit e) {
+        public ChorusFruit(EntityTeleportEvent.ChorusFruit e) {
             super(e);
         }
 

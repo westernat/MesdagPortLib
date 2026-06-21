@@ -22,7 +22,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         super(e);
     }
 
-    public PortStage getStage() {
+    public Stage getStage() {
         return PortRenderLevelStageEventExtension.Stage.wrap(e.getStage());
     }
 
@@ -62,13 +62,13 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         PortEventHooks.register();
     }
 
-    public static class PortRegisterStageEvent extends PortEvent<RenderLevelStageEvent.RegisterStageEvent> implements IPortModBusEvent {
+    public static class RegisterStageEvent extends PortEvent<RenderLevelStageEvent.RegisterStageEvent> implements IPortModBusEvent {
         @Diff
-        public PortRegisterStageEvent(RenderLevelStageEvent.RegisterStageEvent e) {
+        public RegisterStageEvent(RenderLevelStageEvent.RegisterStageEvent e) {
             super(e);
         }
 
-        public PortStage register(ResourceLocation name, @Nullable RenderType renderType) throws IllegalArgumentException {
+        public Stage register(ResourceLocation name, @Nullable RenderType renderType) throws IllegalArgumentException {
             return PortRenderLevelStageEventExtension.Stage.wrap(e.register(name, renderType));
         }
 
@@ -77,23 +77,23 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         }
     }
 
-    public static class PortStage {
-        public static final PortStage AFTER_SKY = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SKY);
-        public static final PortStage AFTER_SOLID_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
-        public static final PortStage AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS);
-        public static final PortStage AFTER_CUTOUT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS);
-        public static final PortStage AFTER_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_ENTITIES);
-        public static final PortStage AFTER_BLOCK_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES);
-        public static final PortStage AFTER_TRANSLUCENT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS);
-        public static final PortStage AFTER_TRIPWIRE_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
-        public static final PortStage AFTER_PARTICLES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_PARTICLES);
-        public static final PortStage AFTER_WEATHER = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_WEATHER);
-        public static final PortStage AFTER_LEVEL = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_LEVEL);
+    public static class Stage {
+        public static final Stage AFTER_SKY = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SKY);
+        public static final Stage AFTER_SOLID_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
+        public static final Stage AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS);
+        public static final Stage AFTER_CUTOUT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS);
+        public static final Stage AFTER_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_ENTITIES);
+        public static final Stage AFTER_BLOCK_ENTITIES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES);
+        public static final Stage AFTER_TRANSLUCENT_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS);
+        public static final Stage AFTER_TRIPWIRE_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
+        public static final Stage AFTER_PARTICLES = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_PARTICLES);
+        public static final Stage AFTER_WEATHER = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_WEATHER);
+        public static final Stage AFTER_LEVEL = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_LEVEL);
 
         private final RenderLevelStageEvent.Stage delegate;
 
         @Diff
-        public PortStage(RenderLevelStageEvent.Stage delegate) {
+        public Stage(RenderLevelStageEvent.Stage delegate) {
             this.delegate = delegate;
         }
 
@@ -104,7 +104,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
 
         @Override
         public boolean equals(Object obj) {
-            return this == obj || obj instanceof PortStage stage && stage.delegate == delegate;
+            return this == obj || obj instanceof Stage stage && stage.delegate == delegate;
         }
 
         @Override
@@ -112,7 +112,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
             return delegate.hashCode();
         }
 
-        public static @Nullable PortRenderLevelStageEvent.PortStage fromRenderType(RenderType renderType) {
+        public static @Nullable PortRenderLevelStageEvent.Stage fromRenderType(RenderType renderType) {
             return PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.fromRenderType(renderType));
         }
     }

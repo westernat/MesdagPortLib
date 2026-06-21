@@ -49,9 +49,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         return PortLogicalSideExtension.wrap(e.getSide());
     }
 
-    public static class PortEntityInteractSpecific extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteractSpecific> implements IPortCancellableEvent {
+    public static class EntityInteractSpecific extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteractSpecific> implements IPortCancellableEvent {
         @Diff
-        public PortEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific e) {
+        public EntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific e) {
             super(e);
         }
 
@@ -76,9 +76,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortEntityInteract extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteract> implements IPortCancellableEvent {
+    public static class EntityInteract extends PortPlayerInteractEvent<PlayerInteractEvent.EntityInteract> implements IPortCancellableEvent {
         @Diff
-        public PortEntityInteract(PlayerInteractEvent.EntityInteract e) {
+        public EntityInteract(PlayerInteractEvent.EntityInteract e) {
             super(e);
         }
 
@@ -99,9 +99,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortRightClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickBlock> implements IPortCancellableEvent {
+    public static class RightClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickBlock> implements IPortCancellableEvent {
         @Diff
-        public PortRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
+        public RightClickBlock(PlayerInteractEvent.RightClickBlock e) {
             super(e);
         }
 
@@ -138,9 +138,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortRightClickItem extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickItem> implements IPortCancellableEvent {
+    public static class RightClickItem extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickItem> implements IPortCancellableEvent {
         @Diff
-        public PortRightClickItem(PlayerInteractEvent.RightClickItem e) {
+        public RightClickItem(PlayerInteractEvent.RightClickItem e) {
             super(e);
         }
 
@@ -157,9 +157,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortRightClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickEmpty> implements IPortCancellableEvent {
+    public static class RightClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.RightClickEmpty> implements IPortCancellableEvent {
         @Diff
-        public PortRightClickEmpty(PlayerInteractEvent.RightClickEmpty e) {
+        public RightClickEmpty(PlayerInteractEvent.RightClickEmpty e) {
             super(e);
         }
 
@@ -168,9 +168,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortLeftClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickBlock> implements IPortCancellableEvent {
+    public static class LeftClickBlock extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickBlock> implements IPortCancellableEvent {
         @Diff
-        public PortLeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
+        public LeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
             super(e);
         }
 
@@ -226,9 +226,9 @@ public abstract class PortPlayerInteractEvent<E extends PlayerInteractEvent> ext
         }
     }
 
-    public static class PortLeftClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickEmpty> implements IPortCancellableEvent {
+    public static class LeftClickEmpty extends PortPlayerInteractEvent<PlayerInteractEvent.LeftClickEmpty> implements IPortCancellableEvent {
         @Diff
-        public PortLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty e) {
+        public LeftClickEmpty(PlayerInteractEvent.LeftClickEmpty e) {
             super(e);
         }
 

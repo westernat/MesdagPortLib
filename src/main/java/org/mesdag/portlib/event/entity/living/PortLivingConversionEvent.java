@@ -12,9 +12,9 @@ public abstract class PortLivingConversionEvent<E extends LivingConversionEvent>
         super(e);
     }
 
-    public static class PortPre extends PortLivingConversionEvent<LivingConversionEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortLivingConversionEvent<LivingConversionEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(LivingConversionEvent.Pre e) {
+        public Pre(LivingConversionEvent.Pre e) {
             super(e);
         }
 
@@ -31,9 +31,9 @@ public abstract class PortLivingConversionEvent<E extends LivingConversionEvent>
         }
     }
 
-    public static class PortPost extends PortLivingConversionEvent<LivingConversionEvent.Post> implements IPortCancellableEvent {
+    public static class Post extends PortLivingConversionEvent<LivingConversionEvent.Post> implements IPortCancellableEvent {
         @Diff
-        public PortPost(LivingConversionEvent.Post e) {
+        public Post(LivingConversionEvent.Post e) {
             super(e);
         }
 

@@ -27,9 +27,9 @@ public abstract class PortClientPlayerNetworkEvent<E extends ClientPlayerNetwork
         return e.getConnection();
     }
 
-    public static class PortLoggingIn extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.LoggingIn> {
+    public static class LoggingIn extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.LoggingIn> {
         @Diff
-        public PortLoggingIn(ClientPlayerNetworkEvent.LoggingIn e) {
+        public LoggingIn(ClientPlayerNetworkEvent.LoggingIn e) {
             super(e);
         }
 
@@ -38,9 +38,9 @@ public abstract class PortClientPlayerNetworkEvent<E extends ClientPlayerNetwork
         }
     }
 
-    public static class PortLoggingOut extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.LoggingOut> {
+    public static class LoggingOut extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.LoggingOut> {
         @Diff
-        public PortLoggingOut(ClientPlayerNetworkEvent.LoggingOut e) {
+        public LoggingOut(ClientPlayerNetworkEvent.LoggingOut e) {
             super(e);
         }
 
@@ -64,9 +64,9 @@ public abstract class PortClientPlayerNetworkEvent<E extends ClientPlayerNetwork
         }
     }
 
-    public static class PortClone extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.Clone> {
+    public static class Clone extends PortClientPlayerNetworkEvent<ClientPlayerNetworkEvent.Clone> {
         @Diff
-        public PortClone(ClientPlayerNetworkEvent.Clone e) {
+        public Clone(ClientPlayerNetworkEvent.Clone e) {
             super(e);
         }
 

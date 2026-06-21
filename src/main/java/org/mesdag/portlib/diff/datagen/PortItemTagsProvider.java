@@ -57,6 +57,13 @@ public class PortItemTagsProvider extends ItemTagsProvider {
         copy(PortTags.Blocks.GLASS_BLOCKS_COLORLESS, PortTags.Items.GLASS_BLOCKS_COLORLESS);
         copy(PortTags.Blocks.GLASS_BLOCKS_TINTED, PortTags.Items.GLASS_BLOCKS_TINTED);
         copy(PortTags.Blocks.GLASS_BLOCKS_CHEAP, PortTags.Items.GLASS_BLOCKS_CHEAP);
+
+        tag(PortTags.Items.MUSIC_DISCS).add(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP,
+                Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD,
+                Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT, Items.MUSIC_DISC_OTHERSIDE, Items.MUSIC_DISC_5,
+                Items.MUSIC_DISC_PIGSTEP, Items.MUSIC_DISC_RELIC);
+
+        copy(PortTags.Blocks.GRAVELS, PortTags.Items.GRAVELS);
     }
 
     protected IntrinsicTagAppender<Item> tag(TagKey<Item> forgeTag, TagKey<Item> commonTag) {

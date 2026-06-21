@@ -15,9 +15,9 @@ public class PortPlayerContainerEvent extends PortPlayerEvent<PlayerContainerEve
         return e.getContainer();
     }
 
-    public static class PortOpen extends PortPlayerContainerEvent {
+    public static class Open extends PortPlayerContainerEvent {
         @Diff
-        public PortOpen(PlayerContainerEvent.Open e) {
+        public Open(PlayerContainerEvent.Open e) {
             super(e);
         }
 
@@ -26,9 +26,9 @@ public class PortPlayerContainerEvent extends PortPlayerEvent<PlayerContainerEve
         }
     }
 
-    public static class PortClose extends PortPlayerContainerEvent {
+    public static class Close extends PortPlayerContainerEvent {
         @Diff
-        public PortClose(PlayerContainerEvent.Close e) {
+        public Close(PlayerContainerEvent.Close e) {
             super(e);
         }
 

@@ -23,16 +23,16 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         return e.getEffectInstance();
     }
 
-    public static class PortRemove extends PortMobEffectEvent<MobEffectEvent.Remove> implements IPortCancellableEvent {
+    public static class Remove extends PortMobEffectEvent<MobEffectEvent.Remove> implements IPortCancellableEvent {
         private final @Nullable PortEffectCure cure;
 
         @Diff
-        public PortRemove(MobEffectEvent.Remove e) {
+        public Remove(MobEffectEvent.Remove e) {
             this(e, null);
         }
 
         @Diff
-        public PortRemove(MobEffectEvent.Remove e, @Nullable PortEffectCure cure) {
+        public Remove(MobEffectEvent.Remove e, @Nullable PortEffectCure cure) {
             super(e);
             this.cure = cure;
         }
@@ -53,7 +53,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         @Diff
         public static boolean onEffectRemoved(LivingEntity entity, MobEffectInstance effectInstance, @Nullable PortEffectCure cure) {
             MobEffectEvent.Remove e = new MobEffectEvent.Remove(entity, effectInstance);
-            return PortEventHandler.postEventWithReturn(new PortRemove(e, cure)).isCanceled();
+            return PortEventHandler.postEventWithReturn(new Remove(e, cure)).isCanceled();
         }
 
         static {
@@ -61,13 +61,13 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
     }
 
-    public static class PortApplicable extends MobEffectEvent {
+    public static class Applicable extends MobEffectEvent {
         protected PortResult result = PortResult.DEFAULT;
         @Nullable
         private final Entity source;
 
         @Diff
-        public PortApplicable(LivingEntity living, MobEffectInstance effectInstance, @Nullable Entity source) {
+        public Applicable(LivingEntity living, MobEffectInstance effectInstance, @Nullable Entity source) {
             super(living, effectInstance);
             this.source = source;
         }
@@ -97,7 +97,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
 
         public static boolean canMobEffectBeApplied(LivingEntity entity, MobEffectInstance effect, @Nullable Entity source) {
-            var event = new PortApplicable(entity, effect, source);
+            var event = new PortMobEffectEvent.Applicable(entity, effect, source);
             return PortEventHandler.postEventWithReturn(event).getApplicationResult();
         }
 
@@ -108,9 +108,9 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
     }
 
-    public static class PortAdded extends PortMobEffectEvent<MobEffectEvent.Added> {
+    public static class Added extends PortMobEffectEvent<MobEffectEvent.Added> {
         @Diff
-        public PortAdded(MobEffectEvent.Added e) {
+        public Added(MobEffectEvent.Added e) {
             super(e);
         }
 
@@ -132,9 +132,9 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
     }
 
-    public static class PortExpired extends PortMobEffectEvent<MobEffectEvent.Expired> implements IPortCancellableEvent {
+    public static class Expired extends PortMobEffectEvent<MobEffectEvent.Expired> implements IPortCancellableEvent {
         @Diff
-        public PortExpired(MobEffectEvent.Expired e) {
+        public Expired(MobEffectEvent.Expired e) {
             super(e);
         }
 

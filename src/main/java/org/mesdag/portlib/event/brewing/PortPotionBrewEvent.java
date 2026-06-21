@@ -25,9 +25,9 @@ public abstract class PortPotionBrewEvent extends PortEvent<PotionBrewEvent> {
         return e.getLength();
     }
 
-    public static class PortPre extends PortPotionBrewEvent implements IPortCancellableEvent {
+    public static class Pre extends PortPotionBrewEvent implements IPortCancellableEvent {
         @Diff
-        public PortPre(PotionBrewEvent e) {
+        public Pre(PotionBrewEvent e) {
             super(e);
         }
 
@@ -36,9 +36,9 @@ public abstract class PortPotionBrewEvent extends PortEvent<PotionBrewEvent> {
         }
     }
 
-    public static class PortPost extends PortPotionBrewEvent {
+    public static class Post extends PortPotionBrewEvent {
         @Diff
-        public PortPost(PotionBrewEvent e) {
+        public Post(PotionBrewEvent e) {
             super(e);
         }
 

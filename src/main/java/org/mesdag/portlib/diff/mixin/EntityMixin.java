@@ -82,9 +82,9 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
 
     @WrapOperation(method = "rideTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
     private void fireEntityTick(Entity instance, Operation<Void> original) {
-        if (!PortEventHandler.postEventWithReturn(new PortEntityTickEvent.PortPre(instance)).isCanceled()) {
+        if (!PortEventHandler.postEventWithReturn(new PortEntityTickEvent.Pre(instance)).isCanceled()) {
             original.call(instance);
-            PortEventHandler.postEvent(new PortEntityTickEvent.PortPost(instance));
+            PortEventHandler.postEvent(new PortEntityTickEvent.Post(instance));
         }
     }
 

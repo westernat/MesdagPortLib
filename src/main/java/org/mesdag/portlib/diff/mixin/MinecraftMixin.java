@@ -19,7 +19,7 @@ public abstract class MinecraftMixin {
 
     @ModifyExpressionValue(method = "runTick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;pause:Z", opcode = Opcodes.GETFIELD, ordinal = 2))
     private boolean onClientPauseChangePre(boolean original, @Local(name = "flag1") boolean flag1) {
-        var event = new PortClientPauseChangeEvent.PortPre(flag1);
+        var event = new PortClientPauseChangeEvent.Pre(flag1);
         PortEventHandler.postEvent(event);
         if (event.isCanceled()) {
             return flag1; // make pause == flag1
@@ -29,6 +29,6 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "runTick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;pause:Z", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
     private void onClientPauseChangePost(CallbackInfo ci) {
-        PortEventHandler.postEvent(new PortClientPauseChangeEvent.PortPost(pause));
+        PortEventHandler.postEvent(new PortClientPauseChangeEvent.Post(pause));
     }
 }

@@ -7,8 +7,8 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUseItemEvent> {
-    private PortLivingEntityUseItemEvent(LivingEntityUseItemEvent e) {
+public class PortLivingEntityUseItemEvent<E extends LivingEntityUseItemEvent> extends PortLivingEvent<E> {
+    private PortLivingEntityUseItemEvent(E e) {
         super(e);
     }
 
@@ -28,9 +28,9 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         return e.getEntity().getUsedItemHand();
     }
 
-    public static class PortStart extends PortLivingEntityUseItemEvent implements IPortCancellableEvent {
+    public static class Start extends PortLivingEntityUseItemEvent<LivingEntityUseItemEvent.Start> implements IPortCancellableEvent {
         @Diff
-        public PortStart(LivingEntityUseItemEvent.Start e) {
+        public Start(LivingEntityUseItemEvent.Start e) {
             super(e);
         }
 
@@ -39,9 +39,9 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
     }
 
-    public static class PortTick extends PortLivingEntityUseItemEvent implements IPortCancellableEvent {
+    public static class Tick extends PortLivingEntityUseItemEvent<LivingEntityUseItemEvent.Tick> implements IPortCancellableEvent {
         @Diff
-        public PortTick(LivingEntityUseItemEvent.Tick e) {
+        public Tick(LivingEntityUseItemEvent.Tick e) {
             super(e);
         }
 
@@ -50,9 +50,9 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
     }
 
-    public static class PortStop extends PortLivingEntityUseItemEvent implements IPortCancellableEvent {
+    public static class Stop extends PortLivingEntityUseItemEvent<LivingEntityUseItemEvent.Stop> implements IPortCancellableEvent {
         @Diff
-        public PortStop(LivingEntityUseItemEvent.Stop e) {
+        public Stop(LivingEntityUseItemEvent.Stop e) {
             super(e);
         }
 
@@ -61,13 +61,10 @@ public class PortLivingEntityUseItemEvent extends PortLivingEvent<LivingEntityUs
         }
     }
 
-    public static class PortFinish extends PortLivingEntityUseItemEvent {
-        private final LivingEntityUseItemEvent.Finish e;
-
+    public static class Finish extends PortLivingEntityUseItemEvent<LivingEntityUseItemEvent.Finish> {
         @Diff
-        public PortFinish(LivingEntityUseItemEvent.Finish e) {
+        public Finish(LivingEntityUseItemEvent.Finish e) {
             super(e);
-            this.e = e;
         }
 
         public ItemStack getResultStack() {

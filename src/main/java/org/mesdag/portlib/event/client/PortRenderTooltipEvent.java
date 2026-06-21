@@ -46,9 +46,9 @@ public abstract class PortRenderTooltipEvent<E extends RenderTooltipEvent> exten
         return e.getFont();
     }
 
-    public static class PortGatherComponents extends PortEvent<RenderTooltipEvent.GatherComponents> implements IPortCancellableEvent {
+    public static class GatherComponents extends PortEvent<RenderTooltipEvent.GatherComponents> implements IPortCancellableEvent {
         @Diff
-        public PortGatherComponents(RenderTooltipEvent.GatherComponents e) {
+        public GatherComponents(RenderTooltipEvent.GatherComponents e) {
             super(e);
         }
 
@@ -81,9 +81,9 @@ public abstract class PortRenderTooltipEvent<E extends RenderTooltipEvent> exten
         }
     }
 
-    public static class PortPre extends PortRenderTooltipEvent<RenderTooltipEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortRenderTooltipEvent<RenderTooltipEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(RenderTooltipEvent.Pre e) {
+        public Pre(RenderTooltipEvent.Pre e) {
             super(e);
         }
 
@@ -116,9 +116,9 @@ public abstract class PortRenderTooltipEvent<E extends RenderTooltipEvent> exten
         }
     }
 
-    public static class PortColor extends PortRenderTooltipEvent<RenderTooltipEvent.Color> {
+    public static class Color extends PortRenderTooltipEvent<RenderTooltipEvent.Color> {
         @Diff
-        public PortColor(RenderTooltipEvent.Color e) {
+        public Color(RenderTooltipEvent.Color e) {
             super(e);
         }
 

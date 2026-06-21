@@ -26,9 +26,9 @@ public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortE
         return e.getExplosion();
     }
 
-    public static class PortStart extends PortExplosionEvent<ExplosionEvent.Start> implements IPortCancellableEvent {
+    public static class Start extends PortExplosionEvent<ExplosionEvent.Start> implements IPortCancellableEvent {
         @Diff
-        public PortStart(ExplosionEvent.Start e) {
+        public Start(ExplosionEvent.Start e) {
             super(e);
         }
 
@@ -37,9 +37,9 @@ public abstract class PortExplosionEvent<E extends ExplosionEvent> extends PortE
         }
     }
 
-    public static class PortDetonate extends PortExplosionEvent<ExplosionEvent.Detonate> {
+    public static class Detonate extends PortExplosionEvent<ExplosionEvent.Detonate> {
         @Diff
-        public PortDetonate(ExplosionEvent.Detonate e) {
+        public Detonate(ExplosionEvent.Detonate e) {
             super(e);
         }
 

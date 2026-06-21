@@ -44,9 +44,9 @@ public abstract class PortRenderHighlightEvent<E extends RenderHighlightEvent> e
         return e.getMultiBufferSource();
     }
 
-    public static class PortBlock extends PortRenderHighlightEvent<RenderHighlightEvent.Block> implements IPortCancellableEvent {
+    public static class Block extends PortRenderHighlightEvent<RenderHighlightEvent.Block> implements IPortCancellableEvent {
         @Diff
-        public PortBlock(RenderHighlightEvent.Block e) {
+        public Block(RenderHighlightEvent.Block e) {
             super(e);
         }
 
@@ -60,9 +60,9 @@ public abstract class PortRenderHighlightEvent<E extends RenderHighlightEvent> e
         }
     }
 
-    public static class PortEntity extends PortRenderHighlightEvent<RenderHighlightEvent.Entity> {
+    public static class Entity extends PortRenderHighlightEvent<RenderHighlightEvent.Entity> {
         @Diff
-        public PortEntity(RenderHighlightEvent.Entity e) {
+        public Entity(RenderHighlightEvent.Entity e) {
             super(e);
         }
 

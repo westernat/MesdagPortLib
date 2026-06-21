@@ -41,6 +41,6 @@ public abstract class BlockBehaviourMixin {
             @Local(argsOnly = true) BlockGetter level,
             @Local(argsOnly = true) BlockPos pos
     ) {
-        return PortPlayerEvent.PortHarvestCheck.doPlayerHarvestCheck(player, state, level, pos, original);
+        return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(player, state, level, pos, original);
     }
 }

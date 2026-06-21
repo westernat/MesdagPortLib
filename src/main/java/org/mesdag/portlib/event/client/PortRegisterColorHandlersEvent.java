@@ -18,9 +18,9 @@ public abstract class PortRegisterColorHandlersEvent<E extends RegisterColorHand
         super(e);
     }
 
-    public static class PortBlock extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.Block> {
+    public static class Block extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.Block> {
         @Diff
-        public PortBlock(RegisterColorHandlersEvent.Block e) {
+        public Block(RegisterColorHandlersEvent.Block e) {
             super(e);
         }
 
@@ -37,9 +37,9 @@ public abstract class PortRegisterColorHandlersEvent<E extends RegisterColorHand
         }
     }
 
-    public static class PortItem extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.Item> {
+    public static class Item extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.Item> {
         @Diff
-        public PortItem(RegisterColorHandlersEvent.Item e) {
+        public Item(RegisterColorHandlersEvent.Item e) {
             super(e);
         }
 
@@ -60,9 +60,9 @@ public abstract class PortRegisterColorHandlersEvent<E extends RegisterColorHand
         }
     }
 
-    public static class PortColorResolvers extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.ColorResolvers> {
+    public static class ColorResolvers extends PortRegisterColorHandlersEvent<RegisterColorHandlersEvent.ColorResolvers> {
         @Diff
-        public PortColorResolvers(RegisterColorHandlersEvent.ColorResolvers e) {
+        public ColorResolvers(RegisterColorHandlersEvent.ColorResolvers e) {
             super(e);
         }
 

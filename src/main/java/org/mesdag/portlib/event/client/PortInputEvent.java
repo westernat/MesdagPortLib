@@ -33,9 +33,9 @@ public abstract class PortInputEvent<E extends InputEvent> extends PortEvent<E> 
             return e.getModifiers();
         }
 
-        public static class PortPre extends PortMouseButton<InputEvent.MouseButton.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortMouseButton<InputEvent.MouseButton.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(InputEvent.MouseButton.Pre e) {
+            public Pre(InputEvent.MouseButton.Pre e) {
                 super(e);
             }
 
@@ -44,9 +44,9 @@ public abstract class PortInputEvent<E extends InputEvent> extends PortEvent<E> 
             }
         }
 
-        public static class PortPost extends PortMouseButton<InputEvent.MouseButton.Post> {
+        public static class Post extends PortMouseButton<InputEvent.MouseButton.Post> {
             @Diff
-            public PortPost(InputEvent.MouseButton.Post e) {
+            public Post(InputEvent.MouseButton.Post e) {
                 super(e);
             }
 
@@ -56,9 +56,9 @@ public abstract class PortInputEvent<E extends InputEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortMouseScrollingEvent extends PortInputEvent<InputEvent.MouseScrollingEvent> implements IPortCancellableEvent {
+    public static class MouseScrollingEvent extends PortInputEvent<InputEvent.MouseScrollingEvent> implements IPortCancellableEvent {
         @Diff
-        public PortMouseScrollingEvent(InputEvent.MouseScrollingEvent e) {
+        public MouseScrollingEvent(InputEvent.MouseScrollingEvent e) {
             super(e);
         }
 
@@ -95,9 +95,9 @@ public abstract class PortInputEvent<E extends InputEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortKey extends PortInputEvent<InputEvent.Key> {
+    public static class Key extends PortInputEvent<InputEvent.Key> {
         @Diff
-        public PortKey(InputEvent.Key e) {
+        public Key(InputEvent.Key e) {
             super(e);
         }
 
@@ -122,9 +122,9 @@ public abstract class PortInputEvent<E extends InputEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortInteractionKeyMappingTriggered extends PortInputEvent<InputEvent.InteractionKeyMappingTriggered> implements IPortCancellableEvent {
+    public static class InteractionKeyMappingTriggered extends PortInputEvent<InputEvent.InteractionKeyMappingTriggered> implements IPortCancellableEvent {
         @Diff
-        public PortInteractionKeyMappingTriggered(InputEvent.InteractionKeyMappingTriggered e) {
+        public InteractionKeyMappingTriggered(InputEvent.InteractionKeyMappingTriggered e) {
             super(e);
         }
 

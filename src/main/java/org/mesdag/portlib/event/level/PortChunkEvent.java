@@ -18,9 +18,9 @@ public abstract class PortChunkEvent<E extends ChunkEvent> extends PortLevelEven
         return e.getChunk();
     }
 
-    public static class PortLoad extends PortChunkEvent<ChunkEvent.Load> {
+    public static class Load extends PortChunkEvent<ChunkEvent.Load> {
         @Diff
-        public PortLoad(ChunkEvent.Load e) {
+        public Load(ChunkEvent.Load e) {
             super(e);
         }
 
@@ -33,9 +33,9 @@ public abstract class PortChunkEvent<E extends ChunkEvent> extends PortLevelEven
         }
     }
 
-    public static class PortUnload extends PortChunkEvent<ChunkEvent.Unload> {
+    public static class Unload extends PortChunkEvent<ChunkEvent.Unload> {
         @Diff
-        public PortUnload(ChunkEvent.Unload e) {
+        public Unload(ChunkEvent.Unload e) {
             super(e);
         }
 

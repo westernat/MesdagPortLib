@@ -32,8 +32,8 @@ public class ItemStack$hurtAndBreakAction {
         this.original = original;
     }
 
-    public PortArmorHurtEvent.PortArmorEntry toEntry() {
-        return new PortArmorHurtEvent.PortArmorEntry(instance, amount);
+    public PortArmorHurtEvent.ArmorEntry toEntry() {
+        return new PortArmorHurtEvent.ArmorEntry(instance, amount);
     }
 
     public boolean notPrepared() {

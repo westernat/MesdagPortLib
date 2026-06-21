@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.diff.datamap.PortDataMapEntry;
 import org.mesdag.portlib.diff.datamap.PortDataMapFile;
 import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
@@ -104,6 +105,10 @@ public abstract class PortDataMapProvider implements DataProvider {
 
         public Builder<T, R> add(Holder<R> object, T value, boolean replace, ICondition... conditions) {
             return add(object.unwrapKey().orElseThrow(), value, replace, conditions);
+        }
+
+        public Builder<T, R> add(RegistryObject<? extends R> object, T value, boolean replace, ICondition... conditions) {
+            return add((ResourceKey<R>) object.getKey(), value, replace, conditions);
         }
 
         public Builder<T, R> add(TagKey<R> tag, T value, boolean replace, ICondition... conditions) {

@@ -12,16 +12,16 @@ public abstract class PortEntityTickEvent extends EntityEvent {
     }
 
     @Cancelable
-    public static class PortPre extends PortEntityTickEvent {
+    public static class Pre extends PortEntityTickEvent {
         @Diff
-        public PortPre(Entity entity) {
+        public Pre(Entity entity) {
             super(entity);
         }
     }
 
-    public static class PortPost extends PortEntityTickEvent {
+    public static class Post extends PortEntityTickEvent {
         @Diff
-        public PortPost(Entity entity) {
+        public Post(Entity entity) {
             super(entity);
         }
     }

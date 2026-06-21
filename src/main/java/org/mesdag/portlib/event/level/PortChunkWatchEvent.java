@@ -26,8 +26,8 @@ public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends Por
         return e.getLevel();
     }
 
-    public static class PortWatch extends PortChunkWatchEvent<ChunkWatchEvent.Watch> {
-        public PortWatch(ChunkWatchEvent.Watch e) {
+    public static class Watch extends PortChunkWatchEvent<ChunkWatchEvent.Watch> {
+        public Watch(ChunkWatchEvent.Watch e) {
             super(e);
         }
 
@@ -53,9 +53,9 @@ public abstract class PortChunkWatchEvent<E extends ChunkWatchEvent> extends Por
         }
     }
 
-    public static class PortUnWatch extends PortChunkWatchEvent<ChunkWatchEvent.UnWatch> {
+    public static class UnWatch extends PortChunkWatchEvent<ChunkWatchEvent.UnWatch> {
         @Diff
-        public PortUnWatch(ChunkWatchEvent.UnWatch e) {
+        public UnWatch(ChunkWatchEvent.UnWatch e) {
             super(e);
         }
 

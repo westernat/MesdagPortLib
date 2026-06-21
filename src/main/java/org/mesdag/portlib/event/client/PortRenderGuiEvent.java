@@ -22,9 +22,9 @@ public abstract class PortRenderGuiEvent<E extends RenderGuiEvent> extends PortE
         return PortDeltaTicker.INSTANCE;
     }
 
-    public static class PortPre extends PortRenderGuiEvent<RenderGuiEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortRenderGuiEvent<RenderGuiEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(RenderGuiEvent.Pre e) {
+        public Pre(RenderGuiEvent.Pre e) {
             super(e);
         }
 
@@ -33,9 +33,9 @@ public abstract class PortRenderGuiEvent<E extends RenderGuiEvent> extends PortE
         }
     }
 
-    public static class PortPost extends PortRenderGuiEvent<RenderGuiEvent.Post> {
+    public static class Post extends PortRenderGuiEvent<RenderGuiEvent.Post> {
         @Diff
-        public PortPost(RenderGuiEvent.Post e) {
+        public Post(RenderGuiEvent.Post e) {
             super(e);
         }
 

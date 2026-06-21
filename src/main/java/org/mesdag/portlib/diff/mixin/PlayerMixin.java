@@ -113,7 +113,7 @@ public abstract class PlayerMixin implements IPortPlayer {
     @ModifyExpressionValue(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
     private float onLivingDamagePre(float original, @Share("absorbed") LocalFloatRef absorbed) {
         PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
-        float damage = PortLivingDamageEvent.PortPre.onLivingDamagePre(portlib$self(), container);
+        float damage = PortLivingDamageEvent.Pre.onLivingDamagePre(portlib$self(), container);
         container.setReduction(PortDamageContainer.PortReduction.ABSORPTION, Math.min(getAbsorptionAmount(), damage));
         absorbed.set(Math.min(damage, container.getReduction(PortDamageContainer.PortReduction.ABSORPTION)));
         setAbsorptionAmount(Math.max(0, getAbsorptionAmount() - absorbed.get()));
@@ -158,7 +158,7 @@ public abstract class PlayerMixin implements IPortPlayer {
     private void onLivingDamagePost(CallbackInfo ci, @Share("couldPost") LocalBooleanRef couldPost) {
         if (couldPost.get()) {
             PortDamageContainer container = IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek();
-            PortLivingDamageEvent.PortPost.onLivingDamagePost(portlib$self(), container);
+            PortLivingDamageEvent.Post.onLivingDamagePost(portlib$self(), container);
         }
     }
 

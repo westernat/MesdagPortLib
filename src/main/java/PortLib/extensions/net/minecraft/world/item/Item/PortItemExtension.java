@@ -1,11 +1,15 @@
 package PortLib.extensions.net.minecraft.world.item.Item;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
+import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.registries.PortRegistryEntry;
@@ -20,6 +24,12 @@ public class PortItemExtension {
     @SuppressWarnings("deprecation")
     public static int getDefaultMaxStackSize(Item thiz) {
         return thiz.getMaxStackSize();
+    }
+
+    // invoked by coremod
+    public static int getBurnTime(Item thiz, ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        PortFurnaceFuel data = PortHolderExtension.getData(thiz.builtInRegistryHolder(), PortLib.FURNACE_FUELS);
+        return data == null ? -1 : data.burnTime();
     }
 
     public static class Properties {

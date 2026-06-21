@@ -20,25 +20,25 @@ public abstract class PortLevelTickEvent extends PortEvent<TickEvent.LevelTickEv
         return e.level;
     }
 
-    public static class PortPre extends PortLevelTickEvent {
+    public static class Pre extends PortLevelTickEvent {
         @Diff
-        public PortPre(TickEvent.LevelTickEvent e) {
+        public Pre(TickEvent.LevelTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.LevelTickEvent.class, PortPre.class, PortPre::new, event -> event.phase == TickEvent.Phase.START);
+            PortEventHooks.registerPredicated(TickEvent.LevelTickEvent.class, Pre.class, Pre::new, event -> event.phase == TickEvent.Phase.START);
         }
     }
 
-    public static class PortPost extends PortLevelTickEvent {
+    public static class Post extends PortLevelTickEvent {
         @Diff
-        public PortPost(TickEvent.LevelTickEvent e) {
+        public Post(TickEvent.LevelTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.LevelTickEvent.class, PortPost.class, PortPost::new, event -> event.phase == TickEvent.Phase.END);
+            PortEventHooks.registerPredicated(TickEvent.LevelTickEvent.class, Post.class, Post::new, event -> event.phase == TickEvent.Phase.END);
         }
     }
 }

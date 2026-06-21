@@ -28,9 +28,9 @@ public abstract class PortNoteBlockEvent<E extends NoteBlockEvent> extends PortB
         e.setNote(note.unwrap(), octave.unwrap());
     }
 
-    public static class PortPlay extends PortNoteBlockEvent<NoteBlockEvent.Play> implements IPortCancellableEvent {
+    public static class Play extends PortNoteBlockEvent<NoteBlockEvent.Play> implements IPortCancellableEvent {
         @Diff
-        public PortPlay(NoteBlockEvent.Play e) {
+        public Play(NoteBlockEvent.Play e) {
             super(e);
         }
 

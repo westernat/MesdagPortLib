@@ -41,7 +41,6 @@ import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItemStack;
-import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
@@ -780,15 +779,7 @@ public class PortItemStackExtension {
     }
 
     public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
-        if (!stack.is(other.getItem())) {
-            return false;
-        }
-        if (stack.isEmpty() && other.isEmpty()) {
-            return true;
-        }
-        PortPatchedDataComponentMap patchA = IPortItemStack.of(stack).portlib$patch();
-        PortPatchedDataComponentMap patchB = IPortItemStack.of(other).portlib$patch();
-        return Objects.equals(patchA, patchB);
+        return ItemStack.isSameItemSameTags(stack, other) && Objects.equals(IPortItemStack.of(stack).portlib$patch(), IPortItemStack.of(other).portlib$patch());
     }
 
     public static ItemStack transmuteCopy(ItemStack thiz, ItemLike item) {

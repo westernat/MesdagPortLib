@@ -10,7 +10,7 @@ import org.mesdag.portlib.event.entity.player.PortPlayerEvent;
 
 public class PortPlayerExtension {
     public static boolean hasCorrectToolForDrops(Player thiz, BlockState state, Level level, BlockPos pos) {
-        return PortPlayerEvent.PortHarvestCheck.doPlayerHarvestCheck(thiz, state, level, pos, thiz.hasCorrectToolForDrops(state));
+        return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(thiz, state, level, pos, thiz.hasCorrectToolForDrops(state));
     }
 
     public static double blockInteractionRange(Player thiz) {

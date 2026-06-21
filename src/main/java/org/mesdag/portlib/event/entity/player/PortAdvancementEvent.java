@@ -16,9 +16,9 @@ public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends P
         return PortAdvancementHolder.wrap(e.getAdvancement());
     }
 
-    public static class PortAdvancementEarnEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementEarnEvent> {
+    public static class AdvancementEarnEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementEarnEvent> {
         @Diff
-        public PortAdvancementEarnEvent(AdvancementEvent.AdvancementEarnEvent e) {
+        public AdvancementEarnEvent(AdvancementEvent.AdvancementEarnEvent e) {
             super(e);
         }
 
@@ -27,9 +27,9 @@ public abstract class PortAdvancementEvent<E extends AdvancementEvent> extends P
         }
     }
 
-    public static class PortAdvancementProgressEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementProgressEvent> {
+    public static class AdvancementProgressEvent extends PortAdvancementEvent<AdvancementEvent.AdvancementProgressEvent> {
         @Diff
-        public PortAdvancementProgressEvent(AdvancementEvent.AdvancementProgressEvent e) {
+        public AdvancementProgressEvent(AdvancementEvent.AdvancementProgressEvent e) {
             super(e);
         }
 

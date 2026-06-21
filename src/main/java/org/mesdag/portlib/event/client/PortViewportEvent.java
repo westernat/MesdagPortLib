@@ -29,9 +29,9 @@ public abstract class PortViewportEvent<E extends ViewportEvent> extends PortEve
         return e.getPartialTick();
     }
 
-    public static class PortRenderFog extends PortViewportEvent<ViewportEvent.RenderFog> implements IPortCancellableEvent {
+    public static class RenderFog extends PortViewportEvent<ViewportEvent.RenderFog> implements IPortCancellableEvent {
         @Diff
-        public PortRenderFog(ViewportEvent.RenderFog e) {
+        public RenderFog(ViewportEvent.RenderFog e) {
             super(e);
         }
 
@@ -80,9 +80,9 @@ public abstract class PortViewportEvent<E extends ViewportEvent> extends PortEve
         }
     }
 
-    public static class PortComputeFogColor extends PortViewportEvent<ViewportEvent.ComputeFogColor> {
+    public static class ComputeFogColor extends PortViewportEvent<ViewportEvent.ComputeFogColor> {
         @Diff
-        public PortComputeFogColor(ViewportEvent.ComputeFogColor e) {
+        public ComputeFogColor(ViewportEvent.ComputeFogColor e) {
             super(e);
         }
 
@@ -115,9 +115,9 @@ public abstract class PortViewportEvent<E extends ViewportEvent> extends PortEve
         }
     }
 
-    public static class PortComputeCameraAngles extends PortViewportEvent<ViewportEvent.ComputeCameraAngles> {
+    public static class ComputeCameraAngles extends PortViewportEvent<ViewportEvent.ComputeCameraAngles> {
         @Diff
-        public PortComputeCameraAngles(ViewportEvent.ComputeCameraAngles e) {
+        public ComputeCameraAngles(ViewportEvent.ComputeCameraAngles e) {
             super(e);
         }
 
@@ -150,9 +150,9 @@ public abstract class PortViewportEvent<E extends ViewportEvent> extends PortEve
         }
     }
 
-    public static class PortComputeFov extends PortViewportEvent<ViewportEvent.ComputeFov> {
+    public static class ComputeFov extends PortViewportEvent<ViewportEvent.ComputeFov> {
         @Diff
-        public PortComputeFov(ViewportEvent.ComputeFov e) {
+        public ComputeFov(ViewportEvent.ComputeFov e) {
             super(e);
         }
 

@@ -41,9 +41,9 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
         return e.getZ();
     }
 
-    public static class PortSpawnPlacementCheck extends PortEvent<MobSpawnEvent.SpawnPlacementCheck> {
+    public static class SpawnPlacementCheck extends PortEvent<MobSpawnEvent.SpawnPlacementCheck> {
         @Diff
-        public PortSpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck e) {
+        public SpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck e) {
             super(e);
         }
 
@@ -115,9 +115,9 @@ public abstract class PortMobSpawnEvent<E extends MobSpawnEvent> extends PortEnt
         }
     }
 
-    public static class PortPositionCheck extends PortMobSpawnEvent<MobSpawnEvent.PositionCheck> {
+    public static class PositionCheck extends PortMobSpawnEvent<MobSpawnEvent.PositionCheck> {
         @Diff
-        public PortPositionCheck(MobSpawnEvent.PositionCheck e) {
+        public PositionCheck(MobSpawnEvent.PositionCheck e) {
             super(e);
         }
 

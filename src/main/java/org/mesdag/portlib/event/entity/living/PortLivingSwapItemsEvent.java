@@ -12,9 +12,9 @@ public abstract class PortLivingSwapItemsEvent<E extends LivingSwapItemsEvent> e
         super(e);
     }
 
-    public static class PortHands extends PortLivingSwapItemsEvent<LivingSwapItemsEvent.Hands> implements IPortCancellableEvent {
+    public static class Hands extends PortLivingSwapItemsEvent<LivingSwapItemsEvent.Hands> implements IPortCancellableEvent {
         @Diff
-        public PortHands(LivingSwapItemsEvent.Hands e) {
+        public Hands(LivingSwapItemsEvent.Hands e) {
             super(e);
         }
 

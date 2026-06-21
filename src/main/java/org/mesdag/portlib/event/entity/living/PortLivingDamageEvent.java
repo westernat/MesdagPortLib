@@ -18,11 +18,11 @@ public abstract class PortLivingDamageEvent extends LivingEvent {
         super(living);
     }
 
-    public static class PortPre extends PortLivingDamageEvent {
+    public static class Pre extends PortLivingDamageEvent {
         private final PortDamageContainer container;
 
         @Diff
-        public PortPre(LivingEntity living, PortDamageContainer container) {
+        public Pre(LivingEntity living, PortDamageContainer container) {
             super(living);
             this.container = container;
         }
@@ -49,11 +49,11 @@ public abstract class PortLivingDamageEvent extends LivingEvent {
 
         @Diff
         public static float onLivingDamagePre(LivingEntity entity, PortDamageContainer container) {
-            return PortEventHandler.postEventWithReturn(new PortPre(entity, container)).getNewDamage();
+            return PortEventHandler.postEventWithReturn(new Pre(entity, container)).getNewDamage();
         }
     }
 
-    public static class PortPost extends PortLivingDamageEvent {
+    public static class Post extends PortLivingDamageEvent {
         private final float originalDamage;
         private final DamageSource source;
         private final float newDamage;
@@ -63,7 +63,7 @@ public abstract class PortLivingDamageEvent extends LivingEvent {
         private final EnumMap<PortDamageContainer.PortReduction, Float> reductions;
 
         @Diff
-        public PortPost(LivingEntity entity, PortDamageContainer container) {
+        public Post(LivingEntity entity, PortDamageContainer container) {
             super(entity);
             this.originalDamage = container.getOriginalDamage();
             this.source = container.getSource();
@@ -107,7 +107,7 @@ public abstract class PortLivingDamageEvent extends LivingEvent {
 
         @Diff
         public static void onLivingDamagePost(LivingEntity entity, PortDamageContainer container) {
-            PortEventHandler.postEvent(new PortPost(entity, container));
+            PortEventHandler.postEvent(new Post(entity, container));
         }
     }
 }

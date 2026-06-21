@@ -29,9 +29,9 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
         e.setXp(xp);
     }
 
-    public static class PortOnPlaceItem extends PortGrindstoneEvent<GrindstoneEvent.OnPlaceItem> implements IPortCancellableEvent {
+    public static class OnPlaceItem extends PortGrindstoneEvent<GrindstoneEvent.OnPlaceItem> implements IPortCancellableEvent {
         @Diff
-        public PortOnPlaceItem(GrindstoneEvent.OnPlaceItem e) {
+        public OnPlaceItem(GrindstoneEvent.OnPlaceItem e) {
             super(e);
         }
 
@@ -48,9 +48,9 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
         }
     }
 
-    public static class PortOnTakeItem extends PortGrindstoneEvent<GrindstoneEvent.OnTakeItem> implements IPortCancellableEvent {
+    public static class OnTakeItem extends PortGrindstoneEvent<GrindstoneEvent.OnTakeItem> implements IPortCancellableEvent {
         @Diff
-        public PortOnTakeItem(GrindstoneEvent.OnTakeItem e) {
+        public OnTakeItem(GrindstoneEvent.OnTakeItem e) {
             super(e);
         }
 
@@ -70,7 +70,7 @@ public abstract class PortGrindstoneEvent<E extends GrindstoneEvent> extends Por
             e.setNewBottomItem(newBottom);
         }
 
-//        public ContainerLevelAccess getContainerAccess() {
+//  todo      public ContainerLevelAccess getContainerAccess() {
 //            return e.getContainerAccess();
 //        }
 //

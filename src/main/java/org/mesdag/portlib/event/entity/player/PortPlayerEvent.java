@@ -33,14 +33,14 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         return e.getEntity();
     }
 
-    public static class PortHarvestCheck extends PlayerEvent {
+    public static class HarvestCheck extends PlayerEvent {
         private final BlockState state;
         private final BlockGetter level;
         private final BlockPos pos;
         private boolean success;
 
         @Diff
-        public PortHarvestCheck(Player player, BlockState state, BlockGetter level, BlockPos pos, boolean success) {
+        public HarvestCheck(Player player, BlockState state, BlockGetter level, BlockPos pos, boolean success) {
             super(player);
             this.state = state;
             this.level = level;
@@ -69,15 +69,15 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
 
         public static boolean doPlayerHarvestCheck(Player player, BlockState state, BlockGetter level, BlockPos pos, boolean success) {
-            PortHarvestCheck event = new PortHarvestCheck(player, state, level, pos, success);
+            PortPlayerEvent.HarvestCheck event = new PortPlayerEvent.HarvestCheck(player, state, level, pos, success);
             PortEventHandler.postEvent(event);
             return event.canHarvest();
         }
     }
 
-    public static class PortBreakSpeed extends PortPlayerEvent<PlayerEvent.BreakSpeed> implements IPortCancellableEvent {
+    public static class BreakSpeed extends PortPlayerEvent<PlayerEvent.BreakSpeed> implements IPortCancellableEvent {
         @Diff
-        public PortBreakSpeed(PlayerEvent.BreakSpeed e) {
+        public BreakSpeed(PlayerEvent.BreakSpeed e) {
             super(e);
         }
 
@@ -106,9 +106,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortNameFormat extends PortPlayerEvent<PlayerEvent.NameFormat> {
+    public static class NameFormat extends PortPlayerEvent<PlayerEvent.NameFormat> {
         @Diff
-        public PortNameFormat(PlayerEvent.NameFormat e) {
+        public NameFormat(PlayerEvent.NameFormat e) {
             super(e);
         }
 
@@ -129,9 +129,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortTabListNameFormat extends PortPlayerEvent<PlayerEvent.TabListNameFormat> {
+    public static class TabListNameFormat extends PortPlayerEvent<PlayerEvent.TabListNameFormat> {
         @Diff
-        public PortTabListNameFormat(PlayerEvent.TabListNameFormat e) {
+        public TabListNameFormat(PlayerEvent.TabListNameFormat e) {
             super(e);
         }
 
@@ -149,9 +149,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortClone extends PortPlayerEvent<PlayerEvent.Clone> {
+    public static class Clone extends PortPlayerEvent<PlayerEvent.Clone> {
         @Diff
-        public PortClone(PlayerEvent.Clone e) {
+        public Clone(PlayerEvent.Clone e) {
             super(e);
         }
 
@@ -168,9 +168,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortStartTracking extends PortPlayerEvent<PlayerEvent.StartTracking> {
+    public static class StartTracking extends PortPlayerEvent<PlayerEvent.StartTracking> {
         @Diff
-        public PortStartTracking(PlayerEvent.StartTracking e) {
+        public StartTracking(PlayerEvent.StartTracking e) {
             super(e);
         }
 
@@ -183,9 +183,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortStopTracking extends PortPlayerEvent<PlayerEvent.StopTracking> {
+    public static class StopTracking extends PortPlayerEvent<PlayerEvent.StopTracking> {
         @Diff
-        public PortStopTracking(PlayerEvent.StopTracking e) {
+        public StopTracking(PlayerEvent.StopTracking e) {
             super(e);
         }
 
@@ -198,9 +198,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortLoadFromFile extends PortPlayerEvent<PlayerEvent.LoadFromFile> {
+    public static class LoadFromFile extends PortPlayerEvent<PlayerEvent.LoadFromFile> {
         @Diff
-        public PortLoadFromFile(PlayerEvent.LoadFromFile e) {
+        public LoadFromFile(PlayerEvent.LoadFromFile e) {
             super(e);
         }
 
@@ -221,9 +221,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortSaveToFile extends PortPlayerEvent<PlayerEvent.SaveToFile> {
+    public static class SaveToFile extends PortPlayerEvent<PlayerEvent.SaveToFile> {
         @Diff
-        public PortSaveToFile(PlayerEvent.SaveToFile e) {
+        public SaveToFile(PlayerEvent.SaveToFile e) {
             super(e);
         }
 
@@ -244,9 +244,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortItemCraftedEvent extends PortPlayerEvent<PlayerEvent.ItemCraftedEvent> {
+    public static class ItemCraftedEvent extends PortPlayerEvent<PlayerEvent.ItemCraftedEvent> {
         @Diff
-        public PortItemCraftedEvent(PlayerEvent.ItemCraftedEvent e) {
+        public ItemCraftedEvent(PlayerEvent.ItemCraftedEvent e) {
             super(e);
         }
 
@@ -263,9 +263,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortItemSmeltedEvent extends PortPlayerEvent<PlayerEvent.ItemSmeltedEvent> {
+    public static class ItemSmeltedEvent extends PortPlayerEvent<PlayerEvent.ItemSmeltedEvent> {
         @Diff
-        public PortItemSmeltedEvent(PlayerEvent.ItemSmeltedEvent e) {
+        public ItemSmeltedEvent(PlayerEvent.ItemSmeltedEvent e) {
             super(e);
         }
 
@@ -278,9 +278,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortPlayerLoggedInEvent extends PortPlayerEvent<PlayerEvent.PlayerLoggedInEvent> {
+    public static class PlayerLoggedInEvent extends PortPlayerEvent<PlayerEvent.PlayerLoggedInEvent> {
         @Diff
-        public PortPlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent e) {
+        public PlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent e) {
             super(e);
         }
 
@@ -289,9 +289,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortPlayerLoggedOutEvent extends PortPlayerEvent<PlayerEvent.PlayerLoggedOutEvent> {
+    public static class PlayerLoggedOutEvent extends PortPlayerEvent<PlayerEvent.PlayerLoggedOutEvent> {
         @Diff
-        public PortPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent e) {
+        public PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent e) {
             super(e);
         }
 
@@ -300,9 +300,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortPlayerRespawnEvent extends PortPlayerEvent<PlayerEvent.PlayerRespawnEvent> {
+    public static class PlayerRespawnEvent extends PortPlayerEvent<PlayerEvent.PlayerRespawnEvent> {
         @Diff
-        public PortPlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent e) {
+        public PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent e) {
             super(e);
         }
 
@@ -315,9 +315,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortPlayerChangedDimensionEvent extends PortPlayerEvent<PlayerEvent.PlayerChangedDimensionEvent> {
+    public static class PlayerChangedDimensionEvent extends PortPlayerEvent<PlayerEvent.PlayerChangedDimensionEvent> {
         @Diff
-        public PortPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent e) {
+        public PlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent e) {
             super(e);
         }
 
@@ -334,9 +334,9 @@ public abstract class PortPlayerEvent<E extends PlayerEvent> extends PortLivingE
         }
     }
 
-    public static class PortPlayerChangeGameModeEvent extends PortPlayerEvent<PlayerEvent.PlayerChangeGameModeEvent> implements IPortCancellableEvent {
+    public static class PlayerChangeGameModeEvent extends PortPlayerEvent<PlayerEvent.PlayerChangeGameModeEvent> implements IPortCancellableEvent {
         @Diff
-        public PortPlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent e) {
+        public PlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent e) {
             super(e);
         }
 

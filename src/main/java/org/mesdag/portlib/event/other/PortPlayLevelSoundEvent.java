@@ -62,9 +62,9 @@ public class PortPlayLevelSoundEvent<E extends PlayLevelSoundEvent> extends Port
         e.setNewPitch(newPitch);
     }
 
-    public static class PortAtEntity extends PortPlayLevelSoundEvent<PlayLevelSoundEvent.AtEntity> {
+    public static class AtEntity extends PortPlayLevelSoundEvent<PlayLevelSoundEvent.AtEntity> {
         @Diff
-        public PortAtEntity(PlayLevelSoundEvent.AtEntity e) {
+        public AtEntity(PlayLevelSoundEvent.AtEntity e) {
             super(e);
         }
 
@@ -77,9 +77,9 @@ public class PortPlayLevelSoundEvent<E extends PlayLevelSoundEvent> extends Port
         }
     }
 
-    public static class PortAtPosition extends PortPlayLevelSoundEvent<PlayLevelSoundEvent.AtPosition> {
+    public static class AtPosition extends PortPlayLevelSoundEvent<PlayLevelSoundEvent.AtPosition> {
         @Diff
-        public PortAtPosition(PlayLevelSoundEvent.AtPosition e) {
+        public AtPosition(PlayLevelSoundEvent.AtPosition e) {
             super(e);
         }
 

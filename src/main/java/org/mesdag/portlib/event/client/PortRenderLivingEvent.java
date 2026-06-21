@@ -41,9 +41,9 @@ public abstract class PortRenderLivingEvent<T extends LivingEntity, M extends En
         return e.getPackedLight();
     }
 
-    public static class PortPre<T extends LivingEntity, M extends EntityModel<T>> extends PortRenderLivingEvent<T, M, RenderLivingEvent.Pre<T, M>> implements IPortCancellableEvent {
+    public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends PortRenderLivingEvent<T, M, RenderLivingEvent.Pre<T, M>> implements IPortCancellableEvent {
         @Diff
-        public PortPre(RenderLivingEvent.Pre<T, M> e) {
+        public Pre(RenderLivingEvent.Pre<T, M> e) {
             super(e);
         }
 
@@ -52,9 +52,9 @@ public abstract class PortRenderLivingEvent<T extends LivingEntity, M extends En
         }
     }
 
-    public static class PortPost<T extends LivingEntity, M extends EntityModel<T>> extends PortRenderLivingEvent<T, M, RenderLivingEvent.Post<T, M>> {
+    public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends PortRenderLivingEvent<T, M, RenderLivingEvent.Post<T, M>> {
         @Diff
-        public PortPost(RenderLivingEvent.Post<T, M> e) {
+        public Post(RenderLivingEvent.Post<T, M> e) {
             super(e);
         }
 

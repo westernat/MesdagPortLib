@@ -14,10 +14,10 @@ import java.util.Map;
 @Cancelable
 public class PortArmorHurtEvent extends LivingEvent {
     private final DamageSource source;
-    private final EnumMap<EquipmentSlot, PortArmorEntry> armorEntries;
+    private final EnumMap<EquipmentSlot, ArmorEntry> armorEntries;
 
     @Diff
-    public PortArmorHurtEvent(EnumMap<EquipmentSlot, PortArmorEntry> armorMap, LivingEntity player, DamageSource source) {
+    public PortArmorHurtEvent(EnumMap<EquipmentSlot, ArmorEntry> armorMap, LivingEntity player, DamageSource source) {
         super(player);
         this.armorEntries = armorMap;
         this.source = source;
@@ -39,7 +39,7 @@ public class PortArmorHurtEvent extends LivingEvent {
         if (this.armorEntries.containsKey(slot)) this.armorEntries.get(slot).newDamage = damage;
     }
 
-    public Map<EquipmentSlot, PortArmorEntry> getArmorMap() {
+    public Map<EquipmentSlot, ArmorEntry> getArmorMap() {
         return armorEntries;
     }
 
@@ -47,12 +47,12 @@ public class PortArmorHurtEvent extends LivingEvent {
         return source;
     }
 
-    public static class PortArmorEntry {
+    public static class ArmorEntry {
         public ItemStack armorItemStack;
         public final float originalDamage;
         public float newDamage;
 
-        public PortArmorEntry(ItemStack armorStack, float damageIn) {
+        public ArmorEntry(ItemStack armorStack, float damageIn) {
             this.armorItemStack = armorStack;
             this.originalDamage = damageIn;
             this.newDamage = damageIn;

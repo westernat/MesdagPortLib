@@ -35,9 +35,9 @@ public abstract class PortContainerScreenEvent<E extends ContainerScreenEvent> e
             return e.getMouseY();
         }
 
-        public static class PortForeground extends PortRender<ContainerScreenEvent.Render.Foreground> {
+        public static class Foreground extends PortRender<ContainerScreenEvent.Render.Foreground> {
             @Diff
-            public PortForeground(ContainerScreenEvent.Render.Foreground e) {
+            public Foreground(ContainerScreenEvent.Render.Foreground e) {
                 super(e);
             }
 
@@ -46,9 +46,9 @@ public abstract class PortContainerScreenEvent<E extends ContainerScreenEvent> e
             }
         }
 
-        public static class PortBackground extends PortRender<ContainerScreenEvent.Render.Background> {
+        public static class Background extends PortRender<ContainerScreenEvent.Render.Background> {
             @Diff
-            public PortBackground(ContainerScreenEvent.Render.Background e) {
+            public Background(ContainerScreenEvent.Render.Background e) {
                 super(e);
             }
 

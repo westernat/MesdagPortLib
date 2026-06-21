@@ -16,25 +16,25 @@ public abstract class PortRenderFrameEvent extends PortEvent<TickEvent.RenderTic
         return PortDeltaTicker.INSTANCE;
     }
 
-    public static class PortPre extends PortRenderFrameEvent {
+    public static class Pre extends PortRenderFrameEvent {
         @Diff
-        public PortPre(TickEvent.RenderTickEvent e) {
+        public Pre(TickEvent.RenderTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.RenderTickEvent.class, PortPre.class, PortPre::new, event -> event.phase == TickEvent.Phase.START);
+            PortEventHooks.registerPredicated(TickEvent.RenderTickEvent.class, Pre.class, Pre::new, event -> event.phase == TickEvent.Phase.START);
         }
     }
 
-    public static class PortPost extends PortRenderFrameEvent {
+    public static class Post extends PortRenderFrameEvent {
         @Diff
-        public PortPost(TickEvent.RenderTickEvent e) {
+        public Post(TickEvent.RenderTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.RenderTickEvent.class, PortPost.class, PortPost::new, event -> event.phase == TickEvent.Phase.END);
+            PortEventHooks.registerPredicated(TickEvent.RenderTickEvent.class, Post.class, Post::new, event -> event.phase == TickEvent.Phase.END);
         }
     }
 }

@@ -23,9 +23,9 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         return e.getLevel();
     }
 
-    public static class PortLoad extends PortLevelEvent<LevelEvent.Load> {
+    public static class Load extends PortLevelEvent<LevelEvent.Load> {
         @Diff
-        public PortLoad(LevelEvent.Load e) {
+        public Load(LevelEvent.Load e) {
             super(e);
         }
 
@@ -34,9 +34,9 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortUnload extends PortLevelEvent<LevelEvent.Unload> {
+    public static class Unload extends PortLevelEvent<LevelEvent.Unload> {
         @Diff
-        public PortUnload(LevelEvent.Unload e) {
+        public Unload(LevelEvent.Unload e) {
             super(e);
         }
 
@@ -45,9 +45,9 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortSave extends PortLevelEvent<LevelEvent.Save> {
+    public static class Save extends PortLevelEvent<LevelEvent.Save> {
         @Diff
-        public PortSave(LevelEvent.Save e) {
+        public Save(LevelEvent.Save e) {
             super(e);
         }
 
@@ -56,9 +56,9 @@ public abstract class PortLevelEvent<E extends LevelEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortCreateSpawnPosition extends PortLevelEvent<LevelEvent.CreateSpawnPosition> implements IPortCancellableEvent {
+    public static class CreateSpawnPosition extends PortLevelEvent<LevelEvent.CreateSpawnPosition> implements IPortCancellableEvent {
         @Diff
-        public PortCreateSpawnPosition(LevelEvent.CreateSpawnPosition e) {
+        public CreateSpawnPosition(LevelEvent.CreateSpawnPosition e) {
             super(e);
         }
 

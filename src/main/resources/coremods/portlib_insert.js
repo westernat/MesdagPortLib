@@ -12,6 +12,33 @@ var LabelNode = Java.type('org.objectweb.asm.tree.LabelNode')
 
 function initializeCoreMod() {
     return {
+        'port_get_burn_time': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net/minecraftforge/common/extensions/IForgeItem',
+                'methodName': 'getBurnTime',
+                'methodDesc': '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I'
+            },
+            'transformer': function (node) {
+                if (node.instructions.size() == 2) {
+                    var iconst = node.instructions.get(0);
+                    var iret = node.instructions.get(1);
+                    if (iconst.getOpcode() == Opcodes.ICONST_M1 && iret.getOpcode() == Opcodes.IRETURN) {
+                        var list = new InsnList();
+                        list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        list.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        list.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            'PortLib/extensions/net/minecraft/world/item/Item/PortItemExtension',
+                            'getBurnTime',
+                            '(Lnet/minecraft/world/item/Item;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I', false));
+                        node.instructions.remove(iconst);
+                        node.instructions.insertBefore(iret, list);
+                    }
+                }
+                return node;
+            }
+        },
         'port_submerged_mining_speed': {
             'target': {
                 'type': 'METHOD',

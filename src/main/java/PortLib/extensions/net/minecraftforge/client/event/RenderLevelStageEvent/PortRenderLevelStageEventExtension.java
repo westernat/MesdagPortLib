@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class PortRenderLevelStageEventExtension {
     public static class Stage {
-        private static final Map<RenderLevelStageEvent.Stage, PortRenderLevelStageEvent.PortStage> WRAPPER = new Reference2ObjectOpenHashMap<>();
+        private static final Map<RenderLevelStageEvent.Stage, PortRenderLevelStageEvent.Stage> WRAPPER = new Reference2ObjectOpenHashMap<>();
 
         @Diff
-        public static PortRenderLevelStageEvent.PortStage wrap(RenderLevelStageEvent.Stage thiz) {
-            return WRAPPER.computeIfAbsent(thiz, PortRenderLevelStageEvent.PortStage::new);
+        public static PortRenderLevelStageEvent.Stage wrap(RenderLevelStageEvent.Stage thiz) {
+            return WRAPPER.computeIfAbsent(thiz, PortRenderLevelStageEvent.Stage::new);
         }
     }
 }

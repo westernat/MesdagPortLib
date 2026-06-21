@@ -17,9 +17,9 @@ public abstract class PortSoundEvent<E extends SoundEvent> extends PortEvent<E> 
         return e.getEngine();
     }
 
-    public static abstract class PortSoundSourceEvent<E extends SoundEvent.SoundSourceEvent> extends PortSoundEvent<E> {
+    public static abstract class SoundSourceEvent<E extends SoundEvent.SoundSourceEvent> extends PortSoundEvent<E> {
         @Diff
-        public PortSoundSourceEvent(E e) {
+        public SoundSourceEvent(E e) {
             super(e);
         }
 

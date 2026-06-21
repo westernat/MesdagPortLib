@@ -41,7 +41,7 @@ public class PortLivingEntityExtension {
         Iterator<MobEffectInstance> itr = thiz.getActiveEffectsMap().values().iterator();
         while (itr.hasNext()) {
             MobEffectInstance effect = itr.next();
-            if (IPortMobEffectInstance.of(effect).portlib$getCures().contains(cure) && !PortMobEffectEvent.PortRemove.onEffectRemoved(thiz, effect, cure)) {
+            if (IPortMobEffectInstance.of(effect).portlib$getCures().contains(cure) && !PortMobEffectEvent.Remove.onEffectRemoved(thiz, effect, cure)) {
                 ((LivingEntityAccessor) thiz).callOnEffectRemoved(effect);
                 itr.remove();
                 ret = true;

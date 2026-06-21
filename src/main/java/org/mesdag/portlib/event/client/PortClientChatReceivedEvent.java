@@ -42,9 +42,9 @@ public class PortClientChatReceivedEvent<E extends ClientChatReceivedEvent> exte
         PortEventHooks.register();
     }
 
-    public static class PortPlayer extends PortClientChatReceivedEvent<ClientChatReceivedEvent.Player> {
+    public static class Player extends PortClientChatReceivedEvent<ClientChatReceivedEvent.Player> {
         @Diff
-        public PortPlayer(ClientChatReceivedEvent.Player e) {
+        public Player(ClientChatReceivedEvent.Player e) {
             super(e);
         }
 
@@ -57,9 +57,9 @@ public class PortClientChatReceivedEvent<E extends ClientChatReceivedEvent> exte
         }
     }
 
-    public static class PortSystem extends PortClientChatReceivedEvent<ClientChatReceivedEvent.System> {
+    public static class System extends PortClientChatReceivedEvent<ClientChatReceivedEvent.System> {
         @Diff
-        public PortSystem(ClientChatReceivedEvent.System e) {
+        public System(ClientChatReceivedEvent.System e) {
             super(e);
         }
 

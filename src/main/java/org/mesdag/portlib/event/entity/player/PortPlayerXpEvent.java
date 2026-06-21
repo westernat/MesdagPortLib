@@ -11,9 +11,9 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         super(e);
     }
 
-    public static class PortPickupXp extends PortPlayerXpEvent<PlayerXpEvent.PickupXp> implements IPortCancellableEvent {
+    public static class PickupXp extends PortPlayerXpEvent<PlayerXpEvent.PickupXp> implements IPortCancellableEvent {
         @Diff
-        public PortPickupXp(PlayerXpEvent.PickupXp e) {
+        public PickupXp(PlayerXpEvent.PickupXp e) {
             super(e);
         }
 
@@ -26,9 +26,9 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         }
     }
 
-    public static class PortXpChange extends PortPlayerXpEvent<PlayerXpEvent.XpChange> implements IPortCancellableEvent {
+    public static class XpChange extends PortPlayerXpEvent<PlayerXpEvent.XpChange> implements IPortCancellableEvent {
         @Diff
-        public PortXpChange(PlayerXpEvent.XpChange e) {
+        public XpChange(PlayerXpEvent.XpChange e) {
             super(e);
         }
 
@@ -45,9 +45,9 @@ public abstract class PortPlayerXpEvent<E extends PlayerXpEvent> extends PortPla
         }
     }
 
-    public static class PortLevelChange extends PortPlayerXpEvent<PlayerXpEvent.LevelChange> implements IPortCancellableEvent {
+    public static class LevelChange extends PortPlayerXpEvent<PlayerXpEvent.LevelChange> implements IPortCancellableEvent {
         @Diff
-        public PortLevelChange(PlayerXpEvent.LevelChange e) {
+        public LevelChange(PlayerXpEvent.LevelChange e) {
             super(e);
         }
 

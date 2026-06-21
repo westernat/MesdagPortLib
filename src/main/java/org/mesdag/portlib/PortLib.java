@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -25,6 +26,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
+import org.mesdag.portlib.datamap.PortDataMapType;
+import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.PortRegistries;
@@ -37,6 +40,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
+import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.AddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
@@ -146,6 +150,8 @@ public class PortLib {
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
 
+    public static final PortDataMapType<Item, PortFurnaceFuel> FURNACE_FUELS = PortDataMapType.builder(asResource("furnace_fuels"), Registries.ITEM, PortFurnaceFuel.CODEC).synced(PortFurnaceFuel.BURN_TIME_CODEC, false).build();
+
     public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init();
         PortRegistries.init();
@@ -180,6 +186,10 @@ public class PortLib {
                     event.add(EntityType.PLAYER, entry);
                 }
             }
+        });
+
+        PortEventHandler.addListener((PortRegisterDataMapTypesEvent event) -> {
+            event.register(FURNACE_FUELS);
         });
 
         if (DEBUG) {

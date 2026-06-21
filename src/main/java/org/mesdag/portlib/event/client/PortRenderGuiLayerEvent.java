@@ -42,9 +42,9 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
         return layer;
     }
 
-    public static class PortPre extends PortRenderGuiLayerEvent<RenderGuiOverlayEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortRenderGuiLayerEvent<RenderGuiOverlayEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(RenderGuiOverlayEvent.Pre e) {
+        public Pre(RenderGuiOverlayEvent.Pre e) {
             super(e);
         }
 
@@ -53,9 +53,9 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
         }
     }
 
-    public static class PortPost extends PortRenderGuiLayerEvent<RenderGuiOverlayEvent.Post> {
+    public static class Post extends PortRenderGuiLayerEvent<RenderGuiOverlayEvent.Post> {
         @Diff
-        public PortPost(RenderGuiOverlayEvent.Post e) {
+        public Post(RenderGuiOverlayEvent.Post e) {
             super(e);
         }
 

@@ -20,25 +20,25 @@ public abstract class PortServerTickEvent extends PortEvent<TickEvent.ServerTick
         return e.getServer();
     }
 
-    public static class PortPre extends PortServerTickEvent {
+    public static class Pre extends PortServerTickEvent {
         @Diff
-        public PortPre(TickEvent.ServerTickEvent e) {
+        public Pre(TickEvent.ServerTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.ServerTickEvent.class, PortPre.class, PortPre::new, event -> event.phase == TickEvent.Phase.START);
+            PortEventHooks.registerPredicated(TickEvent.ServerTickEvent.class, Pre.class, Pre::new, event -> event.phase == TickEvent.Phase.START);
         }
     }
 
-    public static class PortPost extends PortServerTickEvent {
+    public static class Post extends PortServerTickEvent {
         @Diff
-        public PortPost(TickEvent.ServerTickEvent e) {
+        public Post(TickEvent.ServerTickEvent e) {
             super(e);
         }
 
         static {
-            PortEventHooks.registerPredicated(TickEvent.ServerTickEvent.class, PortPost.class, PortPost::new, event -> event.phase == TickEvent.Phase.END);
+            PortEventHooks.registerPredicated(TickEvent.ServerTickEvent.class, Post.class, Post::new, event -> event.phase == TickEvent.Phase.END);
         }
     }
 }

@@ -16,9 +16,9 @@ public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortC
         return e.getData();
     }
 
-    public static class PortLoad extends PortChunkDataEvent<ChunkDataEvent.Load> {
+    public static class Load extends PortChunkDataEvent<ChunkDataEvent.Load> {
         @Diff
-        public PortLoad(ChunkDataEvent.Load e) {
+        public Load(ChunkDataEvent.Load e) {
             super(e);
         }
 
@@ -31,9 +31,9 @@ public abstract class PortChunkDataEvent<E extends ChunkDataEvent> extends PortC
         }
     }
 
-    public static class PortSave extends PortChunkDataEvent<ChunkDataEvent.Save> {
+    public static class Save extends PortChunkDataEvent<ChunkDataEvent.Save> {
         @Diff
-        public PortSave(ChunkDataEvent.Save e) {
+        public Save(ChunkDataEvent.Save e) {
             super(e);
         }
 

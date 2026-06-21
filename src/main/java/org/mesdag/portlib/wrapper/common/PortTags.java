@@ -53,6 +53,10 @@ public class PortTags {
         public static final TagKey<Item> GLASS_BLOCKS_CHEAP = common("glass_blocks/cheap");
         public static final TagKey<Item> GLASS_BLOCKS_TINTED = common("glass_blocks/tinted");
 
+        public static final TagKey<Item> MUSIC_DISCS = common("music_discs");
+
+        public static final TagKey<Item> GRAVELS = common("gravels");
+
         private static TagKey<Item> common(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
         }
@@ -93,6 +97,8 @@ public class PortTags {
         public static final TagKey<Block> ORES_IN_GROUND_DEEPSLATE = common("ores_in_ground/deepslate");
         public static final TagKey<Block> ORES_IN_GROUND_NETHERRACK = common("ores_in_ground/netherrack");
         public static final TagKey<Block> ORES_IN_GROUND_STONE = common("ores_in_ground/stone");
+
+        public static final TagKey<Block> GRAVELS = common("gravels");
 
         private static TagKey<Block> common(String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));

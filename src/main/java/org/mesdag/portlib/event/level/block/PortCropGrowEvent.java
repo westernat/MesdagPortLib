@@ -12,9 +12,9 @@ public abstract class PortCropGrowEvent<E extends BlockEvent.CropGrowEvent> exte
         super(e);
     }
 
-    public static class PortPre extends PortCropGrowEvent<BlockEvent.CropGrowEvent.Pre> {
+    public static class Pre extends PortCropGrowEvent<BlockEvent.CropGrowEvent.Pre> {
         @Diff
-        public PortPre(BlockEvent.CropGrowEvent.Pre e) {
+        public Pre(BlockEvent.CropGrowEvent.Pre e) {
             super(e);
         }
 
@@ -55,9 +55,9 @@ public abstract class PortCropGrowEvent<E extends BlockEvent.CropGrowEvent> exte
         }
     }
 
-    public static class PortPost extends PortCropGrowEvent<BlockEvent.CropGrowEvent.Post> {
+    public static class Post extends PortCropGrowEvent<BlockEvent.CropGrowEvent.Post> {
         @Diff
-        public PortPost(BlockEvent.CropGrowEvent.Post e) {
+        public Post(BlockEvent.CropGrowEvent.Post e) {
             super(e);
         }
 

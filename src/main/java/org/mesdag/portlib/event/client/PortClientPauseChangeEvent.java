@@ -17,16 +17,16 @@ public abstract class PortClientPauseChangeEvent extends Event {
     }
 
     @Cancelable
-    public static class PortPre extends PortClientPauseChangeEvent {
+    public static class Pre extends PortClientPauseChangeEvent {
         @Diff
-        public PortPre(boolean pause) {
+        public Pre(boolean pause) {
             super(pause);
         }
     }
 
-    public static class PortPost extends PortClientPauseChangeEvent {
+    public static class Post extends PortClientPauseChangeEvent {
         @Diff
-        public PortPost(boolean pause) {
+        public Post(boolean pause) {
             super(pause);
         }
     }

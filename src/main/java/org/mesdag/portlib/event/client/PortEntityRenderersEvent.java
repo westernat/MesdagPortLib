@@ -31,9 +31,9 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
         super(e);
     }
 
-    public static class PortRegisterLayerDefinitions extends PortEntityRenderersEvent<EntityRenderersEvent.RegisterLayerDefinitions> {
+    public static class RegisterLayerDefinitions extends PortEntityRenderersEvent<EntityRenderersEvent.RegisterLayerDefinitions> {
         @Diff
-        public PortRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions e) {
+        public RegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions e) {
             super(e);
         }
 
@@ -46,9 +46,9 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
         }
     }
 
-    public static class PortRegisterRenderers extends PortEntityRenderersEvent<EntityRenderersEvent.RegisterRenderers> {
+    public static class RegisterRenderers extends PortEntityRenderersEvent<EntityRenderersEvent.RegisterRenderers> {
         @Diff
-        public PortRegisterRenderers(EntityRenderersEvent.RegisterRenderers e) {
+        public RegisterRenderers(EntityRenderersEvent.RegisterRenderers e) {
             super(e);
         }
 
@@ -65,9 +65,9 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
         }
     }
 
-    public static class PortAddLayers extends PortEntityRenderersEvent<EntityRenderersEvent.AddLayers> {
+    public static class AddLayers extends PortEntityRenderersEvent<EntityRenderersEvent.AddLayers> {
         @Diff
-        public PortAddLayers(EntityRenderersEvent.AddLayers e) {
+        public AddLayers(EntityRenderersEvent.AddLayers e) {
             super(e);
         }
 
@@ -116,9 +116,9 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
         }
     }
 
-    public static class PortCreateSkullModels extends PortEntityRenderersEvent<EntityRenderersEvent.CreateSkullModels> {
+    public static class CreateSkullModels extends PortEntityRenderersEvent<EntityRenderersEvent.CreateSkullModels> {
         @Diff
-        public PortCreateSkullModels(EntityRenderersEvent.CreateSkullModels e) {
+        public CreateSkullModels(EntityRenderersEvent.CreateSkullModels e) {
             super(e);
         }
 

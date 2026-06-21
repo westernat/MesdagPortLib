@@ -41,9 +41,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             e.removeListener(listener);
         }
 
-        public static class PortPre extends PortInit<ScreenEvent.Init.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortInit<ScreenEvent.Init.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.Init.Pre e) {
+            public Pre(ScreenEvent.Init.Pre e) {
                 super(e);
             }
 
@@ -52,9 +52,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortInit<ScreenEvent.Init.Post> {
+        public static class Post extends PortInit<ScreenEvent.Init.Post> {
             @Diff
-            public PortPost(ScreenEvent.Init.Post e) {
+            public Post(ScreenEvent.Init.Post e) {
                 super(e);
             }
 
@@ -86,9 +86,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getPartialTick();
         }
 
-        public static class PortPre extends PortRender<ScreenEvent.Render.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortRender<ScreenEvent.Render.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.Render.Pre e) {
+            public Pre(ScreenEvent.Render.Pre e) {
                 super(e);
             }
 
@@ -97,9 +97,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortRender<ScreenEvent.Render.Post> {
+        public static class Post extends PortRender<ScreenEvent.Render.Post> {
             @Diff
-            public PortPost(ScreenEvent.Render.Post e) {
+            public Post(ScreenEvent.Render.Post e) {
                 super(e);
             }
 
@@ -109,9 +109,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
         }
     }
 
-    public static class PortRenderInventoryMobEffects extends PortScreenEvent<ScreenEvent.RenderInventoryMobEffects> implements IPortCancellableEvent {
+    public static class RenderInventoryMobEffects extends PortScreenEvent<ScreenEvent.RenderInventoryMobEffects> implements IPortCancellableEvent {
         @Diff
-        public PortRenderInventoryMobEffects(ScreenEvent.RenderInventoryMobEffects e) {
+        public RenderInventoryMobEffects(ScreenEvent.RenderInventoryMobEffects e) {
             super(e);
         }
 
@@ -162,9 +162,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getButton();
         }
 
-        public static class PortPre extends PortMouseButtonPressed<ScreenEvent.MouseButtonPressed.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortMouseButtonPressed<ScreenEvent.MouseButtonPressed.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.MouseButtonPressed.Pre e) {
+            public Pre(ScreenEvent.MouseButtonPressed.Pre e) {
                 super(e);
             }
 
@@ -173,9 +173,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortMouseButtonPressed<ScreenEvent.MouseButtonPressed.Post> {
+        public static class Post extends PortMouseButtonPressed<ScreenEvent.MouseButtonPressed.Post> {
             @Diff
-            public PortPost(ScreenEvent.MouseButtonPressed.Post e) {
+            public Post(ScreenEvent.MouseButtonPressed.Post e) {
                 super(e);
             }
 
@@ -245,9 +245,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getButton();
         }
 
-        public static class PortPre extends PortMouseButtonReleased<ScreenEvent.MouseButtonReleased.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortMouseButtonReleased<ScreenEvent.MouseButtonReleased.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.MouseButtonReleased.Pre e) {
+            public Pre(ScreenEvent.MouseButtonReleased.Pre e) {
                 super(e);
             }
 
@@ -256,9 +256,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortMouseButtonReleased<ScreenEvent.MouseButtonReleased.Post> {
+        public static class Post extends PortMouseButtonReleased<ScreenEvent.MouseButtonReleased.Post> {
             @Diff
-            public PortPost(ScreenEvent.MouseButtonReleased.Post e) {
+            public Post(ScreenEvent.MouseButtonReleased.Post e) {
                 super(e);
             }
 
@@ -336,9 +336,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getDragY();
         }
 
-        public static class PortPre extends PortMouseDragged<ScreenEvent.MouseDragged.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortMouseDragged<ScreenEvent.MouseDragged.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.MouseDragged.Pre e) {
+            public Pre(ScreenEvent.MouseDragged.Pre e) {
                 super(e);
             }
 
@@ -347,9 +347,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortMouseDragged<ScreenEvent.MouseDragged.Post> {
+        public static class Post extends PortMouseDragged<ScreenEvent.MouseDragged.Post> {
             @Diff
-            public PortPost(ScreenEvent.MouseDragged.Post e) {
+            public Post(ScreenEvent.MouseDragged.Post e) {
                 super(e);
             }
 
@@ -381,9 +381,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return PortMouseHandler.scrollDeltaY;
         }
 
-        public static class PortPre extends PortMouseScrolled<ScreenEvent.MouseScrolled.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortMouseScrolled<ScreenEvent.MouseScrolled.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.MouseScrolled.Pre e) {
+            public Pre(ScreenEvent.MouseScrolled.Pre e) {
                 super(e);
             }
 
@@ -392,9 +392,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortMouseScrolled<ScreenEvent.MouseScrolled.Post> {
+        public static class Post extends PortMouseScrolled<ScreenEvent.MouseScrolled.Post> {
             @Diff
-            public PortPost(ScreenEvent.MouseScrolled.Post e) {
+            public Post(ScreenEvent.MouseScrolled.Post e) {
                 super(e);
             }
 
@@ -422,9 +422,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getModifiers();
         }
 
-        public static class PortPre extends PortKeyPressed<ScreenEvent.KeyPressed.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortKeyPressed<ScreenEvent.KeyPressed.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.KeyPressed.Pre e) {
+            public Pre(ScreenEvent.KeyPressed.Pre e) {
                 super(e);
             }
 
@@ -433,9 +433,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortKeyPressed<ScreenEvent.KeyPressed.Post> implements IPortCancellableEvent {
+        public static class Post extends PortKeyPressed<ScreenEvent.KeyPressed.Post> implements IPortCancellableEvent {
             @Diff
-            public PortPost(ScreenEvent.KeyPressed.Post e) {
+            public Post(ScreenEvent.KeyPressed.Post e) {
                 super(e);
             }
 
@@ -463,9 +463,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getModifiers();
         }
 
-        public static class PortPre extends PortKeyReleased<ScreenEvent.KeyReleased.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortKeyReleased<ScreenEvent.KeyReleased.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.KeyReleased.Pre e) {
+            public Pre(ScreenEvent.KeyReleased.Pre e) {
                 super(e);
             }
 
@@ -474,9 +474,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortKeyReleased<ScreenEvent.KeyReleased.Post> implements IPortCancellableEvent {
+        public static class Post extends PortKeyReleased<ScreenEvent.KeyReleased.Post> implements IPortCancellableEvent {
             @Diff
-            public PortPost(ScreenEvent.KeyReleased.Post e) {
+            public Post(ScreenEvent.KeyReleased.Post e) {
                 super(e);
             }
 
@@ -500,9 +500,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             return e.getModifiers();
         }
 
-        public static class PortPre extends PortCharacterTyped<ScreenEvent.CharacterTyped.Pre> implements IPortCancellableEvent {
+        public static class Pre extends PortCharacterTyped<ScreenEvent.CharacterTyped.Pre> implements IPortCancellableEvent {
             @Diff
-            public PortPre(ScreenEvent.CharacterTyped.Pre e) {
+            public Pre(ScreenEvent.CharacterTyped.Pre e) {
                 super(e);
             }
 
@@ -511,9 +511,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
             }
         }
 
-        public static class PortPost extends PortCharacterTyped<ScreenEvent.CharacterTyped.Post> {
+        public static class Post extends PortCharacterTyped<ScreenEvent.CharacterTyped.Post> {
             @Diff
-            public PortPost(ScreenEvent.CharacterTyped.Post e) {
+            public Post(ScreenEvent.CharacterTyped.Post e) {
                 super(e);
             }
 
@@ -523,9 +523,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
         }
     }
 
-    public static class PortOpening extends PortScreenEvent<ScreenEvent.Opening> implements IPortCancellableEvent {
+    public static class Opening extends PortScreenEvent<ScreenEvent.Opening> implements IPortCancellableEvent {
         @Diff
-        public PortOpening(ScreenEvent.Opening e) {
+        public Opening(ScreenEvent.Opening e) {
             super(e);
         }
 
@@ -546,9 +546,9 @@ public abstract class PortScreenEvent<E extends ScreenEvent> extends PortEvent<E
         }
     }
 
-    public static class PortClosing extends PortScreenEvent<ScreenEvent.Closing> {
+    public static class Closing extends PortScreenEvent<ScreenEvent.Closing> {
         @Diff
-        public PortClosing(ScreenEvent.Closing e) {
+        public Closing(ScreenEvent.Closing e) {
             super(e);
         }
 

@@ -19,8 +19,8 @@ public abstract class PortLivingEvent<E extends LivingEvent> extends PortEntityE
         return e.getEntity();
     }
 
-    public static class PortLivingJumpEvent extends PortLivingEvent<LivingEvent.LivingJumpEvent> {
-        public PortLivingJumpEvent(LivingEvent.LivingJumpEvent e) {
+    public static class LivingJumpEvent extends PortLivingEvent<LivingEvent.LivingJumpEvent> {
+        public LivingJumpEvent(LivingEvent.LivingJumpEvent e) {
             super(e);
         }
 
@@ -33,9 +33,9 @@ public abstract class PortLivingEvent<E extends LivingEvent> extends PortEntityE
         }
     }
 
-    public static class PortLivingVisibilityEvent extends PortLivingEvent<LivingEvent.LivingVisibilityEvent> {
+    public static class LivingVisibilityEvent extends PortLivingEvent<LivingEvent.LivingVisibilityEvent> {
         @Diff
-        public PortLivingVisibilityEvent(LivingEvent.LivingVisibilityEvent e) {
+        public LivingVisibilityEvent(LivingEvent.LivingVisibilityEvent e) {
             super(e);
         }
 

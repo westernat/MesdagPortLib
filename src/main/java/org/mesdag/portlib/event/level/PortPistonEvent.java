@@ -31,9 +31,9 @@ public abstract class PortPistonEvent<E extends PistonEvent> extends PortBlockEv
         return e.getStructureHelper();
     }
 
-    public static class PortPost extends PortPistonEvent<PistonEvent.Post> {
+    public static class Post extends PortPistonEvent<PistonEvent.Post> {
         @Diff
-        public PortPost(PistonEvent.Post e) {
+        public Post(PistonEvent.Post e) {
             super(e);
         }
 
@@ -42,9 +42,9 @@ public abstract class PortPistonEvent<E extends PistonEvent> extends PortBlockEv
         }
     }
 
-    public static class PortPre extends PortPistonEvent<PistonEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortPistonEvent<PistonEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(PistonEvent.Pre e) {
+        public Pre(PistonEvent.Pre e) {
             super(e);
         }
 

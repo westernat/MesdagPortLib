@@ -28,9 +28,9 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
         return item;
     }
 
-    public static class PortPre extends PortItemEntityPickupEvent<EntityItemPickupEvent> {
+    public static class Pre extends PortItemEntityPickupEvent<EntityItemPickupEvent> {
         @Diff
-        public PortPre(EntityItemPickupEvent e) {
+        public Pre(EntityItemPickupEvent e) {
             super(e, e.getItem());
         }
 
@@ -47,8 +47,8 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
         }
     }
 
-    public static class PortPost extends PortItemEntityPickupEvent<PlayerEvent.ItemPickupEvent> {
-        public PortPost(PlayerEvent.ItemPickupEvent e) {
+    public static class Post extends PortItemEntityPickupEvent<PlayerEvent.ItemPickupEvent> {
+        public Post(PlayerEvent.ItemPickupEvent e) {
             super(e, e.getOriginalEntity());
         }
 

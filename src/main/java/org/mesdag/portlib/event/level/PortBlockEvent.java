@@ -40,9 +40,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         return e.getState();
     }
 
-    public static class PortBreakEvent extends PortBlockEvent<BlockEvent.BreakEvent> implements IPortCancellableEvent {
+    public static class BreakEvent extends PortBlockEvent<BlockEvent.BreakEvent> implements IPortCancellableEvent {
         @Diff
-        public PortBreakEvent(BlockEvent.BreakEvent e) {
+        public BreakEvent(BlockEvent.BreakEvent e) {
             super(e);
         }
 
@@ -55,9 +55,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortEntityPlaceEvent<E extends BlockEvent.EntityPlaceEvent> extends PortBlockEvent<E> implements IPortCancellableEvent {
+    public static class EntityPlaceEvent<E extends BlockEvent.EntityPlaceEvent> extends PortBlockEvent<E> implements IPortCancellableEvent {
         @Diff
-        public PortEntityPlaceEvent(E e) {
+        public EntityPlaceEvent(E e) {
             super(e);
         }
 
@@ -83,9 +83,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortEntityMultiPlaceEvent extends PortEntityPlaceEvent<BlockEvent.EntityMultiPlaceEvent> implements IPortCancellableEvent {
+    public static class EntityMultiPlaceEvent extends EntityPlaceEvent<BlockEvent.EntityMultiPlaceEvent> implements IPortCancellableEvent {
         @Diff
-        public PortEntityMultiPlaceEvent(BlockEvent.EntityMultiPlaceEvent e) {
+        public EntityMultiPlaceEvent(BlockEvent.EntityMultiPlaceEvent e) {
             super(e);
         }
 
@@ -98,9 +98,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortNeighborNotifyEvent extends PortBlockEvent<BlockEvent.NeighborNotifyEvent> implements IPortCancellableEvent {
+    public static class NeighborNotifyEvent extends PortBlockEvent<BlockEvent.NeighborNotifyEvent> implements IPortCancellableEvent {
         @Diff
-        public PortNeighborNotifyEvent(BlockEvent.NeighborNotifyEvent e) {
+        public NeighborNotifyEvent(BlockEvent.NeighborNotifyEvent e) {
             super(e);
         }
 
@@ -117,9 +117,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortFluidPlaceBlockEvent extends PortBlockEvent<BlockEvent.FluidPlaceBlockEvent> implements IPortCancellableEvent {
+    public static class FluidPlaceBlockEvent extends PortBlockEvent<BlockEvent.FluidPlaceBlockEvent> implements IPortCancellableEvent {
         @Diff
-        public PortFluidPlaceBlockEvent(BlockEvent.FluidPlaceBlockEvent e) {
+        public FluidPlaceBlockEvent(BlockEvent.FluidPlaceBlockEvent e) {
             super(e);
         }
 
@@ -144,9 +144,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortFarmlandTrampleEvent extends PortBlockEvent<BlockEvent.FarmlandTrampleEvent> implements IPortCancellableEvent {
+    public static class FarmlandTrampleEvent extends PortBlockEvent<BlockEvent.FarmlandTrampleEvent> implements IPortCancellableEvent {
         @Diff
-        public PortFarmlandTrampleEvent(BlockEvent.FarmlandTrampleEvent e) {
+        public FarmlandTrampleEvent(BlockEvent.FarmlandTrampleEvent e) {
             super(e);
         }
 
@@ -178,9 +178,9 @@ public abstract class PortBlockEvent<E extends BlockEvent> extends PortEvent<E> 
         }
     }
 
-    public static class PortBlockToolModificationEvent extends PortBlockEvent<BlockEvent.BlockToolModificationEvent> implements IPortCancellableEvent {
+    public static class BlockToolModificationEvent extends PortBlockEvent<BlockEvent.BlockToolModificationEvent> implements IPortCancellableEvent {
         @Diff
-        public PortBlockToolModificationEvent(BlockEvent.BlockToolModificationEvent e) {
+        public BlockToolModificationEvent(BlockEvent.BlockToolModificationEvent e) {
             super(e);
         }
 

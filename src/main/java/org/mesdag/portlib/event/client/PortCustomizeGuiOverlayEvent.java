@@ -30,9 +30,9 @@ public abstract class PortCustomizeGuiOverlayEvent<E extends CustomizeGuiOverlay
         return PortDeltaTicker.INSTANCE;
     }
 
-    public static class PortBossEventProgress extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.BossEventProgress> implements IPortCancellableEvent {
+    public static class BossEventProgress extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.BossEventProgress> implements IPortCancellableEvent {
         @Diff
-        public PortBossEventProgress(CustomizeGuiOverlayEvent.BossEventProgress e) {
+        public BossEventProgress(CustomizeGuiOverlayEvent.BossEventProgress e) {
             super(e);
         }
 
@@ -61,9 +61,9 @@ public abstract class PortCustomizeGuiOverlayEvent<E extends CustomizeGuiOverlay
         }
     }
 
-    public static class PortDebugText extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.DebugText> {
+    public static class DebugText extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.DebugText> {
         @Diff
-        public PortDebugText(CustomizeGuiOverlayEvent.DebugText e) {
+        public DebugText(CustomizeGuiOverlayEvent.DebugText e) {
             super(e);
         }
 
@@ -80,9 +80,9 @@ public abstract class PortCustomizeGuiOverlayEvent<E extends CustomizeGuiOverlay
         }
     }
 
-    public static class PortChat extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.Chat> {
+    public static class Chat extends PortCustomizeGuiOverlayEvent<CustomizeGuiOverlayEvent.Chat> {
         @Diff
-        public PortChat(CustomizeGuiOverlayEvent.Chat e) {
+        public Chat(CustomizeGuiOverlayEvent.Chat e) {
             super(e);
         }
 

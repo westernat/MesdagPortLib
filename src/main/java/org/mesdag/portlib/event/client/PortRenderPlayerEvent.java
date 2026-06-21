@@ -35,9 +35,9 @@ public abstract class PortRenderPlayerEvent<E extends RenderPlayerEvent> extends
         return e.getPackedLight();
     }
 
-    public static class PortPre extends PortRenderPlayerEvent<RenderPlayerEvent.Pre> implements IPortCancellableEvent {
+    public static class Pre extends PortRenderPlayerEvent<RenderPlayerEvent.Pre> implements IPortCancellableEvent {
         @Diff
-        public PortPre(RenderPlayerEvent.Pre e) {
+        public Pre(RenderPlayerEvent.Pre e) {
             super(e);
         }
 
@@ -46,9 +46,9 @@ public abstract class PortRenderPlayerEvent<E extends RenderPlayerEvent> extends
         }
     }
 
-    public static class PortPost extends PortRenderPlayerEvent<RenderPlayerEvent.Post> {
+    public static class Post extends PortRenderPlayerEvent<RenderPlayerEvent.Post> {
         @Diff
-        public PortPost(RenderPlayerEvent.Post e) {
+        public Post(RenderPlayerEvent.Post e) {
             super(e);
         }
 
