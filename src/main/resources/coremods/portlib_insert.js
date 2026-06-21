@@ -139,7 +139,7 @@ function initializeCoreMod() {
                             'submergedMiningSpeed',
                             '()Lnet/minecraft/core/Holder;', false));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-                            'net/minecraft/world/entity/player/Player',
+                            'net/minecraft/world/entity/LivingEntity',
                             'getAttributeValue',
                             '(Lnet/minecraft/core/Holder;)D', false));
                         newCode.add(new InsnNode(Opcodes.D2F));
