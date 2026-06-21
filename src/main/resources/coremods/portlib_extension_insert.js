@@ -1,16 +1,13 @@
 function initializeCoreMod() {
     return {
-        'insert_port_codec_extension': {
+        'insert_port_vertex_consumer_extension': {
             'target': {
                 'type': 'CLASS',
-                'name': 'com/mojang/serialization/Codec'
+                'name': 'com/mojang/blaze3d/vertex/VertexConsumer'
             },
             'transformer': function (node) {
-                if (!node.interfaces.contains('org/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension')) {
-                    node.interfaces.add('org/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension');
-                    if (node.signature != null) {
-                        node.signature = node.signature + 'Lorg/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension<TA;>;';
-                    }
+                if (!node.interfaces.contains('org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension')) {
+                    node.interfaces.add('org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension');
                 }
                 return node;
             }

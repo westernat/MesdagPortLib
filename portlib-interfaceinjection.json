@@ -32,9 +32,6 @@
     "net/minecraft/client/renderer/blockentity/BlockEntityRenderer": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension<T>"
     ],
-    "com/mojang/serialization/Codec": [
-        "org/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension<A>"
-    ],
     "net/minecraft/world/entity/player/Player": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortPlayerExtension"
     ],
@@ -83,9 +80,6 @@
     "net/minecraft/core/RegistryAccess": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortRegistryAccessExtension"
     ],
-    "com/mojang/blaze3d/vertex/VertexConsumer": [
-        "org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension"
-    ],
     "net/minecraft/network/chat/MutableComponent": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortMutableComponentExtension"
     ],
@@ -97,5 +91,8 @@
     ],
     "net/minecraft/world/level/block/state/properties/DoubleBlockHalf": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortDoubleBlockHalfExtension"
+    ],
+    "com/mojang/blaze3d/vertex/VertexConsumer": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension"
     ]
 }
