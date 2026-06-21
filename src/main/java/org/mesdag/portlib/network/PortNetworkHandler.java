@@ -151,11 +151,15 @@ public class PortNetworkHandler {
 //    }
 
     private <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> C.handle(p, s, handler, channel));
+    }
+
+    private static class C {
+        private static <P extends IPortPacket> void handle(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler, SimpleChannel channel) {
             NetworkEvent.Context context = s.get();
             handler.accept(p, IPortPacket.Context.wrap(Minecraft.getInstance().player, context, channel));
             context.setPacketHandled(true);
-        });
+        }
     }
 
     private <P extends IPortPacket> void c2s(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
