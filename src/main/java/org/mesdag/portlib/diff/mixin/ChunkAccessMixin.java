@@ -4,13 +4,14 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
+import org.mesdag.portlib.wrapper.common.extensions.IPortChunkAccessExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Map;
 
 @Mixin(ChunkAccess.class)
-public abstract class ChunkAccessMixin implements CPortAttachmentHolder {
+public abstract class ChunkAccessMixin implements CPortAttachmentHolder, IPortChunkAccessExtension {
     @Unique
     private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments = null;
 

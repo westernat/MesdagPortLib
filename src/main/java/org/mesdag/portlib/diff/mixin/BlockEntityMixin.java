@@ -12,6 +12,7 @@ import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.common.extensions.IPortBlockEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSelfGetter<BlockEntity> {
+public abstract class BlockEntityMixin implements CPortAttachmentHolder, PortSelfGetter<BlockEntity>, IPortBlockEntityExtension {
     @Shadow
     @javax.annotation.Nullable
     protected Level level;

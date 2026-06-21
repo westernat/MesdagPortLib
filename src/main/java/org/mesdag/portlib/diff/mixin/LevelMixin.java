@@ -4,13 +4,14 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLevelExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Map;
 
 @Mixin(Level.class)
-public abstract class LevelMixin implements CPortAttachmentHolder {
+public abstract class LevelMixin implements CPortAttachmentHolder, IPortLevelExtension {
     @Unique
     private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments = null;
 

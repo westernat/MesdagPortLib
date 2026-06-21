@@ -8,8 +8,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
+import org.mesdag.portlib.wrapper.common.extensions.IPortBlockExtension;
 
-public interface IPortBlock extends IPortClientExtensionsSetter {
+public interface IPortBlock extends IPortClientExtensionsSetter, IPortBlockExtension {
     static IPortBlock of(Block block) {
         return (IPortBlock) block;
     }

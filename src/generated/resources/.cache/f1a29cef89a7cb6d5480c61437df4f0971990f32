@@ -1,2 +1,6 @@
-// 1.20.1	2026-04-21T12:39:15.7266299	Tags for minecraft:damage_type mod id portlib
+// 1.20.1	2026-06-21T15:22:26.059903	Tags for minecraft:damage_type mod id portlib
 a1e7239e70b40ea667bbc4a48639ba6831a7f1ff data/c/tags/damage_type/is_magic.json
+89acbddfce285561446f8037a41cc5f2e346392f data/minecraft/tags/damage_type/can_break_armor_stand.json
+5ffa76b375d4236f1d832601fff778bc8ce15f51 data/minecraft/tags/damage_type/is_player_attack.json
+92932a9cd274f5cb4c8082511bf04a768adcc3d7 data/minecraft/tags/damage_type/panic_causes.json
+2182196461100581d35d21f915c39cc53acaac17 data/minecraft/tags/damage_type/panic_environmental_causes.json

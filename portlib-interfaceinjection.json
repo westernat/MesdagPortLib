@@ -34,5 +34,68 @@
     ],
     "com/mojang/serialization/Codec": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortCodecExtension<A>"
+    ],
+    "net/minecraft/world/entity/player/Player": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortPlayerExtension"
+    ],
+    "net/minecraft/world/effect/MobEffectInstance": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortMobEffectInstanceExtension"
+    ],
+    "net/minecraft/world/level/block/Block": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockExtension"
+    ],
+    "net/minecraft/world/level/block/state/BlockState": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockStateExtension"
+    ],
+    "net/minecraft/core/Holder": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortHolderExtension<T>"
+    ],
+    "net/minecraft/world/phys/AABB": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAABBExtension"
+    ],
+    "net/minecraft/world/level/Level": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortLevelExtension"
+    ],
+    "net/minecraft/world/level/chunk/ChunkAccess": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortChunkAccessExtension"
+    ],
+    "net/minecraft/world/level/block/entity/BlockEntity": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockEntityExtension"
+    ],
+    "net/minecraft/world/item/crafting/Ingredient": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortIngredientExtension"
+    ],
+    "net/minecraft/world/food/FoodProperties": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortFoodPropertiesExtension"
+    ],
+    "net/minecraft/resources/ResourceKey": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortResourceKeyExtension<T>"
+    ],
+    "net/minecraft/core/BlockPos": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockPosExtension"
+    ],
+    "net/minecraft/core/HolderLookup$Provider": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortHolderLookupProviderExtension"
+    ],
+    "net/minecraft/core/IdMap": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortIdMapExtension<T>"
+    ],
+    "net/minecraft/core/RegistryAccess": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortRegistryAccessExtension"
+    ],
+    "com/mojang/blaze3d/vertex/VertexConsumer": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension"
+    ],
+    "net/minecraft/network/chat/MutableComponent": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortMutableComponentExtension"
+    ],
+    "net/minecraft/client/gui/GuiGraphics": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortGuiGraphicsExtension"
+    ],
+    "net/minecraft/network/FriendlyByteBuf": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortFriendlyByteBufExtension"
+    ],
+    "net/minecraft/world/level/block/state/properties/DoubleBlockHalf": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortDoubleBlockHalfExtension"
     ]
 }
