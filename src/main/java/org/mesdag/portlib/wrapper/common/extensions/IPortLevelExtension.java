@@ -20,59 +20,59 @@ public interface IPortLevelExtension {
         return PortLevelExtension.hasAttaches(self());
     }
 
-    default boolean hasAttachment(PortAttachmentType<?> type) {
+    default boolean hasData(PortAttachmentType<?> type) {
         return PortLevelExtension.hasAttach(self(), type);
     }
 
-    default <T> boolean hasAttachment(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
+    default <T> boolean hasData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return PortLevelExtension.hasAttach(self(), type);
     }
 
-    default <T> T getAttachment(PortAttachmentType<T> type) {
+    default <T> T getData(PortAttachmentType<T> type) {
         return PortLevelExtension.getAttach(self(), type);
     }
 
-    default <T> T getAttachment(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
+    default <T> T getData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return PortLevelExtension.getAttach(self(), type);
     }
 
-    default <T> Optional<T> getExistingAttachment(PortAttachmentType<T> type) {
+    default <T> Optional<T> getExistingData(PortAttachmentType<T> type) {
         return PortLevelExtension.getExistingAttach(self(), type);
     }
 
-    default <T> Optional<T> getExistingAttachment(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
+    default <T> Optional<T> getExistingData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return PortLevelExtension.getExistingAttach(self(), type);
     }
 
-    default <T> @Nullable T getExistingAttachmentOrNull(PortAttachmentType<T> type) {
+    default <T> @Nullable T getExistingDataOrNull(PortAttachmentType<T> type) {
         return PortLevelExtension.getExistingAttachOrNull(self(), type);
     }
 
-    default <T> @Nullable T getExistingAttachmentOrNull(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
+    default <T> @Nullable T getExistingDataOrNull(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return PortLevelExtension.getExistingAttachOrNull(self(), type);
     }
 
-    default <T> @Nullable T setAttachment(PortAttachmentType<T> type, T data) {
+    default <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
         return PortLevelExtension.setAttach(self(), type, data);
     }
 
-    default <T> @Nullable T setAttachment(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type, T data) {
+    default <T> @Nullable T setData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type, T data) {
         return PortLevelExtension.setAttach(self(), type, data);
     }
 
-    default <T> @Nullable T removeAttachment(PortAttachmentType<T> type) {
+    default <T> @Nullable T removeData(PortAttachmentType<T> type) {
         return PortLevelExtension.removeAttach(self(), type);
     }
 
-    default <T> @Nullable T removeAttachment(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
+    default <T> @Nullable T removeData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         return PortLevelExtension.removeAttach(self(), type);
     }
 
-    default void syncAttachment(PortAttachmentType<?> type) {
+    default void syncData(PortAttachmentType<?> type) {
         PortLevelExtension.syncAttach(self(), type);
     }
 
-    default void syncAttachment(Supplier<PortAttachmentType<?>> type) {
+    default void syncData(Supplier<PortAttachmentType<?>> type) {
         PortLevelExtension.syncAttach(self(), type);
     }
 

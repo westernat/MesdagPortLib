@@ -9,17 +9,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortEntity;
+import org.mesdag.portlib.diff.IPortEntityDimensions;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.world.entity.PortEntityAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -35,6 +38,8 @@ import java.util.Map;
 public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity> {
     @Shadow
     private Level level;
+    @Shadow
+    private EntityDimensions dimensions;
     @Unique
     private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments;
 
@@ -58,6 +63,11 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
     @Override
     public void portlib$syncAttach(PortAttachmentType<?> type) {
         PortAttachmentSync.syncEntityUpdate(portlib$self(), type);
+    }
+
+    @Override
+    public PortEntityAttachments portlib$getAttachments() {
+        return IPortEntityDimensions.of(dimensions).portlib$getAttachments();
     }
 
     @Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))

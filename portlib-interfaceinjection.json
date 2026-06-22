@@ -94,5 +94,14 @@
     ],
     "com/mojang/blaze3d/vertex/VertexConsumer": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortVertexConsumerExtension"
+    ],
+    "net/minecraft/world/entity/EntityDimensions": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEntityDimensionsExtension"
+    ],
+    "net/minecraft/world/entity/EntityType$Builder": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEntityTypeBuilderExtension<T>"
+    ],
+    "net/minecraft/world/entity/EntityType": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEntityTypeExtension<T>"
     ]
 }
