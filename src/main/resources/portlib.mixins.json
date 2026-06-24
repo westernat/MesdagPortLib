@@ -8,6 +8,7 @@
         "AbstractArrowAccessor",
         "AbstractArrowMixin",
         "ArrowItemMixin",
+        "AttributeInstanceMixin",
         "AttributeMixin",
         "BlockBehaviourMixin",
         "BlockBehaviourMixin$BlockStateBaseMixin",

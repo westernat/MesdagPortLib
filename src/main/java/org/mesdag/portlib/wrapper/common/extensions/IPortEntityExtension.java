@@ -118,6 +118,10 @@ public interface IPortEntityExtension {
         PortEntityExtension.igniteForTicks(self(), ticks);
     }
 
+    default void igniteForSeconds(float seconds) {
+        igniteForTicks((int) (seconds * 20));
+    }
+
     default Vec3 getKnownMovement() {
         return PortEntityExtension.getKnownMovement(self());
     }
