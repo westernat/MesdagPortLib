@@ -31,7 +31,6 @@ import java.util.List;
 
 @SuppressWarnings("all")
 public interface IPortItemStackExtension {
-
     private ItemStack self() {
         return (ItemStack) (Object) this;
     }
@@ -348,49 +347,53 @@ public interface IPortItemStackExtension {
         return PortItemStackExtension.getAllPortEnchantments(self(), lookup);
     }
 
-    default <T> @Nullable T getData(PortDataComponentType<T> type) {
+    // region data component
+
+    default <T> @Nullable T get(PortDataComponentType<T> type) {
         return PortItemStackExtension.getData(self(), type);
     }
 
-    default <T> @Nullable T getData(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
+    default <T> @Nullable T get(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return PortItemStackExtension.getData(self(), type);
     }
 
-    default <T> @Nullable T setData(PortDataComponentType<T> type, T value) {
+    default <T> @Nullable T set(PortDataComponentType<T> type, T value) {
         return PortItemStackExtension.setData(self(), type, value);
     }
 
-    default <T> @Nullable T setData(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
+    default <T> @Nullable T set(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
         return PortItemStackExtension.setData(self(), type, value);
     }
 
-    default <T> @Nullable T removeData(PortDataComponentType<T> type) {
+    default <T> @Nullable T remove(PortDataComponentType<T> type) {
         return PortItemStackExtension.removeData(self(), type);
     }
 
-    default <T> @Nullable T removeData(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
+    default <T> @Nullable T remove(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return PortItemStackExtension.removeData(self(), type);
     }
 
-    default <T> T getDataOrDefault(PortDataComponentType<? extends T> type, T defaultValue) {
+    default <T> T getOrDefault(PortDataComponentType<? extends T> type, T defaultValue) {
         return PortItemStackExtension.getDataOrDefault(self(), type, defaultValue);
     }
 
-    default <T> T getDataOrDefault(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T defaultValue) {
+    default <T> T getOrDefault(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T defaultValue) {
         return PortItemStackExtension.getDataOrDefault(self(), type, defaultValue);
     }
 
-    default <T> boolean hasData(PortDataComponentType<T> type) {
+    default <T> boolean has(PortDataComponentType<T> type) {
         return PortItemStackExtension.hasData(self(), type);
     }
 
-    default <T> boolean hasData(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
+    default <T> boolean has(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
         return PortItemStackExtension.hasData(self(), type);
     }
 
-    default PortDataComponentMap getPrototypeData() {
+    default PortDataComponentMap getPrototype() {
         return PortItemStackExtension.getPrototypeData(self());
     }
+
+    // endregion data component
 
     @Diff
     default boolean is(RegistryObject<? extends Item> holder) {
