@@ -2,6 +2,9 @@
     "net/minecraft/world/item/Item": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortItemExtension"
     ],
+    "net/minecraft/world/item/Item$Properties": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortItemPropertiesExtension"
+    ],
     "net/minecraft/world/entity/Entity": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortEntityExtension"
     ],
@@ -103,5 +106,8 @@
     ],
     "net/minecraft/world/entity/EntityType": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortEntityTypeExtension<T>"
+    ],
+    "net/minecraft/world/entity/ai/attributes/AttributeInstance": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAttributeInstanceExtension"
     ]
 }

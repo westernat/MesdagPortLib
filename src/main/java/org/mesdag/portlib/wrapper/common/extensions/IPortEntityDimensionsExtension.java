@@ -33,7 +33,7 @@ public interface IPortEntityDimensionsExtension {
         EntityDimensions dimensions = new EntityDimensions(width(), height(), fixed());
         IPortEntityDimensions port = IPortEntityDimensions.of(dimensions);
         port.portlib$setAttachments(attachments());
-        port.portlib$setEyeHeight(eyeHeight());
+        port.portlib$setEyeHeight(eyeHeight);
         return dimensions;
     }
 

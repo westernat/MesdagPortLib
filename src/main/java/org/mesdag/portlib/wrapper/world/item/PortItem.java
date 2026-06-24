@@ -13,7 +13,7 @@ import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
 public class PortItem extends Item {
-    public PortItem(PortProperties properties) {
+    public PortItem(Properties properties) {
         super(properties);
     }
 
@@ -25,48 +25,48 @@ public class PortItem extends Item {
         return PortItemExtension.getDefaultMaxStackSize(this);
     }
 
-    public static class PortProperties extends Properties {
-        public <T> PortProperties component(PortDataComponentType<T> type, T value) {
+    public static class Properties extends Item.Properties {
+        public <T> Properties component(PortDataComponentType<T> type, T value) {
             PortItemExtension.Properties.component(this, type, value);
             return this;
         }
 
-        public <T> PortProperties component(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
+        public <T> Properties component(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
             PortItemExtension.Properties.component(this, type, value);
             return this;
         }
 
         @Diff
-        public PortProperties unbreakable() {
+        public Properties unbreakable() {
             PortItemExtension.Properties.unbreakable(this);
             return this;
         }
 
-        public PortProperties attributes(PortItemAttributeModifiers modifiers) {
+        public Properties attributes(PortItemAttributeModifiers modifiers) {
             PortItemExtension.Properties.attributes(this, modifiers);
             return this;
         }
 
         @Override
-        public PortProperties fireResistant() {
+        public Properties fireResistant() {
             super.fireResistant();
             return this;
         }
 
         @Override
-        public PortProperties durability(int maxDamage) {
+        public Properties durability(int maxDamage) {
             super.durability(maxDamage);
             return this;
         }
 
         @Override
-        public PortProperties stacksTo(int maxStackSize) {
+        public Properties stacksTo(int maxStackSize) {
             super.stacksTo(maxStackSize);
             return this;
         }
 
         @Diff
-        public PortProperties dyedColor(int rgb, boolean showInTooltip) {
+        public Properties dyedColor(int rgb, boolean showInTooltip) {
             PortItemExtension.Properties.dyedColor(this, rgb, showInTooltip);
             return this;
         }

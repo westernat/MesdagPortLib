@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemPropertiesExtension;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -92,7 +93,7 @@ public abstract class ItemMixin implements IPortItem {
     }
 
     @Mixin(Item.Properties.class)
-    public static abstract class PropertiesMixin implements IPortProperties {
+    public static abstract class PropertiesMixin implements IPortProperties, IPortItemPropertiesExtension {
         @Unique
         private @Nullable PortBuilder portlib$builder;
 

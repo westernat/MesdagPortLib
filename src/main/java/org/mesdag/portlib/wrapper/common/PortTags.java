@@ -8,8 +8,20 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 
 public class PortTags {
+    public static class Fluids {
+        public static final TagKey<Fluid> WATER = common("water");
+        public static final TagKey<Fluid> LAVA = common("lava");
+        public static final TagKey<Fluid> MILK = common("milk");
+        public static final TagKey<Fluid> HONEY = common("honey");
+
+        private static TagKey<Fluid> common(String name) {
+            return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", name));
+        }
+    }
+
     public static class DamageTypes {
         public static final TagKey<DamageType> IS_MAGIC = common("is_magic");
         public static final TagKey<DamageType> PANIC_CAUSES = mc("panic_causes");
