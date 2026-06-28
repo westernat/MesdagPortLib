@@ -5,7 +5,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 @SuppressWarnings("all")
 public interface IPortIngredientExtension {
-
     private Ingredient self() {
         return (Ingredient) this;
     }

@@ -109,5 +109,8 @@
     ],
     "net/minecraft/world/entity/ai/attributes/AttributeInstance": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortAttributeInstanceExtension"
+    ],
+    "net/minecraft/world/SimpleContainer": [
+        "org/mesdag/portlib/wrapper/common/extensions/ISimpleContainerExtension"
     ]
 }

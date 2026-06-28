@@ -39,7 +39,7 @@ public class PortItemAttributeModifiers {
     private final boolean showInTooltip;
 
     private @Nullable EnumMap<EquipmentSlot, Multimap<Attribute, AttributeModifier>> mapCache;
-    private @Nullable List<PortEntry> listCache;
+    private @Nullable List<Entry> listCache;
 
     @Diff
     public PortItemAttributeModifiers(ItemStack stack) {
@@ -58,9 +58,9 @@ public class PortItemAttributeModifiers {
         this.showInTooltip = showInTooltip;
     }
 
-    public PortItemAttributeModifiers(List<PortEntry> modifiers, boolean showInTooltip) {
+    public PortItemAttributeModifiers(List<Entry> modifiers, boolean showInTooltip) {
         ListTag listTag = new ListTag();
-        for (PortEntry entry : modifiers) {
+        for (Entry entry : modifiers) {
             addModifier(entry.attribute, entry.modifier, entry.slot, listTag);
         }
         this.listTag = listTag;
@@ -160,13 +160,13 @@ public class PortItemAttributeModifiers {
         });
     }
 
-    public static PortBuilder builder() {
-        return new PortBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public List<PortEntry> modifiers() {
+    public List<Entry> modifiers() {
         if (listCache == null) {
-            ImmutableList.Builder<PortEntry> builder = ImmutableList.builder();
+            ImmutableList.Builder<Entry> builder = ImmutableList.builder();
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag tag = listTag.getCompound(i);
                 Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.tryParse(tag.getString("AttributeName")));
@@ -176,7 +176,7 @@ public class PortItemAttributeModifiers {
                     PortEquipmentSlotGroup group = tag.contains("Slot", 8)
                             ? PortEquipmentSlotGroup.fromSlot(EquipmentSlot.byName(tag.getString("Slot")))
                             : PortEquipmentSlotGroup.ANY;
-                    builder.add(new PortEntry(
+                    builder.add(new Entry(
                             PortAttributeExtension.wrap(attribute),
                             PortAttributeModifierExtension.wrap(modifier),
                             group
@@ -188,28 +188,28 @@ public class PortItemAttributeModifiers {
         return listCache;
     }
 
-    public static class PortBuilder {
+    public static class Builder {
         private final ListTag listTag = new ListTag();
 
-        private PortBuilder() {}
+        private Builder() {}
 
-        public PortBuilder add(Holder<Attribute> attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
+        public Builder add(Holder<Attribute> attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
             addModifier(attribute, modifier, group, listTag);
             return this;
         }
 
         @Diff
-        public PortBuilder add(Attribute attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
+        public Builder add(Attribute attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group) {
             return add(AttributeHolder.wrap(attribute), modifier, group);
         }
 
         @Diff
-        public PortBuilder add(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
+        public Builder add(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
             return add(attribute, new PortAttributeModifier(id, amount, operation), group);
         }
 
         @Diff
-        public PortBuilder add(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
+        public Builder add(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation, PortEquipmentSlotGroup group) {
             return add(AttributeHolder.wrap(attribute), id, amount, operation, group);
         }
 
@@ -218,21 +218,21 @@ public class PortItemAttributeModifiers {
         }
     }
 
-    public record PortEntry(
+    public record Entry(
             Holder<Attribute> attribute,
             PortAttributeModifier modifier,
             PortEquipmentSlotGroup slot
     ) {
-        public static final Codec<PortEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                PortAttributeExtension.codec().fieldOf("type").forGetter(PortEntry::attribute),
-                PortAttributeModifier.MAP_CODEC.forGetter(PortEntry::modifier),
-                PortEquipmentSlotGroup.CODEC.optionalFieldOf("slot", PortEquipmentSlotGroup.ANY).forGetter(PortEntry::slot)
-        ).apply(instance, PortEntry::new));
-        public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortEntry> STREAM_CODEC = PortStreamCodec.composite(
-                PortAttributeExtension.streamCodec(), PortEntry::attribute,
-                PortAttributeModifier.STREAM_CODEC, PortEntry::modifier,
-                PortEquipmentSlotGroup.STREAM_CODEC, PortEntry::slot,
-                PortEntry::new
+        public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                PortAttributeExtension.codec().fieldOf("type").forGetter(Entry::attribute),
+                PortAttributeModifier.MAP_CODEC.forGetter(Entry::modifier),
+                PortEquipmentSlotGroup.CODEC.optionalFieldOf("slot", PortEquipmentSlotGroup.ANY).forGetter(Entry::slot)
+        ).apply(instance, Entry::new));
+        public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Entry> STREAM_CODEC = PortStreamCodec.composite(
+                PortAttributeExtension.streamCodec(), Entry::attribute,
+                PortAttributeModifier.STREAM_CODEC, Entry::modifier,
+                PortEquipmentSlotGroup.STREAM_CODEC, Entry::slot,
+                Entry::new
         );
 
         public boolean matches(Holder<Attribute> attribute, ResourceLocation id) {

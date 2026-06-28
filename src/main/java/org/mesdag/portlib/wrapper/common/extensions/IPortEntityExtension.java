@@ -140,12 +140,12 @@ public interface IPortEntityExtension {
     }
 
     @Final
-    default double getGravity() {
+    default double getGravity1211() {
         return self().isNoGravity() ? 0.0 : getDefaultGravity();
     }
 
     default void applyGravity() {
-        double d0 = getGravity();
+        double d0 = getGravity1211();
         if (d0 != 0.0) {
             self().setDeltaMovement(self().getDeltaMovement().add(0.0, -d0, 0.0));
         }

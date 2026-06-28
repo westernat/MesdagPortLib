@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.Util;
 import org.joml.Vector4f;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.MemoizeCodec;
 import org.mesdag.portlib.util.Static;
 
@@ -120,6 +121,7 @@ public class PortCodecExtension {
         return Codec.unboundedMap(codec, Codec.BOOL).xmap(Object2BooleanOpenHashMap::new, Object2ObjectOpenHashMap::new);
     }
 
+    @Diff
     public static <A> Codec<A> json(Function<A, ? extends JsonElement> encoder, Function<? super JsonElement, A> decoder) {
         return new Codec<>() {
             @Override

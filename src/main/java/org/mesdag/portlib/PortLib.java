@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -46,6 +47,7 @@ import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
+import org.mesdag.portlib.wrapper.common.world.PortAddCarversBiomeModifier;
 import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
 import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
@@ -151,6 +153,9 @@ public class PortLib {
     public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
 
     public static final PortDataMapType<Item, PortFurnaceFuel> FURNACE_FUELS = PortDataMapType.builder(asResource("furnace_fuels"), Registries.ITEM, PortFurnaceFuel.CODEC).synced(PortFurnaceFuel.BURN_TIME_CODEC, false).build();
+
+    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+    public static final RegistryObject<Codec<PortAddCarversBiomeModifier>> ADD_CARVERS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_carvers", () -> PortAddCarversBiomeModifier.CODEC);
 
     public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init();

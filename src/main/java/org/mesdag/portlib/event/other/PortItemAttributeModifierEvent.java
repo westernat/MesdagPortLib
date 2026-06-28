@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 
 public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModifierEvent> {
     private final PortItemAttributeModifiers defaultModifiers;
-    private @Nullable List<PortItemAttributeModifiers.PortEntry> entries;
+    private @Nullable List<PortItemAttributeModifiers.Entry> entries;
     private boolean changed;
 
     @Diff
@@ -39,7 +39,7 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
         return defaultModifiers;
     }
 
-    public List<PortItemAttributeModifiers.PortEntry> getModifiers() {
+    public List<PortItemAttributeModifiers.Entry> getModifiers() {
         if (entries == null) {
             return defaultModifiers.modifiers();
         }
@@ -88,13 +88,13 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
         }
     }
 
-    public boolean removeIf(Predicate<PortItemAttributeModifiers.PortEntry> condition) {
+    public boolean removeIf(Predicate<PortItemAttributeModifiers.Entry> condition) {
         PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
         for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
             Attribute attribute = entry.getKey();
             Holder<Attribute> holder = PortAttributeExtension.wrap(attribute);
             for (AttributeModifier modifier : entry.getValue()) {
-                PortItemAttributeModifiers.PortEntry portEntry = new PortItemAttributeModifiers.PortEntry(holder, PortAttributeModifierExtension.wrap(modifier), group);
+                PortItemAttributeModifiers.Entry portEntry = new PortItemAttributeModifiers.Entry(holder, PortAttributeModifierExtension.wrap(modifier), group);
                 if (condition.test(portEntry)) {
                     if (e.removeModifier(attribute, modifier)) {
                         this.changed = true;
@@ -124,11 +124,11 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
         if (changed) {
             this.changed = false;
             PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
-            List<PortItemAttributeModifiers.PortEntry> list = new LinkedList<>();
+            List<PortItemAttributeModifiers.Entry> list = new LinkedList<>();
             for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
                 Holder<Attribute> attribute = PortAttributeExtension.wrap(entry.getKey());
                 for (AttributeModifier modifier : entry.getValue()) {
-                    list.add(new PortItemAttributeModifiers.PortEntry(attribute, PortAttributeModifierExtension.wrap(modifier), group));
+                    list.add(new PortItemAttributeModifiers.Entry(attribute, PortAttributeModifierExtension.wrap(modifier), group));
                 }
             }
             this.entries = list;

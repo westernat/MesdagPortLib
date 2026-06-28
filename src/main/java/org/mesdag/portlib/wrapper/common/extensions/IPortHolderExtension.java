@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.datamap.PortDataMapType;
 
-@SuppressWarnings("all")
+/// implemented by coremod
+@SuppressWarnings("unchecked")
 public interface IPortHolderExtension<T> {
-
     private Holder<T> self() {
         return (Holder<T>) this;
     }

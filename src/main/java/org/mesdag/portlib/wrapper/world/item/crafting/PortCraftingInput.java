@@ -1,13 +1,14 @@
 package org.mesdag.portlib.wrapper.world.item.crafting;
 
 import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PortCraftingInput implements PortRecipeInput {
+public class PortCraftingInput implements PortRecipeInput, CraftingContainer {
     public static final PortCraftingInput EMPTY = new PortCraftingInput(0, 0, List.of());
     private final int width;
     private final int height;
@@ -126,6 +127,32 @@ public class PortCraftingInput implements PortRecipeInput {
         i = 31 * i + width;
         return 31 * i + height;
     }
+
+    // region CraftingContainer
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public List<ItemStack> getItems() {
+        return items;
+    }
+
+    @Override
+    public void fillStackedContents(StackedContents contents) {
+        for (ItemStack stack : items) {
+            contents.accountSimpleStack(stack);
+        }
+    }
+
+    // endregion CraftingContainer
 
     public record Positioned(PortCraftingInput input, int left, int top) {
         public static final Positioned EMPTY = new Positioned(PortCraftingInput.EMPTY, 0, 0);

@@ -6,6 +6,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.mesdag.portlib.diff.Diff;
 
+/// to replace `LayeredDraw.Layer`
 public interface PortGuiLayer {
     void render(GuiGraphics guiGraphics, PortDeltaTicker ticker);
 
