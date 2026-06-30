@@ -112,5 +112,8 @@
     ],
     "net/minecraft/world/SimpleContainer": [
         "org/mesdag/portlib/wrapper/common/extensions/ISimpleContainerExtension"
+    ],
+    "net/minecraftforge/fluids/FluidType$Properties": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortFluidTypePropertiesExtension"
     ]
 }

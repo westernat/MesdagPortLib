@@ -7,12 +7,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 public class PortEnchantmentHelper {
     @FunctionalInterface
-    public interface PortEnchantmentVisitor {
+    public interface EnchantmentVisitor {
         void accept(Enchantment enchantment, int level);
     }
 
     @FunctionalInterface
-    public interface PortEnchantmentSlotVisitor {
+    public interface EnchantmentSlotVisitor {
         void accept(Enchantment enchantment, int level, ItemStack stack, EquipmentSlot slot, LivingEntity entity);
     }
 }

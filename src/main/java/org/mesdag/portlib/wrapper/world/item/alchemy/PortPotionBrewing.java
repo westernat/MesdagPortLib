@@ -77,11 +77,11 @@ public class PortPotionBrewing {
         return PotionBrewing.mix(potion, potionItem);
     }
 
-    public static class PortBuilder {
+    public static class Builder {
         private final FeatureFlagSet enabledFeatures;
 
         @Diff
-        public PortBuilder(FeatureFlagSet enabledFeatures) {
+        public Builder(FeatureFlagSet enabledFeatures) {
             this.enabledFeatures = enabledFeatures;
         }
 

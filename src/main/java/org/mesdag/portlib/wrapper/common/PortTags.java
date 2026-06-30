@@ -69,6 +69,8 @@ public class PortTags {
 
         public static final TagKey<Item> GRAVELS = common("gravels");
 
+        public static final TagKey<Item> ARMORS = common("armors"); // todo
+
         private static TagKey<Item> common(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
         }

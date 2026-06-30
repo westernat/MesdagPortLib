@@ -16,7 +16,7 @@ public class PortAttachmentRegistration extends PortRegistration<PortAttachmentT
         return super.register(name, valueSupplier);
     }
 
-    public <T> PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> registerSimple(String name, Supplier<PortAttachmentType.PortBuilder<T>> valueSupplier) {
+    public <T> PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> registerSimple(String name, Supplier<PortAttachmentType.Builder<T>> valueSupplier) {
         return register(name, () -> valueSupplier.get().build());
     }
 }

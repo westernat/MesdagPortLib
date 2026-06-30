@@ -23,8 +23,8 @@ public class PortModifyDefaultComponentsEvent extends Event implements IModBusEv
     @Diff
     public PortModifyDefaultComponentsEvent() {}
 
-    public void modify(ItemLike item, Consumer<PortDataComponentPatch.PortBuilder> patch) {
-        PortDataComponentPatch.PortBuilder builder = PortDataComponentPatch.builder();
+    public void modify(ItemLike item, Consumer<PortDataComponentPatch.Builder> patch) {
+        PortDataComponentPatch.Builder builder = PortDataComponentPatch.builder();
         patch.accept(builder);
         Reference2ObjectMap<PortDataComponentType<?>, Optional<?>> compPatch = builder.build();
         if (!compPatch.isEmpty()) {
@@ -43,7 +43,7 @@ public class PortModifyDefaultComponentsEvent extends Event implements IModBusEv
         }
     }
 
-    public void modifyMatching(Predicate<? super Item> predicate, Consumer<PortDataComponentPatch.PortBuilder> patch) {
+    public void modifyMatching(Predicate<? super Item> predicate, Consumer<PortDataComponentPatch.Builder> patch) {
         getAllItems().filter(predicate).forEach(item -> modify(item, patch));
     }
 

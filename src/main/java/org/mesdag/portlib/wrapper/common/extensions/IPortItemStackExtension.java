@@ -420,6 +420,11 @@ public interface IPortItemStackExtension {
         PortItemStackExtension.limitSize(self(), maxSize);
     }
 
+    /// not replace vanilla yet
+    default int getUseDuration(LivingEntity living) {
+        return self().getUseDuration();
+    }
+
     static IPortItemStackExtension of(ItemStack stack) {
         return (IPortItemStackExtension) (Object) stack;
     }

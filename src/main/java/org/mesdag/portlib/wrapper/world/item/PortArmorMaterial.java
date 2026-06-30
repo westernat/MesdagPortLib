@@ -21,7 +21,7 @@ public class PortArmorMaterial implements ArmorMaterial {
     private final int enchantmentValue;
     private final Holder<SoundEvent> equipSound;
     private final Supplier<Ingredient> repairIngredient;
-    private final List<PortLayer> layers;
+    private final List<Layer> layers;
     private final float toughness;
     private final float knockbackResistance;
 
@@ -32,7 +32,7 @@ public class PortArmorMaterial implements ArmorMaterial {
             int enchantmentValue,
             Holder<SoundEvent> equipSound,
             Supplier<Ingredient> repairIngredient,
-            List<PortLayer> layers,
+            List<Layer> layers,
             float toughness,
             float knockbackResistance
     ) {
@@ -100,7 +100,7 @@ public class PortArmorMaterial implements ArmorMaterial {
     }
 
     // todo
-    public List<PortLayer> getLayers() {
+    public List<Layer> getLayers() {
         return layers;
     }
 
@@ -114,14 +114,14 @@ public class PortArmorMaterial implements ArmorMaterial {
         return knockbackResistance;
     }
 
-    public static class PortLayer {
+    public static class Layer {
         private final ResourceLocation assetName;
         private final String suffix;
         private final boolean dyeable;
         private final ResourceLocation innerTexture;
         private final ResourceLocation outerTexture;
 
-        public PortLayer(ResourceLocation assetName, String suffix, boolean dyeable) {
+        public Layer(ResourceLocation assetName, String suffix, boolean dyeable) {
             this.assetName = assetName;
             this.suffix = suffix;
             this.dyeable = dyeable;
@@ -129,7 +129,7 @@ public class PortArmorMaterial implements ArmorMaterial {
             this.outerTexture = this.resolveTexture(false);
         }
 
-        public PortLayer(ResourceLocation assetName) {
+        public Layer(ResourceLocation assetName) {
             this(assetName, "", false);
         }
 
@@ -156,7 +156,7 @@ public class PortArmorMaterial implements ArmorMaterial {
         public SoundEventHolder equipSound;
         public Supplier<Ingredient> repairIngredient;
         @Diff
-        public final List<PortLayer> layers = Lists.newArrayList();
+        public final List<Layer> layers = Lists.newArrayList();
 
         Settings() {}
 
@@ -212,7 +212,7 @@ public class PortArmorMaterial implements ArmorMaterial {
             return this;
         }
 
-        public Settings layer(PortLayer layer) {
+        public Settings layer(Layer layer) {
             this.layers.add(layer);
             return this;
         }

@@ -16,12 +16,12 @@ import java.util.Optional;
 
 public class PortGetEnchantmentLevelEvent extends Event {
     protected final ItemStack stack;
-    protected final PortItemEnchantments.PortMutable enchantments;
+    protected final PortItemEnchantments.Mutable enchantments;
     protected final @Nullable EnchantmentHolder targetEnchant;
     protected final HolderLookup.RegistryLookup<Enchantment> lookup;
 
     @Diff
-    public PortGetEnchantmentLevelEvent(ItemStack stack, PortItemEnchantments.PortMutable enchantments, @Nullable EnchantmentHolder targetEnchant, HolderLookup.RegistryLookup<Enchantment> lookup) {
+    public PortGetEnchantmentLevelEvent(ItemStack stack, PortItemEnchantments.Mutable enchantments, @Nullable EnchantmentHolder targetEnchant, HolderLookup.RegistryLookup<Enchantment> lookup) {
         this.stack = stack;
         this.enchantments = enchantments;
         this.targetEnchant = targetEnchant;
@@ -32,7 +32,7 @@ public class PortGetEnchantmentLevelEvent extends Event {
         return stack;
     }
 
-    public PortItemEnchantments.PortMutable getEnchantments() {
+    public PortItemEnchantments.Mutable getEnchantments() {
         return enchantments;
     }
 
@@ -71,7 +71,7 @@ public class PortGetEnchantmentLevelEvent extends Event {
             return level;
         }
 
-        var enchantments = new PortItemEnchantments.PortMutable(PortItemEnchantments.EMPTY);
+        var enchantments = new PortItemEnchantments.Mutable(PortItemEnchantments.EMPTY);
         enchantments.set(ench, level);
         var event = new PortGetEnchantmentLevelEvent(stack, enchantments, ench, lookup);
         PortEventHandler.postEvent(event);
@@ -80,7 +80,7 @@ public class PortGetEnchantmentLevelEvent extends Event {
 
     @Diff
     public static PortItemEnchantments getAllEnchantmentLevels(PortItemEnchantments enchantments, ItemStack stack, HolderLookup.RegistryLookup<Enchantment> lookup) {
-        var mutableEnchantments = new PortItemEnchantments.PortMutable(enchantments);
+        var mutableEnchantments = new PortItemEnchantments.Mutable(enchantments);
         var event = new PortGetEnchantmentLevelEvent(stack, mutableEnchantments, null, lookup);
         PortEventHandler.postEvent(event);
         return mutableEnchantments.toImmutable();

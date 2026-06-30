@@ -67,13 +67,13 @@ public class PortItemEnchantments {
         return stack.is(Items.ENCHANTED_BOOK);
     }
 
-    public static class PortMutable {
+    public static class Mutable {
         private final ListTag listTag;
         private final boolean showInTooltip;
         private Map<Enchantment, Integer> enchants;
 
         @Diff
-        public PortMutable(PortItemEnchantments immutable) {
+        public Mutable(PortItemEnchantments immutable) {
             this.listTag = immutable.listTag;
             this.showInTooltip = immutable.showInTooltip;
         }

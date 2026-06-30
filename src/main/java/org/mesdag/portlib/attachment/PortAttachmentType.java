@@ -33,7 +33,7 @@ public class PortAttachmentType<T> {
     @Protected
     public @Nullable PortAttachmentSyncHandler<T> syncHandler;
 
-    private PortAttachmentType(PortBuilder<T> builder) {
+    private PortAttachmentType(Builder<T> builder) {
         this.defaultValueSupplier = builder.defaultValueSupplier;
         this.serializer = builder.serializer;
         this.copyOnDeath = builder.copyOnDeath;
@@ -56,19 +56,19 @@ public class PortAttachmentType<T> {
         };
     }
 
-    public static <T> PortBuilder<T> builder(Supplier<T> defaultValueSupplier) {
+    public static <T> Builder<T> builder(Supplier<T> defaultValueSupplier) {
         return builder(holder -> defaultValueSupplier.get());
     }
 
-    public static <T> PortBuilder<T> builder(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
-        return new PortBuilder<>(defaultValueConstructor);
+    public static <T> Builder<T> builder(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
+        return new Builder<>(defaultValueConstructor);
     }
 
-    public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Supplier<T> defaultValueSupplier) {
+    public static <S extends Tag, T extends IPortNBTSerializable<S>> Builder<T> serializable(Supplier<T> defaultValueSupplier) {
         return serializable(holder -> defaultValueSupplier.get());
     }
 
-    public static <S extends Tag, T extends IPortNBTSerializable<S>> PortBuilder<T> serializable(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
+    public static <S extends Tag, T extends IPortNBTSerializable<S>> Builder<T> serializable(Function<IPortAttachmentHolder, T> defaultValueConstructor) {
         return builder(defaultValueConstructor).serialize(new IPortAttachmentSerializer<S, T>() {
             @Override
             public T read(IPortAttachmentHolder holder, S tag, HolderLookup.Provider provider) {
@@ -85,7 +85,7 @@ public class PortAttachmentType<T> {
         });
     }
 
-    public static class PortBuilder<T> {
+    public static class Builder<T> {
         private final Function<IPortAttachmentHolder, T> defaultValueSupplier;
         @Nullable
         private IPortAttachmentSerializer<?, T> serializer;
@@ -95,11 +95,11 @@ public class PortAttachmentType<T> {
         @Nullable
         private PortAttachmentSyncHandler<T> syncHandler;
 
-        private PortBuilder(Function<IPortAttachmentHolder, T> defaultValueSupplier) {
+        private Builder(Function<IPortAttachmentHolder, T> defaultValueSupplier) {
             this.defaultValueSupplier = defaultValueSupplier;
         }
 
-        public PortBuilder<T> serialize(IPortAttachmentSerializer<?, T> serializer) {
+        public Builder<T> serialize(IPortAttachmentSerializer<?, T> serializer) {
             Objects.requireNonNull(serializer);
             if (this.serializer != null) {
                 throw new IllegalStateException("Serializer already set");
@@ -108,11 +108,11 @@ public class PortAttachmentType<T> {
             return this;
         }
 
-        public PortBuilder<T> serialize(Codec<T> codec) {
+        public Builder<T> serialize(Codec<T> codec) {
             return serialize(codec, Predicates.alwaysTrue());
         }
 
-        public PortBuilder<T> serialize(Codec<T> codec, Predicate<? super T> shouldSerialize) {
+        public Builder<T> serialize(Codec<T> codec, Predicate<? super T> shouldSerialize) {
             Objects.requireNonNull(codec);
             return serialize(new IPortAttachmentSerializer<>() {
                 @Override
@@ -137,7 +137,7 @@ public class PortAttachmentType<T> {
             });
         }
 
-        public PortBuilder<T> copyOnDeath() {
+        public Builder<T> copyOnDeath() {
             if (serializer == null) {
                 throw new IllegalStateException("copyOnDeath requires a serializer");
             }
@@ -145,7 +145,7 @@ public class PortAttachmentType<T> {
             return this;
         }
 
-        public PortBuilder<T> copyHandler(IPortAttachmentCopyHandler<T> cloner) {
+        public Builder<T> copyHandler(IPortAttachmentCopyHandler<T> cloner) {
             Objects.requireNonNull(cloner);
             if (this.serializer == null) {
                 throw new IllegalStateException("copyHandler requires a serializer");
@@ -154,17 +154,17 @@ public class PortAttachmentType<T> {
             return this;
         }
 
-        public PortBuilder<T> sync(PortAttachmentSyncHandler<T> syncHandler) {
+        public Builder<T> sync(PortAttachmentSyncHandler<T> syncHandler) {
             Objects.requireNonNull(syncHandler);
             this.syncHandler = syncHandler;
             return this;
         }
 
-        public PortBuilder<T> sync(PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+        public Builder<T> sync(PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
             return sync((holder, to) -> true, streamCodec);
         }
 
-        public PortBuilder<T> sync(BiPredicate<IPortAttachmentHolder, ServerPlayer> sendToPlayer, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+        public Builder<T> sync(BiPredicate<IPortAttachmentHolder, ServerPlayer> sendToPlayer, PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
             Objects.requireNonNull(sendToPlayer);
             Objects.requireNonNull(streamCodec);
             return sync(new PortAttachmentSyncHandler<>() {

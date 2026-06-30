@@ -13,27 +13,27 @@ public class PortAttributeRegistration extends PortRegistration<Attribute> {
         super(namespace, Registries.ATTRIBUTE);
     }
 
-    public <T extends Attribute> PortRegistryEntry<Attribute, T> register(String name, Supplier<T> valueSupplier, Consumer<PortAttributeMaker> consumer) {
+    public <T extends Attribute> PortRegistryEntry<Attribute, T> register(String name, Supplier<T> valueSupplier, Consumer<AttributeMaker> consumer) {
         return super.register(name, () -> {
             T t = valueSupplier.get();
-            consumer.accept(new PortAttributeMaker(t));
+            consumer.accept(new AttributeMaker(t));
             return t;
         });
     }
 
-    public static class PortAttributeMaker {
+    public static class AttributeMaker {
         private final Attribute delegate;
 
-        PortAttributeMaker(Attribute delegate) {
+        AttributeMaker(Attribute delegate) {
             this.delegate = delegate;
         }
 
-        public PortAttributeMaker setSyncable(boolean watch) {
+        public AttributeMaker setSyncable(boolean watch) {
             delegate.setSyncable(watch);
             return this;
         }
 
-        public PortAttributeMaker setSentiment(PortAttribute.PortSentiment sentiment) {
+        public AttributeMaker setSentiment(PortAttribute.PortSentiment sentiment) {
             IPortAttribute.of(delegate).portlib$setSentiment(sentiment);
             return this;
         }

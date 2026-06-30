@@ -13,21 +13,21 @@ public class PortDataComponentType<T> {
     @Diff
     public final @Nullable PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec;
 
-    PortDataComponentType(PortBuilder<T> builder) {
+    PortDataComponentType(Builder<T> builder) {
         this.codec = builder.codec;
         this.streamCodec = builder.streamCodec;
     }
 
-    public static class PortBuilder<T> {
+    public static class Builder<T> {
         private @Nullable Codec<T> codec;
         private @Nullable PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec;
 
-        public PortBuilder<T> persistent(Codec<T> codec) {
+        public Builder<T> persistent(Codec<T> codec) {
             this.codec = codec;
             return this;
         }
 
-        public PortBuilder<T> networkSynchronized(PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
+        public Builder<T> networkSynchronized(PortStreamCodec<? super PortRegistryFriendlyByteBuf, T> streamCodec) {
             this.streamCodec = streamCodec;
             return this;
         }

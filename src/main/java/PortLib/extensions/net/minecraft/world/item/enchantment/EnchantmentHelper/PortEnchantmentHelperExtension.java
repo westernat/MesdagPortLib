@@ -22,7 +22,7 @@ public final class PortEnchantmentHelperExtension {
     }
 
     @Static
-    public static void runIterationOnItem(ItemStack stack, PortEnchantmentHelper.PortEnchantmentVisitor visitor) {
+    public static void runIterationOnItem(ItemStack stack, PortEnchantmentHelper.EnchantmentVisitor visitor) {
         if (stack.isEmpty()) return;
         ListTag listTag = getEnchantmentTags(stack);
         for (int i = 0; i < listTag.size(); i++) {
