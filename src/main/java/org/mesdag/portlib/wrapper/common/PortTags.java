@@ -163,6 +163,14 @@ public class PortTags {
         public static final TagKey<Biome> IS_BEACH = common("is_beach"); // todo
         public static final TagKey<Biome> IS_NETHER = common("is_nether"); // todo
         public static final TagKey<Biome> IS_FLOWER_FOREST = common("is_flower_forest"); // todo
+        public static final TagKey<Biome> IS_COLD_OVERWORLD = common("is_cold_overworld"); // todo
+        public static final TagKey<Biome> IS_MUSHROOM = common("is_mushroom"); // todo
+        public static final TagKey<Biome> IS_FOREST = common("is_forest"); // todo
+        public static final TagKey<Biome> IS_PLAINS = common("is_plains"); // todo
+        public static final TagKey<Biome> IS_WINDSWEPT = common("is_windswept"); // todo
+        public static final TagKey<Biome> IS_OLD_GROWTH = common("is_old_growth"); // todo
+        public static final TagKey<Biome> IS_NETHER_FOREST = common("is_nether_forest"); // todo
+        public static final TagKey<Biome> IS_BIRCH_FOREST = common("is_birch_forest"); // todo
 
         private static TagKey<Biome> common(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", name));
