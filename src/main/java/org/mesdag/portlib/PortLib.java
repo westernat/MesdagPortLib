@@ -42,7 +42,7 @@ import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
-import org.mesdag.portlib.loot.AddTableLootModifier;
+import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
@@ -150,7 +150,7 @@ public class PortLib {
     );
 
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
-    public static final RegistryObject<Codec<AddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> AddTableLootModifier.CODEC);
+    public static final RegistryObject<Codec<PortAddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> PortAddTableLootModifier.CODEC);
 
     public static final PortDataMapType<Item, PortFurnaceFuel> FURNACE_FUELS = PortDataMapType.builder(asResource("furnace_fuels"), Registries.ITEM, PortFurnaceFuel.CODEC).synced(PortFurnaceFuel.BURN_TIME_CODEC, false).build();
 

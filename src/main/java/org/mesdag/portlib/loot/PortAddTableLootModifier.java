@@ -11,15 +11,15 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.LootModifier;
 import org.mesdag.portlib.PortLib;
 
-public class AddTableLootModifier extends LootModifier {
-    public static final Codec<AddTableLootModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public class PortAddTableLootModifier extends LootModifier {
+    public static final Codec<PortAddTableLootModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(lm -> lm.conditions),
-            ResourceLocation.CODEC.fieldOf("table").forGetter(AddTableLootModifier::table)
-    ).apply(instance, AddTableLootModifier::new));
+            ResourceLocation.CODEC.fieldOf("table").forGetter(PortAddTableLootModifier::table)
+    ).apply(instance, PortAddTableLootModifier::new));
 
     private final ResourceLocation table;
 
-    public AddTableLootModifier(LootItemCondition[] conditionsIn, ResourceLocation table) {
+    public PortAddTableLootModifier(LootItemCondition[] conditionsIn, ResourceLocation table) {
         super(conditionsIn);
         this.table = table;
     }
@@ -36,7 +36,7 @@ public class AddTableLootModifier extends LootModifier {
     }
 
     @Override
-    public Codec<AddTableLootModifier> codec() {
+    public Codec<PortAddTableLootModifier> codec() {
         return PortLib.ADD_TABLE_LOOT_MODIFIER.get();
     }
 }

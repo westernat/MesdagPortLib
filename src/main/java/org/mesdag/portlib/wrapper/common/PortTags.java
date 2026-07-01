@@ -71,6 +71,14 @@ public class PortTags {
 
         public static final TagKey<Item> ARMORS = common("armors"); // todo
 
+        public static final TagKey<Item> STONES = common("stones"); // todo
+
+        public static final TagKey<Item> FOODS_RAW_FISH = common("foods/raw_fish"); // todo
+        public static final TagKey<Item> FOODS_FRUIT = common("foods/fruit"); // todo
+        public static final TagKey<Item> FOODS_RAW_MEAT = common("foods/raw_meat"); // todo
+
+        public static final TagKey<Item> SANDS = common("sands"); // todo
+
         private static TagKey<Item> common(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
         }
