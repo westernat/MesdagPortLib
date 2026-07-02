@@ -46,6 +46,9 @@ public class PortMobEffect extends MobEffect {
         return isDurationEffectTick(duration, amplifier);
     }
 
+    // todo
+    public void onEffectStarted(LivingEntity living, int amplifier) {}
+
     @Override
     public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {
         if (curves != null) {

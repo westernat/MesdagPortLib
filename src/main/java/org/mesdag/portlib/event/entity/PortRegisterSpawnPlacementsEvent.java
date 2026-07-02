@@ -22,15 +22,15 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent<SpawnPlacementRe
         e.register(entityType, predicate);
     }
 
-    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate, PortOperation operation) {
+    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation) {
         e.register(entityType, predicate, operation.unwrap());
     }
 
-    public <T extends Entity> void register(EntityType<T> entityType, @Nullable PortSpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, PortOperation operation) {
+    public <T extends Entity> void register(EntityType<T> entityType, @Nullable PortSpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation) {
         e.register(entityType, placementType == null ? null : placementType.unwrap(), heightmap, predicate, operation.unwrap());
     }
 
-    public enum PortOperation {
+    public enum Operation {
         AND,
         OR,
         REPLACE;
@@ -45,7 +45,7 @@ public class PortRegisterSpawnPlacementsEvent extends PortEvent<SpawnPlacementRe
         }
 
         @Diff
-        public static PortOperation wrap(SpawnPlacementRegisterEvent.Operation operation) {
+        public static Operation wrap(SpawnPlacementRegisterEvent.Operation operation) {
             return switch (operation) {
                 case AND -> AND;
                 case OR -> OR;

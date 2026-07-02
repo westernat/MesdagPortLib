@@ -115,5 +115,11 @@
     ],
     "net/minecraftforge/fluids/FluidType$Properties": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortFluidTypePropertiesExtension"
+    ],
+    "net/minecraft/world/damagesource/DamageSource": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortDamageSourceExtension"
+    ],
+    "net/minecraft/client/renderer/texture/TextureAtlas": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortTextureAtlasExtension"
     ]
 }
