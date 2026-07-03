@@ -219,7 +219,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
             @Share("ctx") LocalRef<PortAttributeTooltipContext> ctx,
             @Share("event") LocalRef<PortGatherSkippedAttributeTooltipsEvent> evt
     ) {
-        var itemCtx = PortItem.PortTooltipContext.of(player == null ? null : player.level());
+        var itemCtx = PortItem.TooltipContext.of(player == null ? null : player.level());
         var context = PortAttributeTooltipContext.of(player, itemCtx, isAdvanced);
         ctx.set(context);
         var event = new PortGatherSkippedAttributeTooltipsEvent(portlib$self(), context);

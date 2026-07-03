@@ -4,6 +4,9 @@ import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtens
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +14,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
@@ -21,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.world.item.alchemy.PortPotionContents;
 import org.mesdag.portlib.wrapper.world.item.component.*;
@@ -63,6 +68,27 @@ public interface IPortItemStackExtension {
         return PortItemStackExtension.getLore(self());
     }
 
+    default void setLore(List<Component> list) {
+        CompoundTag tag = self().getOrCreateTag();
+        CompoundTag display;
+        if (tag.contains("display", Tag.TAG_COMPOUND)) {
+            display = tag.getCompound("display");
+        } else {
+            display = new CompoundTag();
+            tag.put("display", display);
+        }
+        ListTag lore;
+        if (display.contains("Lore", Tag.TAG_LIST)) {
+            lore = display.getList("Lore", Tag.TAG_STRING);
+        } else {
+            lore = new ListTag();
+            display.put("Lore", lore);
+        }
+        for (Component component : list) {
+            lore.add(StringTag.valueOf(Component.Serializer.toJson(component)));
+        }
+    }
+
     default @Nullable PortItemEnchantments getPortEnchantments() {
         return PortItemStackExtension.getPortEnchantments(self());
     }
@@ -81,6 +107,10 @@ public interface IPortItemStackExtension {
 
     default int getCustomModelData() {
         return PortItemStackExtension.getCustomModelData(self());
+    }
+
+    default void setCustomModelData(int data) {
+        self().getOrCreateTag().putInt("portlib:custom_model_data", data);
     }
 
     default boolean getShowEnchantmentsTooltip() {
@@ -393,6 +423,10 @@ public interface IPortItemStackExtension {
         return PortItemStackExtension.getPrototypeData(self());
     }
 
+    default PortDataComponentMap getComponents() {
+        return ((IPortItemStack) this).portlib$patch();
+    }
+
     // endregion data component
 
     @Diff
@@ -423,6 +457,10 @@ public interface IPortItemStackExtension {
     /// not replace vanilla yet
     default int getUseDuration(LivingEntity living) {
         return self().getUseDuration();
+    }
+
+    default void setRarity(Rarity rarity) {
+        // todo
     }
 
     static IPortItemStackExtension of(ItemStack stack) {

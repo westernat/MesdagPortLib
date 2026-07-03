@@ -57,7 +57,7 @@ public class PortRegisterHandler {
     @Diff
     @SuppressWarnings("unchecked")
     public static <T, R extends Registry<T>> void init() {
-        PortEventHandler.addListener(PortEventPriority.LOW, (PortRegisterEvent event) -> {
+        PortEventHandler.addListener(PortEventPriority.HIGH, (PortRegisterEvent event) -> {
             ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
             for (List<PortRegistryEntry<?, ?>> entries : PortRegistration.registrations.getOrDefault(registryKey, List.of())) {
                 for (PortRegistryEntry<?, ?> entry : entries) {

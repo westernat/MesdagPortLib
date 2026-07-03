@@ -542,4 +542,19 @@ public interface PortByteBufCodecs {
             }
         };
     }
+
+    static <T> PortStreamCodec<ByteBuf, T> fromCodecTrusted(Codec<T> codec) {
+        return fromCodec(codec, () -> NbtAccounter.UNLIMITED);
+    }
+
+    static <T> PortStreamCodec<ByteBuf, T> fromCodec(Codec<T> codec) {
+        return fromCodec(codec, () -> new NbtAccounter(2097152L));
+    }
+
+    static <T> PortStreamCodec<ByteBuf, T> fromCodec(Codec<T> codec, Supplier<NbtAccounter> accounterSupplier) {
+        return tagCodec(accounterSupplier).map(
+                tag -> PortDataResultExtension.getOrThrow(codec.parse(NbtOps.INSTANCE, tag), message -> new DecoderException("Failed to decode: " + message + " " + tag)),
+                t -> PortDataResultExtension.getOrThrow(codec.encodeStart(NbtOps.INSTANCE, t), message -> new EncoderException("Failed to encode: " + message + " " + t))
+        );
+    }
 }

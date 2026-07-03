@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unchecked")
 public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     final ResourceLocation identifier;
     RegistryObject<T> object;
@@ -24,6 +25,12 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     public PortRegistryEntry(ResourceLocation identifier, @Nullable Supplier<T> valueSupplier) {
         this.identifier = identifier;
         this.valueSupplier = valueSupplier;
+    }
+
+    @Diff
+    public PortRegistryEntry(RegistryObject<T> object) {
+        this.identifier = object.getId();
+        this.object = object;
     }
 
     @Diff
@@ -89,12 +96,12 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
 
     @Override
     public Either<ResourceKey<R>, R> unwrap() {
-        return asHolder().unwrap();
+        return Either.left(getKey());
     }
 
     @Override
     public Optional<ResourceKey<R>> unwrapKey() {
-        return asHolder().unwrapKey();
+        return Optional.of(getKey());
     }
 
     @Override
@@ -108,7 +115,7 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     }
 
     public ResourceKey<R> getKey() {
-        return PortHolderExtension.getKey(this);
+        return (ResourceKey<R>) object.getKey();
     }
 
     // endregion Holder

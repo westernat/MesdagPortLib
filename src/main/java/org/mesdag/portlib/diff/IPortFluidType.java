@@ -13,6 +13,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.registries.PortDeferredBlock;
 import org.mesdag.portlib.wrapper.common.PortSoundActions;
 import org.mesdag.portlib.wrapper.common.extensions.IPortFluidTypePropertiesExtension;
 import org.mesdag.portlib.wrapper.fluids.PortFluidType;
@@ -23,7 +24,7 @@ public interface IPortFluidType extends IPortClientExtensionsSetter {
 
     default boolean handleCauldronDrip(Fluid fluid, Level level, BlockPos cauldronPos) {
         if (fluid instanceof FlowingFluid flowing && fluid.isSource(flowing.getSource(false)) && portlib$getDripInfo() != null) {
-            BlockState cauldronBlock = portlib$getDripInfo().filledCauldron().defaultBlockState();
+            BlockState cauldronBlock = portlib$getDripInfo().filledCauldron().get().defaultBlockState();
             level.setBlockAndUpdate(cauldronPos, cauldronBlock);
             level.gameEvent(GameEvent.BLOCK_CHANGE, cauldronPos, GameEvent.Context.of(cauldronBlock));
             SoundEvent dripSound = ((FluidType) this).getSound(null, level, cauldronPos, PortSoundActions.CAULDRON_DRIP);
@@ -40,7 +41,7 @@ public interface IPortFluidType extends IPortClientExtensionsSetter {
     }
 
     interface IPortProperties extends IPortFluidTypePropertiesExtension {
-        void portlib$setDripInfo(float chance, ParticleOptions dripParticle, Block cauldron, @Nullable SoundEvent fillSound);
+        void portlib$setDripInfo(float chance, ParticleOptions dripParticle, PortDeferredBlock<? extends Block> cauldron, @Nullable SoundEvent fillSound);
 
         @Nullable PortFluidType.DripstoneDripInfo portlib$getDripInfo();
 

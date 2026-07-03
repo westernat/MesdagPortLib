@@ -35,9 +35,9 @@ public class PortItemTooltipEvent extends PortPlayerEvent<ItemTooltipEvent> {
         return e.getEntity();
     }
 
-    public PortItem.PortTooltipContext getContext() {
+    public PortItem.TooltipContext getContext() {
         Player player = e.getEntity();
-        return PortItem.PortTooltipContext.of(player == null ? null : player.level());
+        return PortItem.TooltipContext.of(player == null ? null : player.level());
     }
 
     static {

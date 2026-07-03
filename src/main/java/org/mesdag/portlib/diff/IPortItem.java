@@ -22,9 +22,9 @@ public interface IPortItem extends PortDataComponentMap, IPortClientExtensionsSe
     }
 
     interface IPortProperties {
-        void portlib$set(PortBuilder consumer);
+        void portlib$set(Builder consumer);
 
-        @Nullable PortBuilder portlib$getBuilder();
+        @Nullable PortDataComponentMap.Builder portlib$getBuilder();
 
         static IPortProperties of(Item.Properties properties) {
             return (IPortProperties) properties;

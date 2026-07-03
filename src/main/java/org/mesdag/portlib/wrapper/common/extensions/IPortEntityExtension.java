@@ -212,4 +212,6 @@ public interface IPortEntityExtension {
                 PortAdvancedAddEntityPayload::handle
         );
     }
+
+    default void onExplosionHit(Entity source) {}
 }

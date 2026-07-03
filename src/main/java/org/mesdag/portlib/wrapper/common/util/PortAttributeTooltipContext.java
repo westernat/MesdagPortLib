@@ -8,12 +8,12 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.wrapper.world.item.PortItem;
 
-public interface PortAttributeTooltipContext extends PortItem.PortTooltipContext {
+public interface PortAttributeTooltipContext extends PortItem.TooltipContext {
     @Nullable Player player();
 
     TooltipFlag flag();
 
-    static PortAttributeTooltipContext of(@Nullable Player player, PortItem.PortTooltipContext itemCtx, TooltipFlag flag) {
+    static PortAttributeTooltipContext of(@Nullable Player player, PortItem.TooltipContext itemCtx, TooltipFlag flag) {
         return new PortAttributeTooltipContext() {
 
             @Override

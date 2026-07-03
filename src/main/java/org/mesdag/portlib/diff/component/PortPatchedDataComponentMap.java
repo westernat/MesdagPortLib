@@ -3,6 +3,9 @@ package org.mesdag.portlib.diff.component;
 import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -10,6 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.component.PortDataComponentMap;
@@ -23,10 +27,11 @@ import org.mesdag.portlib.wrapper.PortEnvironment;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Diff
 @SuppressWarnings("unchecked")
-public class PortPatchedDataComponentMap {
+public class PortPatchedDataComponentMap implements PortDataComponentMap {
     public static final PortPatchedDataComponentMap EMPTY = new PortPatchedDataComponentMap(null) {
         @Override
         public <T> @Nullable T set(PortDataComponentType<T> type, T value) {
@@ -40,16 +45,41 @@ public class PortPatchedDataComponentMap {
     };
 
     private final PortDataComponentMap prototype;
-    private final Map<PortDataComponentType<?>, Optional<?>> patch;
+    private final Reference2ObjectMap<PortDataComponentType<?>, Optional<?>> patch;
 
     public PortPatchedDataComponentMap(@Nullable Item item) {
         this.prototype = item == null ? PortDataComponentMap.EMPTY : IPortItem.of(item);
         this.patch = new Reference2ObjectArrayMap<>();
     }
 
-    public <T> @Nullable T get(PortDataComponentType<T> type) {
+    @ApiStatus.Internal
+    @Override
+    public <T> @Nullable T portlib$get(PortDataComponentType<T> type) {
         Optional<? extends T> optional = (Optional<? extends T>) patch.get(type);
         return optional == null ? prototype.get(type) : optional.orElse(null);
+    }
+
+    @Override
+    public <T> @Nullable T get(PortDataComponentType<T> type) {
+        return portlib$get(type);
+    }
+
+    @ApiStatus.Internal
+    @Override
+    public Set<PortDataComponentType<?>> portlib$keySet() {
+        if (patch.isEmpty()) {
+            return prototype.keySet();
+        }
+        Set<PortDataComponentType<?>> set = new ReferenceArraySet<>(prototype.keySet());
+        for (Reference2ObjectMap.Entry<PortDataComponentType<?>, Optional<?>> entry : Reference2ObjectMaps.fastIterable(patch)) {
+            Optional<?> optional = entry.getValue();
+            if (optional.isPresent()) {
+                set.add(entry.getKey());
+            } else {
+                set.remove(entry.getKey());
+            }
+        }
+        return set;
     }
 
     public <T> @Nullable T set(PortDataComponentType<T> type, T value) {
@@ -74,15 +104,6 @@ public class PortPatchedDataComponentMap {
         }
 
         return optional == null ? t : optional.orElse(null);
-    }
-
-    public <T> T getOrDefault(PortDataComponentType<? extends T> type, T defaultValue) {
-        T t = get(type);
-        return t == null ? defaultValue : t;
-    }
-
-    public <T> boolean has(PortDataComponentType<T> type) {
-        return get(type) != null;
     }
 
     public CompoundTag serializeNBT(RegistryAccess provider) {

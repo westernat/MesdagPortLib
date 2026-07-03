@@ -121,5 +121,20 @@
     ],
     "net/minecraft/client/renderer/texture/TextureAtlas": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortTextureAtlasExtension"
+    ],
+    "net/minecraft/core/Registry": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortRegistryExtension<T>"
+    ],
+    "net/minecraftforge/registries/IForgeRegistry": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortForgeRegistryExtension<V>"
+    ],
+    "net/minecraft/server/level/ServerPlayer": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortServerPlayerExtension"
+    ],
+    "net/minecraft/client/multiplayer/ClientLevel": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortClientLevelExtension"
+    ],
+    "net/minecraft/world/entity/projectile/AbstractArrow": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAbstractArrowExtension"
     ]
 }

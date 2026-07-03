@@ -1,14 +1,21 @@
 package org.mesdag.portlib.diff.mixin;
 
+import com.google.common.collect.Multimap;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Cancellable;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
@@ -25,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 import java.util.Set;
 
-@Mixin(Item.class)
+@Mixin(value = Item.class, priority = 1100)
 public abstract class ItemMixin implements IPortItem {
     @Shadow(remap = false)
     private Object renderProperties;
@@ -74,7 +81,7 @@ public abstract class ItemMixin implements IPortItem {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void setup(Item.Properties properties, CallbackInfo ci) {
-        PortBuilder builder = IPortProperties.of(properties).portlib$getBuilder();
+        Builder builder = IPortProperties.of(properties).portlib$getBuilder();
         if (builder != null) {
             this.portlib$prototype = builder.getMap();
             this.portlib$defaultAttributeModifiers = builder.getModifiers();
@@ -92,18 +99,26 @@ public abstract class ItemMixin implements IPortItem {
         return food;
     }
 
+    @ModifyReturnValue(method = "getDefaultAttributeModifiers", at = @At("RETURN"))
+    private Multimap<Attribute, AttributeModifier> modify(Multimap<Attribute, AttributeModifier> original, @Local(argsOnly = true) EquipmentSlot slot) {
+        if (original.isEmpty()) {
+            return portlib$defaultAttributeModifiers().getAttributeModifiers(slot);
+        }
+        return original;
+    }
+
     @Mixin(Item.Properties.class)
     public static abstract class PropertiesMixin implements IPortProperties, IPortItemPropertiesExtension {
         @Unique
-        private @Nullable PortBuilder portlib$builder;
+        private @Nullable PortDataComponentMap.Builder portlib$builder;
 
         @Override
-        public void portlib$set(PortBuilder builder) {
+        public void portlib$set(Builder builder) {
             this.portlib$builder = builder;
         }
 
         @Override
-        public @Nullable PortBuilder portlib$getBuilder() {
+        public @Nullable PortDataComponentMap.Builder portlib$getBuilder() {
             return portlib$builder;
         }
     }

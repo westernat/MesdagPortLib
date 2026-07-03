@@ -31,7 +31,7 @@ public class PortProjectileUtilExtension {
         return getHitResult(vec31, projectile, filter, vec3, level, 0.0F, ClipContext.Block.COLLIDER);
     }
 
-    private static HitResult getHitResult(Vec3 pos, Entity projectile, Predicate<Entity> filter, Vec3 deltaMovement, Level level, float margin, ClipContext.Block clipContext) {
+    public static HitResult getHitResult(Vec3 pos, Entity projectile, Predicate<Entity> filter, Vec3 deltaMovement, Level level, float margin, ClipContext.Block clipContext) {
         Vec3 vec3 = pos.add(deltaMovement);
         HitResult hitresult = level.clip(new ClipContext(pos, vec3, clipContext, ClipContext.Fluid.NONE, projectile));
         if (hitresult.getType() != HitResult.Type.MISS) {

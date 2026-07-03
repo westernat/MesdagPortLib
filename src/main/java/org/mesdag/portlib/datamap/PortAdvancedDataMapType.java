@@ -26,30 +26,31 @@ public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemo
         return merger;
     }
 
-    public static <T, R> PortBuilder<T, R, PortDataMapValueRemover.PortDefault<T, R>> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
-        return new PortBuilder<>(registry, id, codec).remover(PortDataMapValueRemover.PortDefault.codec());
+    public static <T, R> Builder<T, R, PortDataMapValueRemover.PortDefault<T, R>> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
+        return new Builder<>(registry, id, codec).remover(PortDataMapValueRemover.PortDefault.codec());
     }
 
-    public static final class PortBuilder<T, R, VR extends PortDataMapValueRemover<R, T>> extends PortDataMapType.PortBuilder<T, R> {
+    public static final class Builder<T, R, VR extends PortDataMapValueRemover<R, T>> extends PortDataMapType.Builder<T, R> {
         private Codec<VR> remover;
         private PortDataMapValueMerger<R, T> merger = PortDataMapValueMerger.defaultMerger();
 
-        PortBuilder(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec) {
+        Builder(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec) {
             super(registryKey, id, codec);
         }
 
         @Override
-        public PortBuilder<T, R, VR> synced(Codec<T> networkCodec, boolean mandatory) {
+        public Builder<T, R, VR> synced(Codec<T> networkCodec, boolean mandatory) {
             super.synced(networkCodec, mandatory);
             return this;
         }
 
-        public <VR1 extends PortDataMapValueRemover<R, T>> PortBuilder<T, R, VR1> remover(Codec<VR1> remover) {
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        public <VR1 extends PortDataMapValueRemover<R, T>> Builder<T, R, VR1> remover(Codec<VR1> remover) {
             this.remover = (Codec) remover;
-            return (PortBuilder<T, R, VR1>) this;
+            return (Builder<T, R, VR1>) this;
         }
 
-        public PortBuilder<T, R, VR> merger(PortDataMapValueMerger<R, T> merger) {
+        public Builder<T, R, VR> merger(PortDataMapValueMerger<R, T> merger) {
             this.merger = merger;
             return this;
         }

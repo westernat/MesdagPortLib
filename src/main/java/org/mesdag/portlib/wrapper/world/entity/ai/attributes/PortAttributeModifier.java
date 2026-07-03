@@ -17,17 +17,17 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
-public record PortAttributeModifier(ResourceLocation id, double amount, PortOperation operation) {
+public record PortAttributeModifier(ResourceLocation id, double amount, Operation operation) {
     public static final MapCodec<PortAttributeModifier> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(PortAttributeModifier::id),
             Codec.DOUBLE.fieldOf("amount").forGetter(PortAttributeModifier::amount),
-            PortOperation.CODEC.fieldOf("operation").forGetter(PortAttributeModifier::operation)
+            Operation.CODEC.fieldOf("operation").forGetter(PortAttributeModifier::operation)
     ).apply(instance, PortAttributeModifier::new));
     public static final Codec<PortAttributeModifier> CODEC = MAP_CODEC.codec();
     public static final PortStreamCodec<ByteBuf, PortAttributeModifier> STREAM_CODEC = PortStreamCodec.composite(
             PortResourceLocationExtension.streamCodec(), PortAttributeModifier::id,
             PortByteBufCodecs.DOUBLE, PortAttributeModifier::amount,
-            PortOperation.STREAM_CODEC, PortAttributeModifier::operation,
+            Operation.STREAM_CODEC, PortAttributeModifier::operation,
             PortAttributeModifier::new
     );
 
@@ -67,14 +67,14 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
         }
     }
 
-    public enum PortOperation implements StringRepresentable {
+    public enum Operation implements StringRepresentable {
         ADD_VALUE,
         ADD_MULTIPLIED_BASE,
         ADD_MULTIPLIED_TOTAL;
 
-        public static final IntFunction<PortOperation> BY_ID = ByIdMap.continuous(PortOperation::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-        public static final Codec<PortOperation> CODEC = StringRepresentable.fromEnum(PortOperation::values);
-        public static final PortStreamCodec<ByteBuf, PortOperation> STREAM_CODEC = PortByteBufCodecs.idMapper(BY_ID, PortOperation::ordinal);
+        public static final IntFunction<Operation> BY_ID = ByIdMap.continuous(Operation::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+        public static final Codec<Operation> CODEC = StringRepresentable.fromEnum(Operation::values);
+        public static final PortStreamCodec<ByteBuf, Operation> STREAM_CODEC = PortByteBufCodecs.idMapper(BY_ID, Operation::ordinal);
 
         @Diff
         public AttributeModifier.Operation unwrap() {
@@ -86,7 +86,7 @@ public record PortAttributeModifier(ResourceLocation id, double amount, PortOper
             return AttributeModifier.Operation.ADDITION;
         }
 
-        public static PortOperation wrap(AttributeModifier.Operation operation) {
+        public static Operation wrap(AttributeModifier.Operation operation) {
             if (operation == AttributeModifier.Operation.MULTIPLY_BASE) {
                 return ADD_MULTIPLIED_BASE;
             } else if (operation == AttributeModifier.Operation.MULTIPLY_TOTAL) {

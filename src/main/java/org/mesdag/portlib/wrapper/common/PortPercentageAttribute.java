@@ -20,7 +20,7 @@ public class PortPercentageAttribute extends RangedAttribute implements IPortAtt
     }
 
     @Override
-    public MutableComponent toValueComponent(PortAttributeModifier.PortOperation op, double value, TooltipFlag flag) {
+    public MutableComponent toValueComponent(PortAttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (IPortAttributeExtension.isNullOrAddition(op)) {
             return Component.translatable("portlib.value.percent", FORMAT.format(value * this.scaleFactor));
         }

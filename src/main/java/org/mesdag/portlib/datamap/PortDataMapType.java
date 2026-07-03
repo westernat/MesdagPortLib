@@ -26,8 +26,8 @@ public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
         this.mandatorySync = mandatorySync;
     }
 
-    public static <T, R> PortBuilder<T, R> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
-        return new PortBuilder<>(registry, id, codec);
+    public static <T, R> Builder<T, R> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
+        return new Builder<>(registry, id, codec);
     }
 
     public ResourceKey<Registry<R>> registryKey() {
@@ -50,7 +50,7 @@ public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
         return mandatorySync;
     }
 
-    public static sealed class PortBuilder<T, R> permits PortAdvancedDataMapType.PortBuilder {
+    public static sealed class Builder<T, R> permits PortAdvancedDataMapType.Builder {
         protected final ResourceKey<Registry<R>> registryKey;
         protected final ResourceLocation id;
         protected final Codec<T> codec;
@@ -58,13 +58,13 @@ public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
         protected @Nullable Codec<T> networkCodec;
         protected boolean mandatorySync;
 
-        PortBuilder(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec) {
+        Builder(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec) {
             this.registryKey = registryKey;
             this.id = id;
             this.codec = codec;
         }
 
-        public PortBuilder<T, R> synced(Codec<T> networkCodec, boolean mandatory) {
+        public Builder<T, R> synced(Codec<T> networkCodec, boolean mandatory) {
             this.mandatorySync = mandatory;
             this.networkCodec = networkCodec;
             return this;

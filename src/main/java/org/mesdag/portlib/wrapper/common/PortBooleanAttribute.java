@@ -24,12 +24,12 @@ public class PortBooleanAttribute extends Attribute implements IPortAttributeExt
     }
 
     @Override
-    public MutableComponent toValueComponent(@Nullable PortAttributeModifier.PortOperation op, double value, TooltipFlag flag) {
+    public MutableComponent toValueComponent(@Nullable PortAttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (op == null) {
             return Component.translatable("portlib.value.boolean." + (value > 0 ? "enabled" : "disabled"));
-        } else if (op == PortAttributeModifier.PortOperation.ADD_VALUE && value > 0) {
+        } else if (op == PortAttributeModifier.Operation.ADD_VALUE && value > 0) {
             return Component.translatable("portlib.value.boolean.enable");
-        } else if (op == PortAttributeModifier.PortOperation.ADD_MULTIPLIED_TOTAL && (int) value == -1) {
+        } else if (op == PortAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL && (int) value == -1) {
             return Component.translatable("portlib.value.boolean.disable");
         }
         return Component.translatable("portlib.value.boolean.invalid");

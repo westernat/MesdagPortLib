@@ -1,24 +1,24 @@
 package PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.common.ForgeMod;
 import org.mesdag.portlib.PortLib;
+import org.mesdag.portlib.registries.PortRegistryEntry;
 
 import java.util.function.Supplier;
 
 public class PortAttributesExtension {
     private static final Supplier<Holder<Attribute>> BLOCK_BREAK_SPEED = Suppliers.memoize(() -> PortLib.BLOCK_BREAK_SPEED);
-    private static final Supplier<Holder<Attribute>> BLOCK_INTERACTION_RANGE = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.BLOCK_REACH.get()));
+    private static final Supplier<Holder<Attribute>> BLOCK_INTERACTION_RANGE = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.BLOCK_REACH));
     private static final Supplier<Holder<Attribute>> BURNING_TIME = Suppliers.memoize(() -> PortLib.BURNING_TIME);
     private static final Supplier<Holder<Attribute>> EXPLOSION_KNOCKBACK_RESISTANCE = Suppliers.memoize(() -> PortLib.EXPLOSION_KNOCKBACK_RESISTANCE);
-    private static final Supplier<Holder<Attribute>> ENTITY_INTERACTION_RANGE = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_REACH.get()));
+    private static final Supplier<Holder<Attribute>> ENTITY_INTERACTION_RANGE = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.ENTITY_REACH));
     private static final Supplier<Holder<Attribute>> FALL_DAMAGE_MULTIPLIER = Suppliers.memoize(() -> PortLib.FALL_DAMAGE_MULTIPLIER);
     private static final Supplier<Holder<Attribute>> FLYING_SPEED = Suppliers.memoize(() -> PortLib.FLYING_SPEED);
     private static final Supplier<Holder<Attribute>> JUMP_STRENGTH = Suppliers.memoize(() -> PortLib.JUMP_STRENGTH);
-    private static final Supplier<Holder<Attribute>> GRAVITY = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.ENTITY_GRAVITY.get()));
+    private static final Supplier<Holder<Attribute>> GRAVITY = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.ENTITY_GRAVITY));
     private static final Supplier<Holder<Attribute>> MAX_ABSORPTION = Suppliers.memoize(() -> PortLib.MAX_ABSORPTION);
     private static final Supplier<Holder<Attribute>> MINING_EFFICIENCY = Suppliers.memoize(() -> PortLib.MINING_EFFICIENCY);
     private static final Supplier<Holder<Attribute>> MOVEMENT_EFFICIENCY = Suppliers.memoize(() -> PortLib.MOVEMENT_EFFICIENCY);
@@ -26,11 +26,11 @@ public class PortAttributesExtension {
     private static final Supplier<Holder<Attribute>> SAFE_FALL_DISTANCE = Suppliers.memoize(() -> PortLib.SAFE_FALL_DISTANCE);
     private static final Supplier<Holder<Attribute>> SCALE = Suppliers.memoize(() -> PortLib.SCALE);
     private static final Supplier<Holder<Attribute>> SNEAKING_SPEED = Suppliers.memoize(() -> PortLib.SNEAKING_SPEED);
-    private static final Supplier<Holder<Attribute>> STEP_HEIGHT = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+    private static final Supplier<Holder<Attribute>> STEP_HEIGHT = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.STEP_HEIGHT_ADDITION));
     private static final Supplier<Holder<Attribute>> SUBMERGED_MINING_SPEED = Suppliers.memoize(() -> PortLib.SUBMERGED_MINING_SPEED);
     private static final Supplier<Holder<Attribute>> SWEEPING_DAMAGE_RATIO = Suppliers.memoize(() -> PortLib.SWEEPING_DAMAGE_RATIO);
     private static final Supplier<Holder<Attribute>> WATER_MOVEMENT_EFFICIENCY = Suppliers.memoize(() -> PortLib.WATER_MOVEMENT_EFFICIENCY);
-    private static final Supplier<Holder<Attribute>> SWIM_SPEED = Suppliers.memoize(() -> PortAttributeExtension.wrap(ForgeMod.SWIM_SPEED.get()));
+    private static final Supplier<Holder<Attribute>> SWIM_SPEED = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.SWIM_SPEED));
     private static final Supplier<Holder<Attribute>> CREATIVE_FLIGHT = Suppliers.memoize(() -> PortLib.CREATIVE_FLIGHT);
 
     public static Holder<Attribute> blockBreakSpeed() {

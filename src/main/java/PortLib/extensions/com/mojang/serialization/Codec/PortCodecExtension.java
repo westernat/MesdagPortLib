@@ -135,4 +135,11 @@ public class PortCodecExtension {
             }
         };
     }
+
+    public static <E> Codec<E> stringResolver(Function<E, String> toString, Function<String, E> fromString) {
+        return Codec.STRING.flatXmap(
+                name -> Optional.ofNullable(fromString.apply(name)).map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Unknown element name:" + name)),
+                e -> Optional.ofNullable(toString.apply(e)).map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Element with unknown name: " + e))
+        );
+    }
 }

@@ -6,9 +6,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortFluidType;
+import org.mesdag.portlib.registries.PortDeferredBlock;
 
 public interface IPortFluidTypePropertiesExtension {
-    default FluidType.Properties addDripstoneDripping(float chance, ParticleOptions dripParticle, Block cauldron, @Nullable SoundEvent fillSound) {
+    default FluidType.Properties addDripstoneDripping(float chance, ParticleOptions dripParticle, PortDeferredBlock<? extends Block> cauldron, @Nullable SoundEvent fillSound) {
         ((IPortFluidType.IPortProperties) this).portlib$setDripInfo(chance, dripParticle, cauldron, fillSound);
         return (FluidType.Properties) (Object) this;
     }

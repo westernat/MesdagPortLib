@@ -7,6 +7,7 @@ import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortFluidType;
+import org.mesdag.portlib.registries.PortDeferredBlock;
 import org.mesdag.portlib.wrapper.common.PortSoundActions;
 import org.mesdag.portlib.wrapper.fluids.PortFluidType;
 import org.spongepowered.asm.mixin.Final;
@@ -50,7 +51,7 @@ public abstract class FluidTypeMixin implements IPortFluidType {
         private @Nullable PortFluidType.DripstoneDripInfo portlib$dripInfo;
 
         @Override
-        public void portlib$setDripInfo(float chance, ParticleOptions dripParticle, Block cauldron, @Nullable SoundEvent fillSound) {
+        public void portlib$setDripInfo(float chance, ParticleOptions dripParticle, PortDeferredBlock<? extends Block> cauldron, @Nullable SoundEvent fillSound) {
             if (fillSound != null) {
                 sounds.put(PortSoundActions.CAULDRON_DRIP, fillSound);
             }

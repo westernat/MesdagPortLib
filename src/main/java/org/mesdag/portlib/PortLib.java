@@ -152,6 +152,7 @@ public class PortLib {
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<PortAddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> PortAddTableLootModifier.CODEC);
 
+    // todo datamap
     public static final PortDataMapType<Item, PortFurnaceFuel> FURNACE_FUELS = PortDataMapType.builder(asResource("furnace_fuels"), Registries.ITEM, PortFurnaceFuel.CODEC).synced(PortFurnaceFuel.BURN_TIME_CODEC, false).build();
 
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);

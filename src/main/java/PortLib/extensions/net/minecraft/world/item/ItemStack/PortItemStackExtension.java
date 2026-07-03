@@ -252,9 +252,9 @@ public class PortItemStackExtension {
                 for (int i = 0; i < lore.size(); ++i) {
                     String s = lore.getString(i);
                     try {
-                        MutableComponent mutablecomponent1 = Component.Serializer.fromJson(s);
-                        if (mutablecomponent1 != null) {
-                            builder.add(ComponentUtils.mergeStyles(mutablecomponent1, ItemStack.LORE_STYLE));
+                        MutableComponent component = Component.Serializer.fromJson(s);
+                        if (component != null) {
+                            builder.add(ComponentUtils.mergeStyles(component, ItemStack.LORE_STYLE));
                         }
                     } catch (Exception exception) {
                         display.remove("Lore");
@@ -288,6 +288,7 @@ public class PortItemStackExtension {
         return thiz.hasAdventureModeBreakTagForBlock(PortEnvironment.registryAccess().registryOrThrow(Registries.BLOCK), block);
     }
 
+    // todo
     public static int getCustomModelData(ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
         return tag == null ? 0 : tag.getInt("portlib:custom_model_data");

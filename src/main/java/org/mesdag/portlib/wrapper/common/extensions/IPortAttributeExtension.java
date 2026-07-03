@@ -21,7 +21,7 @@ public interface IPortAttributeExtension {
         return (Attribute) this;
     }
 
-    default MutableComponent toValueComponent(@Nullable PortAttributeModifier.PortOperation op, double value, TooltipFlag flag) {
+    default MutableComponent toValueComponent(@Nullable PortAttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (isNullOrAddition(op)) {
             return Component.translatable("portlib.value.flat", FORMAT.format(value));
         }
@@ -41,7 +41,7 @@ public interface IPortAttributeExtension {
         return Component.translatable(key, valueComp, attrDesc).withStyle(color);
     }
 
-    static boolean isNullOrAddition(@Nullable PortAttributeModifier.PortOperation op) {
-        return op == null || op == PortAttributeModifier.PortOperation.ADD_VALUE;
+    static boolean isNullOrAddition(@Nullable PortAttributeModifier.Operation op) {
+        return op == null || op == PortAttributeModifier.Operation.ADD_VALUE;
     }
 }

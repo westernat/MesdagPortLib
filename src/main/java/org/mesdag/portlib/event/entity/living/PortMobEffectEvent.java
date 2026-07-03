@@ -115,7 +115,7 @@ public abstract class PortMobEffectEvent<E extends MobEffectEvent> extends PortL
         }
 
         @Override
-        public MobEffectInstance getEffectInstance() {
+        public @NotNull MobEffectInstance getEffectInstance() {
             return e.getEffectInstance();
         }
 

@@ -72,8 +72,8 @@ public class PortItem extends Item {
         }
     }
 
-    public interface PortTooltipContext {
-        PortTooltipContext EMPTY = new PortTooltipContext() {
+    public interface TooltipContext {
+        TooltipContext EMPTY = new TooltipContext() {
             @Override
             public @Nullable HolderLookup.Provider registries() {
                 return null;
@@ -100,8 +100,8 @@ public class PortItem extends Item {
             return null;
         }
 
-        static PortTooltipContext of(@Nullable Level level) {
-            return level == null ? EMPTY : new PortTooltipContext() {
+        static TooltipContext of(@Nullable Level level) {
+            return level == null ? EMPTY : new TooltipContext() {
                 @Override
                 public HolderLookup.Provider registries() {
                     return level.registryAccess();
@@ -124,8 +124,8 @@ public class PortItem extends Item {
             };
         }
 
-        static PortTooltipContext of(HolderLookup.Provider registries) {
-            return new PortTooltipContext() {
+        static TooltipContext of(HolderLookup.Provider registries) {
+            return new TooltipContext() {
                 @Override
                 public HolderLookup.Provider registries() {
                     return registries;

@@ -33,9 +33,9 @@ public class PortItemExtension {
     }
 
     public static class Properties {
-        private static PortDataComponentMap.@NotNull PortBuilder getOrCreateBuilder(Item.Properties thiz) {
+        private static PortDataComponentMap.@NotNull Builder getOrCreateBuilder(Item.Properties thiz) {
             IPortItem.IPortProperties port = IPortItem.IPortProperties.of(thiz);
-            PortDataComponentMap.PortBuilder builder = port.portlib$getBuilder();
+            PortDataComponentMap.Builder builder = port.portlib$getBuilder();
             if (builder == null) {
                 port.portlib$set(builder = PortDataComponentMap.builder());
             }
@@ -54,7 +54,7 @@ public class PortItemExtension {
         @SuppressWarnings("unchecked")
         @Diff
         public static <T> @Nullable T getComponent(Item.Properties thiz, PortDataComponentType<T> type) {
-            PortDataComponentMap.PortBuilder builder = IPortItem.IPortProperties.of(thiz).portlib$getBuilder();
+            PortDataComponentMap.Builder builder = IPortItem.IPortProperties.of(thiz).portlib$getBuilder();
             if (builder == null) return null;
             return (T) builder.getMap().get(type);
         }

@@ -3,6 +3,7 @@ package org.mesdag.portlib.component;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
@@ -24,36 +25,47 @@ public interface PortDataComponentMap {
         }
     };
 
+    @ApiStatus.Internal
     <T> @Nullable T portlib$get(PortDataComponentType<T> type);
 
     default <T> @Nullable T get(PortDataComponentType<T> type) {
         return portlib$get(type);
     }
 
+    default <T> boolean has(PortDataComponentType<T> type) {
+        return get(type) != null;
+    }
+
+    default <T> T getOrDefault(PortDataComponentType<? extends T> component, T defaultValue) {
+        T t = get(component);
+        return t == null ? defaultValue : t;
+    }
+
+    @ApiStatus.Internal
     Set<PortDataComponentType<?>> portlib$keySet();
 
     default Set<PortDataComponentType<?>> keySet() {
         return portlib$keySet();
     }
 
-    static PortBuilder builder() {
-        return new PortBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
-    class PortBuilder {
+    class Builder {
         private final Map<PortDataComponentType<?>, Object> map = new Reference2ObjectOpenHashMap<>();
         private PortItemAttributeModifiers modifiers = PortItemAttributeModifiers.EMPTY;
         private @Nullable CompoundTag defaultTag;
 
-        PortBuilder() {}
+        Builder() {}
 
-        public <T> PortBuilder set(PortDataComponentType<T> component, T value) {
+        public <T> Builder set(PortDataComponentType<T> component, T value) {
             map.put(component, value);
             return this;
         }
 
         @Diff
-        public PortBuilder unbreakable() {
+        public Builder unbreakable() {
             getOrCreateTag().putBoolean("Unbreakable", true);
             return this;
         }

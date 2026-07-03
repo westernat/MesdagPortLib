@@ -17,6 +17,7 @@ import org.mesdag.portlib.util.Protected;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface IPortProjectileWeaponItemExtension {
     @Protected
@@ -76,6 +77,16 @@ public interface IPortProjectileWeaponItemExtension {
 
     default AbstractArrow customArrow(AbstractArrow arrow, ItemStack projectileStack, ItemStack weaponStack) {
         return arrow;
+    }
+
+    // todo projectile
+    default Predicate<ItemStack> getSupportedHeldProjectiles(ItemStack stack) {
+        return ammo -> true;
+    }
+
+    // todo projectile
+    default Predicate<ItemStack> getAllSupportedProjectiles(ItemStack stack) {
+        return ammo -> true;
     }
 
     @Protected

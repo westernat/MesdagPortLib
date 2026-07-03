@@ -208,6 +208,7 @@ public class PortTags {
         public static final TagKey<Item> PARROT_POISONOUS_FOOD = mc("parrot_poisonous_food"); // todo
         public static final TagKey<Item> PIGLIN_LOVED = mc("piglin_loved"); // todo
         public static final TagKey<Item> VILLAGER_PLANTABLE_SEEDS = mc("villager_plantable_seeds"); // todo
+        public static final TagKey<Item> SHEEP_FOOD = mc("sheep_food"); // todo
 
         public static final TagKey<Item> ANVIL = mc("anvil"); // todo
         public static final TagKey<Item> ARROWS = mc("arrows"); // todo
@@ -270,14 +271,71 @@ public class PortTags {
 
         public static final TagKey<Block> GRAVELS = common("gravels");
 
-        public static final TagKey<Block> STORAGE_BLOCKS = common("storage_blocks"); // todo
         public static final TagKey<Block> SANDSTONE_BLOCKS = common("sandstone_blocks"); // todo
+        public static final TagKey<Block> SANDSTONE_RED_BLOCKS = common("sandstone_red_blocks"); // todo
+
         public static final TagKey<Block> PLAYER_WORKSTATIONS_FURNACES = common("player_workstations/furnaces"); // todo
         public static final TagKey<Block> PLAYER_WORKSTATIONS_CRAFTING_TABLES = common("player_workstations/crafting_tables"); // todo
+
         public static final TagKey<Block> CHAINS = common("chains"); // todo
+
         public static final TagKey<Block> ROPES = common("ropes"); // todo
+
         public static final TagKey<Block> VILLAGER_JOB_SITES = common("villager_job_sites"); // todo
+
+        public static final TagKey<Block> OBSIDIANS = common("obsidians"); // todo
+
+        public static final TagKey<Block> STORAGE_BLOCKS = common("storage_blocks"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_NETHERITE = common("storage_blocks/netherite"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_DIAMOND = common("storage_blocks/diamond");
+        public static final TagKey<Block> STORAGE_BLOCKS_COAL = common("storage_blocks/coal"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_RAW_COPPER = common("storage_blocks/raw_copper"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_COPPER = common("storage_blocks/copper"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_RAW_IRON = common("storage_blocks/raw_iron"); // todo
+        public static final TagKey<Block> STORAGE_BLOCKS_IRON = common("storage_blocks/iron"); // todo
+
+        public static final TagKey<Block> CHESTS = common("chests"); // todo
+        public static final TagKey<Block> CHESTS_WOODEN = common("chests/wooden"); // todo
         public static final TagKey<Block> CHESTS_TRAPPED = common("chests/trapped"); // todo
+
+        public static final TagKey<Block> COBBLESTONES_NORMAL = common("cobblestones_normal"); // todo
+
+        public static final TagKey<Block> DYED = common("dyed"); // todo
+        public static final TagKey<Block> DYED_BLACK = common("dyed/black"); // todo
+        public static final TagKey<Block> DYED_BLUE = common("dyed/blue"); // todo
+        public static final TagKey<Block> DYED_BROWN = common("dyed/brown"); // todo
+        public static final TagKey<Block> DYED_CYAN = common("dyed/cyan"); // todo
+        public static final TagKey<Block> DYED_GRAY = common("dyed/gray"); // todo
+        public static final TagKey<Block> DYED_GREEN = common("dyed/green"); // todo
+        public static final TagKey<Block> DYED_LIGHT_BLUE = common("dyed/light_blue"); // todo
+        public static final TagKey<Block> DYED_LIGHT_GRAY = common("dyed/light_gray"); // todo
+        public static final TagKey<Block> DYED_LIME = common("dyed/lime"); // todo
+        public static final TagKey<Block> DYED_MAGENTA = common("dyed/magenta"); // todo
+        public static final TagKey<Block> DYED_ORANGE = common("dyed/orange"); // todo
+        public static final TagKey<Block> DYED_PINK = common("dyed/pink"); // todo
+        public static final TagKey<Block> DYED_PURPLE = common("dyed/purple"); // todo
+        public static final TagKey<Block> DYED_RED = common("dyed/red"); // todo
+        public static final TagKey<Block> DYED_WHITE = common("dyed/white"); // todo
+        public static final TagKey<Block> DYED_YELLOW = common("dyed/yellow"); // todo
+
+        public static final TagKey<Block> NEEDS_WOOD_TOOL = forge("needs_wood_tool"); // todo
+        public static final TagKey<Block> NEEDS_GOLD_TOOL = forge("needs_gold_tool"); // todo
+        public static final TagKey<Block> NEEDS_NETHERITE_TOOL = forge("needs_netherite_tool"); // todo
+
+        public static final TagKey<Block> INCORRECT_FOR_WOODEN_TOOL = mc("incorrect_for_wooden_tool"); // todo
+        public static final TagKey<Block> INCORRECT_FOR_GOLD_TOOL = mc("incorrect_for_gold_tool"); // todo
+        public static final TagKey<Block> INCORRECT_FOR_STONE_TOOL = mc("incorrect_for_stone_tool"); // todo
+        public static final TagKey<Block> INCORRECT_FOR_IRON_TOOL = mc("incorrect_for_iron_tool"); // todo
+        public static final TagKey<Block> INCORRECT_FOR_DIAMOND_TOOL = mc("incorrect_for_diamond_tool"); // todo
+        public static final TagKey<Block> INCORRECT_FOR_NETHERITE_TOOL = mc("incorrect_for_netherite_tool"); // todo
+
+        public static final TagKey<Block> BUDS = common("buds"); // todo
+
+        public static final TagKey<Block> SANDS = common("sands"); // todo
+
+        public static final TagKey<Block> STONES = common("stones"); // todo
+
+        public static final TagKey<Block> HIDDEN_FROM_RECIPE_VIEWERS = common("hidden_from_recipe_viewers"); // todo
 
         private static TagKey<Block> common(String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));
@@ -285,6 +343,10 @@ public class PortTags {
 
         private static TagKey<Block> mc(String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.withDefaultNamespace(name));
+        }
+
+        private static TagKey<Block> forge(String name) {
+            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("forge", name));
         }
     }
 

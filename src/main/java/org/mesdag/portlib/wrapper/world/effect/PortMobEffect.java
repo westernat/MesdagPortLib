@@ -64,12 +64,12 @@ public class PortMobEffect extends MobEffect {
         return particleFactory.apply(instance);
     }
 
-    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
+    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.Operation operation) {
         getAttributeModifiers().put(attribute, new AttributeModifier(PortAttributeModifier.rl2uuid(id), id.getPath(), amount, operation.unwrap()));
         return this;
     }
 
-    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
+    public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, PortAttributeModifier.Operation operation, Int2DoubleFunction curve) {
         UUID uuid = PortAttributeModifier.rl2uuid(id);
         getAttributeModifiers().put(attribute, new AttributeModifier(uuid, id.getPath(), 0, operation.unwrap()));
         putCurve(uuid, curve);
@@ -83,11 +83,11 @@ public class PortMobEffect extends MobEffect {
         curves.put(uuid, curve);
     }
 
-    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.PortOperation operation) {
+    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.Operation operation) {
         return addAttributeModifier(attribute.value(), id, amount, operation);
     }
 
-    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, PortAttributeModifier.PortOperation operation, Int2DoubleFunction curve) {
+    public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, PortAttributeModifier.Operation operation, Int2DoubleFunction curve) {
         return addAttributeModifier(attribute.value(), id, operation, curve);
     }
 
