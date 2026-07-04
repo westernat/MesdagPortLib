@@ -2,6 +2,7 @@ package org.mesdag.portlib.diff.mixin;
 
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Cancellable;
@@ -109,6 +110,8 @@ public abstract class ItemMixin implements IPortItem {
 
     @Mixin(Item.Properties.class)
     public static abstract class PropertiesMixin implements IPortProperties, IPortItemPropertiesExtension {
+        @Shadow
+        int maxStackSize;
         @Unique
         private @Nullable PortDataComponentMap.Builder portlib$builder;
 
@@ -120,6 +123,15 @@ public abstract class ItemMixin implements IPortItem {
         @Override
         public @Nullable PortDataComponentMap.Builder portlib$getBuilder() {
             return portlib$builder;
+        }
+
+        @WrapMethod(method = "stacksTo")
+        private Item.Properties safe(int maxStackSize, Operation<Item.Properties> original) {
+            if (maxStackSize == 1) {
+                this.maxStackSize = 1;
+                return (Item.Properties) (Object) this;
+            }
+            return original.call(maxStackSize);
         }
     }
 }

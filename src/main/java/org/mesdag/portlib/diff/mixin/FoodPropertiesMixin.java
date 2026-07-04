@@ -22,7 +22,7 @@ public abstract class FoodPropertiesMixin implements IPortFoodProperties {
     @Unique
     private float portlib$eatSeconds;
     @Unique
-    private @Nullable ItemStack portlib$usingConvertsTo;
+    private Supplier<@Nullable ItemStack> portlib$usingConvertsTo;
 
     @Override
     public float portlib$getEatSeconds() {
@@ -36,11 +36,11 @@ public abstract class FoodPropertiesMixin implements IPortFoodProperties {
 
     @Override
     public @Nullable ItemStack portlib$getUsingConvertsTo() {
-        return portlib$usingConvertsTo;
+        return portlib$usingConvertsTo.get();
     }
 
     @Override
-    public void portlib$setUsingConvertsTo(@Nullable ItemStack stack) {
+    public void portlib$setUsingConvertsTo(Supplier<@Nullable ItemStack> stack) {
         this.portlib$usingConvertsTo = stack;
     }
 

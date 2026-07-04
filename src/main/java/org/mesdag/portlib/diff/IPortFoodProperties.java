@@ -18,7 +18,7 @@ public interface IPortFoodProperties extends IPortFoodPropertiesExtension {
 
     @Nullable ItemStack portlib$getUsingConvertsTo();
 
-    void portlib$setUsingConvertsTo(@Nullable ItemStack stack);
+    void portlib$setUsingConvertsTo(Supplier<@Nullable ItemStack> stack);
 
     List<Pair<Supplier<MobEffectInstance>, Float>> portlib$getEffects();
 

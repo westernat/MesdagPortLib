@@ -1,6 +1,7 @@
 package org.mesdag.portlib.registries;
 
 import com.google.common.base.Supplier;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -9,14 +10,14 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PortRegistration<R> {
-    static final Map<ResourceKey<? extends Registry<?>>, List<List<PortRegistryEntry<?, ?>>>> registrations = new Reference2ObjectOpenHashMap<>();
+    static final Map<String, Map<ResourceKey<? extends Registry<?>>, List<List<PortRegistryEntry<?, ?>>>>> registrations = new ConcurrentHashMap<>();
     final String namespace;
     final ResourceKey<? extends Registry<R>> registryKey;
     final List<PortRegistryEntry<?, ?>> entries;
@@ -26,9 +27,11 @@ public class PortRegistration<R> {
     PortRegistration(String namespace, ResourceKey<? extends Registry<R>> registryKey, boolean registerEntries) {
         this.namespace = namespace;
         this.registryKey = registryKey;
-        this.entries = new ArrayList<>();
+        this.entries = new ObjectArrayList<>();
         if (registerEntries) {
-            registrations.computeIfAbsent(registryKey, key -> new ArrayList<>()).add(entries);
+            registrations.computeIfAbsent(namespace, modId -> new Reference2ObjectOpenHashMap<>())
+                    .computeIfAbsent(registryKey, key -> new ObjectArrayList<>())
+                    .add(entries);
         }
     }
 

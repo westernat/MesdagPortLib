@@ -3,9 +3,11 @@ package org.mesdag.portlib.wrapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.DelegatingOps;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -46,9 +48,10 @@ public class PortUtil {
     }
 
     public static <A, T> DataResult<T> encode(A input, Function<A, JsonElement> serializer, DynamicOps<T> ops, T prefix) {
-        return ops.getMap(prefix).flatMap(preMap -> {
-            T converted = JsonOps.INSTANCE.convertTo(ops, serializer.apply(input));
-            return ops.getMap(converted).flatMap(jsonMap -> ops.mergeToMap(prefix, jsonMap));
-        });
+        JsonElement element = serializer.apply(input);
+        if (ops instanceof DelegatingOps<T> delegatingOps && delegatingOps.empty() == JsonNull.INSTANCE) {
+            return DataResult.success((T) element);
+        }
+        return DataResult.success(JsonOps.INSTANCE.convertTo(ops, element));
     }
 }

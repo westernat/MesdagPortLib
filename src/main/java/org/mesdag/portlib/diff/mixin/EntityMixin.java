@@ -39,7 +39,7 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
     @Shadow
     private Level level;
     @Shadow
-    private EntityDimensions dimensions;
+    public EntityDimensions dimensions;
     @Unique
     private @Nullable Map<PortAttachmentType<?>, Object> portlib$attachments;
 
@@ -51,12 +51,6 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
     @Override
     public void portlib$attachments(Map<PortAttachmentType<?>, Object> map) {
         this.portlib$attachments = map;
-    }
-
-    @Final
-    @Override
-    public <T> @Nullable T portlib$setAttach(PortAttachmentType<T> type, T data) {
-        return IPortEntity.super.portlib$setAttach(type, data);
     }
 
     @Final

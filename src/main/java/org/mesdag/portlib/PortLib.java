@@ -159,7 +159,7 @@ public class PortLib {
     public static final RegistryObject<Codec<PortAddCarversBiomeModifier>> ADD_CARVERS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_carvers", () -> PortAddCarversBiomeModifier.CODEC);
 
     public PortLib(FMLJavaModLoadingContext context) {
-        PortRegisterHandler.init();
+        PortRegisterHandler.init(context.getModEventBus());
         PortRegistries.init();
         PortAttachmentSync.init();
         PortEventHooks.init();
@@ -171,6 +171,7 @@ public class PortLib {
         IEventBus eventBus = context.getModEventBus();
         PortSoundEvents.register(eventBus);
         GLOBAL_LOOT_MODIFIERS.register(eventBus);
+        BIOME_MODIFIER_SERIALIZERS.register(eventBus);
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForgeChunkManager
             PortDataMapLoader.initDataMaps();

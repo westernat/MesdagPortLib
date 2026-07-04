@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.mixin;
 
+import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ServerLevel.class)
@@ -38,10 +40,9 @@ public abstract class ServerLevelMixin implements CPortAttachmentHolder, PortSel
     @Inject(method = "initCapabilities", at = @At("TAIL"), remap = false)
     private void initAttachments(CallbackInfo ci) {
         PortLevelAttachmentsSavedData.init(portlib$self());
-
-        PortModifyCustomSpawnersEvent event = new PortModifyCustomSpawnersEvent(portlib$self(), customSpawners);
+        PortModifyCustomSpawnersEvent event = new PortModifyCustomSpawnersEvent(portlib$self(), new ArrayList<>(customSpawners));
         PortEventHandler.postEvent(event);
-        this.customSpawners = event.getCustomSpawners();
+        this.customSpawners = ImmutableList.copyOf(event.getCustomSpawners());
     }
 
     @WrapOperation(method = "tickNonPassenger", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))

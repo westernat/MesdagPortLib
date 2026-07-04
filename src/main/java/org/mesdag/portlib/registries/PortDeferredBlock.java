@@ -8,9 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 
 public class PortDeferredBlock<T extends Block> extends PortRegistryEntry<Block, T> implements ItemLike {
-    public PortDeferredBlock(ResourceLocation identifier, Supplier<T> valueSupplier) {
+    public PortDeferredBlock(ResourceLocation identifier, @Nullable Supplier<T> valueSupplier) {
         super(identifier, valueSupplier);
     }
 

@@ -29,7 +29,7 @@ public class PortFoodProperties {
         IPortFoodProperties iFood = IPortFoodProperties.of(food);
         iFood.portlib$setEatSeconds(data.getFloat("eat_seconds"));
         if (data.contains("using_converts_to", Tag.TAG_COMPOUND)) {
-            iFood.portlib$setUsingConvertsTo(ItemStack.of(data.getCompound("using_converts_to")));
+            iFood.portlib$setUsingConvertsTo(() -> ItemStack.of(data.getCompound("using_converts_to")));
         }
         if (data.contains("effects", Tag.TAG_LIST)) {
             for (Tag tag : data.getList("effects", Tag.TAG_COMPOUND)) {

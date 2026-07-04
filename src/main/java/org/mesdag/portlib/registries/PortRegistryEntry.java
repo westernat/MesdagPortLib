@@ -40,10 +40,6 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
         return entry;
     }
 
-    public Holder<R> asHolder() {
-        return (Holder<R>) object.getHolder().orElseGet(() -> Holder.direct(get()));
-    }
-
     @Override
     public T get() {
         return object.get();
@@ -57,41 +53,41 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
 
     @Override
     public R value() {
-        return asHolder().value();
+        return object.get();
     }
 
     @Override
     public boolean isBound() {
-        return asHolder().isBound();
+        return object.isPresent();
     }
 
     @Override
     public boolean is(ResourceLocation location) {
-        return asHolder().is(location);
+        return location.equals(getKey().location());
     }
 
     @Override
     public boolean is(ResourceKey<R> resourceKey) {
-        return asHolder().is(resourceKey);
+        return getKey() == resourceKey;
     }
 
     @Override
     public boolean is(Predicate<ResourceKey<R>> predicate) {
-        return asHolder().is(predicate);
+        return predicate.test(getKey());
     }
 
     @Override
     public boolean is(TagKey<R> tagKey) {
-        return asHolder().is(tagKey);
+        return object.getHolder().map(holder -> ((Holder<R>) holder).is(tagKey)).orElse(false);
     }
 
     public boolean is(Holder<R> holder) {
-        return PortHolderExtension.is(asHolder(), holder);
+        return object.getHolder().map(holder1 -> PortHolderExtension.is(((Holder<R>) holder1), holder)).orElse(false);
     }
 
     @Override
     public Stream<TagKey<R>> tags() {
-        return asHolder().tags();
+        return object.getHolder().map(holder -> ((Holder<R>) holder).tags()).orElseGet(Stream::of);
     }
 
     @Override
@@ -106,12 +102,12 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
 
     @Override
     public Holder.Kind kind() {
-        return asHolder().kind();
+        return Kind.REFERENCE;
     }
 
     @Override
     public boolean canSerializeIn(HolderOwner<R> owner) {
-        return asHolder().canSerializeIn(owner);
+        return object.getHolder().map(holder -> ((Holder<R>) holder).canSerializeIn(owner)).orElse(false);
     }
 
     public ResourceKey<R> getKey() {
@@ -131,8 +127,8 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
         }
 
         @Override
-        public Holder<R> asHolder() {
-            return Holder.direct(get());
+        public R value() {
+            return valueSupplier.get();
         }
     }
 }

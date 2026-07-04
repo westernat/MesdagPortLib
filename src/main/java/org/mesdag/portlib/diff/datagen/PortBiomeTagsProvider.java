@@ -36,6 +36,40 @@ public class PortBiomeTagsProvider extends BiomeTagsProvider {
         tag(PortTags.Biomes.IS_DEEP_OCEAN).addTag(BiomeTags.IS_DEEP_OCEAN);
         tag(Tags.Biomes.IS_LUSH, PortTags.Biomes.IS_LUSH).add(Biomes.LUSH_CAVES);
         tag(PortTags.Biomes.IS_STONY_SHORES).add(Biomes.STONY_SHORE);
+        tag(PortTags.Biomes.IS_BADLANDS).addTag(BiomeTags.IS_BADLANDS);
+        tag(PortTags.Biomes.IS_OVERWORLD).addTag(BiomeTags.IS_OVERWORLD);
+        tag(Tags.Biomes.IS_SWAMP, PortTags.Biomes.IS_SWAMP).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP);
+        tag(PortTags.Biomes.IS_BEACH).addTag(BiomeTags.IS_BEACH);
+        tag(PortTags.Biomes.IS_NETHER).addTag(BiomeTags.IS_NETHER);
+        tag(PortTags.Biomes.IS_FLOWER_FOREST).add(Biomes.FLOWER_FOREST);
+        tag(Tags.Biomes.IS_COLD_OVERWORLD, PortTags.Biomes.IS_COLD_OVERWORLD)
+                .add(Biomes.TAIGA)
+                .add(Biomes.OLD_GROWTH_PINE_TAIGA)
+                .add(Biomes.OLD_GROWTH_SPRUCE_TAIGA)
+                .add(Biomes.WINDSWEPT_HILLS)
+                .add(Biomes.WINDSWEPT_GRAVELLY_HILLS)
+                .add(Biomes.WINDSWEPT_FOREST)
+                .add(Biomes.SNOWY_PLAINS)
+                .add(Biomes.ICE_SPIKES)
+                .add(Biomes.GROVE)
+                .add(Biomes.SNOWY_SLOPES)
+                .add(Biomes.JAGGED_PEAKS)
+                .add(Biomes.FROZEN_PEAKS)
+                .add(Biomes.STONY_SHORE)
+                .add(Biomes.SNOWY_BEACH)
+                .add(Biomes.SNOWY_TAIGA)
+                .add(Biomes.FROZEN_RIVER)
+                .add(Biomes.COLD_OCEAN)
+                .add(Biomes.FROZEN_OCEAN)
+                .add(Biomes.DEEP_COLD_OCEAN)
+                .add(Biomes.DEEP_FROZEN_OCEAN);
+        tag(Tags.Biomes.IS_MUSHROOM, PortTags.Biomes.IS_MUSHROOM).add(Biomes.MUSHROOM_FIELDS);
+        tag(PortTags.Biomes.IS_FOREST).addTag(BiomeTags.IS_FOREST);
+        tag(Tags.Biomes.IS_PLAINS, PortTags.Biomes.IS_PLAINS).add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS);
+        tag(PortTags.Biomes.IS_WINDSWEPT).add(Biomes.WINDSWEPT_HILLS).add(Biomes.WINDSWEPT_GRAVELLY_HILLS).add(Biomes.WINDSWEPT_FOREST).add(Biomes.WINDSWEPT_SAVANNA);
+        tag(PortTags.Biomes.IS_OLD_GROWTH).add(Biomes.OLD_GROWTH_BIRCH_FOREST).add(Biomes.OLD_GROWTH_PINE_TAIGA).add(Biomes.OLD_GROWTH_SPRUCE_TAIGA);
+        tag(PortTags.Biomes.IS_NETHER_FOREST).add(Biomes.CRIMSON_FOREST).add(Biomes.WARPED_FOREST);
+        tag(PortTags.Biomes.IS_BIRCH_FOREST).add(Biomes.BIRCH_FOREST).add(Biomes.OLD_GROWTH_BIRCH_FOREST);
 
         tag(PortTags.Biomes.IS_CONIFEROUS_TREE).addTag(PortTags.Biomes.IS_TAIGA).add(Biomes.GROVE);
         tag(PortTags.Biomes.IS_SAVANNA_TREE).addTag(PortTags.Biomes.IS_SAVANNA);

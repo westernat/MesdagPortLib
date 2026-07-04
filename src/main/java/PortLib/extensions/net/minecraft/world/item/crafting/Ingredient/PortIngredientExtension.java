@@ -65,7 +65,12 @@ public class PortIngredientExtension {
     private static Codec<Ingredient> makeIngredientCodec(boolean allowEmpty) {
         var listCodec = PortCodecExtension.lazyInitialized(() -> allowEmpty ? LIST_CODEC : LIST_CODEC_NONEMPTY);
         return Codec.either(listCodec, makeIngredientMapCodec().codec()).xmap(
-                either -> either.map(list -> CompoundIngredient.of(list.toArray(Ingredient[]::new)), Function.identity()),
+                either -> either.map(list -> {
+                    if (list.isEmpty()) {
+                        return Ingredient.of();
+                    }
+                    return CompoundIngredient.of(list.toArray(Ingredient[]::new));
+                }, Function.identity()),
                 ingredient -> {
                     if (!ingredient.isVanilla()) {
                         if (ingredient instanceof CompoundIngredient compound) {

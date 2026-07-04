@@ -237,6 +237,24 @@ function initializeCoreMod() {
                 }
                 return node
             }
+        },
+        'replace_with_equals': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net/minecraft/core/HolderOwner',
+                'methodName': 'canSerializeIn',
+                'methodDesc': '(Lnet/minecraft/core/HolderOwner;)Z'
+            },
+            'transformer': function (node) {
+                node.instructions.clear();
+                node.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                node.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                node.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, 'java/lang/Object', 'equals', '(Ljava/lang/Object;)Z', false));
+                node.instructions.add(new InsnNode(Opcodes.IRETURN));
+                node.maxStack = 2;
+                node.maxLocals = 2;
+                return node;
+            }
         }
     }
 }

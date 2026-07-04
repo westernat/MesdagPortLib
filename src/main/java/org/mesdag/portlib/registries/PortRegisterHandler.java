@@ -3,11 +3,13 @@ package org.mesdag.portlib.registries;
 import com.google.common.base.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DataPackRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.event.PortEventHandler;
-import org.mesdag.portlib.event.PortEventPriority;
-import org.mesdag.portlib.event.registries.PortRegisterEvent;
+import org.mesdag.portlib.event.PortBus;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -56,18 +58,25 @@ public class PortRegisterHandler {
     @ApiStatus.Internal
     @Diff
     @SuppressWarnings("unchecked")
-    public static <T, R extends Registry<T>> void init() {
-        PortEventHandler.addListener(PortEventPriority.HIGH, (PortRegisterEvent event) -> {
-            ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            for (List<PortRegistryEntry<?, ?>> entries : PortRegistration.registrations.getOrDefault(registryKey, List.of())) {
-                for (PortRegistryEntry<?, ?> entry : entries) {
-                    event.register(
-                            (ResourceKey<R>) registryKey,
-                            entry.identifier,
-                            (Supplier<T>) entry.valueSupplier
-                    );
-                    entry.valueSupplier = null;
-                }
+    public static <T, R extends Registry<T>> void init(IEventBus eventBus) {
+        eventBus.addListener((DataPackRegistryEvent.NewRegistry e) -> {
+            for (var byModId : PortRegistration.registrations.entrySet()) {
+                String modId = byModId.getKey();
+                var registration = byModId.getValue();
+                PortBus.MOD.unwrap(modId).addListener(EventPriority.HIGH, (RegisterEvent event) -> {
+                    ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
+                    for (var entries : registration.getOrDefault(registryKey, List.of())) {
+                        for (PortRegistryEntry<?, ?> entry : entries) {
+                            if (entry.valueSupplier == null) continue;
+                            event.register(
+                                    (ResourceKey<R>) registryKey,
+                                    entry.identifier,
+                                    (Supplier<T>) entry.valueSupplier
+                            );
+                            entry.valueSupplier = null;
+                        }
+                    }
+                });
             }
         });
     }
