@@ -52,7 +52,8 @@ public class PointedDripstoneBlockMixin {
         return f;
     }
 
-    @ModifyVariable(method = "maybeTransferFluid", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;findTip(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;IZ)Lnet/minecraft/core/BlockPos;"), name = "fluid")
+    // 生产环境的局部变量名不稳定，不要改成 name = "fluid"。
+    @ModifyVariable(method = "maybeTransferFluid", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;findTip(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;IZ)Lnet/minecraft/core/BlockPos;"), ordinal = 0)
     private static Fluid realFluid(Fluid fluid, @Share("cachedFluid") LocalRef<Fluid> cachedFluid) {
         return cachedFluid.get();
     }
