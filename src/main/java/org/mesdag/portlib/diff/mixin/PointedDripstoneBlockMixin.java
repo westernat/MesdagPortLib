@@ -38,7 +38,8 @@ public class PointedDripstoneBlockMixin {
         return fluid;
     }
 
-    @ModifyVariable(method = "maybeTransferFluid", at = @At(value = "STORE", ordinal = 1), name = "f")
+    // 不要改成 name = "f"：第二个 fstore 发生时，f 的局部变量表作用域还没开始。
+    @ModifyVariable(method = "maybeTransferFluid", at = @At(value = "STORE", ordinal = 1), ordinal = 1)
     private static float realF(float f, @Share("cachedFluid") LocalRef<Fluid> cachedFluid, @Cancellable CallbackInfo ci) {
         Fluid fluid = cachedFluid.get();
         if (fluid != Fluids.WATER && fluid != Fluids.LAVA) {
