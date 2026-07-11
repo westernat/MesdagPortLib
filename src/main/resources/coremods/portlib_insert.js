@@ -228,13 +228,13 @@ function initializeCoreMod() {
                         var list = new InsnList()
                         // boolean success = ForgeHooks.isCorrectToolForDrops(state, player);
                         list.add(new VarInsnNode(Opcodes.ISTORE, 5))
-                        // return PortPlayerEvent.PortHarvestCheck.doPlayerHarvestCheck(player, state, level, pos, ForgeHooks.isCorrectToolForDrops(state, player));
+                        // return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(player, state, level, pos, ForgeHooks.isCorrectToolForDrops(state, player));
                         list.add(new VarInsnNode(Opcodes.ALOAD, 4))
                         list.add(new VarInsnNode(Opcodes.ALOAD, 1))
                         list.add(new VarInsnNode(Opcodes.ALOAD, 2))
                         list.add(new VarInsnNode(Opcodes.ALOAD, 3))
                         list.add(new VarInsnNode(Opcodes.ILOAD, 5))
-                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/mesdag/portlib/event/entity/player/PortPlayerEvent$PortHarvestCheck", "doPlayerHarvestCheck", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Z)Z", false));
+                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/mesdag/portlib/event/entity/player/PortPlayerEvent$HarvestCheck", "doPlayerHarvestCheck", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Z)Z", false));
                         node.instructions.insertBefore(IRETURN, list)
                         node.visitLocalVariable('success', 'Z', null, L0.getLabel(), L1.getLabel(), 5)
                         node.visitMaxs(5, 6)
