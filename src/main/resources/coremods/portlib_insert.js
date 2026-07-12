@@ -138,10 +138,10 @@ function initializeCoreMod() {
                             'PortLib/extensions/net/minecraft/world/entity/ai/attributes/Attributes/PortAttributesExtension',
                             'submergedMiningSpeed',
                             '()Lnet/minecraft/core/Holder;', false));
-                        newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                        newCode.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE,
                             'net/minecraft/core/Holder',
                             'value',
-                            '()Ljava/lang/Object;', false));
+                            '()Ljava/lang/Object;', true));
                         newCode.add(new TypeInsnNode(Opcodes.CHECKCAST, 'net/minecraft/world/entity/ai/attributes/Attribute'));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                             'net/minecraft/world/entity/LivingEntity',
