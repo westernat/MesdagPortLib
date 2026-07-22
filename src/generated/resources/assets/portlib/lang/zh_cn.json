@@ -20,6 +20,7 @@
   "portlib.modifier.plus": "+%s %s",
   "portlib.modifier.take": "%s %s",
   "portlib.network.advanced_add_entity.failed": "处理高级实体生成数据失败：%s",
+  "portlib.network.data_maps.failed": "处理注册表数据映射同步失败 %s: %s",
   "portlib.value.boolean.disable": "Disables",
   "portlib.value.boolean.disabled": "Disabled",
   "portlib.value.boolean.enable": "Enables",

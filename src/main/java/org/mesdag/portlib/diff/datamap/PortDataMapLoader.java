@@ -89,20 +89,19 @@ public class PortDataMapLoader implements PreparableReloadListener {
         });
         PortEventHandler.addListener((OnDatapackSyncEvent event) -> {
             for (Map.Entry<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> entry : getDataMaps().entrySet()) {
-                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(entry.getKey().location());
                 ServerPlayer player = event.getPlayer();
                 if (player == null) {
                     for (ServerPlayer serverPlayer : event.getPlayers()) {
-                        handleSync(serverPlayer, registry, (ResourceKey) entry.getKey());
+                        handleSync(serverPlayer, (ResourceKey) entry.getKey());
                     }
                 } else {
-                    handleSync(player, registry, (ResourceKey) entry.getKey());
+                    handleSync(player, (ResourceKey) entry.getKey());
                 }
             }
         });
     }
 
-    private static <T> void handleSync(ServerPlayer player, IForgeRegistry<T> registry, ResourceKey<Registry<T>> registryKey) {
+    private static <T> void handleSync(ServerPlayer player, ResourceKey<Registry<T>> registryKey) {
         if (player.connection.connection.isMemoryConnection() && PortDataPackRegistriesHooks.getSyncedRegistry((ResourceKey) registryKey) == null) {
             return;
         }
@@ -129,7 +128,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     public void apply() {
-        results.forEach((key, result) -> this.apply(RegistryManager.ACTIVE.getRegistry(key.location()), result));
+        results.forEach((key, result) -> apply(RegistryManager.ACTIVE.getRegistry(key.location()), result));
         this.results = null;
     }
 
@@ -178,7 +177,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                             if (newValue.isEmpty()) {
                                 result.remove(key);
                             } else {
-                                result.put((ResourceKey<R>) key, new WithSource<>(newValue.get(), oldValue.source()));
+                                result.put(key, new WithSource<>(newValue.get(), oldValue.source()));
                             }
                         }
                     });
@@ -300,6 +299,9 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     public static PortDataMapLoader getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new PortDataMapLoader(null, null); // for client side
+        }
         return INSTANCE;
     }
 }

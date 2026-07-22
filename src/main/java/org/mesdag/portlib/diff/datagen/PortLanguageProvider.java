@@ -60,6 +60,7 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.modifier.bool", "%s %s");
 
         add("portlib.network.advanced_add_entity.failed", "Failed to process advanced entity spawn data: %s", "处理高级实体生成数据失败：%s");
+        add("portlib.network.data_maps.failed", "Failed to handle registry data map sync for registry %s: %s", "处理注册表数据映射同步失败 %s: %s");
     }
 
     @Override

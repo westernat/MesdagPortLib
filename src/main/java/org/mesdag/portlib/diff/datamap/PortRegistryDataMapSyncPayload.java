@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @Diff
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes", "UnstableApiUsage"})
 public record PortRegistryDataMapSyncPayload<T>(
         ResourceKey<? extends Registry<T>> registryKey,
         Map<ResourceLocation, Map<ResourceKey<T>, ?>> dataMaps
@@ -45,10 +45,10 @@ public record PortRegistryDataMapSyncPayload<T>(
             PortRegistryDataMapSyncPayload::write, PortRegistryDataMapSyncPayload::decode);
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
-        final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) PortFriendlyByteBuf.readRegistryKey(buf);
+        final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) PortFriendlyByteBuf.readRegistryKey(buf);
         final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = PortFriendlyByteBufExtension.readMap(buf, PortResourceLocationExtension.streamCodec(), (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            return (Map) PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
+            return PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
         return new PortRegistryDataMapSyncPayload<>(registryKey, attach);
     }
@@ -57,7 +57,7 @@ public record PortRegistryDataMapSyncPayload<T>(
         buf.writeResourceKey(registryKey);
         PortFriendlyByteBufExtension.writeMap(buf, dataMaps, PortResourceLocationExtension.streamCodec(), (b1, key, attach) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            PortFriendlyByteBufExtension.<ResourceKey<T>, Object>writeMap(b1, (Map) attach, (FriendlyByteBuf b2, ResourceKey<T> rk) -> b2.writeResourceKey(rk), (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), (Object) value));
+            PortFriendlyByteBufExtension.writeMap(b1, (Map) attach, FriendlyByteBuf::writeResourceKey, (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
         });
     }
 
@@ -80,7 +80,7 @@ public record PortRegistryDataMapSyncPayload<T>(
             try {
                 var regAccess = PortEnvironment.registryAccess();
                 IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryKey);
-                Map innerMap = PortDataMapLoader.INSTANCE.getInnerMap(registryKey);
+                Map innerMap = PortDataMapLoader.getInstance().getInnerMap(registryKey);
                 innerMap.clear();
                 dataMaps.forEach((attachKey, maps) -> innerMap.put(PortDataMapLoader.getDataMap(registryKey, attachKey), Collections.unmodifiableMap(maps)));
                 PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(regAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.CLIENT_SYNC));
