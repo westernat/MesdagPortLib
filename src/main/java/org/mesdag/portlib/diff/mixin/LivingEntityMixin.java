@@ -20,6 +20,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.PotionColorCalculationEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
@@ -355,7 +356,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @ModifyReturnValue(method = "getScale", at = @At("RETURN"))
     private float applyScale(float original) {
-        return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.scale()));
+        @Nullable AttributeMap attributes = portlib$self().getAttributes();
+        if (attributes == null) { // maybe happens in super()
+            return original;
+        }
+        return (float) (original * attributes.getValue(PortAttributesExtension.scale().value()));
     }
 
     @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
