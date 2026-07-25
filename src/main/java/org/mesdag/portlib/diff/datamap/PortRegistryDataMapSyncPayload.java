@@ -45,7 +45,7 @@ public record PortRegistryDataMapSyncPayload<T>(
             PortRegistryDataMapSyncPayload::write, PortRegistryDataMapSyncPayload::decode);
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
-        final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) PortFriendlyByteBuf.readRegistryKey(buf);
+        final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) /* <- don't delete */ PortFriendlyByteBuf.readRegistryKey(buf);
         final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = PortFriendlyByteBufExtension.readMap(buf, PortResourceLocationExtension.streamCodec(), (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
             return PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));

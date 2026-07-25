@@ -42,8 +42,8 @@ public class PortEventHandler {
     }
 
     public static <E extends Event> void postEvent(E event) {
-        if (event instanceof IModBusEvent modBusEvent) {
-            ModLoader.get().postEvent((Event & IModBusEvent) modBusEvent);
+        if (event instanceof IModBusEvent) {
+            ModLoader.get().postEvent((Event & IModBusEvent) event);
         } else {
             MinecraftForge.EVENT_BUS.post(event);
         }
