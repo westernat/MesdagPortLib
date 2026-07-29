@@ -21,11 +21,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements IPortPacket.S2C {
+    private static final int MAX_REGISTRIES = 256;
+    private static final int MAX_DATA_MAPS_PER_REGISTRY = 4_096;
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("known_registry_data_maps");
     public static final PortStreamCodec<FriendlyByteBuf, PortKnownRegistryDataMapsPayload> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize, PortByteBufCodecs.registryKey(),
-                    KnownDataMap.STREAM_CODEC.apply(PortByteBufCodecs.list())
+                    KnownDataMap.STREAM_CODEC.apply(PortByteBufCodecs.list(MAX_DATA_MAPS_PER_REGISTRY)),
+                    MAX_REGISTRIES
             ), PortKnownRegistryDataMapsPayload::dataMaps,
             PortKnownRegistryDataMapsPayload::new
     );

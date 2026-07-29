@@ -110,7 +110,7 @@ public interface IPortItemStackExtension {
     }
 
     default void setCustomModelData(int data) {
-        self().getOrCreateTag().putInt("portlib:custom_model_data", data);
+        PortItemStackExtension.setCustomModelData(self(), data);
     }
 
     default boolean getShowEnchantmentsTooltip() {
@@ -454,9 +454,15 @@ public interface IPortItemStackExtension {
         PortItemStackExtension.limitSize(self(), maxSize);
     }
 
-    /// not replace vanilla yet
+    /**
+     * 返回当前使用者上下文中的物品使用时长。
+     *
+     * <p>1.21 的物品栈会把物品栈和使用者一起交给物品。1.20 原版只有无使用者参数的
+     * 入口，因此桥接层必须显式转发到 {@link IPortItemExtension}；退回原版方法会让需要
+     * 玩家上下文的移植物品丢失自定义时长。</p>
+     */
     default int getUseDuration(LivingEntity living) {
-        return self().getUseDuration();
+        return IPortItemExtension.of(self().getItem()).getUseDuration(self(), living);
     }
 
     default void setRarity(Rarity rarity) {

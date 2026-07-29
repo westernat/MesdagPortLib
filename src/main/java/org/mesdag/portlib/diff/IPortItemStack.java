@@ -25,7 +25,17 @@ public interface IPortItemStack extends IPortItemStackExtension, PortSelfGetter<
     PortPatchedDataComponentMap portlib$patch();
 
     default void updateTag() {
-        portlib$self().getOrCreateTag().put(DATA_COMPONENTS, portlib$patch().serializeNBT(PortEnvironment.registryAccess()));
+        if (portlib$patch().isEmpty()) {
+            var tag = portlib$self().getTag();
+            if (tag != null) {
+                tag.remove(DATA_COMPONENTS);
+            }
+            return;
+        }
+        portlib$self().getOrCreateTag().put(
+                DATA_COMPONENTS,
+                portlib$patch().serializeNBT(
+                        PortEnvironment.registryAccess()));
     }
 
     static IPortItemStack of(ItemStack stack) {

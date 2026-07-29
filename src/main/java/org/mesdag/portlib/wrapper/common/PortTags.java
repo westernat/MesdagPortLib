@@ -461,6 +461,9 @@ public class PortTags {
 
     public static class EntityTypes {
         public static final TagKey<EntityType<?>> DEFLECTS_PROJECTILES = mc("deflects_projectiles");
+        public static final TagKey<EntityType<?>> ARTHROPOD = mc("arthropod");
+        public static final TagKey<EntityType<?>> AQUATIC = mc("aquatic");
+        public static final TagKey<EntityType<?>> CAN_BREATHE_UNDER_WATER = mc("can_breathe_under_water");
         public static final TagKey<EntityType<?>> UNDEAD = mc("undead");
         public static final TagKey<EntityType<?>> ZOMBIES = mc("zombies");
 

@@ -9,9 +9,11 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +26,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.diff.IPortItem;
@@ -33,6 +37,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.client.PortAddAttributeTooltipsEvent;
 import org.mesdag.portlib.event.client.PortGatherSkippedAttributeTooltipsEvent;
 import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
+import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
@@ -75,6 +80,26 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Unique
     private PortPatchedDataComponentMap portlib$patch = PortPatchedDataComponentMap.EMPTY;
 
+    /**
+     * 让 1.20.1 的物品栈能够直接匹配 PortLib 延迟注册项。
+     *
+     * <p>该版本原版的 {@code ItemStack.is(Holder)} 只比较 Holder 对象身份，而
+     * 1.21 的调用方可以直接传入延迟注册包装。PortRegistryEntry 并不是原版注册表
+     * 创建的 Holder 实例，所以即使内部物品完全相同，原版比较也会返回 false。
+     * 这里只对 PortLib 自身的注册包装补充值身份比较，不改变原版 Holder 的语义。</p>
+     */
+    @Inject(
+            method = "is(Lnet/minecraft/core/Holder;)Z",
+            at = @At("HEAD"),
+            cancellable = true)
+    private void portlib$matchRegistryEntry(
+            Holder<Item> holder,
+            CallbackInfoReturnable<Boolean> cir) {
+        if (holder instanceof PortRegistryEntry<?, ?> entry) {
+            cir.setReturnValue(entry.value() == getItem());
+        }
+    }
+
     @Inject(method = "forgeInit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;gatherCapabilities(Ljava/util/function/Supplier;)V"), remap = false)
     private void init(CallbackInfo ci) {
         assert delegate != null;
@@ -97,6 +122,10 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Override
     public void portlib$setFood(@Nullable FoodProperties food, boolean encode) {
+        if (encode && food != null) {
+            // getOrCreateTag 可能触发 setTag；必须先完成标签初始化，再写入缓存。
+            getOrCreateTag();
+        }
         this.portlib$food = food;
         if (encode) {
             if (food == null) {
@@ -117,6 +146,10 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Override
     public void portlib$setTool(@Nullable PortTool tool, boolean encode) {
+        if (encode && tool != null) {
+            // 与食物组件一致，防止首次创建标签时把刚写入的缓存立即清空。
+            getOrCreateTag();
+        }
         this.portlib$tool = tool;
         if (encode) {
             if (tool == null) {
@@ -146,8 +179,76 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "hasFoil", at = @At("HEAD"), cancellable = true)
     private void override(CallbackInfoReturnable<Boolean> cir) {
-        if (PortItemStackExtension.getEnchantmentGlintOverride(portlib$self())) {
-            cir.setReturnValue(true);
+        if (PortItemStackExtension.hasEnchantmentGlintOverride(portlib$self())) {
+            cir.setReturnValue(
+                    PortItemStackExtension.getEnchantmentGlintOverride(
+                            portlib$self()));
+        }
+    }
+
+    /**
+     * 使用栈上的工具组件决定挖掘速度。
+     *
+     * <p>1.20.1 的镐、斧等旧工具类各自覆盖了物品方法，而 1.21 已把这些
+     * 参数统一放进栈组件。必须在物品栈入口接管，才能避免旧类覆盖新组件。
+     * 没有工具组件时不介入原版和模组物品逻辑。</p>
+     */
+    @Inject(method = "getDestroySpeed", at = @At("HEAD"),
+            cancellable = true)
+    private void portlib$useToolMiningSpeed(
+            BlockState state,
+            CallbackInfoReturnable<Float> cir) {
+        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        if (tool != null) {
+            cir.setReturnValue(tool.getMiningSpeed(state));
+        }
+    }
+
+    /**
+     * 按照 1.21 工具组件的规则处理破坏方块和耐久消耗。
+     *
+     * <p>有组件时不再调用 1.20.1 旧工具类的破坏实现，否则旧实现会额外
+     * 扣除一次耐久。非客户端、方块硬度非零且消耗值大于零时，仅按
+     * {@code damage_per_block} 扣除一次，并保持原版使用统计。</p>
+     */
+    @Inject(method = "mineBlock", at = @At("HEAD"), cancellable = true)
+    private void portlib$useToolDurability(
+            Level level,
+            BlockState state,
+            BlockPos pos,
+            Player player,
+            CallbackInfo ci) {
+        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        if (tool == null) {
+            return;
+        }
+        if (!level.isClientSide
+                && state.getDestroySpeed(level, pos) != 0.0F
+                && tool.damagePerBlock() > 0) {
+            PortItemStackExtension.hurtAndBreak(
+                    portlib$self(),
+                    tool.damagePerBlock(),
+                    player,
+                    EquipmentSlot.MAINHAND);
+        }
+        player.awardStat(Stats.ITEM_USED.get(getItem()));
+        ci.cancel();
+    }
+
+    /**
+     * 使用栈上的工具组件判断方块是否会掉落战利品。
+     *
+     * <p>1.20.1 的物品接口没有接收物品栈，无法表达 1.21 的逐栈工具组件。
+     * 因此在物品栈这一层补充判定；没有工具组件时保留物品原有逻辑。</p>
+     */
+    @Inject(method = "isCorrectToolForDrops", at = @At("HEAD"),
+            cancellable = true)
+    private void portlib$useToolDropRule(
+            net.minecraft.world.level.block.state.BlockState state,
+            CallbackInfoReturnable<Boolean> cir) {
+        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        if (tool != null) {
+            cir.setReturnValue(tool.isCorrectForDrops(state));
         }
     }
 
@@ -167,8 +268,14 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "setTag", at = @At("TAIL"))
     private void load2(@Nullable CompoundTag compoundTag, CallbackInfo ci) {
+        // 整体替换 NBT 后，所有由旧标签延迟解析出的缓存都必须失效。
+        portlib$food = null;
+        portlib$tool = null;
         if (compoundTag != null) {
             portlib$patch.load(compoundTag);
+        } else {
+            // setTag(null) 与设置不含组件数据的新标签一样，表示整体替换并清除旧补丁。
+            portlib$patch.load(new CompoundTag());
         }
     }
 

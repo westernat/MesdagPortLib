@@ -7,7 +7,7 @@ import org.mesdag.portlib.wrapper.common.extensions.IPortAbstractArrowExtension;
 
 @Diff
 public interface IPortAbstractArrow extends IPortAbstractArrowExtension {
-    ItemStack portlib$getPickupItem();
+    @Nullable ItemStack portlib$getPickupItem();
 
     void portlib$setPickupItem(ItemStack stack);
 

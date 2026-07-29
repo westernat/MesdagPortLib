@@ -31,6 +31,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class PortEventHooks {
+    /**
+     * Forge 会并行构造多个模组；事件包装类的静态初始化因此可能同时注册。
+     * 三张表共同描述一次注册，必须在同一把锁下写入和读取快照。
+     */
+    private static final Object REGISTRY_LOCK = new Object();
     private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Function<? extends Event, ? extends PortEvent<?>>> wrappers = HashBasedTable.create();
     private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new Reference2ObjectOpenHashMap<>();
     private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Predicate<? extends Event>> predicates = HashBasedTable.create();
@@ -60,8 +65,14 @@ public class PortEventHooks {
 
     @Diff
     public static <F extends Event, T extends PortEvent<?>> void registerPredicated(Class<F> from, Class<T> to, Function<F, T> wrapper, Predicate<F> predicate) {
-        register(from, to, wrapper);
-        predicates.put(from, to, predicate);
+        validateIfPortEvent(from);
+        validateIfAbstract(from);
+        validateIfAbstract(to);
+        synchronized (REGISTRY_LOCK) {
+            wrappers.put(from, to, wrapper);
+            rawGetter.put(to, from);
+            predicates.put(from, to, predicate);
+        }
     }
 
     @Diff
@@ -69,8 +80,10 @@ public class PortEventHooks {
         validateIfPortEvent(from);
         validateIfAbstract(from);
         validateIfAbstract(to);
-        wrappers.put(from, to, wrapper);
-        rawGetter.put(to, from);
+        synchronized (REGISTRY_LOCK) {
+            wrappers.put(from, to, wrapper);
+            rawGetter.put(to, from);
+        }
     }
 
     @Diff
@@ -136,22 +149,31 @@ public class PortEventHooks {
     @SuppressWarnings("unchecked")
     static <F extends Event, T extends PortEvent<?>> void wrapEvent(PortEventPriority priority, boolean receiveCancelled, Class<F> from, Consumer<F> consumer) {
         if (PortEvent.class.isAssignableFrom(from)) {
-            Class<F> rawFrom = (Class<F>) rawGetter.get(from);
+            Class<F> rawFrom;
+            synchronized (REGISTRY_LOCK) {
+                rawFrom = (Class<F>) rawGetter.get(from);
+            }
             if (rawFrom == null) {
                 try {
                     Class.forName(from.getName(), true, from.getClassLoader()); // cinit
-                    rawFrom = (Class<F>) rawGetter.get(from);
+                    synchronized (REGISTRY_LOCK) {
+                        rawFrom = (Class<F>) rawGetter.get(from);
+                    }
                 } catch (Exception ignored) {}
             }
             if (rawFrom == null) {
                 PortLib.LOGGER.warn("Failed to find wrapped class for {}", from);
             } else {
-                Function<F, T> wrapper = (Function<F, T>) wrappers.get(rawFrom, from);
+                Function<F, T> wrapper;
+                Predicate<F> predicate;
+                synchronized (REGISTRY_LOCK) {
+                    wrapper = (Function<F, T>) wrappers.get(rawFrom, from);
+                    predicate = (Predicate<F>) predicates.get(rawFrom, from);
+                }
                 if (wrapper == null) {
                     PortLib.LOGGER.warn("Failed to find wrapper function for {}", rawFrom);
                 } else {
                     PortBus bus = IModBusEvent.class.isAssignableFrom(rawFrom) ? PortBus.MOD : PortBus.GAME;
-                    Predicate<F> predicate = (Predicate<F>) predicates.get(rawFrom, from);
                     bus.unwrap(getCallerModId()).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
                         if (predicate == null || predicate.test(raw)) {
                             consumer.accept((F) wrapper.apply(raw));

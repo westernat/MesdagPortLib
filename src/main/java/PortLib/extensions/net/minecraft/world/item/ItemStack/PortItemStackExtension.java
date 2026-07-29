@@ -122,9 +122,6 @@ public class PortItemStackExtension {
             OPTIONAL_STREAM_CODEC.encode(buffer, value);
         }
     };
-    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> OPTIONAL_LIST_STREAM_CODEC = OPTIONAL_STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
-    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> LIST_STREAM_CODEC = STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
-
     public static Codec<Holder<Item>> itemNonAirCodec() {
         return ITEM_NON_AIR_CODEC;
     }
@@ -162,11 +159,39 @@ public class PortItemStackExtension {
     }
 
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> optionalListStreamCodec() {
-        return OPTIONAL_LIST_STREAM_CODEC;
+        return OPTIONAL_STREAM_CODEC.apply(
+                PortByteBufCodecs.collection(
+                        NonNullList::createWithCapacity));
     }
 
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> listStreamCodec() {
-        return LIST_STREAM_CODEC;
+        return STREAM_CODEC.apply(
+                PortByteBufCodecs.collection(
+                        NonNullList::createWithCapacity));
+    }
+
+    /**
+     * 创建带元素数量上限的可空物品列表编解码器。
+     */
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> optionalListStreamCodec(
+            int maxSize
+    ) {
+        return OPTIONAL_STREAM_CODEC.apply(
+                PortByteBufCodecs.collection(
+                        NonNullList::createWithCapacity,
+                        maxSize));
+    }
+
+    /**
+     * 创建带元素数量上限的非空物品列表编解码器。
+     */
+    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> listStreamCodec(
+            int maxSize
+    ) {
+        return STREAM_CODEC.apply(
+                PortByteBufCodecs.collection(
+                        NonNullList::createWithCapacity,
+                        maxSize));
     }
 
     private static DataResult<ItemStack> validateStrict(ItemStack stack) {
@@ -288,10 +313,19 @@ public class PortItemStackExtension {
         return thiz.hasAdventureModeBreakTagForBlock(PortEnvironment.registryAccess().registryOrThrow(Registries.BLOCK), block);
     }
 
-    // todo
     public static int getCustomModelData(ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
-        return tag == null ? 0 : tag.getInt("portlib:custom_model_data");
+        return tag == null ? 0 : tag.getInt("CustomModelData");
+    }
+
+    /**
+     * 使用 1.20 原版模型谓词识别的 NBT 键保存自定义模型数据。
+     *
+     * <p>这里不能使用 PortLib 私有键，否则代码虽然能读回数值，原版
+     * {@code custom_model_data} 谓词却永远看不到它。</p>
+     */
+    public static void setCustomModelData(ItemStack thiz, int data) {
+        thiz.getOrCreateTag().putInt("CustomModelData", data);
     }
 
     private static boolean getShowTooltipPart(ItemStack stack, ItemStack.TooltipPart part) {
@@ -450,11 +484,23 @@ public class PortItemStackExtension {
     }
 
     public static boolean getEnchantmentGlintOverride(ItemStack thiz) {
-        return getUnit(thiz, "portlib:enchantment_glint_override");
+        CompoundTag tag = thiz.getTag();
+        return tag != null
+                && tag.getBoolean("portlib:enchantment_glint_override");
+    }
+
+    public static boolean hasEnchantmentGlintOverride(ItemStack thiz) {
+        CompoundTag tag = thiz.getTag();
+        return tag != null
+                && tag.contains(
+                        "portlib:enchantment_glint_override",
+                        Tag.TAG_BYTE);
     }
 
     public static void setEnchantmentGlintOverride(ItemStack thiz, boolean override) {
-        setUnit(thiz, "portlib:enchantment_glint_override", override);
+        // false 也是有效覆盖值，不能像无值组件一样删除。
+        thiz.getOrCreateTag().putBoolean(
+                "portlib:enchantment_glint_override", override);
     }
 
     // todo AbstractArrow类
@@ -493,12 +539,11 @@ public class PortItemStackExtension {
         setUnit(thiz, "portlib:fire_resistant", resistant);
     }
 
-    // todo 功能
     public static @Nullable PortTool getTool(ItemStack thiz) {
         IPortItemStack iStack = IPortItemStack.of(thiz);
         PortTool tool = iStack.portlib$getTool();
         if (tool == null) {
-            CompoundTag data = thiz.getTagElement(PortFoodProperties.KEY);
+            CompoundTag data = thiz.getTagElement(PortTool.KEY);
             if (data != null) {
                 tool = PortTool.load(data);
                 iStack.portlib$setTool(tool, false);
@@ -519,10 +564,9 @@ public class PortItemStackExtension {
     }
 
     public static void setStoredEnchantments(ItemStack thiz, PortItemEnchantments value) {
-        CompoundTag tag = thiz.getTag();
-        if (tag != null && tag.contains(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, Tag.TAG_LIST)) {
-            thiz.getOrCreateTag().put(EnchantedBookItem.TAG_STORED_ENCHANTMENTS, value.getListTag().copy());
-        }
+        thiz.getOrCreateTag().put(
+                EnchantedBookItem.TAG_STORED_ENCHANTMENTS,
+                value.getListTag().copy());
         setShowStoredEnchantmentsTooltip(thiz, value.showInTooltip);
     }
 
@@ -691,6 +735,9 @@ public class PortItemStackExtension {
     }
 
     public static <T> @Nullable T setData(ItemStack thiz, PortDataComponentType<T> type, T value) {
+        // 首次创建原版 NBT 会内部调用 setTag。必须先完成该步骤，再写组件补丁，
+        // 否则 setTag 的“整体替换”语义会把刚写入的内存补丁立即清除。
+        thiz.getOrCreateTag();
         IPortItemStack i = IPortItemStack.of(thiz);
         T t = i.portlib$patch().set(type, value);
         i.updateTag();
@@ -702,6 +749,9 @@ public class PortItemStackExtension {
     }
 
     public static <T> @Nullable T removeData(ItemStack thiz, PortDataComponentType<T> type) {
+        // 与 setData 保持同一顺序，确保删除默认组件形成的空 Optional 不会在
+        // 首次创建 NBT 容器时丢失。
+        thiz.getOrCreateTag();
         IPortItemStack i = IPortItemStack.of(thiz);
         T t = i.portlib$patch().remove(type);
         i.updateTag();
@@ -784,7 +834,7 @@ public class PortItemStackExtension {
     }
 
     public static ItemStack transmuteCopy(ItemStack thiz, ItemLike item) {
-        return null;
+        return transmuteCopy(thiz, item, thiz.getCount());
     }
 
     public static ItemStack transmuteCopy(ItemStack thiz, ItemLike item, int count) {
@@ -792,7 +842,17 @@ public class PortItemStackExtension {
     }
 
     private static ItemStack transmuteCopyIgnoreEmpty(ItemStack thiz, ItemLike item, int count) {
-        return new ItemStack(item, count, thiz.getTag());
+        CompoundTag tag = thiz.getTag();
+        ItemStack converted = new ItemStack(item, count);
+        /*
+         * 1.20 的三参数 ItemStack 构造方法第三项是 Forge capability NBT，
+         * 并不是物品标签。必须显式 setTag，才能把由 NBT 模拟的 1.21 组件补丁
+         * 应用到目标物品，同时让 Mixin 以目标物品原型重新解析补丁。
+         */
+        if (tag != null) {
+            converted.setTag(tag.copy());
+        }
+        return converted;
     }
 
     public static void consume(ItemStack thiz, int amount, @Nullable LivingEntity living) {

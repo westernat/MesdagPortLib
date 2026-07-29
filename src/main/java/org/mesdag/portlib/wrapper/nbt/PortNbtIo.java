@@ -20,7 +20,8 @@ public class PortNbtIo {
 
     private static Tag readTagSafe(DataInput input, NbtAccounter accounter, byte type) {
         try {
-            return TagTypes.getType(type).load(input, 512, accounter);
+            // load 的第二个参数表示当前嵌套深度，不是允许的最大深度；根标签必须从零开始计数。
+            return TagTypes.getType(type).load(input, 0, accounter);
         } catch (IOException ioexception) {
             CrashReport crashreport = CrashReport.forThrowable(ioexception, "Loading NBT data");
             CrashReportCategory crashreportcategory = crashreport.addCategory("NBT Tag");

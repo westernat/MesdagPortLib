@@ -16,10 +16,11 @@ public record PortSyncEffectParticlesS2C(
         int entityId,
         List<ParticleOptions> list
 ) implements IPortPacket.S2C {
+    private static final int MAX_EFFECT_PARTICLES = 256;
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("sync_effect_particles");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncEffectParticlesS2C> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.VAR_INT, PortSyncEffectParticlesS2C::entityId,
-            PortParticleOptionsExtension.streamCodec().apply(PortByteBufCodecs.list()), PortSyncEffectParticlesS2C::list,
+            PortParticleOptionsExtension.streamCodec().apply(PortByteBufCodecs.list(MAX_EFFECT_PARTICLES)), PortSyncEffectParticlesS2C::list,
             PortSyncEffectParticlesS2C::new
     );
 

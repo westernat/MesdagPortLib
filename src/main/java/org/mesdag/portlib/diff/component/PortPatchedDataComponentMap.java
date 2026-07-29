@@ -7,9 +7,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -32,6 +30,12 @@ import java.util.Set;
 @Diff
 @SuppressWarnings("unchecked")
 public class PortPatchedDataComponentMap implements PortDataComponentMap {
+    private static final int DATA_VERSION = 1;
+    private static final int MAX_SERIALIZED_COMPONENTS = 256;
+    private static final String VERSION_KEY = "version";
+    private static final String VALUES_KEY = "values";
+    private static final String REMOVED_KEY = "removed";
+
     public static final PortPatchedDataComponentMap EMPTY = new PortPatchedDataComponentMap(null) {
         @Override
         public <T> @Nullable T set(PortDataComponentType<T> type, T value) {
@@ -107,24 +111,51 @@ public class PortPatchedDataComponentMap implements PortDataComponentMap {
     }
 
     public CompoundTag serializeNBT(RegistryAccess provider) {
-        CompoundTag tag = new CompoundTag();
+        CompoundTag root = new CompoundTag();
+        root.putInt(VERSION_KEY, DATA_VERSION);
+        CompoundTag values = new CompoundTag();
+        ListTag removed = new ListTag();
         RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
         for (Map.Entry<PortDataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
             var type = entry.getKey();
             var key = PortRegistries.DATA_COMPONENTS.getKey(type);
-            if (type.codec == null || entry.getValue().isEmpty()) continue;
+            if (key == null || type.codec == null) continue;
+            if (entry.getValue().isEmpty()) {
+                removed.add(StringTag.valueOf(key.toString()));
+                continue;
+            }
             try {
-                ((Codec<Object>) type.codec).encodeStart(ops, entry.getValue().get()).result().ifPresent(result -> tag.put(key.toString(), result));
+                ((Codec<Object>) type.codec)
+                        .encodeStart(ops, entry.getValue().get())
+                        .resultOrPartial(message -> PortLib.LOGGER.error(
+                                "Failed to serialize data component {}: {}",
+                                key, message))
+                        .ifPresent(result -> values.put(key.toString(), result));
             } catch (Exception exception) {
                 PortLib.LOGGER.error("Failed to serialize data component {}. Skipping.", key, exception);
             }
         }
-        return tag;
+        root.put(VALUES_KEY, values);
+        root.put(REMOVED_KEY, removed);
+        return root;
     }
 
-    public void deserializeNBT(RegistryAccess provider, CompoundTag tag) {
+    public void deserializeNBT(RegistryAccess provider, CompoundTag root) {
+        patch.clear();
+        if (root.getInt(VERSION_KEY) != DATA_VERSION) {
+            return;
+        }
+
         RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
-        for (var key : tag.getAllKeys()) {
+        CompoundTag values = root.getCompound(VALUES_KEY);
+        int inspected = 0;
+        for (var key : values.getAllKeys()) {
+            if (inspected++ >= MAX_SERIALIZED_COMPONENTS) {
+                PortLib.LOGGER.error(
+                        "Data component value budget exceeded: {}",
+                        MAX_SERIALIZED_COMPONENTS);
+                break;
+            }
             ResourceLocation keyLocation = ResourceLocation.tryParse(key);
             if (keyLocation == null) {
                 PortLib.LOGGER.error("Encountered invalid data component key {}. Skipping.", key);
@@ -138,16 +169,51 @@ public class PortPatchedDataComponentMap implements PortDataComponentMap {
             }
 
             try {
-                patch.put(type, type.codec.parse(ops, tag.get(key)).result());
+                type.codec.parse(ops, values.get(key))
+                        .resultOrPartial(message -> PortLib.LOGGER.error(
+                                "Failed to deserialize data component {}: {}",
+                                key, message))
+                        .ifPresent(value -> patch.put(type, Optional.of(value)));
             } catch (Exception exception) {
                 PortLib.LOGGER.error("Failed to deserialize data component {}. Skipping.", key, exception);
             }
+        }
+
+        ListTag removed = root.getList(REMOVED_KEY, Tag.TAG_STRING);
+        int removalCount = Math.min(
+                removed.size(), MAX_SERIALIZED_COMPONENTS);
+        for (int i = 0; i < removalCount; i++) {
+            String key = removed.getString(i);
+            ResourceLocation keyLocation = ResourceLocation.tryParse(key);
+            if (keyLocation == null) {
+                PortLib.LOGGER.error(
+                        "Encountered invalid removed data component key {}. Skipping.",
+                        key);
+                continue;
+            }
+            PortDataComponentType<?> type =
+                    PortRegistries.DATA_COMPONENTS.get(keyLocation);
+            if (type == null || type.codec == null) {
+                PortLib.LOGGER.error(
+                        "Encountered unknown or non-serializable removed data component {}. Skipping.",
+                        key);
+                continue;
+            }
+            patch.put(type, Optional.empty());
+        }
+        if (removed.size() > MAX_SERIALIZED_COMPONENTS) {
+            PortLib.LOGGER.error(
+                    "Removed data component budget exceeded: {}",
+                    MAX_SERIALIZED_COMPONENTS);
         }
     }
 
     public void load(CompoundTag tag) {
         if (tag.contains(IPortItemStack.DATA_COMPONENTS, Tag.TAG_COMPOUND)) {
             deserializeNBT(PortEnvironment.registryAccess(), tag.getCompound(IPortItemStack.DATA_COMPONENTS));
+        } else {
+            // setTag 会整体替换物品栈 NBT；新标签未携带组件补丁时，旧内存补丁也必须同步清空。
+            patch.clear();
         }
     }
 
@@ -158,5 +224,17 @@ public class PortPatchedDataComponentMap implements PortDataComponentMap {
     @Diff
     public PortDataComponentMap getPrototype() {
         return prototype;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof PortPatchedDataComponentMap other)) return false;
+        return prototype == other.prototype && patch.equals(other.patch);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * System.identityHashCode(prototype) + patch.hashCode();
     }
 }

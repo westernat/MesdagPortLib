@@ -43,6 +43,7 @@ public class PortLanguageProvider extends LanguageProvider {
         addAttribute(PortLib.SAFE_FALL_DISTANCE, "Safe Fall Distance", "安全摔落距离");
         addAttribute(PortLib.SCALE, "Scale", "体型缩放");
         addAttribute(PortLib.SNEAKING_SPEED, "Sneaking Speed", "潜行速度");
+        addAttribute(PortLib.STEP_HEIGHT, "Step Height", "跨步高度");
         addAttribute(PortLib.SUBMERGED_MINING_SPEED, "Submerged Mining Speed", "水下挖掘速度");
         addAttribute(PortLib.SWEEPING_DAMAGE_RATIO, "Sweeping Damage Ratio", "横扫伤害比例");
         addAttribute(PortLib.WATER_MOVEMENT_EFFICIENCY, "Water Movement Efficiency", "水中移动效率");

@@ -323,9 +323,20 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     // region attributes
 
-    @WrapOperation(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getDepthStrider(Lnet/minecraft/world/entity/LivingEntity;)I"))
-    private int applyWaterMovementEfficiency(LivingEntity entity, Operation<Integer> original) {
-        return (int) (original.call(entity) * entity.getAttributeValue(PortAttributesExtension.waterMovementEfficiency()));
+    /**
+     * 把 1.21 的连续水中移动效率换算为 1.20 水中移动公式使用的三档系数。
+     *
+     * <p>这里修改刚写入的浮点局部变量，而不是把效率乘到整数附魔等级上。这样没有
+     * 深海探索者时效率仍会生效，0 到 1 的小数值也不会因整数截断而丢失。</p>
+     */
+    @ModifyVariable(
+            method = "travel",
+            at = @At(value = "STORE", ordinal = 0),
+            name = "f6")
+    private float applyWaterMovementEfficiency(float depthStrider) {
+        float efficiency = (float) portlib$self().getAttributeValue(
+                PortAttributesExtension.waterMovementEfficiency());
+        return Math.max(depthStrider, efficiency * 3.0F);
     }
 
     @ModifyReturnValue(method = "getBlockSpeedFactor", at = @At("RETURN"))

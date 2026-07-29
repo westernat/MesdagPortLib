@@ -40,6 +40,9 @@ public record PortRegistryDataMapSyncPayload<T>(
         ResourceKey<? extends Registry<T>> registryKey,
         Map<ResourceLocation, Map<ResourceKey<T>, ?>> dataMaps
 ) implements IPortPacket.S2C {
+    private static final int MAX_DATA_MAPS = 4096;
+    private static final int MAX_ENTRIES_PER_DATA_MAP = 65536;
+    private static final int MAX_JSON_LENGTH = 262144;
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("registry_data_map_sync");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortRegistryDataMapSyncPayload<?>> STREAM_CODEC = PortStreamCodec.ofMember(
             PortRegistryDataMapSyncPayload::write, PortRegistryDataMapSyncPayload::decode);
@@ -48,8 +51,15 @@ public record PortRegistryDataMapSyncPayload<T>(
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) /* <- don't delete */ PortFriendlyByteBuf.readRegistryKey(buf);
         final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = PortFriendlyByteBufExtension.readMap(buf, PortResourceLocationExtension.streamCodec(), (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            return PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
-        });
+            return PortFriendlyByteBufExtension.readMap(
+                    b1,
+                    (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey),
+                    (FriendlyByteBuf bf, ResourceKey<T> k) ->
+                            readJsonWithRegistryCodec(
+                                    (PortRegistryFriendlyByteBuf) bf,
+                                    dataMap.networkCodec()),
+                    MAX_ENTRIES_PER_DATA_MAP);
+        }, MAX_DATA_MAPS);
         return new PortRegistryDataMapSyncPayload<>(registryKey, attach);
     }
 
@@ -57,21 +67,36 @@ public record PortRegistryDataMapSyncPayload<T>(
         buf.writeResourceKey(registryKey);
         PortFriendlyByteBufExtension.writeMap(buf, dataMaps, PortResourceLocationExtension.streamCodec(), (b1, key, attach) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            PortFriendlyByteBufExtension.writeMap(b1, (Map) attach, FriendlyByteBuf::writeResourceKey, (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
-        });
+            PortFriendlyByteBufExtension.writeMap(
+                    b1,
+                    (Map) attach,
+                    FriendlyByteBuf::writeResourceKey,
+                    (FriendlyByteBuf bf, ResourceKey<T> k, Object value) ->
+                            writeJsonWithRegistryCodec(
+                                    (PortRegistryFriendlyByteBuf) bf,
+                                    (Codec) dataMap.networkCodec(),
+                                    value),
+                    MAX_ENTRIES_PER_DATA_MAP);
+        }, MAX_DATA_MAPS);
     }
 
     private static final Gson GSON = new Gson();
 
     private static <T> T readJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec) {
-        JsonElement jsonelement = GsonHelper.fromJson(GSON, buf.readUtf(), JsonElement.class);
+        JsonElement jsonelement = GsonHelper.fromJson(
+                GSON, buf.readUtf(MAX_JSON_LENGTH), JsonElement.class);
         DataResult<T> dataresult = codec.parse(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), jsonelement);
         return PortDataResultExtension.getOrThrow(dataresult, name -> new DecoderException("Failed to decode json: " + name));
     }
 
     private static <T> void writeJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec, T value) {
         DataResult<JsonElement> dataresult = codec.encodeStart(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), value);
-        buf.writeUtf(GSON.toJson(PortDataResultExtension.getOrThrow(dataresult, message -> new EncoderException("Failed to encode: " + message + " " + value))));
+        buf.writeUtf(
+                GSON.toJson(PortDataResultExtension.getOrThrow(
+                        dataresult,
+                        message -> new EncoderException(
+                                "Failed to encode: " + message + " " + value))),
+                MAX_JSON_LENGTH);
     }
 
     @Override

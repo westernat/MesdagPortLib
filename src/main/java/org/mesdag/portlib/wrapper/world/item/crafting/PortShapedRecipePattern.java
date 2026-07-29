@@ -9,6 +9,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import net.minecraft.core.NonNullList;
@@ -205,6 +207,7 @@ public final class PortShapedRecipePattern {
     }
 
     private void toNetwork(PortRegistryFriendlyByteBuf buffer) {
+        validateNetworkDimensions(width, height, ingredients.size(), true);
         buffer.writeVarInt(width);
         buffer.writeVarInt(height);
 
@@ -214,11 +217,34 @@ public final class PortShapedRecipePattern {
     }
 
     private static PortShapedRecipePattern fromNetwork(PortRegistryFriendlyByteBuf buffer) {
-        int i = buffer.readVarInt();
-        int j = buffer.readVarInt();
-        NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i * j, Ingredient.EMPTY);
+        int width = buffer.readVarInt();
+        int height = buffer.readVarInt();
+        int ingredientCount = validateNetworkDimensions(width, height, -1, false);
+        NonNullList<Ingredient> nonnulllist = NonNullList.withSize(ingredientCount, Ingredient.EMPTY);
         nonnulllist.replaceAll(ingredient -> PortIngredientExtension.contentsStreamCodec().decode(buffer));
-        return new PortShapedRecipePattern(i, j, nonnulllist, Optional.empty());
+        return new PortShapedRecipePattern(width, height, nonnulllist, Optional.empty());
+    }
+
+    /**
+     * 在分配配方原料列表之前验证网络尺寸，避免负数、乘法溢出或恶意超大尺寸进入分配流程。
+     */
+    private static int validateNetworkDimensions(int width, int height, int ingredientCount, boolean encoding) {
+        long expectedCount = (long) width * height;
+        boolean valid = width > 0
+                && height > 0
+                && width <= getMaxWidth()
+                && height <= getMaxHeight()
+                && expectedCount <= Integer.MAX_VALUE
+                && (ingredientCount < 0 || ingredientCount == expectedCount);
+        if (!valid) {
+            String message = "Invalid shaped recipe dimensions: "
+                    + width + "x" + height + " with " + ingredientCount + " ingredients";
+            if (encoding) {
+                throw new EncoderException(message);
+            }
+            throw new DecoderException(message);
+        }
+        return (int) expectedCount;
     }
 
     public int width() {

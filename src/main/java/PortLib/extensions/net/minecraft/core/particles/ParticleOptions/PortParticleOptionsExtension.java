@@ -10,19 +10,24 @@ import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
 public class PortParticleOptionsExtension {
+    private static final int MAX_SERIALIZED_LENGTH = 2048;
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ParticleOptions> STREAM_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(PortRegistryFriendlyByteBuf buffer, ParticleOptions value) {
-            buffer.writeUtf(value.writeToString());
+            buffer.writeUtf(value.writeToString(), MAX_SERIALIZED_LENGTH);
         }
 
         @Override
         public ParticleOptions decode(PortRegistryFriendlyByteBuf buffer) {
             HolderLookup.RegistryLookup<ParticleType<?>> lookup = buffer.registryAccess().lookupOrThrow(Registries.PARTICLE_TYPE);
             try {
-                return ParticleArgument.readParticle(new StringReader(buffer.readUtf()), lookup);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to read particle options");
+                return ParticleArgument.readParticle(
+                        new StringReader(
+                                buffer.readUtf(MAX_SERIALIZED_LENGTH)),
+                        lookup);
+            } catch (Exception exception) {
+                throw new IllegalStateException(
+                        "Unable to read particle options", exception);
             }
         }
     };

@@ -42,11 +42,17 @@ public abstract class PortAbstractArrow extends AbstractArrow implements IPortPr
 
     @Override
     protected ItemStack getPickupItem() {
-        return PortAbstractArrowExtension.pickupItem(this);
+        return getPickupItemStackOrigin().copy();
     }
 
     public ItemStack getPickupItemStackOrigin() {
-        return PortAbstractArrowExtension.pickupItemStackOrigin(this);
+        IPortAbstractArrow arrow = IPortAbstractArrow.of(this);
+        ItemStack pickup = arrow.portlib$getPickupItem();
+        if (pickup == null || pickup.isEmpty()) {
+            arrow.portlib$setPickupItem(getDefaultPickupItem());
+            pickup = arrow.portlib$getPickupItem();
+        }
+        return pickup == null ? ItemStack.EMPTY : pickup;
     }
 
     @Override

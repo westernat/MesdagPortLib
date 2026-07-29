@@ -73,7 +73,8 @@
         "SlimeMixin",
         "StatsCounterMixin",
         "WitchMixin",
-        "WitherBossMixin"
+        "WitherBossMixin",
+        "WorkAtComposterAccessor"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -11,7 +11,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortEntity;
@@ -100,6 +102,30 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
             return (int) (ticks * living.getAttributeValue(PortAttributesExtension.burningTime()));
         }
         return ticks;
+    }
+
+    /**
+     * 返回 1.21 总值语义的跨步高度，并兼容只面向 Forge 1.20 增量属性的模组。
+     *
+     * <p>Forge 把 {@code getStepHeight} 作为接口默认方法提供，目标类没有可注入的方法体，
+     * 因此 Mixin 在实体类上补充同签名实现来覆盖默认方法。</p>
+     */
+    public float getStepHeight() {
+        Entity self = portlib$self();
+        if (!(self instanceof LivingEntity living)) {
+            return self.maxUpStep();
+        }
+        AttributeInstance totalHeight = living.getAttribute(
+                PortAttributesExtension.stepHeight().value());
+        float baseHeight = totalHeight == null
+                ? living.maxUpStep()
+                : (float) totalHeight.getValue();
+        AttributeInstance forgeAddition = living.getAttribute(
+                ForgeMod.STEP_HEIGHT_ADDITION.get());
+        float addition = forgeAddition == null
+                ? 0.0F
+                : (float) forgeAddition.getValue();
+        return Math.max(0.0F, baseHeight + addition);
     }
 
     // endregion attributes

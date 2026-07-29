@@ -1,9 +1,11 @@
 package org.mesdag.portlib;
 
+import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
@@ -15,6 +17,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -28,6 +32,7 @@ import net.minecraftforge.registries.RegistryObject;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.datamap.PortDataMapType;
+import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortLivingEntity;
@@ -35,12 +40,14 @@ import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
+import org.mesdag.portlib.diff.mixin.WorkAtComposterAccessor;
 import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
+import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
@@ -53,6 +60,8 @@ import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 @Mod(PortLib.MODID)
 public class PortLib {
@@ -128,6 +137,11 @@ public class PortLib {
             () -> new RangedAttribute("attribute.name.player.sneaking_speed", 0.3, 0.0, 1.0),
             maker -> maker.setSyncable(true)
     );
+    public static final PortRegistryEntry<Attribute, RangedAttribute> STEP_HEIGHT = ATTRIBUTES.register(
+            "generic.step_height",
+            () -> new RangedAttribute("attribute.name.generic.step_height", 0.6, 0.0, 10.0),
+            maker -> maker.setSyncable(true)
+    );
     public static final PortRegistryEntry<Attribute, RangedAttribute> SUBMERGED_MINING_SPEED = ATTRIBUTES.register(
             "player.submerged_mining_speed",
             () -> new RangedAttribute("attribute.name.player.submerged_mining_speed", 0.2, 0.0, 20.0),
@@ -152,8 +166,14 @@ public class PortLib {
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<PortAddTableLootModifier>> ADD_TABLE_LOOT_MODIFIER = GLOBAL_LOOT_MODIFIERS.register("add_table", () -> PortAddTableLootModifier.CODEC);
 
-    // todo datamap
+    public static final PortDataMapType<Item, PortCompostable> COMPOSTABLES = PortDataMapType.builder(
+            asResource("compostables"),
+            Registries.ITEM,
+            PortCompostable.CODEC
+    ).synced(PortCompostable.CHANCE_CODEC, false).build();
     public static final PortDataMapType<Item, PortFurnaceFuel> FURNACE_FUELS = PortDataMapType.builder(asResource("furnace_fuels"), Registries.ITEM, PortFurnaceFuel.CODEC).synced(PortFurnaceFuel.BURN_TIME_CODEC, false).build();
+    private static final Map<Item, Float> ORIGINAL_COMPOST_CHANCES = new IdentityHashMap<>();
+    private static final Set<Item> APPLIED_COMPOSTABLES = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<PortAddCarversBiomeModifier>> ADD_CARVERS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_carvers", () -> PortAddCarversBiomeModifier.CODEC);
@@ -183,10 +203,20 @@ public class PortLib {
             ATTRIBUTES.getEntries().stream().filter(entry -> entry.getId().getPath().startsWith("generic.")).forEach(entry -> {
                 for (EntityType<? extends LivingEntity> type : event.getTypes()) {
                     if (type == EntityType.PLAYER) continue;
-                    event.add(type, entry);
+                    /*
+                     * 平台桥只负责为旧版本缺失的属性补齐默认档案。模组在
+                     * EntityAttributeCreationEvent 中已经声明的物种专属值必须保留，
+                     * 否则这里再次 add 会把鸭子等实体的显式数值覆盖为属性默认值。
+                     */
+                    if (!event.has(type, entry)) {
+                        event.add(type, entry);
+                    }
                 }
             });
             for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
+                if (event.has(EntityType.PLAYER, entry)) {
+                    continue;
+                }
                 if (FLYING_SPEED.equals(entry)) {
                     event.add(EntityType.PLAYER, entry, 1.0);
                 } else {
@@ -196,7 +226,46 @@ public class PortLib {
         });
 
         PortEventHandler.addListener((PortRegisterDataMapTypesEvent event) -> {
+            event.register(COMPOSTABLES);
             event.register(FURNACE_FUELS);
+        });
+        PortEventHandler.addListener((PortDataMapsUpdatedEvent event) -> {
+            if (!event.getRegistryKey().equals(Registries.ITEM)) {
+                return;
+            }
+            for (Item item : APPLIED_COMPOSTABLES) {
+                float originalChance = ORIGINAL_COMPOST_CHANCES.get(item);
+                if (Float.isNaN(originalChance)) {
+                    ComposterBlock.COMPOSTABLES.removeFloat(item);
+                } else {
+                    ComposterBlock.COMPOSTABLES.put(item, originalChance);
+                }
+            }
+            APPLIED_COMPOSTABLES.clear();
+
+            List<Item> villagerCompostables = new ArrayList<>(
+                    List.of(Items.WHEAT_SEEDS, Items.BEETROOT_SEEDS));
+            BuiltInRegistries.ITEM.forEach(item -> {
+                PortCompostable compostable = PortHolderExtension.getData(item.builtInRegistryHolder(), COMPOSTABLES);
+                if (compostable == null) {
+                    return;
+                }
+                ORIGINAL_COMPOST_CHANCES.computeIfAbsent(item, key ->
+                        ComposterBlock.COMPOSTABLES.containsKey(key)
+                                ? ComposterBlock.COMPOSTABLES.getFloat(key)
+                                : Float.NaN);
+                ComposterBlock.COMPOSTABLES.put(item, compostable.chance());
+                APPLIED_COMPOSTABLES.add(item);
+                if (compostable.canVillagerCompost()) {
+                    if (!villagerCompostables.contains(item)) {
+                        villagerCompostables.add(item);
+                    }
+                } else {
+                    villagerCompostables.remove(item);
+                }
+            });
+            WorkAtComposterAccessor.portlib$setCompostableItems(
+                    List.copyOf(villagerCompostables));
         });
 
         if (DEBUG) {

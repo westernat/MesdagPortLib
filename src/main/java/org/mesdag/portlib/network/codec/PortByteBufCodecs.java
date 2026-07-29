@@ -137,6 +137,33 @@ public interface PortByteBufCodecs {
             buf.writeByteArray(value);
         }
     };
+
+    /**
+     * 创建带明确字节数上限的数组 codec。
+     *
+     * <p>网络协议应按消息用途声明上限，避免畸形长度在校验前触发大块内存分配。
+     * 编码和解码使用同一上限，使本地生成的异常载荷也能在离开发送端前失败。</p>
+     */
+    static <B extends ByteBuf> PortStreamCodec<B, byte[]> byteArray(int maxSize) {
+        if (maxSize < 0) {
+            throw new IllegalArgumentException("maxSize must be non-negative");
+        }
+        return new PortStreamCodec<>() {
+            @Override
+            public byte[] decode(B buffer) {
+                return PortFriendlyByteBuf.readByteArray(buffer, maxSize);
+            }
+
+            @Override
+            public void encode(B buffer, byte[] value) {
+                if (value.length > maxSize) {
+                    throw new EncoderException(
+                            "ByteArray with size " + value.length + " is bigger than allowed " + maxSize);
+                }
+                PortFriendlyByteBuf.writeByteArray(buffer, value);
+            }
+        };
+    }
     PortStreamCodec<ByteBuf, String> STRING_UTF8 = stringUtf8(32767);
     PortStreamCodec<ByteBuf, Tag> TAG = tagCodec(() -> new NbtAccounter(2097152L));
     PortStreamCodec<ByteBuf, Tag> TRUSTED_TAG = tagCodec(() -> new NbtAccounter(Long.MAX_VALUE));
@@ -275,6 +302,17 @@ public interface PortByteBufCodecs {
         return codec -> collection(ArrayList::new, codec);
     }
 
+    /**
+     * 创建带协议上限的列表 codec，对齐新版平台为业务包提供的有界集合能力。
+     *
+     * <p>PortLib 只提供“如何在 1.20 Forge 上表达上限”的桥；具体上限仍由调用它的
+     * 业务模块决定。解码会在创建集合之前拒绝负数和超限长度，编码也执行相同检查。</p>
+     */
+    static <B extends ByteBuf, V> PortStreamCodec.PortCodecOperation<B, V, List<V>> list(int maxSize) {
+        if (maxSize < 0) throw new IllegalArgumentException("maxSize must be non-negative");
+        return codec -> collection(ArrayList::new, codec, maxSize);
+    }
+
     static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec<B, C> collection(IntFunction<C> factory, PortStreamCodec<? super B, V> codec) {
         return collection(factory, codec, Integer.MAX_VALUE);
     }
@@ -283,17 +321,30 @@ public interface PortByteBufCodecs {
         return codec -> collection(factory, codec);
     }
 
+    /**
+     * 创建带元素数量上限的集合 codec 操作，供已有元素 codec 通过 {@code apply} 组合。
+     */
+    static <B extends ByteBuf, V, C extends Collection<V>> PortStreamCodec.PortCodecOperation<B, V, C> collection(
+            IntFunction<C> factory,
+            int maxSize
+    ) {
+        if (maxSize < 0) {
+            throw new IllegalArgumentException("maxSize must be non-negative");
+        }
+        return codec -> collection(factory, codec, maxSize);
+    }
+
     static int readCount(ByteBuf buffer, int maxSize) {
         int i = PortVarInt.read(buffer);
-        if (i > maxSize) {
-            throw new DecoderException(i + " elements exceeded max size of: " + maxSize);
+        if (i < 0 || i > maxSize) {
+            throw new DecoderException(i + " elements outside allowed size range 0.." + maxSize);
         }
         return i;
     }
 
     static void writeCount(ByteBuf buffer, int count, int maxSize) {
-        if (count > maxSize) {
-            throw new EncoderException(count + " elements exceeded max size of: " + maxSize);
+        if (count < 0 || count > maxSize) {
+            throw new EncoderException(count + " elements outside allowed size range 0.." + maxSize);
         }
         PortVarInt.write(buffer, count);
     }

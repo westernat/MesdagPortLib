@@ -21,12 +21,18 @@ import java.util.Map;
 
 @Diff
 public class PortKnownRegistryDataMapsReplyPayload extends PortLoginPacket implements IPortPacket.C2S {
+    private static final int MAX_REGISTRIES = 256;
+    private static final int MAX_DATA_MAPS_PER_REGISTRY = 4_096;
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("known_registry_data_maps_reply");
     public static final PortStreamCodec<FriendlyByteBuf, PortKnownRegistryDataMapsReplyPayload> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize,
                     PortByteBufCodecs.registryKey(),
-                    PortResourceLocationExtension.streamCodec().apply(PortByteBufCodecs.collection(ArrayList::new))
+                    PortByteBufCodecs.collection(
+                            ArrayList::new,
+                            PortResourceLocationExtension.streamCodec(),
+                            MAX_DATA_MAPS_PER_REGISTRY),
+                    MAX_REGISTRIES
             ), PortKnownRegistryDataMapsReplyPayload::dataMaps,
             PortKnownRegistryDataMapsReplyPayload::new
     );

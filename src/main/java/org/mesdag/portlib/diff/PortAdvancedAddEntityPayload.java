@@ -20,11 +20,12 @@ public record PortAdvancedAddEntityPayload(
         int entityId,
         byte[] customPayload
 ) implements IPortPacket.S2C {
+    private static final int MAX_CUSTOM_PAYLOAD_BYTES = 1_048_576;
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("portlib", "advanced_add_entity");
     public static final PortStreamCodec<FriendlyByteBuf, PortAdvancedAddEntityPayload> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.VAR_INT,
             PortAdvancedAddEntityPayload::entityId,
-            PortByteBufCodecs.UNBOUNDED_BYTE_ARRAY,
+            PortByteBufCodecs.byteArray(MAX_CUSTOM_PAYLOAD_BYTES),
             PortAdvancedAddEntityPayload::customPayload,
             PortAdvancedAddEntityPayload::new);
 

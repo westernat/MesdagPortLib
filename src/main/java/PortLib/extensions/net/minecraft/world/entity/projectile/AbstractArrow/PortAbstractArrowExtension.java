@@ -46,7 +46,14 @@ public class PortAbstractArrowExtension {
     }
 
     public static ItemStack pickupItemStackOrigin(AbstractArrow thiz) {
-        return IPortAbstractArrow.of(thiz).portlib$getPickupItem();
+        IPortAbstractArrow arrow = IPortAbstractArrow.of(thiz);
+        ItemStack pickup = arrow.portlib$getPickupItem();
+        if (pickup == null || pickup.isEmpty()) {
+            pickup = defaultPickupItem(thiz);
+            arrow.portlib$setPickupItem(pickup);
+            pickup = arrow.portlib$getPickupItem();
+        }
+        return pickup == null ? ItemStack.EMPTY : pickup;
     }
 
     public static ItemStack defaultPickupItem(AbstractArrow thiz) {

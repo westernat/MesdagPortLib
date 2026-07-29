@@ -9,6 +9,7 @@
   "attribute.name.generic.oxygen_bonus": "氧气加成",
   "attribute.name.generic.safe_fall_distance": "安全摔落距离",
   "attribute.name.generic.scale": "体型缩放",
+  "attribute.name.generic.step_height": "跨步高度",
   "attribute.name.generic.water_movement_efficiency": "水中移动效率",
   "attribute.name.player.block_break_speed": "方块破坏速度",
   "attribute.name.player.creative_flight": "创造飞行",
