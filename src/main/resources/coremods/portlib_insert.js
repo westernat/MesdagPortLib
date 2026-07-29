@@ -51,7 +51,7 @@ function initializeCoreMod() {
                 //   if (this.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(this)) { f /= 5.0F; }
                 // into:
                 //   if (this.isEyeInFluid(FluidTags.WATER)) {
-                //       float speed = (float) this.getAttributeValue((Attribute) PortAttributesExtension.submergedMiningSpeed().value());
+                //       float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
                 //       if (EnchantmentHelper.hasAquaAffinity(this)) { speed = Math.min(speed * 5.0F, 1.0F); }
                 //       f *= speed;
                 //   }
@@ -132,21 +132,16 @@ function initializeCoreMod() {
 
                         var newCode = new InsnList();
 
-                        // float speed = (float) this.getAttributeValue((Attribute) PortAttributesExtension.submergedMiningSpeed().value());
+                        // float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
                         newCode.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                             'PortLib/extensions/net/minecraft/world/entity/ai/attributes/Attributes/PortAttributesExtension',
                             'submergedMiningSpeed',
                             '()Lnet/minecraft/core/Holder;', false));
-                        newCode.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE,
-                            'net/minecraft/core/Holder',
-                            'value',
-                            '()Ljava/lang/Object;', true));
-                        newCode.add(new TypeInsnNode(Opcodes.CHECKCAST, 'net/minecraft/world/entity/ai/attributes/Attribute'));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                             'net/minecraft/world/entity/LivingEntity',
-                            'getAttributeValue',
-                            '(Lnet/minecraft/world/entity/ai/attributes/Attribute;)D', false));
+                            ASMAPI.mapMethod('m_246858_'), // getAttributeValue
+                            '(Lnet/minecraft/core/Holder;)D', false));
                         newCode.add(new InsnNode(Opcodes.D2F));
                         newCode.add(new VarInsnNode(Opcodes.FSTORE, speedVar));
 
