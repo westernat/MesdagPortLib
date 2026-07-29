@@ -13,6 +13,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,6 +21,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.PotionColorCalculationEvent;
@@ -61,6 +63,10 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     @Shadow
     @Final
     private Map<MobEffect, MobEffectInstance> activeEffects;
+
+    @Shadow
+    public abstract double getAttributeValue(Holder<Attribute> attribute);
+
     @Unique
     private Stack<PortDamageContainer> portlib$damageContainers = new Stack<>();
     @Unique
@@ -323,45 +329,39 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     // region attributes
 
-    /**
-     * 把 1.21 的连续水中移动效率换算为 1.20 水中移动公式使用的三档系数。
-     *
-     * <p>这里修改刚写入的浮点局部变量，而不是把效率乘到整数附魔等级上。这样没有
-     * 深海探索者时效率仍会生效，0 到 1 的小数值也不会因整数截断而丢失。</p>
-     */
-    @ModifyVariable(
-            method = "travel",
-            at = @At(value = "STORE", ordinal = 0),
-            name = "f6")
-    private float applyWaterMovementEfficiency(float depthStrider) {
-        float efficiency = (float) portlib$self().getAttributeValue(
-                PortAttributesExtension.waterMovementEfficiency());
-        return Math.max(depthStrider, efficiency * 3.0F);
+    /// 把 1.21 的连续水中移动效率换算为 1.20 水中移动公式使用的三档系数。
+    ///
+    /// 这里修改刚写入的浮点局部变量，而不是把效率乘到整数附魔等级上。这样没有
+    /// 深海探索者时效率仍会生效，0 到 1 的小数值也不会因整数截断而丢失。
+    @ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0), name = "f6")
+    private float applyWaterMovementEfficiency(float f6) {
+        float efficiency = (float) getAttributeValue(PortAttributesExtension.waterMovementEfficiency());
+        return Math.max(f6, efficiency * 3.0F);
     }
 
     @ModifyReturnValue(method = "getBlockSpeedFactor", at = @At("RETURN"))
     private float applyMovementEfficiency(float original) {
-        return Mth.lerp((float) portlib$self().getAttributeValue(PortAttributesExtension.movementEfficiency()), original, 1.0F);
+        return Mth.lerp((float) getAttributeValue(PortAttributesExtension.movementEfficiency()), original, 1.0F);
     }
 
     @ModifyArg(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
     private float applyFallDamageMultiplier(float damage) {
-        return (float) (damage * portlib$self().getAttributeValue(PortAttributesExtension.fallDamageMultiplier()));
+        return (float) (damage * getAttributeValue(PortAttributesExtension.fallDamageMultiplier()));
     }
 
     @ModifyExpressionValue(method = "calculateFallDamage", at = @At(value = "CONSTANT", args = "floatValue=3.0"))
     private float applySafeFallDistance(float original) {
-        return (float) portlib$self().getAttributeValue(PortAttributesExtension.safeFallDistance());
+        return (float) getAttributeValue(PortAttributesExtension.safeFallDistance());
     }
 
     @ModifyReturnValue(method = "increaseAirSupply", at = @At("RETURN"))
     private int applyOxygenBonus(int original) {
-        return Math.min(original + (int) portlib$self().getAttributeValue(PortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
+        return Math.min(original + (int) getAttributeValue(PortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
     }
 
     @ModifyVariable(method = "setAbsorptionAmount", at = @At("HEAD"), argsOnly = true)
     private float capAbsorption(float amount) {
-        float max = (float) portlib$self().getAttributeValue(PortAttributesExtension.maxAbsorption());
+        float max = (float) getAttributeValue(PortAttributesExtension.maxAbsorption());
         return max > 0 ? Math.min(amount, max) : amount;
     }
 
@@ -376,13 +376,13 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
     private float applyJumpStrength(float original) {
-        return (float) portlib$self().getAttributeValue(PortAttributesExtension.jumpStrength());
+        return (float) getAttributeValue(PortAttributesExtension.jumpStrength());
     }
 
     @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
     private float applySneakingSpeed(float original) {
         if (portlib$self().isCrouching()) {
-            return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.sneakingSpeed()));
+            return (float) (original * getAttributeValue(PortAttributesExtension.sneakingSpeed()));
         }
         return original;
     }

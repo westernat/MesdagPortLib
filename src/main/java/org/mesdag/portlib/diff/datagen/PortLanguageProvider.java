@@ -43,7 +43,6 @@ public class PortLanguageProvider extends LanguageProvider {
         addAttribute(PortLib.SAFE_FALL_DISTANCE, "Safe Fall Distance", "安全摔落距离");
         addAttribute(PortLib.SCALE, "Scale", "体型缩放");
         addAttribute(PortLib.SNEAKING_SPEED, "Sneaking Speed", "潜行速度");
-        addAttribute(PortLib.STEP_HEIGHT, "Step Height", "跨步高度");
         addAttribute(PortLib.SUBMERGED_MINING_SPEED, "Submerged Mining Speed", "水下挖掘速度");
         addAttribute(PortLib.SWEEPING_DAMAGE_RATIO, "Sweeping Damage Ratio", "横扫伤害比例");
         addAttribute(PortLib.WATER_MOVEMENT_EFFICIENCY, "Water Movement Efficiency", "水中移动效率");
@@ -62,6 +61,8 @@ public class PortLanguageProvider extends LanguageProvider {
 
         add("portlib.network.advanced_add_entity.failed", "Failed to process advanced entity spawn data: %s", "处理高级实体生成数据失败：%s");
         add("portlib.network.data_maps.failed", "Failed to handle registry data map sync for registry %s: %s", "处理注册表数据映射同步失败 %s: %s");
+        add("portlib.network.data_maps.missing_our", "Cannot connect to server as it is missing mandatory registry data maps present on the client: %s", "无法连接至服务器，因为客户端缺少必要的注册表数据映射：%s");
+        add("portlib.network.data_maps.missing_their", "Cannot connect to server as it has mandatory registry data maps not present on the client: %s", "无法连接至服务器，因为客户端上不存在必要的注册表数据映射：%s");
     }
 
     @Override

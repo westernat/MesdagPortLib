@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -36,6 +37,7 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.datamap.PortAdvancedDataMapType;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.datamap.PortDataMapValueMerger;
+import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 import org.mesdag.portlib.event.PortEventHandler;
@@ -135,10 +137,12 @@ public class PortDataMapLoader implements PreparableReloadListener {
     private <T> void apply(IForgeRegistry<T> registry, LoadResult<T> result) {
         ResourceKey<Registry<T>> registryKey = registry.getRegistryKey();
         clear(registryKey);
-        result.results().forEach((key, entries) -> {
+        PortCompostable.injectFake(result.results);
+        result.results.forEach((key, entries) -> {
             Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> innerMap = getInnerMap(registryKey);
-            innerMap.put(key, this.buildDataMap(registry, key, (List) entries));
+            innerMap.put(key, buildDataMap(registry, key, (List) entries));
         });
+        PortCompostable.doFill(getInnerMap(Registries.ITEM).get(PortLib.COMPOSTABLES));
         PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
     }
 

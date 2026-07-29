@@ -15,7 +15,8 @@ import java.util.function.Function;
 
 @Diff
 public record PortDataMapEntry<T>(T value, boolean replace) {
-    private PortDataMapEntry(T value) {
+    @Diff
+    public PortDataMapEntry(T value) {
         this(value, false);
     }
 

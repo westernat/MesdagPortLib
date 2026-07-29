@@ -11,9 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortEntity;
@@ -102,37 +100,6 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
             return (int) (ticks * living.getAttributeValue(PortAttributesExtension.burningTime()));
         }
         return ticks;
-    }
-
-    /**
-     * 返回 1.21 总值语义的跨步高度，并兼容只面向 Forge 1.20 增量属性的模组。
-     *
-     * <p>Forge 把 {@code getStepHeight} 作为接口默认方法提供，目标类没有可注入的方法体，
-     * 因此 Mixin 在实体类上补充同签名实现来覆盖默认方法。</p>
-     */
-    public float getStepHeight() {
-        Entity self = portlib$self();
-        if (!(self instanceof LivingEntity living)) {
-            return self.maxUpStep();
-        }
-        AttributeInstance totalHeight = living.getAttribute(
-                PortAttributesExtension.stepHeight().value());
-        float baseHeight = living.maxUpStep();
-        if (totalHeight != null) {
-            /*
-             * 1.20 的部分实体仍通过 maxUpStep 保存物种基础值。PortLib 属性只把
-             * “相对属性默认值的变化”叠加到该基础值上，既保留马等原版实体的
-             * 特殊高度，也允许调用方显式修改新版总值属性。
-             */
-            baseHeight += (float) (
-                    totalHeight.getValue() - totalHeight.getAttribute().getDefaultValue());
-        }
-        AttributeInstance forgeAddition = living.getAttribute(
-                ForgeMod.STEP_HEIGHT_ADDITION.get());
-        float addition = forgeAddition == null
-                ? 0.0F
-                : (float) forgeAddition.getValue();
-        return Math.max(0.0F, baseHeight + addition);
     }
 
     // endregion attributes

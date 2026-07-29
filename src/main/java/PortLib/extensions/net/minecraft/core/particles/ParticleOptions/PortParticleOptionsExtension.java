@@ -21,13 +21,9 @@ public class PortParticleOptionsExtension {
         public ParticleOptions decode(PortRegistryFriendlyByteBuf buffer) {
             HolderLookup.RegistryLookup<ParticleType<?>> lookup = buffer.registryAccess().lookupOrThrow(Registries.PARTICLE_TYPE);
             try {
-                return ParticleArgument.readParticle(
-                        new StringReader(
-                                buffer.readUtf(MAX_SERIALIZED_LENGTH)),
-                        lookup);
+                return ParticleArgument.readParticle(new StringReader(buffer.readUtf(MAX_SERIALIZED_LENGTH)), lookup);
             } catch (Exception exception) {
-                throw new IllegalStateException(
-                        "Unable to read particle options", exception);
+                throw new IllegalStateException("Unable to read particle options", exception);
             }
         }
     };

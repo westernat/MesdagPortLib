@@ -48,6 +48,6 @@ public class PortDataMapsUpdatedEvent extends Event {
 
     public enum PortUpdateCause {
         CLIENT_SYNC,
-        SERVER_RELOAD;
+        SERVER_RELOAD
     }
 }

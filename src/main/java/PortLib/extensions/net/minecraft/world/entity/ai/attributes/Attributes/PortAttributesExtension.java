@@ -26,7 +26,7 @@ public class PortAttributesExtension {
     private static final Supplier<Holder<Attribute>> SAFE_FALL_DISTANCE = Suppliers.memoize(() -> PortLib.SAFE_FALL_DISTANCE);
     private static final Supplier<Holder<Attribute>> SCALE = Suppliers.memoize(() -> PortLib.SCALE);
     private static final Supplier<Holder<Attribute>> SNEAKING_SPEED = Suppliers.memoize(() -> PortLib.SNEAKING_SPEED);
-    private static final Supplier<Holder<Attribute>> STEP_HEIGHT = Suppliers.memoize(() -> PortLib.STEP_HEIGHT);
+    private static final Supplier<Holder<Attribute>> STEP_HEIGHT = Suppliers.memoize(() -> new PortRegistryEntry<>(ForgeMod.STEP_HEIGHT_ADDITION));
     private static final Supplier<Holder<Attribute>> SUBMERGED_MINING_SPEED = Suppliers.memoize(() -> PortLib.SUBMERGED_MINING_SPEED);
     private static final Supplier<Holder<Attribute>> SWEEPING_DAMAGE_RATIO = Suppliers.memoize(() -> PortLib.SWEEPING_DAMAGE_RATIO);
     private static final Supplier<Holder<Attribute>> WATER_MOVEMENT_EFFICIENCY = Suppliers.memoize(() -> PortLib.WATER_MOVEMENT_EFFICIENCY);

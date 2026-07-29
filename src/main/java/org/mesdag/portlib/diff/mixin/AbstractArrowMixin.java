@@ -50,12 +50,10 @@ public abstract class AbstractArrowMixin implements IPortAbstractArrow {
         this.portlib$firedFromWeapon = stack == null || stack.isEmpty() ? null : stack.copyWithCount(1);
     }
 
-    /**
-     * 1.21 的箭矢本体保存实际拾取物和发射武器；1.20 没有这两个字段，因此桥层必须补齐。
-     * 这里只保存平台差异，不保存穿透、命中特效等具体玩法状态。
-     */
+    /// 1.21 的箭矢本体保存实际拾取物和发射武器；1.20 没有这两个字段，因此桥层必须补齐。
+    /// 这里只保存平台差异，不保存穿透、命中特效等具体玩法状态。
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    private void portlib$saveCompatibilityData(CompoundTag entityTag, CallbackInfo ci) {
+    private void portlib$saveCompatibilityData(CompoundTag compound, CallbackInfo ci) {
         if (portlib$pickupItemStack == null && portlib$firedFromWeapon == null) {
             return;
         }
@@ -67,20 +65,21 @@ public abstract class AbstractArrowMixin implements IPortAbstractArrow {
         if (portlib$firedFromWeapon != null) {
             bridgeTag.put(portlib$FIRED_FROM_WEAPON_TAG, portlib$firedFromWeapon.save(new CompoundTag()));
         }
-        entityTag.put(portlib$ROOT_TAG, bridgeTag);
+        compound.put(portlib$ROOT_TAG, bridgeTag);
     }
 
-    /** 当前格式缺失或损坏时清空桥接缓存，由具体箭矢按自身默认物品恢复。 */
+    /// 当前格式缺失或损坏时清空桥接缓存，由具体箭矢按自身默认物品恢复。
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void portlib$loadCompatibilityData(CompoundTag entityTag, CallbackInfo ci) {
+    private void portlib$loadCompatibilityData(CompoundTag compound, CallbackInfo ci) {
         portlib$pickupItemStack = null;
         portlib$firedFromWeapon = null;
-        if (!entityTag.contains(portlib$ROOT_TAG, Tag.TAG_COMPOUND)) {
+        if (!compound.contains(portlib$ROOT_TAG, Tag.TAG_COMPOUND)) {
             return;
         }
-        CompoundTag bridgeTag = entityTag.getCompound(portlib$ROOT_TAG);
-        if (!bridgeTag.contains(portlib$VERSION_TAG, Tag.TAG_INT)
-                || bridgeTag.getInt(portlib$VERSION_TAG) != portlib$CURRENT_FORMAT_VERSION) {
+        CompoundTag bridgeTag = compound.getCompound(portlib$ROOT_TAG);
+        if (!bridgeTag.contains(portlib$VERSION_TAG, Tag.TAG_INT) ||
+                bridgeTag.getInt(portlib$VERSION_TAG) != portlib$CURRENT_FORMAT_VERSION
+        ) {
             return;
         }
         if (bridgeTag.contains(portlib$PICKUP_ITEM_TAG, Tag.TAG_COMPOUND)) {

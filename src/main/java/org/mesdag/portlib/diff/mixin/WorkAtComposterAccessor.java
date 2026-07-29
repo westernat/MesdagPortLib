@@ -8,15 +8,17 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 
-/**
- * 允许 PortLib 在 Data Map 重载后刷新农民村民可投入堆肥桶的物品列表。
- */
+/// 允许 PortLib 在 Data Map 重载后刷新农民村民可投入堆肥桶的物品列表。
 @Mixin(WorkAtComposter.class)
 public interface WorkAtComposterAccessor {
     @Accessor("COMPOSTABLE_ITEMS")
     @Mutable
-    static void portlib$setCompostableItems(List<Item> items) {
-        throw new AssertionError(
-                "WorkAtComposter accessor was not transformed");
+    static void setCompostableItems(List<Item> items) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Accessor("COMPOSTABLE_ITEMS")
+    static List<Item> getCompostableItems() {
+        throw new UnsupportedOperationException();
     }
 }

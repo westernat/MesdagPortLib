@@ -29,7 +29,6 @@ public class PortGuiGraphicsExtension {
     ) {
         // 目标尺寸与源纹理尺寸必须分开传递。若使用参数较少的 1.20 blit 重载，
         // width/height 会同时充当源区域尺寸，控件缩放时只能截取纹理左上角。
-        thiz.blit(sprite.path(), x, y, width, height, 0.0F, 0.0F,
-                sprite.textureW(), sprite.textureH(), sprite.textureW(), sprite.textureH());
+        thiz.blit(sprite.path(), x, y, width, height, 0.0F, 0.0F, sprite.textureW(), sprite.textureH(), sprite.textureW(), sprite.textureH());
     }
 }

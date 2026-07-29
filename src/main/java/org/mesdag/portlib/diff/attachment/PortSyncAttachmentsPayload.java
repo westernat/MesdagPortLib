@@ -22,13 +22,11 @@ public record PortSyncAttachmentsPayload(
         List<PortAttachmentType<?>> types,
         byte[] syncPayload
 ) implements IPortPacket.S2C {
-    private static final int MAX_SYNCED_TYPES = 1_024;
-    private static final int MAX_SYNC_PAYLOAD_BYTES = 1_048_576;
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("sync_attachments");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncAttachmentsPayload> STREAM_CODEC = PortStreamCodec.composite(
             Target.STREAM_CODEC, PortSyncAttachmentsPayload::target,
-            PortByteBufCodecs.registry(PortAttachmentSync.SYNCED_ATTACHMENT_TYPES.key()).apply(PortByteBufCodecs.list(MAX_SYNCED_TYPES)), PortSyncAttachmentsPayload::types,
-            PortByteBufCodecs.byteArray(MAX_SYNC_PAYLOAD_BYTES), PortSyncAttachmentsPayload::syncPayload,
+            PortByteBufCodecs.registry(PortAttachmentSync.SYNCED_ATTACHMENT_TYPES.key()).apply(PortByteBufCodecs.list()), PortSyncAttachmentsPayload::types,
+            PortByteBufCodecs.UNBOUNDED_BYTE_ARRAY, PortSyncAttachmentsPayload::syncPayload,
             PortSyncAttachmentsPayload::new
     );
 

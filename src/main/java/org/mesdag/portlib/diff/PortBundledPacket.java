@@ -1,81 +1,57 @@
 package org.mesdag.portlib.diff;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * 将多个 PortLib 业务包按发送顺序合并为一次 Forge 消息。
- *
- * <p>合包使用列表保存成员，同一种消息可以在一次发送中出现多次。成员标识沿用原版
- * {@link ResourceLocation} 编解码，消息总数另设协议上限；执行阶段通过网络注册表调用
- * 对应处理器并复核消息方向。</p>
- */
 @Diff
-public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacket {
-    private static final int MAX_PACKETS = 256;
-    public static final ResourceLocation IDENTIFIER =
-            ResourceLocation.fromNamespaceAndPath("portlib", "bundled");
-    public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC =
-            new PortStreamCodec<>() {
-                @Override
-                public void encode(FriendlyByteBuf buffer, PortBundledPacket packet) {
-                    validatePacketCount(packet.packets.size());
-                    buffer.writeVarInt(packet.packets.size());
-                    for (IPortPacket member : packet.packets) {
-                        validateMember(member);
-                        ResourceLocation identifier = member.identifier();
-                        buffer.writeResourceLocation(identifier);
-                        PortNetworkHandler.getPacketCodec(identifier)
-                                .encode(buffer, member);
-                    }
+@SuppressWarnings("all")
+public record PortBundledPacket(
+        LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map
+) implements IPortPacket {
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("portlib", "bundled");
+    public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC = new PortStreamCodec<>() {
+        @Override
+        public void encode(FriendlyByteBuf buffer, PortBundledPacket packet) {
+            buffer.writeVarInt(packet.map.size());
+            for (Map.Entry<String, LinkedHashMap<String, IPortPacket>> namespace : packet.map.entrySet()) {
+                buffer.writeUtf(namespace.getKey());
+                buffer.writeVarInt(namespace.getValue().size());
+                for (Map.Entry<String, IPortPacket> path : namespace.getValue().entrySet()) {
+                    ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace.getKey(), path.getKey());
+                    buffer.writeUtf(path.getKey());
+                    PortNetworkHandler.getPacketCodec(identifier).encode(buffer, path.getValue());
                 }
+            }
+        }
 
-                @Override
-                public PortBundledPacket decode(FriendlyByteBuf buffer) {
-                    int packetCount = buffer.readVarInt();
-                    validatePacketCount(packetCount);
-                    List<IPortPacket> packets =
-                            new ArrayList<>(packetCount);
-                    for (int index = 0; index < packetCount; index++) {
-                        ResourceLocation identifier =
-                                buffer.readResourceLocation();
-                        if (IDENTIFIER.equals(identifier)) {
-                            throw new IllegalArgumentException(
-                                    "Nested bundled packets are not allowed");
-                        }
-                        packets.add(PortNetworkHandler
-                                .getPacketCodec(identifier)
-                                .decode(buffer));
-                    }
-                    return new PortBundledPacket(packets);
+        @Override
+        public PortBundledPacket decode(FriendlyByteBuf buffer) {
+            LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
+            int i = buffer.readVarInt();
+            for (int j = 0; j < i; j++) {
+                String namespace = buffer.readUtf();
+                int k = buffer.readVarInt();
+                for (int l = 0; l < k; l++) {
+                    String path = buffer.readUtf();
+                    ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace, path);
+                    IPortPacket packet = PortNetworkHandler.getPacketCodec(identifier).decode(buffer);
+                    map.computeIfAbsent(namespace, s -> new LinkedHashMap<>()).put(path, packet);
                 }
-            };
-
-    public PortBundledPacket {
-        packets = List.copyOf(packets);
-    }
+            }
+            return new PortBundledPacket(map);
+        }
+    };
 
     @Override
     public void handle(Context context) {
-        for (IPortPacket packet : packets) {
-            if (!PortNetworkHandler.isPacketAllowed(
-                    packet.identifier(),
-                    context.isServerbound(),
-                    context.channelIdentifier())) {
-                context.disconnect(Component.literal(
-                        "PortLib rejected a bundled packet with an invalid direction or channel: "
-                                + packet.identifier()));
-                return;
-            }
-            PortNetworkHandler.handleBundledPacket(packet, context);
-        }
+        map.values().stream().flatMap(map -> map.values().stream()).forEachOrdered(packet -> packet.handle(context));
     }
 
     @Override
@@ -83,58 +59,25 @@ public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacke
         return IDENTIFIER;
     }
 
-    public static IPortPacket makePacket(
-            IPortPacket packet,
-            IPortPacket... packets
-    ) {
-        if (packets.length == 0) {
-            return packet;
+    public static IPortPacket makePacket(IPortPacket packet, IPortPacket... packets) {
+        if (packets.length > 0) {
+            LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
+            LinkedHashMap<String, IPortPacket> value = new LinkedHashMap<>();
+            value.put(packet.identifier().getPath(), packet);
+            map.put(packet.identifier().getNamespace(), value);
+            for (IPortPacket iPacket : packets) {
+                map.computeIfAbsent(iPacket.identifier().getNamespace(), s -> new LinkedHashMap<>()).put(iPacket.identifier().getPath(), iPacket);
+            }
+            return new PortBundledPacket(map);
         }
-        List<IPortPacket> bundled =
-                new ArrayList<>(packets.length + 1);
-        appendFlattened(bundled, packet);
-        for (IPortPacket member : packets) {
-            appendFlattened(bundled, member);
-        }
-        return bundled.size() == 1
-                ? bundled.get(0)
-                : new PortBundledPacket(bundled);
+        return packet;
     }
 
     public static IPortPacket makePacket(List<IPortPacket> packets) {
-        List<IPortPacket> bundled = new ArrayList<>(packets.size());
-        for (IPortPacket packet : packets) {
-            appendFlattened(bundled, packet);
+        LinkedHashMap<String, LinkedHashMap<String, IPortPacket>> map = new LinkedHashMap<>();
+        for (IPortPacket iPacket : packets) {
+            map.computeIfAbsent(iPacket.identifier().getNamespace(), s -> new LinkedHashMap<>()).put(iPacket.identifier().getPath(), iPacket);
         }
-        return bundled.size() == 1
-                ? bundled.get(0)
-                : new PortBundledPacket(bundled);
-    }
-
-    private static void appendFlattened(
-            List<IPortPacket> destination,
-            IPortPacket packet
-    ) {
-        if (packet instanceof PortBundledPacket bundle) {
-            destination.addAll(bundle.packets);
-        } else {
-            destination.add(packet);
-        }
-        validatePacketCount(destination.size());
-    }
-
-    private static void validatePacketCount(int count) {
-        if (count < 0 || count > MAX_PACKETS) {
-            throw new IllegalArgumentException(
-                    "Invalid bundled packet count: " + count);
-        }
-    }
-
-    private static void validateMember(IPortPacket packet) {
-        if (packet instanceof PortBundledPacket
-                || IDENTIFIER.equals(packet.identifier())) {
-            throw new IllegalArgumentException(
-                    "Nested bundled packets are not allowed");
-        }
+        return new PortBundledPacket(map);
     }
 }

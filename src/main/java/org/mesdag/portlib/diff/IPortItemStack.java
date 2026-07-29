@@ -32,10 +32,7 @@ public interface IPortItemStack extends IPortItemStackExtension, PortSelfGetter<
             }
             return;
         }
-        portlib$self().getOrCreateTag().put(
-                DATA_COMPONENTS,
-                portlib$patch().serializeNBT(
-                        PortEnvironment.registryAccess()));
+        portlib$self().getOrCreateTag().put(DATA_COMPONENTS, portlib$patch().serializeNBT(PortEnvironment.registryAccess()));
     }
 
     static IPortItemStack of(ItemStack stack) {

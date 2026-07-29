@@ -122,6 +122,9 @@ public class PortItemStackExtension {
             OPTIONAL_STREAM_CODEC.encode(buffer, value);
         }
     };
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> OPTIONAL_LIST_STREAM_CODEC = OPTIONAL_STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
+    private static final PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> LIST_STREAM_CODEC = STREAM_CODEC.apply(PortByteBufCodecs.collection(NonNullList::createWithCapacity));
+
     public static Codec<Holder<Item>> itemNonAirCodec() {
         return ITEM_NON_AIR_CODEC;
     }
@@ -159,39 +162,11 @@ public class PortItemStackExtension {
     }
 
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> optionalListStreamCodec() {
-        return OPTIONAL_STREAM_CODEC.apply(
-                PortByteBufCodecs.collection(
-                        NonNullList::createWithCapacity));
+        return OPTIONAL_LIST_STREAM_CODEC;
     }
 
     public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> listStreamCodec() {
-        return STREAM_CODEC.apply(
-                PortByteBufCodecs.collection(
-                        NonNullList::createWithCapacity));
-    }
-
-    /**
-     * 创建带元素数量上限的可空物品列表编解码器。
-     */
-    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> optionalListStreamCodec(
-            int maxSize
-    ) {
-        return OPTIONAL_STREAM_CODEC.apply(
-                PortByteBufCodecs.collection(
-                        NonNullList::createWithCapacity,
-                        maxSize));
-    }
-
-    /**
-     * 创建带元素数量上限的非空物品列表编解码器。
-     */
-    public static PortStreamCodec<PortRegistryFriendlyByteBuf, List<ItemStack>> listStreamCodec(
-            int maxSize
-    ) {
-        return STREAM_CODEC.apply(
-                PortByteBufCodecs.collection(
-                        NonNullList::createWithCapacity,
-                        maxSize));
+        return LIST_STREAM_CODEC;
     }
 
     private static DataResult<ItemStack> validateStrict(ItemStack stack) {
@@ -318,12 +293,10 @@ public class PortItemStackExtension {
         return tag == null ? 0 : tag.getInt("CustomModelData");
     }
 
-    /**
-     * 使用 1.20 原版模型谓词识别的 NBT 键保存自定义模型数据。
-     *
-     * <p>这里不能使用 PortLib 私有键，否则代码虽然能读回数值，原版
-     * {@code custom_model_data} 谓词却永远看不到它。</p>
-     */
+    /// 使用 1.20 原版模型谓词识别的 NBT 键保存自定义模型数据。
+    ///
+    /// 这里不能使用 PortLib 私有键，否则代码虽然能读回数值，原版
+    /// `custom_model_data` 谓词却永远看不到它。
     public static void setCustomModelData(ItemStack thiz, int data) {
         thiz.getOrCreateTag().putInt("CustomModelData", data);
     }
@@ -485,22 +458,17 @@ public class PortItemStackExtension {
 
     public static boolean getEnchantmentGlintOverride(ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
-        return tag != null
-                && tag.getBoolean("portlib:enchantment_glint_override");
+        return tag != null && tag.getBoolean("portlib:enchantment_glint_override");
     }
 
     public static boolean hasEnchantmentGlintOverride(ItemStack thiz) {
         CompoundTag tag = thiz.getTag();
-        return tag != null
-                && tag.contains(
-                        "portlib:enchantment_glint_override",
-                        Tag.TAG_BYTE);
+        return tag != null && tag.contains("portlib:enchantment_glint_override", Tag.TAG_BYTE);
     }
 
     public static void setEnchantmentGlintOverride(ItemStack thiz, boolean override) {
         // false 也是有效覆盖值，不能像无值组件一样删除。
-        thiz.getOrCreateTag().putBoolean(
-                "portlib:enchantment_glint_override", override);
+        thiz.getOrCreateTag().putBoolean("portlib:enchantment_glint_override", override);
     }
 
     // todo AbstractArrow类
@@ -735,9 +703,6 @@ public class PortItemStackExtension {
     }
 
     public static <T> @Nullable T setData(ItemStack thiz, PortDataComponentType<T> type, T value) {
-        // 首次创建原版 NBT 会内部调用 setTag。必须先完成该步骤，再写组件补丁，
-        // 否则 setTag 的“整体替换”语义会把刚写入的内存补丁立即清除。
-        thiz.getOrCreateTag();
         IPortItemStack i = IPortItemStack.of(thiz);
         T t = i.portlib$patch().set(type, value);
         i.updateTag();
@@ -749,9 +714,6 @@ public class PortItemStackExtension {
     }
 
     public static <T> @Nullable T removeData(ItemStack thiz, PortDataComponentType<T> type) {
-        // 与 setData 保持同一顺序，确保删除默认组件形成的空 Optional 不会在
-        // 首次创建 NBT 容器时丢失。
-        thiz.getOrCreateTag();
         IPortItemStack i = IPortItemStack.of(thiz);
         T t = i.portlib$patch().remove(type);
         i.updateTag();
@@ -844,8 +806,7 @@ public class PortItemStackExtension {
     private static ItemStack transmuteCopyIgnoreEmpty(ItemStack thiz, ItemLike item, int count) {
         CompoundTag tag = thiz.getTag();
         CompoundTag serialized = thiz.save(new CompoundTag());
-        CompoundTag capabilityData = serialized.contains(
-                "ForgeCaps", Tag.TAG_COMPOUND)
+        CompoundTag capabilityData = serialized.contains("ForgeCaps", Tag.TAG_COMPOUND)
                 ? serialized.getCompound("ForgeCaps")
                 : null;
         ItemStack converted = new ItemStack(item, count, capabilityData);
