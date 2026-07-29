@@ -10,7 +10,7 @@ import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
 public class PortParticleOptionsExtension {
-    private static final int MAX_SERIALIZED_LENGTH = 2048;
+    private static final int MAX_SERIALIZED_LENGTH = 32767;
     private static final PortStreamCodec<PortRegistryFriendlyByteBuf, ParticleOptions> STREAM_CODEC = new PortStreamCodec<>() {
         @Override
         public void encode(PortRegistryFriendlyByteBuf buffer, ParticleOptions value) {

@@ -843,11 +843,17 @@ public class PortItemStackExtension {
 
     private static ItemStack transmuteCopyIgnoreEmpty(ItemStack thiz, ItemLike item, int count) {
         CompoundTag tag = thiz.getTag();
-        ItemStack converted = new ItemStack(item, count);
+        CompoundTag serialized = thiz.save(new CompoundTag());
+        CompoundTag capabilityData = serialized.contains(
+                "ForgeCaps", Tag.TAG_COMPOUND)
+                ? serialized.getCompound("ForgeCaps")
+                : null;
+        ItemStack converted = new ItemStack(item, count, capabilityData);
         /*
          * 1.20 的三参数 ItemStack 构造方法第三项是 Forge capability NBT，
-         * 并不是物品标签。必须显式 setTag，才能把由 NBT 模拟的 1.21 组件补丁
-         * 应用到目标物品，同时让 Mixin 以目标物品原型重新解析补丁。
+         * 并不是物品标签。这里分别复制 capability 与普通标签，才能同时保留
+         * 加载器能力以及由 NBT 模拟的新版组件，并让 Mixin 按目标物品原型
+         * 重新解析组件补丁。
          */
         if (tag != null) {
             converted.setTag(tag.copy());

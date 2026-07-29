@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * PortLib 跨版本业务包契约。
  *
  * <p>{@link C2S} 与 {@link S2C} 用类型表达固定方向，基础接口只用于确实需要双向复用编码的
- * 少量消息。{@link Context} 隐藏 Forge/NeoForge 上下文差异，并提供玩家、回复、断开连接和
+ * 少量消息。{@link Context} 隐藏不同版本和加载器的网络上下文差异，并提供玩家、回复、断开连接和
  * 主线程任务入口；具体玩法校验仍必须在业务包中以服务端状态为准。</p>
  */
 @SuppressWarnings("all")
@@ -56,6 +56,7 @@ public interface IPortPacket {
         private final Consumer<IPortPacket> reply;
         private final Consumer<Component> disconnect;
         private final boolean serverbound;
+        private final ResourceLocation channelIdentifier;
 
         Context(
                 @Nullable Player player,
@@ -63,7 +64,8 @@ public interface IPortPacket {
                 Consumer<Runnable> executor,
                 Consumer<IPortPacket> reply,
                 Consumer<Component> disconnect,
-                boolean serverbound
+                boolean serverbound,
+                ResourceLocation channelIdentifier
         ) {
             this.player = player;
             this.connection = connection;
@@ -71,21 +73,29 @@ public interface IPortPacket {
             this.reply = reply;
             this.disconnect = disconnect;
             this.serverbound = serverbound;
+            this.channelIdentifier = channelIdentifier;
         }
 
         @Diff
-        static Context wrap(@Nullable Player player, NetworkEvent.Context context, SimpleChannel channel) {
+        static Context wrap(
+                @Nullable Player player,
+                NetworkEvent.Context context,
+                SimpleChannel channel,
+                ResourceLocation channelIdentifier
+        ) {
             boolean serverbound = context.getDirection().getReceptionSide().isServer();
             return new Context(
                     player,
                     context.getNetworkManager(),
                     context::enqueueWork,
                     packet -> {
-                        PortNetworkHandler.validateReplyDirection(packet, serverbound);
+                        PortNetworkHandler.validateReplyDirection(
+                                channelIdentifier, packet, serverbound);
                         channel.reply(packet, context);
                     },
                     context.getNetworkManager()::disconnect,
-                    serverbound
+                    serverbound,
+                    channelIdentifier
             );
         }
 
@@ -112,6 +122,13 @@ public interface IPortPacket {
         /** 当前消息是否由客户端发往服务器。 */
         public boolean isServerbound() {
             return serverbound;
+        }
+
+        /**
+         * 当前消息所属的 PortLib 逻辑频道。
+         */
+        public ResourceLocation channelIdentifier() {
+            return channelIdentifier;
         }
     }
 }

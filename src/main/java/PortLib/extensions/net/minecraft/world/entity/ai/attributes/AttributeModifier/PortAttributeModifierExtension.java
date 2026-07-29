@@ -12,7 +12,6 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 public class PortAttributeModifierExtension {
-    private static final int MAX_NAME_LENGTH = 128;
     private static final MapCodec<AttributeModifier> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(AttributeModifier::getId),
             Codec.STRING.fieldOf("name").forGetter(AttributeModifier::getName),
@@ -22,7 +21,7 @@ public class PortAttributeModifierExtension {
     private static final Codec<AttributeModifier> CODEC = MAP_CODEC.codec();
     private static final PortStreamCodec<FriendlyByteBuf, AttributeModifier> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.UUID, AttributeModifier::getId,
-            PortByteBufCodecs.stringUtf8(MAX_NAME_LENGTH), AttributeModifier::getName,
+            PortByteBufCodecs.STRING_UTF8, AttributeModifier::getName,
             PortByteBufCodecs.DOUBLE, AttributeModifier::getAmount,
             PortAttributeModifierExtension.Operation.streamCodec(), AttributeModifier::getOperation,
             AttributeModifier::new

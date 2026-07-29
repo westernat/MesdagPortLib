@@ -117,9 +117,16 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
         }
         AttributeInstance totalHeight = living.getAttribute(
                 PortAttributesExtension.stepHeight().value());
-        float baseHeight = totalHeight == null
-                ? living.maxUpStep()
-                : (float) totalHeight.getValue();
+        float baseHeight = living.maxUpStep();
+        if (totalHeight != null) {
+            /*
+             * 1.20 的部分实体仍通过 maxUpStep 保存物种基础值。PortLib 属性只把
+             * “相对属性默认值的变化”叠加到该基础值上，既保留马等原版实体的
+             * 特殊高度，也允许调用方显式修改新版总值属性。
+             */
+            baseHeight += (float) (
+                    totalHeight.getValue() - totalHeight.getAttribute().getDefaultValue());
+        }
         AttributeInstance forgeAddition = living.getAttribute(
                 ForgeMod.STEP_HEIGHT_ADDITION.get());
         float addition = forgeAddition == null

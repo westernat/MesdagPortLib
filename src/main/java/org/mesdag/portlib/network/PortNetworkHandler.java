@@ -37,8 +37,8 @@ import java.util.function.Supplier;
  * Forge 1.20 网络 API 的轻量桥接层。
  *
  * <p>该类只负责不同加载器版本之间的频道注册、编解码、收发目标、方向校验和主线程调度，
- * 不承载 Confluence 的物品、Boss、难度或其他玩法规则。业务包仍由各自模块定义，通用玩法
- * 契约则归 MagicLib 所有。</p>
+ * 不承载任何调用方的物品、实体、难度或其他业务规则。业务包及其校验逻辑仍由调用模块
+ * 自行定义。</p>
  *
  * <p>所有公开发送方法都会在发送端验证方向；接收端由 SimpleChannel 验证普通消息，并由
  * {@link PortBundledPacket} 逐项验证合包消息。这样即使客户端手工构造数据，也不能通过
@@ -50,6 +50,7 @@ public class PortNetworkHandler {
     //    private static final List<PortNetworkHandler> handlers = new ArrayList<>();
     private static final Object REGISTRATION_LOCK = new Object();
     private final SimpleChannel channel;
+    private final ResourceLocation channelIdentifier;
     private static final Map<ResourceLocation, PortStreamCodec<?, ?>> codecMap = new ConcurrentHashMap<>();
     private static final Map<ResourceLocation, BiConsumer<IPortPacket, IPortPacket.Context>> handlerMap =
             new ConcurrentHashMap<>();
@@ -59,6 +60,8 @@ public class PortNetworkHandler {
      * Forge 可能并行构造多个模组，相关全局索引都必须使用并发容器。
      */
     private static final Map<ResourceLocation, Optional<PortNetworkDirection>> directionMap = new ConcurrentHashMap<>();
+    private static final Map<ResourceLocation, ResourceLocation> ownerMap =
+            new ConcurrentHashMap<>();
     private int packetId;
 //    private final List<Consumer<IPortCustomLoginTask>> tasks = new ArrayList<>();
 
@@ -66,8 +69,10 @@ public class PortNetworkHandler {
     public PortNetworkHandler(String namespace, String version) {
         String protocolVersion =
                 BRIDGE_PROTOCOL_VERSION + ":" + version;
+        this.channelIdentifier =
+                ResourceLocation.fromNamespaceAndPath(namespace, "main");
         this.channel = NetworkRegistry.newSimpleChannel(
-                ResourceLocation.fromNamespaceAndPath(namespace, "main"),
+                channelIdentifier,
                 () -> protocolVersion,
                 protocolVersion::equals,
                 protocolVersion::equals
@@ -175,15 +180,28 @@ public class PortNetworkHandler {
 //    }
 
     private <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> C.handle(p, s, handler, channel));
+        DistExecutor.unsafeRunWhenOn(
+                Dist.CLIENT,
+                () -> () -> C.handle(
+                        p, s, handler, channel, channelIdentifier));
     }
 
     private static class C {
-        private static <P extends IPortPacket> void handle(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler, SimpleChannel channel) {
+        private static <P extends IPortPacket> void handle(
+                P p,
+                Supplier<NetworkEvent.Context> s,
+                BiConsumer<P, IPortPacket.Context> handler,
+                SimpleChannel channel,
+                ResourceLocation channelIdentifier
+        ) {
             NetworkEvent.Context context = s.get();
-            IPortPacket.Context portContext = IPortPacket.Context.wrap(Minecraft.getInstance().player, context, channel);
+            IPortPacket.Context portContext = IPortPacket.Context.wrap(
+                    Minecraft.getInstance().player,
+                    context,
+                    channel,
+                    channelIdentifier);
             // Forge 1.20 在网络线程调用消息消费者。PortLib 在桥接层统一切回游戏主线程，
-            // 使业务模块与 NeoForge 新版负载处理器保持相同的线程语义。
+            // 使业务模块在不同版本和加载器上保持相同的主线程处理语义。
             context.enqueueWork(() -> handleDecodedPacket(p, portContext, handler));
             context.setPacketHandled(true);
         }
@@ -191,7 +209,11 @@ public class PortNetworkHandler {
 
     private <P extends IPortPacket> void c2s(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
         NetworkEvent.Context context = s.get();
-        IPortPacket.Context portContext = IPortPacket.Context.wrap(context.getSender(), context, channel);
+        IPortPacket.Context portContext = IPortPacket.Context.wrap(
+                context.getSender(),
+                context,
+                channel,
+                channelIdentifier);
         // 世界、实体、容器和 SavedData 都只能在服务器主线程修改。
         context.enqueueWork(() -> handleDecodedPacket(p, portContext, handler));
         context.setPacketHandled(true);
@@ -240,7 +262,8 @@ public class PortNetworkHandler {
             @Nullable PortNetworkDirection direction
     ) {
         synchronized (REGISTRATION_LOCK) {
-            boolean reserved = reservePacketIdentifier(identifier, codec, direction);
+            boolean reserved = reservePacketIdentifier(
+                    identifier, codec, direction, channelIdentifier);
             if (reserved) {
                 handlerMap.put(
                         identifier,
@@ -257,6 +280,7 @@ public class PortNetworkHandler {
                 if (reserved) {
                     codecMap.remove(identifier, codec);
                     directionMap.remove(identifier, Optional.ofNullable(direction));
+                    ownerMap.remove(identifier, channelIdentifier);
                     handlerMap.remove(identifier);
                 }
                 throw failure;
@@ -307,7 +331,8 @@ public class PortNetworkHandler {
     static boolean reservePacketIdentifier(
             ResourceLocation identifier,
             PortStreamCodec<?, ?> codec,
-            @Nullable PortNetworkDirection direction
+            @Nullable PortNetworkDirection direction,
+            ResourceLocation owner
     ) {
         synchronized (REGISTRATION_LOCK) {
             PortStreamCodec<?, ?> registeredCodec = codecMap.get(identifier);
@@ -320,6 +345,9 @@ public class PortNetworkHandler {
             if (!sharedBundleRegistration) {
                 codecMap.put(identifier, codec);
                 directionMap.put(identifier, Optional.ofNullable(direction));
+                if (!PortBundledPacket.IDENTIFIER.equals(identifier)) {
+                    ownerMap.put(identifier, owner);
+                }
             }
             return !sharedBundleRegistration;
         }
@@ -336,42 +364,50 @@ public class PortNetworkHandler {
     }
 
     public void sendToServer(IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(true, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, true, packet, packets);
         channel.sendToServer(PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayer(ServerPlayer player, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.PLAYER.with(() -> player), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayersInDimension(ResourceKey<Level> dimension, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.DIMENSION.with(() -> dimension), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayersNear(ResourceKey<Level> dimension, @Nullable ServerPlayer excluded, double x, double y, double z, double radius, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(excluded, x, y, z, radius, dimension)), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToAllPlayers(IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.ALL.noArg(), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayersTrackingEntity(Entity entity, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayersTrackingEntityAndSelf(Entity entity, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), PortBundledPacket.makePacket(packet, packets));
     }
 
     public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket packet, IPortPacket... packets) {
-        validateOutgoingDirection(false, packet, packets);
+        validateOutgoingDirection(
+                channelIdentifier, false, packet, packets);
         channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(pos.x, pos.z)), PortBundledPacket.makePacket(packet, packets));
     }
 
@@ -379,25 +415,35 @@ public class PortNetworkHandler {
      * 在消息离开发送端前校验外层及所有合包成员的方向。
      * 这既能尽早暴露开发期误用，也与接收端的恶意消息防护形成双保险。
      */
-    static void validateOutgoingDirection(boolean serverbound, IPortPacket packet, IPortPacket... packets) {
-        validatePacketDirection(packet, serverbound, false);
+    static void validateOutgoingDirection(
+            ResourceLocation channelIdentifier,
+            boolean serverbound,
+            IPortPacket packet,
+            IPortPacket... packets
+    ) {
+        validatePacketDirection(
+                channelIdentifier, packet, serverbound, false);
         for (IPortPacket bundled : packets) {
-            validatePacketDirection(bundled, serverbound, true);
+            validatePacketDirection(
+                    channelIdentifier, bundled, serverbound, true);
         }
     }
 
     private static void validatePacketDirection(
+            ResourceLocation channelIdentifier,
             IPortPacket packet,
             boolean serverbound,
             boolean bundled
     ) {
         if (packet instanceof PortBundledPacket bundle) {
             for (IPortPacket member : bundle.packets()) {
-                validatePacketDirection(member, serverbound, true);
+                validatePacketDirection(
+                        channelIdentifier, member, serverbound, true);
             }
             return;
         }
-        if (!isPacketAllowed(packet.identifier(), serverbound)) {
+        if (!isPacketAllowed(
+                packet.identifier(), serverbound, channelIdentifier)) {
             String prefix = bundled ? "Bundled packet" : "Packet";
             throw new IllegalArgumentException(
                     prefix + " registered for the wrong direction: "
@@ -412,9 +458,17 @@ public class PortNetworkHandler {
      * 但不会替 PortLib 检查业务消息的注册方向。这里在真正编码前拒绝误用，避免方向错误
      * 进入 Forge 的连接异常处理。</p>
      */
-    static void validateReplyDirection(IPortPacket packet, boolean receivedServerbound) {
+    static void validateReplyDirection(
+            ResourceLocation channelIdentifier,
+            IPortPacket packet,
+            boolean receivedServerbound
+    ) {
         try {
-            validatePacketDirection(packet, !receivedServerbound, false);
+            validatePacketDirection(
+                    channelIdentifier,
+                    packet,
+                    !receivedServerbound,
+                    false);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(
                     "Packet registered for the wrong reply direction: "
@@ -440,12 +494,26 @@ public class PortNetworkHandler {
      */
     @ApiStatus.Internal
     public static boolean isPacketAllowed(ResourceLocation identifier, boolean serverbound) {
-        if (!directionMap.containsKey(identifier)) {
+        Optional<PortNetworkDirection> direction =
+                directionMap.get(identifier);
+        if (direction == null) {
             return false;
         }
-        Optional<PortNetworkDirection> direction = directionMap.get(identifier);
         return direction.isEmpty()
                 || (serverbound ? direction.get().toServer() : direction.get().toClient());
+    }
+
+    /**
+     * 在方向校验之外复核消息的注册频道，防止通过其他模组的合包频道绕过协议握手。
+     */
+    @ApiStatus.Internal
+    public static boolean isPacketAllowed(
+            ResourceLocation identifier,
+            boolean serverbound,
+            ResourceLocation channelIdentifier
+    ) {
+        return isPacketAllowed(identifier, serverbound)
+                && channelIdentifier.equals(ownerMap.get(identifier));
     }
 
     @ApiStatus.Internal

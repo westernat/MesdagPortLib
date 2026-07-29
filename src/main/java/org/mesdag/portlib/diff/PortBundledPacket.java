@@ -13,13 +13,13 @@ import java.util.List;
 /**
  * 将多个 PortLib 业务包按发送顺序合并为一次 Forge 消息。
  *
- * <p>合包使用列表保存成员，同一种消息可以在一次发送中出现多次。编码和解码阶段都会限制
- * 消息总数与标识长度，执行阶段则通过网络注册表调用对应处理器并复核消息方向。</p>
+ * <p>合包使用列表保存成员，同一种消息可以在一次发送中出现多次。成员标识沿用原版
+ * {@link ResourceLocation} 编解码，消息总数另设协议上限；执行阶段通过网络注册表调用
+ * 对应处理器并复核消息方向。</p>
  */
 @Diff
 public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacket {
     private static final int MAX_PACKETS = 256;
-    private static final int MAX_IDENTIFIER_PART_LENGTH = 64;
     public static final ResourceLocation IDENTIFIER =
             ResourceLocation.fromNamespaceAndPath("portlib", "bundled");
     public static final PortStreamCodec<FriendlyByteBuf, PortBundledPacket> PACKET_CODEC =
@@ -31,12 +31,7 @@ public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacke
                     for (IPortPacket member : packet.packets) {
                         validateMember(member);
                         ResourceLocation identifier = member.identifier();
-                        buffer.writeUtf(
-                                identifier.getNamespace(),
-                                MAX_IDENTIFIER_PART_LENGTH);
-                        buffer.writeUtf(
-                                identifier.getPath(),
-                                MAX_IDENTIFIER_PART_LENGTH);
+                        buffer.writeResourceLocation(identifier);
                         PortNetworkHandler.getPacketCodec(identifier)
                                 .encode(buffer, member);
                     }
@@ -49,13 +44,8 @@ public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacke
                     List<IPortPacket> packets =
                             new ArrayList<>(packetCount);
                     for (int index = 0; index < packetCount; index++) {
-                        String namespace =
-                                buffer.readUtf(MAX_IDENTIFIER_PART_LENGTH);
-                        String path =
-                                buffer.readUtf(MAX_IDENTIFIER_PART_LENGTH);
                         ResourceLocation identifier =
-                                ResourceLocation.fromNamespaceAndPath(
-                                        namespace, path);
+                                buffer.readResourceLocation();
                         if (IDENTIFIER.equals(identifier)) {
                             throw new IllegalArgumentException(
                                     "Nested bundled packets are not allowed");
@@ -76,9 +66,11 @@ public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacke
     public void handle(Context context) {
         for (IPortPacket packet : packets) {
             if (!PortNetworkHandler.isPacketAllowed(
-                    packet.identifier(), context.isServerbound())) {
+                    packet.identifier(),
+                    context.isServerbound(),
+                    context.channelIdentifier())) {
                 context.disconnect(Component.literal(
-                        "PortLib rejected a bundled packet with an invalid direction: "
+                        "PortLib rejected a bundled packet with an invalid direction or channel: "
                                 + packet.identifier()));
                 return;
             }
@@ -143,15 +135,6 @@ public record PortBundledPacket(List<IPortPacket> packets) implements IPortPacke
                 || IDENTIFIER.equals(packet.identifier())) {
             throw new IllegalArgumentException(
                     "Nested bundled packets are not allowed");
-        }
-        ResourceLocation identifier = packet.identifier();
-        if (identifier.getNamespace().length()
-                        > MAX_IDENTIFIER_PART_LENGTH
-                || identifier.getPath().length()
-                        > MAX_IDENTIFIER_PART_LENGTH) {
-            throw new IllegalArgumentException(
-                    "Bundled packet identifier is too long: "
-                            + identifier);
         }
     }
 }
