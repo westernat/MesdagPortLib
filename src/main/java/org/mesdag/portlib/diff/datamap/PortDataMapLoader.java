@@ -137,12 +137,18 @@ public class PortDataMapLoader implements PreparableReloadListener {
     private <T> void apply(IForgeRegistry<T> registry, LoadResult<T> result) {
         ResourceKey<Registry<T>> registryKey = registry.getRegistryKey();
         clear(registryKey);
-        PortCompostable.injectFake(result.results);
+        // 原版堆肥表只属于物品注册表。这里不能在方块、实体等其他注册表加载时注入，
+        // 否则 vanilla 食物和植物会被当作对应注册表的键解析，导致启动日志出现大量伪错误。
+        if (Registries.ITEM.equals(registryKey)) {
+            PortCompostable.injectFake(result.results);
+        }
         result.results.forEach((key, entries) -> {
             Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> innerMap = getInnerMap(registryKey);
             innerMap.put(key, buildDataMap(registry, key, (List) entries));
         });
-        PortCompostable.doFill(getInnerMap(Registries.ITEM).get(PortLib.COMPOSTABLES));
+        if (Registries.ITEM.equals(registryKey)) {
+            PortCompostable.doFill(getInnerMap(Registries.ITEM).get(PortLib.COMPOSTABLES));
+        }
         PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
     }
 

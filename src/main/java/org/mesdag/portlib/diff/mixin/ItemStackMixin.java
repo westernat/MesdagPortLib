@@ -12,6 +12,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -59,6 +60,9 @@ import java.util.Objects;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements IPortItemStack {
+    @Shadow
+    private int count;
+
     @Shadow
     public abstract CompoundTag getOrCreateTag();
 
@@ -233,8 +237,22 @@ public abstract class ItemStackMixin implements IPortItemStack {
         getOrCreateTag().put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
     }
 
+    /**
+     * 1.20.1 原版会把物品数量写成有符号 byte，超过 127 后会发生溢出。
+     * 普通数量继续保留原版格式；只有扩展堆叠数量才改写为 int，避免破坏旧格式兼容性。
+     */
+    @Inject(method = "save", at = @At("RETURN"))
+    private void portlib$saveExpandedCount(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
+        if (count > Byte.MAX_VALUE) {
+            cir.getReturnValue().putInt("Count", count);
+        }
+    }
+
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
-    private void load1(CallbackInfo ci) {
+    private void load1(CompoundTag compoundTag, CallbackInfo ci) {
+        if (compoundTag.contains("Count", Tag.TAG_INT)) {
+            this.count = compoundTag.getInt("Count");
+        }
         CompoundTag tag = getTag();
         if (tag != null) {
             portlib$patch.load(tag);

@@ -22,7 +22,7 @@ public abstract class FoodPropertiesMixin implements IPortFoodProperties {
     @Unique
     private float portlib$eatSeconds;
     @Unique
-    private Supplier<@Nullable ItemStack> portlib$usingConvertsTo;
+    private Supplier<@Nullable ItemStack> portlib$usingConvertsTo = () -> null;
 
     @Override
     public float portlib$getEatSeconds() {
@@ -40,8 +40,10 @@ public abstract class FoodPropertiesMixin implements IPortFoodProperties {
     }
 
     @Override
-    public void portlib$setUsingConvertsTo(Supplier<@Nullable ItemStack> stack) {
-        this.portlib$usingConvertsTo = stack;
+    public void portlib$setUsingConvertsTo(@Nullable Supplier<@Nullable ItemStack> stack) {
+        // 1.21 的默认语义是“不产生转换物品”。1.20 构建器可能用 null 表示未配置，
+        // 因此在桥接层统一归一化，避免每个调用方都重复补空 Supplier。
+        this.portlib$usingConvertsTo = stack == null ? () -> null : stack;
     }
 
     @Override

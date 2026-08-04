@@ -12,6 +12,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.IPortPlayer;
@@ -36,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
@@ -62,9 +65,21 @@ public abstract class PlayerMixin implements IPortPlayer {
         return portlib$self().getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION);
     }
 
+    @Inject(method = "eat", at = @At("HEAD"))
+    private void captureFoodProperties(
+            Level level,
+            ItemStack food,
+            CallbackInfoReturnable<ItemStack> cir,
+            @Share("foodProperties") LocalRef<FoodProperties> foodProperties) {
+        // 原版会在 eat 返回前把最后一份食物减为空栈，必须在消费前保留本次食物属性。
+        foodProperties.set(food.getFoodProperties(portlib$self()));
+    }
+
     @ModifyReturnValue(method = "eat", at = @At("RETURN"))
-    private ItemStack usingConvertsTo(ItemStack original, @Local(argsOnly = true) ItemStack food) {
-        FoodProperties foodProperties = food.getFoodProperties(portlib$self());
+    private ItemStack usingConvertsTo(
+            ItemStack original,
+            @Share("foodProperties") LocalRef<FoodProperties> foodPropertiesRef) {
+        FoodProperties foodProperties = foodPropertiesRef.get();
         if (foodProperties != null) {
             ItemStack stack = IPortFoodProperties.of(foodProperties).portlib$getUsingConvertsTo();
             if (stack != null && !PortPlayerExtension.hasInfiniteMaterials(portlib$self())) {

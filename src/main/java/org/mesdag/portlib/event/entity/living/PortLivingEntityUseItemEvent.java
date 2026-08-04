@@ -68,7 +68,7 @@ public class PortLivingEntityUseItemEvent<E extends LivingEntityUseItemEvent> ex
         }
 
         public ItemStack getResultStack() {
-            return e.getItem();
+            return e.getResultStack();
         }
 
         public void setResultStack(ItemStack result) {

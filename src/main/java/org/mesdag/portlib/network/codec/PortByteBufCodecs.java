@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.RegistryFixedCodec;
@@ -266,8 +267,26 @@ public interface PortByteBufCodecs {
 
     private static <T, R> PortStreamCodec<PortRegistryFriendlyByteBuf, R> registry(ResourceKey<? extends Registry<T>> registryKey, Function<Registry<T>, IdMap<R>> idGetter) {
         return new PortStreamCodec<>() {
+            /**
+             * 1.20.1 的客户端连接注册表主要保存数据包驱动的动态注册表，不保证包含
+             * {@code entity_type}、{@code item} 等静态注册表。新版注册表友好缓冲区
+             * 则向编解码器暴露完整注册表视图，因此桥接层必须在动态视图缺项时回退到
+             * 原版内建注册表，否则非空同步集合会在第二位玩家登录时直接断开连接。
+             */
+            @SuppressWarnings("unchecked")
+            private Registry<T> getRegistry(PortRegistryFriendlyByteBuf buffer) {
+                return buffer.registryAccess().registry(registryKey)
+                        .orElseGet(() -> {
+                            Registry<?> builtIn = BuiltInRegistries.REGISTRY.get(registryKey.location());
+                            if (builtIn == null) {
+                                throw new IllegalStateException("Missing registry: " + registryKey);
+                            }
+                            return (Registry<T>) builtIn;
+                        });
+            }
+
             private IdMap<R> getRegistryOrThrow(PortRegistryFriendlyByteBuf buffer) {
-                var registry = buffer.registryAccess().registryOrThrow(registryKey);
+                Registry<T> registry = getRegistry(buffer);
                 if (PortRegistryManager.isNonSyncedBuiltInRegistry(registry)) {
                     throw new IllegalStateException("Cannot use ID syncing for non-synced built-in registry: " + registry.key());
                 }
