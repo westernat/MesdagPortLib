@@ -5,6 +5,7 @@ import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
@@ -19,7 +20,9 @@ public class PortParticleOptionsExtension {
 
         @Override
         public ParticleOptions decode(PortRegistryFriendlyByteBuf buffer) {
-            HolderLookup.RegistryLookup<ParticleType<?>> lookup = buffer.registryAccess().lookupOrThrow(Registries.PARTICLE_TYPE);
+            HolderLookup.RegistryLookup<ParticleType<?>> lookup = buffer.registryAccess()
+                    .lookup(Registries.PARTICLE_TYPE)
+                    .orElseGet(BuiltInRegistries.PARTICLE_TYPE::asLookup);
             try {
                 return ParticleArgument.readParticle(new StringReader(buffer.readUtf(MAX_SERIALIZED_LENGTH)), lookup);
             } catch (Exception exception) {
