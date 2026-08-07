@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +41,6 @@ import org.mesdag.portlib.diff.test.TestAttachment;
 import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
-import org.mesdag.portlib.event.entity.PortEntityAttributeModificationEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
@@ -184,30 +184,18 @@ public class PortLib {
 //            extendPoiTypes
         });
 
-        PortEventHandler.addListener((PortEntityAttributeModificationEvent event) -> {
-            ATTRIBUTES.getEntries().stream().filter(entry -> entry.getId().getPath().startsWith("generic.")).forEach(entry -> {
-                for (EntityType<? extends LivingEntity> type : event.getTypes()) {
-                    if (type == EntityType.PLAYER) continue;
-                    /*
-                     * 平台桥只负责为旧版本缺失的属性补齐默认档案。模组在
-                     * EntityAttributeCreationEvent 中已经声明的物种专属值必须保留，
-                     * 否则这里再次 add 会把鸭子等实体的显式数值覆盖为属性默认值。
-                     */
-                    if (!event.has(type, entry)) {
-                        event.add(type, entry);
-                    }
-                }
-            });
-            for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
-                if (event.has(EntityType.PLAYER, entry)) {
-                    continue;
-                }
-                if (FLYING_SPEED.equals(entry)) {
-                    event.add(EntityType.PLAYER, entry, 1.0);
-                } else {
-                    event.add(EntityType.PLAYER, entry);
+        PortEventHandler.addListener((EntityAttributeModificationEvent event) -> {
+            for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+                if (type == EntityType.PLAYER) continue;
+                for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
+                    if (entry.getId().getPath().startsWith("player.")) continue;
+                    event.add(type, entry.value());
                 }
             }
+            for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
+                event.add(EntityType.PLAYER, entry.value());
+            }
+            event.add(EntityType.PLAYER, FLYING_SPEED.value(), 1.0);
         });
 
         PortEventHandler.addListener((PortRegisterDataMapTypesEvent event) -> {

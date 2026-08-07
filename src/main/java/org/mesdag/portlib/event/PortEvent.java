@@ -26,13 +26,11 @@ public class PortEvent<E extends Event> extends Event {
         return this instanceof IPortCancellableEvent;
     }
 
-    /**
-     * 同步取消包装事件与底层加载器事件。
-     *
-     * <p>{@link Event} 已经声明了同名实例方法，因此 Java 不会调用
-     * {@link IPortCancellableEvent} 中的默认实现。统一在包装事件基类中回写，
-     * 才能保证监听者取消 PortLib 事件时，原始 Forge 事件也真正停止执行。</p>
-     */
+    /// 同步取消包装事件与底层加载器事件。
+    ///
+    /// [Event] 已经声明了同名实例方法，因此 Java 不会调用
+    /// [IPortCancellableEvent] 中的默认实现。统一在包装事件基类中回写，
+    /// 才能保证监听者取消 PortLib 事件时，原始 Forge 事件也真正停止执行。
     @Diff
     @ApiStatus.NonExtendable
     @Override

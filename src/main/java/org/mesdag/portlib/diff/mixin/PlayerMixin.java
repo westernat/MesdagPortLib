@@ -70,7 +70,8 @@ public abstract class PlayerMixin implements IPortPlayer {
             Level level,
             ItemStack food,
             CallbackInfoReturnable<ItemStack> cir,
-            @Share("foodProperties") LocalRef<FoodProperties> foodProperties) {
+            @Share("foodProperties") LocalRef<FoodProperties> foodProperties
+    ) {
         // 原版会在 eat 返回前把最后一份食物减为空栈，必须在消费前保留本次食物属性。
         foodProperties.set(food.getFoodProperties(portlib$self()));
     }
@@ -78,7 +79,8 @@ public abstract class PlayerMixin implements IPortPlayer {
     @ModifyReturnValue(method = "eat", at = @At("RETURN"))
     private ItemStack usingConvertsTo(
             ItemStack original,
-            @Share("foodProperties") LocalRef<FoodProperties> foodPropertiesRef) {
+            @Share("foodProperties") LocalRef<FoodProperties> foodPropertiesRef
+    ) {
         FoodProperties foodProperties = foodPropertiesRef.get();
         if (foodProperties != null) {
             ItemStack stack = IPortFoodProperties.of(foodProperties).portlib$getUsingConvertsTo();
@@ -87,7 +89,7 @@ public abstract class PlayerMixin implements IPortPlayer {
                     return stack.copy();
                 }
 
-                if (!portlib$self().level().isClientSide()) {
+                if (!portlib$self().level().isClientSide) {
                     ItemStack container = stack.copy();
                     if (!getInventory().add(container)) {
                         drop(container, false);
@@ -219,6 +221,14 @@ public abstract class PlayerMixin implements IPortPlayer {
     @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getSweepingDamageRatio(Lnet/minecraft/world/entity/LivingEntity;)F"))
     private float applySweepingDamageRatio(float original) {
         return (float) (original + portlib$self().getAttributeValue(PortAttributesExtension.sweepingDamageRatio()));
+    }
+
+    @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
+    private float applySneakingSpeed(float original) {
+        if (portlib$self().isCrouching()) {
+            return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.sneakingSpeed()));
+        }
+        return original;
     }
 
     // endregion attributes

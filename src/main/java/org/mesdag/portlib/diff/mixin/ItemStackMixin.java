@@ -237,21 +237,19 @@ public abstract class ItemStackMixin implements IPortItemStack {
         getOrCreateTag().put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
     }
 
-    /**
-     * 1.20.1 原版会把物品数量写成有符号 byte，超过 127 后会发生溢出。
-     * 普通数量继续保留原版格式；只有扩展堆叠数量才改写为 int，避免破坏旧格式兼容性。
-     */
+    /// 1.20.1 原版会把物品数量写成有符号 byte，超过 127 后会发生溢出。
+    /// 普通数量继续保留原版格式；只有扩展堆叠数量才改写为 int，避免破坏旧格式兼容性。
     @Inject(method = "save", at = @At("RETURN"))
     private void portlib$saveExpandedCount(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
         if (count > Byte.MAX_VALUE) {
-            cir.getReturnValue().putInt("Count", count);
+            cir.getReturnValue().putInt("PortCount", count);
         }
     }
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
     private void load1(CompoundTag compoundTag, CallbackInfo ci) {
-        if (compoundTag.contains("Count", Tag.TAG_INT)) {
-            this.count = compoundTag.getInt("Count");
+        if (compoundTag.contains("PortCount", Tag.TAG_INT)) {
+            this.count = compoundTag.getInt("PortCount");
         }
         CompoundTag tag = getTag();
         if (tag != null) {

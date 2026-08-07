@@ -67,6 +67,9 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     @Shadow
     public abstract double getAttributeValue(Holder<Attribute> attribute);
 
+    @Shadow
+    public abstract AttributeMap getAttributes();
+
     @Unique
     private Stack<PortDamageContainer> portlib$damageContainers = new Stack<>();
     @Unique
@@ -104,7 +107,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return portlib$dirty;
     }
 
-    // region 受伤流程
+    // region hurt
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isSleeping()Z"), cancellable = true)
     private void push(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
@@ -115,7 +118,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     }
 
     @ModifyVariable(method = "hurt", at = @At(value = "STORE"), name = "f")
-    private float peekNewDamage(float original) {
+    private float peekNewDamage(float f) {
         return portlib$damageContainers.peek().getNewDamage();
     }
 
@@ -176,7 +179,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         portlib$damageContainers.pop();
     }
 
-    // endregion 受伤流程
+    // endregion hurt
 
     @ModifyVariable(method = "getDamageAfterMagicAbsorb", at = @At(value = "STORE", ordinal = 1), argsOnly = true)
     private float setEnchantmentsReduction(float original) {
@@ -184,7 +187,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return original;
     }
 
-    // region 实际伤害结算
+    // region actuallyHurt
 
     /// ```java
     /// damageAmount = this.getDamageAfterArmorAbsorb(damageSource, damageAmount);
@@ -229,7 +232,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     /// float f1 = this.damageContainers.peek().getNewDamage();
     ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f1")
-    private float modifyF1(float original) {
+    private float modifyF1(float f1) {
         return portlib$damageContainers.peek().getNewDamage();
     }
 
@@ -246,7 +249,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     /// float f = absorbed;
     ///```
     @ModifyVariable(method = "actuallyHurt", at = @At(value = "STORE", ordinal = 0), name = "f")
-    private float modifyF(float original, @Share("absorbed") LocalFloatRef absorbed) {
+    private float modifyF(float f, @Share("absorbed") LocalFloatRef absorbed) {
         return absorbed.get();
     }
 
@@ -268,7 +271,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         PortLivingEntityExtension.onDamageTaken(portlib$self(), portlib$damageContainers.peek());
     }
 
-    // endregion 实际伤害结算
+    // endregion actuallyHurt
 
     @ModifyExpressionValue(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;canBeAffected(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
     private boolean canMobEffectBeApplied1(boolean original, @Local(argsOnly = true) MobEffectInstance instance, @Local(argsOnly = true) @Nullable Entity entity) {
@@ -290,7 +293,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return PortCanContinueSleepingEvent.canEntityContinueSleeping(portlib$self(), original ? null : Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
     }
 
-    // region 效果粒子
+    // region particles
 
     @Inject(method = "updateInvisibilityStatus", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setInvisible(Z)V", ordinal = 0))
     private void updateSynchronizedMobEffectParticles(CallbackInfo ci) {
@@ -313,11 +316,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     }
 
     @Inject(method = "tickEffects", at = @At("TAIL"))
-    private void tickEffectParticles(CallbackInfo ci, @Local(name = "flag1") boolean ambience) { // clientside
+    private void tickEffectParticles(CallbackInfo ci, @Local(name = "flag1") boolean flag1) { // clientside
         LivingEntity self = portlib$self();
         if (self.level().isClientSide && !portlib$effectParticles.isEmpty()) {
             int invisibleFactor = self.isInvisible() ? 15 : 4;
-            int ambienceFactor = ambience ? 5 : 1;
+            int ambienceFactor = flag1 ? 5 : 1;
             if (self.getRandom().nextInt(invisibleFactor * ambienceFactor) == 0) {
                 ParticleOptions particle = Util.getRandom(portlib$effectParticles, self.getRandom());
                 self.level().addParticle(particle, self.getRandomX(0.5), self.getRandomY(), self.getRandomZ(0.5), 1.0, 1.0, 1.0);
@@ -325,9 +328,9 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         }
     }
 
-    // endregion 效果粒子
+    // endregion particles
 
-    // region 属性行为
+    // region attributes
 
     /// 把 1.21 的连续水中移动效率换算为 1.20 水中移动公式使用的三档系数。
     ///
@@ -367,11 +370,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @ModifyReturnValue(method = "getScale", at = @At("RETURN"))
     private float applyScale(float original) {
-        @Nullable AttributeMap attributes = portlib$self().getAttributes();
-        if (attributes == null) { // maybe happens in super()
-            return original;
+        @Nullable AttributeMap attributes = getAttributes();
+        if (attributes != null) { // maybe happens in super()
+            return (float) (original * attributes.getValue(PortAttributesExtension.scale().value()));
         }
-        return (float) (original * attributes.getValue(PortAttributesExtension.scale().value()));
+        return original;
     }
 
     @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
@@ -379,17 +382,5 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return (float) getAttributeValue(PortAttributesExtension.jumpStrength());
     }
 
-    @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
-    private float applySneakingSpeed(float original) {
-        /*
-         * 潜行速度是 player 命名空间的玩家属性。猫潜伏等生物动作也会进入
-         * CROUCHING 姿态，但它们没有、也不应被补入这个玩家专用属性。
-         */
-        if (portlib$self() instanceof Player && portlib$self().isCrouching()) {
-            return (float) (original * getAttributeValue(PortAttributesExtension.sneakingSpeed()));
-        }
-        return original;
-    }
-
-    // endregion 属性行为
+    // endregion attributes
 }
