@@ -193,6 +193,8 @@ public interface IPortEntityExtension {
         return getDefaultPassengerAttachmentPoint(self(), entity, IPortEntityDimensions.of(dimensions).attachments());
     }
 
+    default void onExplosionHit(Entity source) {}
+
     @Protected
     static Vec3 getDefaultPassengerAttachmentPoint(Entity vehicle, Entity passenger, PortEntityAttachments attachments) {
         int i = vehicle.getPassengers().indexOf(passenger);
@@ -212,6 +214,4 @@ public interface IPortEntityExtension {
                 PortAdvancedAddEntityPayload::handle
         );
     }
-
-    default void onExplosionHit(Entity source) {}
 }

@@ -178,7 +178,7 @@ public class PortLib {
         GLOBAL_LOOT_MODIFIERS.register(eventBus);
         BIOME_MODIFIER_SERIALIZERS.register(eventBus);
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
-//            ForgeChunkManager
+//            ForcedChunkManager
             PortDataMapLoader.initDataMaps();
             PortModifyDefaultComponentsEvent.modifyComponents();
 //            extendPoiTypes
