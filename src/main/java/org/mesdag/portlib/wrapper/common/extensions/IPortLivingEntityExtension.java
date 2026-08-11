@@ -14,7 +14,6 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 
-@SuppressWarnings("all")
 public interface IPortLivingEntityExtension extends IPortEntityExtension {
     private LivingEntity self() {
         return (LivingEntity) this;

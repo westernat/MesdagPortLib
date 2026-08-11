@@ -18,12 +18,12 @@ public class PortPlayerRespawnPositionEvent extends PlayerEvent {
     private boolean copyOriginalSpawnPosition;
 
     @Diff
-    public PortPlayerRespawnPositionEvent(ServerPlayer player, PortDimensionTransition dimensionTransition, boolean fromEndFight) {
+    public PortPlayerRespawnPositionEvent(ServerPlayer player, PortDimensionTransition dimensionTransition, boolean fromEndFight, boolean copyOriginalSpawnPosition) {
         super(player);
         this.dimensionTransition = dimensionTransition;
         this.originalDimensionTransition = dimensionTransition;
         this.fromEndFight = fromEndFight;
-        this.copyOriginalSpawnPosition = !originalDimensionTransition.missingRespawnBlock();
+        this.copyOriginalSpawnPosition = copyOriginalSpawnPosition;
     }
 
     public PortDimensionTransition getDimensionTransition() {
