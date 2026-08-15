@@ -28,6 +28,7 @@
         "DataPackRegistriesHooksAccessor",
         "DoorBlockMixin",
         "DoubleBlockHalfMixin",
+        "EnchantedBookItemMixin",
         "EnchantmentMenuMixin",
         "EntityDimensionsMixin",
         "EntityMixin",
