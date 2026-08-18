@@ -7,6 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,15 +16,18 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
+import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectExtension;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class PortMobEffect extends MobEffect {
+public class PortMobEffect extends MobEffect implements IPortMobEffectExtension {
     private final Function<MobEffectInstance, ParticleOptions> particleFactory;
     private @Nullable Object2ObjectMap<UUID, Int2DoubleFunction> curves;
+    private Optional<SoundEvent> soundOnAdded = Optional.empty();
 
     public PortMobEffect(MobEffectCategory category, int color, ParticleOptions particle) {
         super(category, color);
@@ -46,8 +50,10 @@ public class PortMobEffect extends MobEffect {
         return isDurationEffectTick(duration, amplifier);
     }
 
-    // todo
-    public void onEffectStarted(LivingEntity living, int amplifier) {}
+    @Override
+    public void onEffectAdded(LivingEntity living, int amplifier) {
+        soundOnAdded.ifPresent(event -> living.level().playSound(null, living.getX(), living.getY(), living.getZ(), event, living.getSoundSource(), 1.0F, 1.0F));
+    }
 
     @Override
     public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {
@@ -94,6 +100,11 @@ public class PortMobEffect extends MobEffect {
     public PortMobEffect addAttributeModifier(Attribute attribute, UUID uuid, String name, AttributeModifier.Operation operation, Int2DoubleFunction curve) {
         getAttributeModifiers().put(attribute, new AttributeModifier(uuid, name, 0, operation));
         putCurve(uuid, curve);
+        return this;
+    }
+
+    public PortMobEffect withSoundOnAdded(SoundEvent sound) {
+        this.soundOnAdded = Optional.of(sound);
         return this;
     }
 }

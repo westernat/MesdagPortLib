@@ -34,6 +34,7 @@ import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectInstanceExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -383,4 +384,27 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     }
 
     // endregion attributes
+
+    // region onEffectStarted
+
+    @ModifyReturnValue(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "RETURN", ordinal = 1))
+    private boolean start1(boolean original, @Local(argsOnly = true) MobEffectInstance effectInstance) {
+        IPortMobEffectInstanceExtension.of(effectInstance).onEffectAdded(portlib$self());
+        IPortMobEffectInstanceExtension.of(effectInstance).onEffectStarted(portlib$self());
+        return original;
+    }
+
+    @ModifyReturnValue(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "RETURN", ordinal = 2))
+    private boolean start2(boolean original, @Local(argsOnly = true) MobEffectInstance effectInstance) {
+        IPortMobEffectInstanceExtension.of(effectInstance).onEffectStarted(portlib$self());
+        return original;
+    }
+
+    @ModifyReturnValue(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "RETURN", ordinal = 3))
+    private boolean start3(boolean original, @Local(argsOnly = true) MobEffectInstance effectInstance) {
+        IPortMobEffectInstanceExtension.of(effectInstance).onEffectStarted(portlib$self());
+        return original;
+    }
+
+    // endregion
 }

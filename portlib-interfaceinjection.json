@@ -136,5 +136,8 @@
     ],
     "net/minecraft/world/entity/projectile/AbstractArrow": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortAbstractArrowExtension"
+    ],
+    "net/minecraft/world/effect/MobEffect": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortMobEffectExtension"
     ]
 }
