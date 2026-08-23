@@ -223,13 +223,5 @@ public abstract class PlayerMixin implements IPortPlayer {
         return (float) (original + portlib$self().getAttributeValue(PortAttributesExtension.sweepingDamageRatio()));
     }
 
-    @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
-    private float applySneakingSpeed(float original) {
-        if (portlib$self().isCrouching()) {
-            return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.sneakingSpeed()));
-        }
-        return original;
-    }
-
     // endregion attributes
 }

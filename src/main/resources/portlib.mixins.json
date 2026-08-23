@@ -93,6 +93,7 @@
         "GuiMixin",
         "GuiMixin$HeartTypeMixin",
         "LevelRendererMixin",
+        "LocalPlayerMixin",
         "MinecraftMixin",
         "ModelManagerMixin",
         "MouseHandlerMixin",
