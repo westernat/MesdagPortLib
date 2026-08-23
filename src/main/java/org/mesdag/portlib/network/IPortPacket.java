@@ -23,7 +23,7 @@ public interface IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player instanceof ServerPlayer player) {
-                work(player);
+                context.enqueueWork(() -> work(player));
             }
         }
 
@@ -34,7 +34,7 @@ public interface IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player != null) {
-                work(context.player);
+                context.enqueueWork(() -> work(context.player));
             }
         }
 
@@ -42,8 +42,7 @@ public interface IPortPacket {
     }
 
     class Context {
-        @Nullable
-        private final Player player;
+        private final @Nullable Player player;
         private final Connection connection;
         private final Consumer<Runnable> executor;
         private final Consumer<IPortPacket> reply;
