@@ -76,7 +76,7 @@ public abstract class InventoryMixin {
         EnumMap<EquipmentSlot, PortArmorHurtEvent.ArmorEntry> armorMap = new EnumMap<>(EquipmentSlot.class);
         for (int i = 0; i < arr.length; i++) {
             ItemStack$hurtAndBreakAction action = arr[i];
-            if (action.notPrepared()) continue;
+            if (action == null || action.notPrepared()) continue;
             armorMap.put(EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, i), action.toEntry());
         }
 

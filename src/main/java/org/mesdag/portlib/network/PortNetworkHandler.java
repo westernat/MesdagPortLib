@@ -176,13 +176,15 @@ public class PortNetworkHandler {
         codecMap.put(identifier, codec);
     }
 
+    /// s2c
     @Diff
-    public Packet<ClientGamePacketListener> toVanillaClientbound(IPortPacket.S2C packet) {
+    public Packet<ClientGamePacketListener> toVanillaClientbound(IPortPacket packet) {
         return (Packet<ClientGamePacketListener>) channel.toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT);
     }
 
+    /// c2s
     @Diff
-    public Packet<ServerGamePacketListener> toVanillaServerbound(IPortPacket.C2S packet) {
+    public Packet<ServerGamePacketListener> toVanillaServerbound(IPortPacket packet) {
         return (Packet<ServerGamePacketListener>) channel.toVanillaPacket(packet, NetworkDirection.PLAY_TO_SERVER);
     }
 
