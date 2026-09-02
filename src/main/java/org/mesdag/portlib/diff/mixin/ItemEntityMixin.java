@@ -1,8 +1,8 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +16,7 @@ public abstract class ItemEntityMixin {
 
     @Inject(method = "fireImmune", at = @At("HEAD"), cancellable = true)
     private void fireResistant(CallbackInfoReturnable<Boolean> cir) {
-        if (PortItemStackExtension.getFireResistant(getItem())) {
+        if (IPortItemStackExtension.of(getItem()).getFireResistant()) {
             cir.setReturnValue(true);
         }
     }

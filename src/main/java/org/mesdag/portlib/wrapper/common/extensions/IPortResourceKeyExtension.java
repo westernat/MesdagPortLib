@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceKey;
 
 @SuppressWarnings("all")
 public interface IPortResourceKeyExtension<T> {
-
     private ResourceKey<T> self() {
         return (ResourceKey<T>) this;
     }

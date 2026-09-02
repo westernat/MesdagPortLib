@@ -1,7 +1,6 @@
 package org.mesdag.portlib.diff.datamap;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
 import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.google.gson.Gson;
@@ -32,6 +31,7 @@ import org.mesdag.portlib.network.PortFriendlyByteBuf;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
 
 import java.util.Collections;
 import java.util.Map;
@@ -67,12 +67,12 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     private static <T> T readJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec) {
         JsonElement jsonelement = GsonHelper.fromJson(GSON, buf.readUtf(), JsonElement.class);
-        DataResult<T> dataresult = codec.parse(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), jsonelement);
+        DataResult<T> dataresult = codec.parse(IPortHolderLookupProviderExtension.of(buf.registryAccess()).createSerializationContext(JsonOps.INSTANCE), jsonelement);
         return PortDataResultExtension.getOrThrow(dataresult, name -> new DecoderException("Failed to decode json: " + name));
     }
 
     private static <T> void writeJsonWithRegistryCodec(PortRegistryFriendlyByteBuf buf, Codec<T> codec, T value) {
-        DataResult<JsonElement> dataresult = codec.encodeStart(PortHolderLookupExtension.Provider.createSerializationContext(buf.registryAccess(), JsonOps.INSTANCE), value);
+        DataResult<JsonElement> dataresult = codec.encodeStart(IPortHolderLookupProviderExtension.of(buf.registryAccess()).createSerializationContext(JsonOps.INSTANCE), value);
         buf.writeUtf(GSON.toJson(PortDataResultExtension.getOrThrow(dataresult, message -> new EncoderException("Failed to encode: " + message + " " + value))));
     }
 

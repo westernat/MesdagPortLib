@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.EntityHitResult;
@@ -39,7 +38,7 @@ public interface IPortProjectileExtension extends IPortEntityExtension {
 
     default boolean deflect(PortProjectileDeflection deflection, @Nullable Entity entity, @Nullable Entity owner, boolean deflectedByPlayer) {
         if (!self().level().isClientSide) {
-            deflection.deflect(self(), entity, PortEntityExtension.getRandom(self()));
+            deflection.deflect(self(), entity, self().random);
             self().setOwner(owner);
             onDeflection(entity, deflectedByPlayer);
         }

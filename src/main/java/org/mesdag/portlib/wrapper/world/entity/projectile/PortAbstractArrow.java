@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.entity.projectile;
 
-import PortLib.extensions.net.minecraft.world.entity.projectile.AbstractArrow.PortAbstractArrowExtension;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.mesdag.portlib.diff.IPortAbstractArrow;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAbstractArrowExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortProjectileExtension;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public abstract class PortAbstractArrow extends AbstractArrow implements IPortPr
     ) {
         this(entityType, level);
         setPos(x, y, z);
-        PortAbstractArrowExtension.setup(this, pickupItemStack, firedFromWeapon);
+        IPortAbstractArrowExtension.of(this).setup(pickupItemStack, firedFromWeapon);
     }
 
     protected PortAbstractArrow(
@@ -57,7 +57,7 @@ public abstract class PortAbstractArrow extends AbstractArrow implements IPortPr
 
     @Override
     public @Nullable ItemStack getWeaponItem() {
-        return PortAbstractArrowExtension.weaponItem(this);
+        return IPortAbstractArrowExtension.of(this).weaponItem();
     }
 
     protected void setPickupItemStack(ItemStack pickupItemStack) {

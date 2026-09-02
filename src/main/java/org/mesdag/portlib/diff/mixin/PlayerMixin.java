@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import PortLib.extensions.net.minecraft.world.entity.player.Player.PortPlayerExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -30,6 +29,7 @@ import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -181,7 +181,7 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER))
     private void onDamageTaken(CallbackInfo ci) {
-        PortLivingEntityExtension.onDamageTaken(portlib$self(), IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek());
+        IPortLivingEntityExtension.of(portlib$self()).onDamageTaken(IPortLivingEntity.of(portlib$self()).portlib$getDamageContainers().peek());
     }
 
     // endregion actuallyHurt

@@ -1,7 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -22,10 +20,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,6 +35,8 @@ import org.mesdag.portlib.event.client.PortGatherSkippedAttributeTooltipsEvent;
 import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItem;
@@ -85,12 +82,6 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @Unique
     private PortPatchedDataComponentMap portlib$patch = PortPatchedDataComponentMap.EMPTY;
 
-    /// 让 1.20.1 的物品栈能够直接匹配 PortLib 延迟注册项。
-    ///
-    /// 该版本原版的 `ItemStack.is(Holder)` 只比较 Holder 对象身份，而
-    /// 1.21 的调用方可以直接传入延迟注册包装。PortRegistryEntry 并不是原版注册表
-    /// 创建的 Holder 实例，所以即使内部物品完全相同，原版比较也会返回 false。
-    /// 这里只对 PortLib 自身的注册包装补充值身份比较，不改变原版 Holder 的语义。
     @ModifyReturnValue(method = "is(Lnet/minecraft/core/Holder;)Z", at = @At("RETURN"))
     private boolean portlib$matchRegistryEntry(boolean original, @Local(argsOnly = true) Holder<Item> item) {
         if (!original && item instanceof PortRegistryEntry<?, ?> entry) {
@@ -154,45 +145,57 @@ public abstract class ItemStackMixin implements IPortItemStack {
         }
     }
 
+    @Override
+    public void portlib$setRarity(@Nullable Rarity rarity) {
+        if (rarity == null) {
+            CompoundTag tag = getTag();
+            if (tag != null) {
+                tag.remove("portlib:rarity");
+            }
+        } else {
+            getOrCreateTag().putString("portlib:rarity", rarity.name());
+        }
+    }
+
+    @Inject(method = "getRarity", at = @At("HEAD"), cancellable = true)
+    private void overrideRarity(CallbackInfoReturnable<Rarity> cir) {
+        CompoundTag tag = getTag();
+        if (tag != null && tag.contains("portlib:rarity", Tag.TAG_STRING)) {
+            try {
+                cir.setReturnValue(Rarity.valueOf(tag.getString("portlib:rarity")));
+            } catch (Exception ignored) {}
+        }
+    }
+
     @Inject(method = "getTooltipLines", at = @At("HEAD"), cancellable = true)
     private void hideTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir) {
-        if (!isAdvanced.isCreative() && !PortItemStackExtension.getShowTooltip(portlib$self())) {
+        if (!isAdvanced.isCreative() && !getShowTooltip()) {
             cir.setReturnValue(List.of());
         }
     }
 
     @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shouldShowInTooltip(ILnet/minecraft/world/item/ItemStack$TooltipPart;)Z", ordinal = 2))
     private void hideStoredEnchantmentsTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local(name = "list") List<Component> list) {
-        if (PortItemStackExtension.getShowStoredEnchantmentsTooltip(portlib$self())) {
+        if (getShowStoredEnchantmentsTooltip()) {
             ItemStack.appendEnchantmentNames(list, EnchantedBookItem.getEnchantments(portlib$self()));
         }
     }
 
     @Inject(method = "hasFoil", at = @At("HEAD"), cancellable = true)
     private void override(CallbackInfoReturnable<Boolean> cir) {
-        if (PortItemStackExtension.hasEnchantmentGlintOverride(portlib$self())) {
-            cir.setReturnValue(PortItemStackExtension.getEnchantmentGlintOverride(portlib$self()));
+        if (hasEnchantmentGlintOverride()) {
+            cir.setReturnValue(getEnchantmentGlintOverride());
         }
     }
 
-    /// 使用栈上的工具组件决定挖掘速度。
-    ///
-    /// 1.20.1 的镐、斧等旧工具类各自覆盖了物品方法，而 1.21 已把这些
-    /// 参数统一放进栈组件。必须在物品栈入口接管，才能避免旧类覆盖新组件。
-    /// 没有工具组件时不介入原版和模组物品逻辑。
     @Inject(method = "getDestroySpeed", at = @At("HEAD"), cancellable = true)
     private void portlib$useToolMiningSpeed(BlockState state, CallbackInfoReturnable<Float> cir) {
-        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        PortTool tool = getTool();
         if (tool != null) {
             cir.setReturnValue(tool.getMiningSpeed(state));
         }
     }
 
-    /// 按照 1.21 工具组件的规则处理破坏方块和耐久消耗。
-    ///
-    /// 有组件时不再调用 1.20.1 旧工具类的破坏实现，否则旧实现会额外
-    /// 扣除一次耐久。非客户端、方块硬度非零且消耗值大于零时，仅按
-    /// `damage_per_block` 扣除一次，并保持原版使用统计。
     @Inject(method = "mineBlock", at = @At("HEAD"), cancellable = true)
     private void portlib$useToolDurability(
             Level level,
@@ -201,7 +204,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
             Player player,
             CallbackInfo ci
     ) {
-        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        PortTool tool = getTool();
         if (tool == null) {
             return;
         }
@@ -209,23 +212,15 @@ public abstract class ItemStackMixin implements IPortItemStack {
                 state.getDestroySpeed(level, pos) != 0.0F &&
                 tool.damagePerBlock() > 0
         ) {
-            PortItemStackExtension.hurtAndBreak(
-                    portlib$self(),
-                    tool.damagePerBlock(),
-                    player,
-                    EquipmentSlot.MAINHAND);
+            IPortItemStackExtension.of(portlib$self()).hurtAndBreak(tool.damagePerBlock(), player, EquipmentSlot.MAINHAND);
         }
         player.awardStat(Stats.ITEM_USED.get(getItem()));
         ci.cancel();
     }
 
-    /// 使用栈上的工具组件判断方块是否会掉落战利品。
-    ///
-    /// 1.20.1 的物品接口没有接收物品栈，无法表达 1.21 的逐栈工具组件。
-    /// 因此在物品栈这一层补充判定；没有工具组件时保留物品原有逻辑。
     @Inject(method = "isCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
     private void portlib$useToolDropRule(BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        PortTool tool = PortItemStackExtension.getTool(portlib$self());
+        PortTool tool = getTool();
         if (tool != null) {
             cir.setReturnValue(tool.isCorrectForDrops(state));
         }
@@ -237,8 +232,6 @@ public abstract class ItemStackMixin implements IPortItemStack {
         getOrCreateTag().put(DATA_COMPONENTS, portlib$patch.serializeNBT(PortEnvironment.registryAccess()));
     }
 
-    /// 1.20.1 原版会把物品数量写成有符号 byte，超过 127 后会发生溢出。
-    /// 普通数量继续保留原版格式；只有扩展堆叠数量才改写为 int，避免破坏旧格式兼容性。
     @Inject(method = "save", at = @At("RETURN"))
     private void portlib$saveExpandedCount(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
         if (count > Byte.MAX_VALUE) {
@@ -259,10 +252,8 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "setTag", at = @At("TAIL"))
     private void load2(@Nullable CompoundTag compoundTag, CallbackInfo ci) {
-        // 整体替换 NBT 后，所有由旧标签延迟解析出的缓存都必须失效。
         this.portlib$food = null;
         this.portlib$tool = null;
-        // setTag(null) 与设置不含组件数据的新标签一样，表示整体替换并清除旧补丁。
         portlib$patch.load(Objects.requireNonNullElseGet(compoundTag, CompoundTag::new));
     }
 
@@ -362,7 +353,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
     private Multimap<Attribute, AttributeModifier> withNewDefaultAttributeModifiers(Multimap<Attribute, AttributeModifier> original, @Local(argsOnly = true) EquipmentSlot slot) {
         if (original.isEmpty()) {
-            return PortItemExtension.getDefaultPortAttributeModifiers(getItem(), portlib$self()).getAttributeModifiers(slot);
+            return IPortItemExtension.of(getItem()).getDefaultPortAttributeModifiers(portlib$self()).getAttributeModifiers(slot);
         }
         return original;
     }

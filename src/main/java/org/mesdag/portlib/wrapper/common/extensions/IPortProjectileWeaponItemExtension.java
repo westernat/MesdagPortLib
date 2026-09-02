@@ -1,7 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,7 +43,7 @@ public interface IPortProjectileWeaponItemExtension {
                 Projectile projectile = this.createProjectile(level, shooter, weapon, itemstack, isCrit);
                 this.shootProjectile(shooter, projectile, i, velocity, inaccuracy, f4, target);
                 level.addFreshEntity(projectile);
-                PortItemStackExtension.hurtAndBreak(weapon, this.getDurabilityUse(itemstack), shooter, PortLivingEntityExtension.getSlotForHand(hand));
+                IPortItemStackExtension.of(weapon).hurtAndBreak(getDurabilityUse(itemstack), shooter, IPortLivingEntityExtension.getSlotForHand(hand));
                 if (weapon.isEmpty()) {
                     break;
                 }
@@ -111,15 +109,15 @@ public interface IPortProjectileWeaponItemExtension {
     @Protected
     static ItemStack useAmmo(ItemStack weapon, ItemStack ammo, LivingEntity shooter, boolean intangable) {
         // Neo: Adjust this check to respect ArrowItem#isInfinite, bypassing processAmmoUse if true.
-        int i = !intangable && shooter.level() instanceof ServerLevel serverlevel &&
-                !(PortLivingEntityExtension.hasInfiniteMaterials(shooter) || (ammo.getItem() instanceof IPortArrowItemExtension ai && ai.isInfinite(ammo, weapon, shooter)))
+        int i = !intangable && shooter.level() instanceof ServerLevel /*serverlevel*/ &&
+                !(IPortLivingEntityExtension.of(shooter).hasInfiniteMaterials() || (ammo.getItem() instanceof IPortArrowItemExtension ai && ai.isInfinite(ammo, weapon, shooter)))
                 ? 1/* todo EnchantmentHelper.processAmmoUse(serverlevel, weapon, ammo, 1)*/
                 : 0;
         if (i > ammo.getCount()) {
             return ItemStack.EMPTY;
         } else if (i == 0) {
             ItemStack copy = ammo.copyWithCount(1);
-            PortItemStackExtension.setIntangibleProjectile(copy, true);
+            IPortItemStackExtension.of(copy).setIntangibleProjectile(true);
             return copy;
         }
         ItemStack itemstack = ammo.split(i);

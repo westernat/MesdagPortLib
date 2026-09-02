@@ -1,6 +1,5 @@
 package org.mesdag.portlib.registries;
 
-import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import com.google.common.base.Supplier;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
@@ -11,6 +10,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -82,7 +82,7 @@ public class PortRegistryEntry<R, T extends R> implements Holder<R> {
     }
 
     public boolean is(Holder<R> holder) {
-        return object.getHolder().map(holder1 -> PortHolderExtension.is(((Holder<R>) holder1), holder)).orElse(false);
+        return object.getHolder().map(holder1 -> IPortHolderExtension.of(((Holder<R>) holder1)).is(holder)).orElse(false);
     }
 
     @Override

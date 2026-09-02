@@ -1,8 +1,6 @@
 package org.mesdag.portlib.network.codec;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
-import PortLib.extensions.net.minecraft.core.IdMap.PortIdMapExtension;
 import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import PortLib.extensions.net.minecraftforge.registries.ForgeRegistry.PortForgeRegistryExtension;
 import com.google.gson.JsonElement;
@@ -27,6 +25,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.mesdag.portlib.diff.PortRegistryManager;
 import org.mesdag.portlib.network.*;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortIdMapExtension;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -282,7 +282,7 @@ public interface PortByteBufCodecs {
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, R value) {
-                int i = PortIdMapExtension.getIdOrThrow(getRegistryOrThrow(buffer), value);
+                int i = IPortIdMapExtension.of(getRegistryOrThrow(buffer)).getIdOrThrow(value);
                 buffer.writeVarInt(i);
             }
         };
@@ -381,12 +381,12 @@ public interface PortByteBufCodecs {
         return new PortStreamCodec<>() {
             public T decode(PortRegistryFriendlyByteBuf buffer) {
                 Tag tag = streamcodec.decode(buffer);
-                RegistryOps<Tag> registryops = PortHolderLookupExtension.Provider.createSerializationContext(buffer.registryAccess(), NbtOps.INSTANCE);
+                RegistryOps<Tag> registryops = IPortHolderLookupProviderExtension.of(buffer.registryAccess()).createSerializationContext(NbtOps.INSTANCE);
                 return PortDataResultExtension.getOrThrow(codec.parse(registryops, tag), message -> new DecoderException("Failed to decode: " + message + " " + tag));
             }
 
             public void encode(PortRegistryFriendlyByteBuf buffer, T value) {
-                RegistryOps<Tag> registryops = PortHolderLookupExtension.Provider.createSerializationContext(buffer.registryAccess(), NbtOps.INSTANCE);
+                RegistryOps<Tag> registryops = IPortHolderLookupProviderExtension.of(buffer.registryAccess()).createSerializationContext(NbtOps.INSTANCE);
                 Tag tag = PortDataResultExtension.getOrThrow(codec.encodeStart(registryops, value), message -> new EncoderException("Failed to encode: " + message + " " + value));
                 streamcodec.encode(buffer, tag);
             }

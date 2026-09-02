@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.resource;
 
-import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
@@ -9,6 +8,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.wrapper.common.conditions.PortConditionalOps;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
 
 public abstract class PortContextAwareReloadListener implements PreparableReloadListener {
     private ICondition.IContext conditionContext = ICondition.IContext.EMPTY;
@@ -30,6 +30,6 @@ public abstract class PortContextAwareReloadListener implements PreparableReload
     }
 
     protected final PortConditionalOps<JsonElement> makeConditionalOps() {
-        return new PortConditionalOps<>(PortHolderLookupExtension.Provider.createSerializationContext(getRegistryLookup(), JsonOps.INSTANCE), getContext());
+        return new PortConditionalOps<>(IPortHolderLookupProviderExtension.of(getRegistryLookup()).createSerializationContext(JsonOps.INSTANCE), getContext());
     }
 }

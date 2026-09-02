@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
@@ -8,6 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.text.DecimalFormat;
@@ -21,6 +21,10 @@ public interface IPortAttributeExtension {
         return (Attribute) this;
     }
 
+    default ChatFormatting getStyle(boolean isPositive) {
+        return IPortAttribute.of(self()).portlib$getSentiment().getStyle(isPositive);
+    }
+
     default MutableComponent toValueComponent(@Nullable PortAttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (isNullOrAddition(op)) {
             return Component.translatable("portlib.value.flat", FORMAT.format(value));
@@ -30,12 +34,11 @@ public interface IPortAttributeExtension {
     }
 
     default MutableComponent toComponent(PortAttributeModifier modif, TooltipFlag flag) {
-        Attribute attr = self();
         double value = modif.amount();
         String key = value > 0 ? "portlib.modifier.plus" : "portlib.modifier.take";
-        ChatFormatting color = PortAttributeExtension.getStyle(attr, value > 0);
+        ChatFormatting color = getStyle(value > 0);
 
-        Component attrDesc = Component.translatable(attr.getDescriptionId());
+        Component attrDesc = Component.translatable(self().getDescriptionId());
         Component valueComp = toValueComponent(modif.operation(), value, flag);
 
         return Component.translatable(key, valueComp, attrDesc).withStyle(color);

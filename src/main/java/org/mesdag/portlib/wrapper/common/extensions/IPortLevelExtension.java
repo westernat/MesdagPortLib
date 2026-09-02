@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("all")
 public interface IPortLevelExtension {
-
     private Level self() {
         return (Level) this;
     }

@@ -1,10 +1,11 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
@@ -15,40 +16,55 @@ public interface IPortItemPropertiesExtension {
         return (Item.Properties) this;
     }
 
+    private static PortDataComponentMap.Builder getOrCreateBuilder(Item.Properties thiz) {
+        IPortItem.IPortProperties port = IPortItem.IPortProperties.of(thiz);
+        PortDataComponentMap.Builder builder = port.portlib$getBuilder();
+        if (builder == null) {
+            port.portlib$set(builder = PortDataComponentMap.builder());
+        }
+        return builder;
+    }
+
     default <T> Item.Properties component(PortDataComponentType<T> type, T value) {
-        return PortItemExtension.Properties.component(self(), type, value);
+        getOrCreateBuilder(self()).set(type, value);
+        return self();
     }
 
     default <T> Item.Properties component(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
-        return PortItemExtension.Properties.component(self(), type, value);
+        return component(type.get(), value);
     }
 
     @Diff
     default <T> @Nullable T getComponent(PortDataComponentType<T> type) {
-        return PortItemExtension.Properties.getComponent(self(), type);
+        PortDataComponentMap.Builder builder = IPortItem.IPortProperties.of(self()).portlib$getBuilder();
+        if (builder == null) return null;
+        return (T) builder.getMap().get(type);
     }
 
     @Diff
     default <T> @Nullable T getComponent(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type) {
-        return PortItemExtension.Properties.getComponent(self(), type);
+        return getComponent(type.get());
     }
 
     @Diff
     default Item.Properties unbreakable() {
-        return PortItemExtension.Properties.unbreakable(self());
+        getOrCreateBuilder(self()).unbreakable();
+        return self();
     }
 
     default Item.Properties attributes(PortItemAttributeModifiers modifiers) {
-        return PortItemExtension.Properties.attributes(self(), modifiers);
+        getOrCreateBuilder(self()).setModifiers(modifiers);
+        return self();
     }
 
     @Diff
     default PortItemAttributeModifiers getAttributes() {
-        return PortItemExtension.Properties.getAttributes(self());
+        return getOrCreateBuilder(self()).getModifiers();
     }
 
     @Diff
     default Item.Properties dyedColor(int rgb, boolean showInTooltip) {
-        return PortItemExtension.Properties.dyedColor(self(), rgb, showInTooltip);
+        getOrCreateBuilder(self()).dyedColor(rgb, showInTooltip);
+        return self();
     }
 }

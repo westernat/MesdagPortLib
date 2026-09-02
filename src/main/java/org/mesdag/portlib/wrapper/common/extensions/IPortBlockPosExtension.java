@@ -1,18 +1,16 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.core.BlockPos.PortBlockPosExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("all")
 public interface IPortBlockPosExtension {
-
     private BlockPos self() {
         return (BlockPos) this;
     }
 
     default Vec3 getBottomCenter() {
-        return PortBlockPosExtension.getBottomCenter(self());
+        return new Vec3(self().getX() + 0.5, self().getY(), self().getZ() + 0.5);
     }
 
     static IPortBlockPosExtension of(BlockPos pos) {

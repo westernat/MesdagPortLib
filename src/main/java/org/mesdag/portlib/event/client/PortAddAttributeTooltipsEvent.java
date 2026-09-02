@@ -1,10 +1,10 @@
 package org.mesdag.portlib.event.client;
 
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Event;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
 
 import java.util.function.Consumer;
@@ -36,6 +36,6 @@ public class PortAddAttributeTooltipsEvent extends Event {
     }
 
     public boolean shouldShow() {
-        return PortItemStackExtension.getShowAttributeModifiersTooltip(stack);
+        return IPortItemStackExtension.of(stack).getShowAttributeModifiersTooltip();
     }
 }

@@ -52,6 +52,7 @@ public class PortBonemealEvent extends PortEvent<BonemealEvent> implements IPort
 
     public void setSuccessful(boolean success) {
         this.isSuccess = success;
+        setCanceled(true);
     }
 
     public boolean isSuccessful() {

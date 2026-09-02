@@ -2,7 +2,6 @@ package org.mesdag.portlib.event.other;
 
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
@@ -28,7 +28,7 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
     @Diff
     public PortItemAttributeModifierEvent(ItemAttributeModifierEvent e) {
         super(e);
-        this.defaultModifiers = PortItemStackExtension.getPortAttributeModifiers(e.getItemStack());
+        this.defaultModifiers = IPortItemStackExtension.of(e.getItemStack()).getPortAttributeModifiers();
     }
 
     public ItemStack getItemStack() {

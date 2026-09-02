@@ -1,17 +1,15 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.network.chat.MutableComponent.PortMutableComponentExtension;
 import net.minecraft.network.chat.MutableComponent;
 
 @SuppressWarnings("all")
 public interface IPortMutableComponentExtension {
-
     private MutableComponent self() {
         return (MutableComponent) this;
     }
 
     default MutableComponent withColor(int color) {
-        return PortMutableComponentExtension.withColor(self(), color);
+        return self().setStyle(self().getStyle().withColor(color));
     }
 
     static IPortMutableComponentExtension of(MutableComponent component) {

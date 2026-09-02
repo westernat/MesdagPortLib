@@ -3,6 +3,7 @@ package org.mesdag.portlib.diff;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.component.PortPatchedDataComponentMap;
 import org.mesdag.portlib.wrapper.PortEnvironment;
@@ -23,6 +24,8 @@ public interface IPortItemStack extends IPortItemStackExtension, PortSelfGetter<
     void portlib$setTool(@Nullable PortTool tool, boolean encode);
 
     PortPatchedDataComponentMap portlib$patch();
+
+    void portlib$setRarity(@Nullable Rarity rarity);
 
     default void updateTag() {
         if (portlib$patch().isEmpty()) {

@@ -1,17 +1,19 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.core.IdMap.PortIdMapExtension;
 import net.minecraft.core.IdMap;
 
 @SuppressWarnings("all")
 public interface IPortIdMapExtension<T> {
-
     private IdMap<T> self() {
         return (IdMap<T>) this;
     }
 
     default int getIdOrThrow(T value) {
-        return PortIdMapExtension.getIdOrThrow(self(), value);
+        int i = self().getId(value);
+        if (i == -1) {
+            throw new IllegalArgumentException("Can't find id for '" + value + "' in map " + self());
+        }
+        return i;
     }
 
     static <T> IPortIdMapExtension<T> of(IdMap<T> idMap) {

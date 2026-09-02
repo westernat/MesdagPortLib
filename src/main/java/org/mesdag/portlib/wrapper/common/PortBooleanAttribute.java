@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,7 +38,7 @@ public class PortBooleanAttribute extends Attribute implements IPortAttributeExt
     public MutableComponent toComponent(PortAttributeModifier modif, TooltipFlag flag) {
         double value = modif.amount();
 
-        ChatFormatting color = PortAttributeExtension.getStyle(this, value > 0);
+        ChatFormatting color = getStyle(value > 0);
 
         return Component.translatable("portlib.modifier.bool", toValueComponent(modif.operation(), value, flag), Component.translatable(getDescriptionId())).withStyle(color);
     }

@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import com.google.common.base.Supplier;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
@@ -9,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +20,10 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortEntity;
 import org.mesdag.portlib.diff.IPortEntityDimensions;
+import org.mesdag.portlib.diff.IPortPlayer;
 import org.mesdag.portlib.diff.PortAdvancedAddEntityPayload;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
+import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.util.Protected;
@@ -41,81 +44,83 @@ public interface IPortEntityExtension {
     // region Attachment
 
     default void copyAttachmentsFrom(Entity other, boolean isDeath) {
-        PortEntityExtension.copyAttachmentsFrom(self(), other, isDeath);
+        PortAttachmentInternals.copyEntityAttachments(other, self(), isDeath);
     }
 
     default boolean hasAttachments() {
-        return PortEntityExtension.hasAttaches(self());
+        return CPortAttachmentHolder.of(self()).hasAttaches();
     }
 
     default boolean hasData(PortAttachmentType<?> type) {
-        return PortEntityExtension.hasAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).hasAttach(type);
     }
 
     default <T> boolean hasData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortEntityExtension.hasAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).hasAttach(type);
     }
 
     default <T> T getData(PortAttachmentType<T> type) {
-        return PortEntityExtension.getAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).getAttach(type);
     }
 
     default <T> T getData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortEntityExtension.getAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).getAttach(type);
     }
 
     default <T> Optional<T> getExistingData(PortAttachmentType<T> type) {
-        return PortEntityExtension.getExistingAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).getExistingAttach(type);
     }
 
     default <T> Optional<T> getExistingData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortEntityExtension.getExistingAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).getExistingAttach(type);
     }
 
     default <T> @Nullable T getExistingDataOrNull(PortAttachmentType<T> type) {
-        return PortEntityExtension.getExistingAttachOrNull(self(), type);
+        return CPortAttachmentHolder.of(self()).getExistingAttachOrNull(type);
     }
 
     default <T> @Nullable T getExistingDataOrNull(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortEntityExtension.getExistingAttachOrNull(self(), type);
+        return CPortAttachmentHolder.of(self()).getExistingAttachOrNull(type);
     }
 
     @MustBeInvokedByOverriders
     default <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
-        return PortEntityExtension.setAttach(self(), type, data);
+        return CPortAttachmentHolder.of(self()).setAttach(type, data);
     }
 
     @MustBeInvokedByOverriders
     default <T> @Nullable T setData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type, T data) {
-        return PortEntityExtension.setAttach(self(), type, data);
+        return CPortAttachmentHolder.of(self()).setAttach(type, data);
     }
 
     @MustBeInvokedByOverriders
     default <T> @Nullable T removeData(PortAttachmentType<T> type) {
-        return PortEntityExtension.removeAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).removeAttach(type);
     }
 
     @MustBeInvokedByOverriders
     default <T> @Nullable T removeData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortEntityExtension.removeAttach(self(), type);
+        return CPortAttachmentHolder.of(self()).removeAttach(type);
     }
 
     default void syncData(PortAttachmentType<?> type) {
-        PortEntityExtension.syncAttach(self(), type);
+        CPortAttachmentHolder.of(self()).syncAttach(type);
     }
 
     default void syncData(Supplier<PortAttachmentType<?>> type) {
-        PortEntityExtension.syncAttach(self(), type);
+        CPortAttachmentHolder.of(self()).syncAttach(type);
     }
 
     // endregion Attachment
 
     default RegistryAccess registryAccess() {
-        return PortEntityExtension.registryAccess(self());
+        return self().level().registryAccess();
     }
 
     default void igniteForTicks(int ticks) {
-        PortEntityExtension.igniteForTicks(self(), ticks);
+        if (self().getRemainingFireTicks() < ticks) {
+            self().setRemainingFireTicks(ticks);
+        }
     }
 
     default void igniteForSeconds(float seconds) {
@@ -123,15 +128,18 @@ public interface IPortEntityExtension {
     }
 
     default Vec3 getKnownMovement() {
-        return PortEntityExtension.getKnownMovement(self());
+        if (self().getControllingPassenger() instanceof Player player && self().isAlive()) {
+            return IPortPlayer.of(player).getKnownMovement();
+        }
+        return self().getDeltaMovement();
     }
 
     default BlockState getInBlockState() {
-        return PortEntityExtension.getInBlockState(self());
+        return self().getFeetBlockState();
     }
 
     default RandomSource getRandom() {
-        return PortEntityExtension.getRandom(self());
+        return self().random;
     }
 
     @Protected

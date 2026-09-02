@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff;
 
-import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -37,7 +36,7 @@ public record PortAdvancedAddEntityPayload(
         if (!(entity instanceof IPortEntityWithComplexSpawn port)) {
             return new byte[0];
         }
-        PortRegistryFriendlyByteBuf buf = new PortRegistryFriendlyByteBuf(Unpooled.buffer(), PortEntityExtension.registryAccess(entity), PortConnectionType.MODDED);
+        PortRegistryFriendlyByteBuf buf = new PortRegistryFriendlyByteBuf(Unpooled.buffer(), entity.level().registryAccess(), PortConnectionType.MODDED);
         try {
             port.writeSpawnData(buf);
             buf.readerIndex(0);
@@ -58,7 +57,7 @@ public record PortAdvancedAddEntityPayload(
             if (entity instanceof IPortEntityWithComplexSpawn port) {
                 PortRegistryFriendlyByteBuf buf = new PortRegistryFriendlyByteBuf(
                         Unpooled.wrappedBuffer(customPayload()),
-                        PortEntityExtension.registryAccess(entity),
+                        entity.level().registryAccess(),
                         PortConnectionType.MODDED
                 );
                 try {

@@ -8,7 +8,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
@@ -60,10 +59,10 @@ public class PortAddReloadListenerEvent extends PortEvent<AddReloadListenerEvent
 
         @Override
         public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor) {
-            if (ModLoader.isLoadingStateValid()) {
+// 不需要，因为forge会wrap           if (ModLoader.isLoadingStateValid()) {
                 return wrapped.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
-            }
-            return CompletableFuture.completedFuture(null);
+//            }
+//            return CompletableFuture.completedFuture(null);
         }
     }
 

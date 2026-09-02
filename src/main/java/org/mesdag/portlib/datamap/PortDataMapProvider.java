@@ -1,7 +1,6 @@
 package org.mesdag.portlib.datamap;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -23,6 +22,7 @@ import org.mesdag.portlib.diff.datamap.PortDataMapFile;
 import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
 import org.mesdag.portlib.wrapper.common.conditions.PortConditionalOps;
 import org.mesdag.portlib.wrapper.common.conditions.PortWithConditions;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -43,7 +43,7 @@ public abstract class PortDataMapProvider implements DataProvider {
         return lookupProvider.thenCompose(provider -> {
             gather(provider);
 
-            DynamicOps<JsonElement> dynamicOps = PortHolderLookupExtension.Provider.createSerializationContext(provider, JsonOps.INSTANCE);
+            DynamicOps<JsonElement> dynamicOps = IPortHolderLookupProviderExtension.of(provider).createSerializationContext(JsonOps.INSTANCE);
 
             return CompletableFuture.allOf(this.builders.entrySet().stream().map(entry -> {
                 PortDataMapType<?, ?> type = entry.getKey();

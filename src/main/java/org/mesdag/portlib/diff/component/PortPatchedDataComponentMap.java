@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.component;
 
-import PortLib.extensions.net.minecraft.core.HolderLookup.PortHolderLookupExtension;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
@@ -23,6 +22,7 @@ import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
 
 import java.util.Map;
 import java.util.Objects;
@@ -108,7 +108,7 @@ public class PortPatchedDataComponentMap implements PortDataComponentMap {
 
     public CompoundTag serializeNBT(RegistryAccess provider) {
         CompoundTag tag = new CompoundTag();
-        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = IPortHolderLookupProviderExtension.of(provider).createSerializationContext(NbtOps.INSTANCE);
         for (Map.Entry<PortDataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
             var type = entry.getKey();
             var key = PortRegistries.DATA_COMPONENTS.getKey(type);
@@ -123,7 +123,7 @@ public class PortPatchedDataComponentMap implements PortDataComponentMap {
     }
 
     public void deserializeNBT(RegistryAccess provider, CompoundTag tag) {
-        RegistryOps<Tag> ops = PortHolderLookupExtension.Provider.createSerializationContext(provider, NbtOps.INSTANCE);
+        RegistryOps<Tag> ops = IPortHolderLookupProviderExtension.of(provider).createSerializationContext(NbtOps.INSTANCE);
         for (var key : tag.getAllKeys()) {
             ResourceLocation keyLocation = ResourceLocation.tryParse(key);
             if (keyLocation == null) {

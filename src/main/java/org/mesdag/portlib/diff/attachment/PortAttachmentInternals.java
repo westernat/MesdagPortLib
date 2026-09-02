@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.attachment;
 
-import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
@@ -12,6 +11,7 @@ import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 
 import java.util.function.Predicate;
 
@@ -53,8 +53,8 @@ public final class PortAttachmentInternals {
                 PortSyncAttachmentsPayload.STREAM_CODEC,
                 PortSyncAttachmentsPayload::handle
         );
-        PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> PortEntityExtension.copyAttachmentsFrom(event.getEntity(), event.getOriginal(), event.isWasDeath()));
-        PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> PortEntityExtension.copyAttachmentsFrom(event.getOutcome(), event.getEntity(), true));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> IPortEntityExtension.of(event.getEntity()).copyAttachmentsFrom(event.getOriginal(), event.isWasDeath()));
+        PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> IPortEntityExtension.of(event.getOutcome()).copyAttachmentsFrom(event.getEntity(), true));
     }
 
     private PortAttachmentInternals() {}

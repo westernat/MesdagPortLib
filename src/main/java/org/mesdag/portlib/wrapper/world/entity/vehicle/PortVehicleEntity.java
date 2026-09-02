@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.entity.vehicle;
 
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -13,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 
 public abstract class PortVehicleEntity extends Entity {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(PortVehicleEntity.class, EntityDataSerializers.INT);
@@ -56,7 +56,7 @@ public abstract class PortVehicleEntity extends Entity {
         kill();
         if (level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             ItemStack stack = dropItem.getDefaultInstance();
-            PortItemStackExtension.setCustomName(stack, getCustomName());
+            IPortItemStackExtension.of(stack).setCustomName(getCustomName());
             spawnAtLocation(stack);
         }
 

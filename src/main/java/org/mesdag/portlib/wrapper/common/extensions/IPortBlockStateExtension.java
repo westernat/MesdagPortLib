@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.level.block.state.BlockState.PortBlockStateExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -16,7 +15,7 @@ public interface IPortBlockStateExtension {
     }
 
     default boolean isEmpty() {
-        return PortBlockStateExtension.isEmpty(self());
+        return IPortBlockExtension.of(self().getBlock()).isEmpty(self());
     }
 
     default void onExplosionHit(Level level, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> dropConsumer) {

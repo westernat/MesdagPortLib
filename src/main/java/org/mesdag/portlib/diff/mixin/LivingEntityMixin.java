@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -34,6 +33,7 @@ import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectInstanceExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -269,7 +269,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER))
     private void onDamageTaken(CallbackInfo ci) {
-        PortLivingEntityExtension.onDamageTaken(portlib$self(), portlib$damageContainers.peek());
+        IPortLivingEntityExtension.of(portlib$self()).onDamageTaken(portlib$damageContainers.peek());
     }
 
     // endregion actuallyHurt
@@ -286,7 +286,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
 
     @WrapOperation(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;removeAllEffects()Z"))
     private boolean replace(LivingEntity instance, Operation<Boolean> original) {
-        return PortLivingEntityExtension.removeEffectsCuredBy(instance, PortEffectCures.PROTECTED_BY_TOTEM);
+        return IPortLivingEntityExtension.of(instance).removeEffectsCuredBy(PortEffectCures.PROTECTED_BY_TOTEM);
     }
 
     @ModifyReturnValue(method = "checkBedExists", at = @At("RETURN"))

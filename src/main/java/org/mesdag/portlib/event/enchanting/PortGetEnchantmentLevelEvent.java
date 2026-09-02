@@ -1,6 +1,5 @@
 package org.mesdag.portlib.event.enchanting;
 
-import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
 import org.mesdag.portlib.wrapper.world.item.enchantment.EnchantmentHolder;
 import org.mesdag.portlib.wrapper.world.item.enchantment.PortItemEnchantments;
 
@@ -66,7 +66,7 @@ public class PortGetEnchantmentLevelEvent extends Event {
 
     @Diff
     public static int getEnchantmentLevelSpecific(int level, ItemStack stack, EnchantmentHolder ench) {
-        HolderLookup.RegistryLookup<Enchantment> lookup = PortHolderExtension.unwrapLookup(ench);
+        HolderLookup.RegistryLookup<Enchantment> lookup = IPortHolderExtension.of(ench).unwrapLookup();
         if (lookup == null) {
             return level;
         }

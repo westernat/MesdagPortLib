@@ -1,33 +1,23 @@
 package org.mesdag.portlib;
 
-import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.mojang.serialization.Codec;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.mesdag.portlib.attachment.PortAttachmentType;
-import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
@@ -37,20 +27,19 @@ import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
-import org.mesdag.portlib.diff.test.TestAttachment;
-import org.mesdag.portlib.diff.test.TestComponent;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
-import org.mesdag.portlib.registries.*;
+import org.mesdag.portlib.registries.PortAttributeRegistration;
+import org.mesdag.portlib.registries.PortRegisterHandler;
+import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.mesdag.portlib.wrapper.common.world.PortAddCarversBiomeModifier;
 import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
-import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +50,6 @@ public class PortLib {
     public static final Logger LOGGER = LoggerFactory.getLogger("PortLib");
     @Diff
     public static final PortNetworkHandler NETWORK_HANDLER = new PortNetworkHandler(MODID, "1");
-    public static final boolean DEBUG = Boolean.getBoolean("portlib.debug");
 
     private static final PortAttributeRegistration ATTRIBUTES = PortRegisterHandler.attribute(MODID);
     public static final PortRegistryEntry<Attribute, RangedAttribute> BLOCK_BREAK_SPEED = ATTRIBUTES.register(
@@ -202,31 +190,6 @@ public class PortLib {
             event.register(COMPOSTABLES);
             event.register(FURNACE_FUELS);
         });
-
-        if (DEBUG) {
-            PortAttachmentRegistration attachment = PortRegisterHandler.attachment(MODID);
-            PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<TestAttachment>> testAttachment = attachment.registerSimple("test", () -> PortAttachmentType.serializable(() -> new TestAttachment(true)).sync(TestAttachment.STREAM_CODEC).copyOnDeath());
-
-            PortDataComponentRegistration dataComponent = PortRegisterHandler.dataComponent(MODID);
-            PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<TestComponent>> testDataComponent = dataComponent.builder("test", builder -> builder.persistent(TestComponent.CODEC).networkSynchronized(TestComponent.STREAM_CODEC));
-
-            PortEventHandler.addListener((PlayerInteractEvent.EntityInteract event) -> {
-                ItemStack stack = event.getItemStack();
-                if (!stack.isEmpty()) {
-                    if (!event.getLevel().isClientSide) {
-                        TestAttachment data = PortEntityExtension.getAttach(event.getTarget(), testAttachment);
-                        data.setStack(stack);
-
-                        PortItemStackExtension.setData(stack, testDataComponent, new TestComponent(1));
-                    }
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.getEntity().swing(event.getHand(), true);
-                }
-            });
-
-            PortRegistration<MobEffect> effects = PortRegisterHandler.create(MODID, Registries.MOB_EFFECT);
-            effects.register("test", () -> new PortMobEffect(MobEffectCategory.BENEFICIAL, 0xFF0000, ParticleTypes.EXPLOSION));
-        }
     }
 
     public static ResourceLocation asResource(String path) {

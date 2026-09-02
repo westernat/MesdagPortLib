@@ -1,7 +1,6 @@
 package org.mesdag.portlib.diff.datamap;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForgeRegistryExtension;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -44,6 +43,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.wrapper.common.conditions.PortConditionalOps;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
 import org.mesdag.portlib.wrapper.core.PortHolder;
 import org.mesdag.portlib.wrapper.core.PortRegistry;
 
@@ -166,7 +166,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
                 resolve(registry, tKey, true, holder -> {
                     var newValue = value.get().carrier();
-                    var key = PortHolderExtension.getKey(holder);
+                    var key = IPortHolderExtension.of(holder).getKey();
                     var oldValue = result.get(key);
                     if (oldValue == null || newValue.replace()) {
                         result.put(key, new WithSource<>(newValue.value(), tKey));

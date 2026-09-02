@@ -1,11 +1,11 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.datamap.PortDataMapType;
+import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
 
 /// implemented by coremod
 @SuppressWarnings("unchecked")
@@ -15,23 +15,31 @@ public interface IPortHolderExtension<T> {
     }
 
     default boolean is(Holder<T> holder) {
-        return PortHolderExtension.is(self(), holder);
+        if (self().kind() == Holder.Kind.DIRECT) {
+            return self().value().equals(holder.value());
+        }
+        return self().unwrapKey().map(holder::is).orElse(false);
     }
 
     default String getRegisteredName() {
-        return PortHolderExtension.getRegisteredName(self());
+        return self().unwrapKey().map(key -> key.location().toString()).orElse("[unregistered]");
     }
 
     default @Nullable ResourceKey<T> getKey() {
-        return PortHolderExtension.getKey(self());
+        return self().unwrapKey().orElse(null);
     }
 
     default HolderLookup.@Nullable RegistryLookup<T> unwrapLookup() {
-        return PortHolderExtension.unwrapLookup(self());
+        return self() instanceof Holder.Reference<T> ref
+                ? ref.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null
+                : null;
     }
 
     default <A> @Nullable A getData(PortDataMapType<T, A> type) {
-        return PortHolderExtension.getData(self(), type);
+        if (self() instanceof Holder.Reference<T> reference && reference.owner instanceof HolderLookup.RegistryLookup<T> lookup) {
+            return PortDataMapLoader.getInstance().getData(lookup.key(), type, getKey());
+        }
+        return null;
     }
 
     static <T> IPortHolderExtension<T> of(Holder<T> holder) {

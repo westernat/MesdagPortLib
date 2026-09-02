@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +23,7 @@ public interface IPortItemExtension {
 
     @SuppressWarnings("deprecation")
     default int getDefaultMaxStackSize() {
-        return PortItemExtension.getDefaultMaxStackSize(self());
+        return self().getMaxStackSize();
     }
 
     /// not replace vanilla yet

@@ -1,9 +1,7 @@
 package org.mesdag.portlib.wrapper.world.item.component;
 
-import PortLib.extensions.net.minecraft.core.Holder.PortHolderExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
 import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
-import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -24,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
@@ -49,7 +49,7 @@ public class PortItemAttributeModifiers {
         } else {
             this.listTag = new ListTag();
         }
-        this.showInTooltip = PortItemStackExtension.getShowAttributeModifiersTooltip(stack);
+        this.showInTooltip = IPortItemStackExtension.of(stack).getShowAttributeModifiersTooltip();
     }
 
     @Diff
@@ -84,7 +84,7 @@ public class PortItemAttributeModifiers {
 
     @Diff
     public static void addModifier(Holder<Attribute> attribute, PortAttributeModifier modifier, PortEquipmentSlotGroup group, ListTag listTag) {
-        String attributeName = PortHolderExtension.getRegisteredName(attribute);
+        String attributeName = IPortHolderExtension.of(attribute).getRegisteredName();
         if (group != null && group != PortEquipmentSlotGroup.ANY) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 if (group.test(slot)) {
@@ -144,7 +144,7 @@ public class PortItemAttributeModifiers {
     public void applyTo(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         tag.put("AttributeModifiers", listTag);
-        PortItemStackExtension.setShowAttributeModifiersTooltip(stack, showInTooltip);
+        IPortItemStackExtension.of(stack).setShowAttributeModifiersTooltip(showInTooltip);
     }
 
     @Diff

@@ -1,11 +1,13 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.effect.MobEffectInstance.PortMobEffectInstanceExtension;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
+import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Set;
 import java.util.function.Supplier;
@@ -16,20 +18,19 @@ public interface IPortMobEffectInstanceExtension {
         return (MobEffectInstance) this;
     }
 
-    default Set<PortEffectCure> getPortCures() {
-        return PortMobEffectInstanceExtension.getPortCures(self());
-    }
-
     default ParticleOptions getParticleOptions() {
-        return PortMobEffectInstanceExtension.getParticleOptions(self());
+        if (self().getEffect() instanceof PortMobEffect port) {
+            return port.createParticleOptions(self());
+        }
+        return self().isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
     }
 
     default boolean is(Supplier<MobEffect> effectSupplier) {
-        return PortMobEffectInstanceExtension.is(self(), effectSupplier);
+        return self().getEffect() == effectSupplier.get();
     }
 
     default Set<PortEffectCure> getCures() {
-        return PortMobEffectInstanceExtension.getCures(self());
+        return IPortMobEffectInstance.of(self()).portlib$getCures();
     }
 
     default void onEffectStarted(LivingEntity living) {
