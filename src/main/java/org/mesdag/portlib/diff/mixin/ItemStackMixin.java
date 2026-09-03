@@ -36,7 +36,6 @@ import org.mesdag.portlib.event.entity.player.PortUseItemOnBlockEvent;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.common.util.PortAttributeTooltipContext;
 import org.mesdag.portlib.wrapper.world.food.PortFoodProperties;
 import org.mesdag.portlib.wrapper.world.item.PortItem;
@@ -212,7 +211,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
                 state.getDestroySpeed(level, pos) != 0.0F &&
                 tool.damagePerBlock() > 0
         ) {
-            IPortItemStackExtension.of(portlib$self()).hurtAndBreak(tool.damagePerBlock(), player, EquipmentSlot.MAINHAND);
+            hurtAndBreak(tool.damagePerBlock(), player, EquipmentSlot.MAINHAND);
         }
         player.awardStat(Stats.ITEM_USED.get(getItem()));
         ci.cancel();
