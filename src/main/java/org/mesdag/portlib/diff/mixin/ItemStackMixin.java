@@ -240,7 +240,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
     private void load1(CompoundTag compoundTag, CallbackInfo ci) {
-        if (compoundTag.contains("PortCount", Tag.TAG_INT)) {
+        if (compoundTag.contains("PortCount", Tag.TAG_ANY_NUMERIC)) {
             this.count = compoundTag.getInt("PortCount");
         }
         CompoundTag tag = getTag();
