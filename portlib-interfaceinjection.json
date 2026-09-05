@@ -139,5 +139,8 @@
     ],
     "net/minecraft/world/effect/MobEffect": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortMobEffectExtension"
+    ],
+    "net/minecraft/world/level/block/entity/BlockEntityType": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockEntityTypeExtension"
     ]
 }

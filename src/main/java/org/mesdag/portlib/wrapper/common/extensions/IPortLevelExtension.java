@@ -1,9 +1,9 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.world.level.Level.PortLevelExtension;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.attachment.PortAttachmentType;
+import org.mesdag.portlib.diff.attachment.CPortAttachmentHolder;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 
 import java.util.Optional;
@@ -16,63 +16,63 @@ public interface IPortLevelExtension {
     }
 
     default boolean hasAttachments() {
-        return PortLevelExtension.hasAttaches(self());
+        return ((CPortAttachmentHolder) this).hasAttaches();
     }
 
     default boolean hasData(PortAttachmentType<?> type) {
-        return PortLevelExtension.hasAttach(self(), type);
+        return ((CPortAttachmentHolder) this).hasAttach(type);
     }
 
     default <T> boolean hasData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortLevelExtension.hasAttach(self(), type);
+        return hasData(type.get());
     }
 
     default <T> T getData(PortAttachmentType<T> type) {
-        return PortLevelExtension.getAttach(self(), type);
+        return ((CPortAttachmentHolder) this).getAttach(type);
     }
 
     default <T> T getData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortLevelExtension.getAttach(self(), type);
+        return getData(type.get());
     }
 
     default <T> Optional<T> getExistingData(PortAttachmentType<T> type) {
-        return PortLevelExtension.getExistingAttach(self(), type);
+        return ((CPortAttachmentHolder) this).getExistingAttach(type);
     }
 
     default <T> Optional<T> getExistingData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortLevelExtension.getExistingAttach(self(), type);
+        return getExistingData(type.get());
     }
 
     default <T> @Nullable T getExistingDataOrNull(PortAttachmentType<T> type) {
-        return PortLevelExtension.getExistingAttachOrNull(self(), type);
+        return ((CPortAttachmentHolder) this).getExistingAttachOrNull(type);
     }
 
     default <T> @Nullable T getExistingDataOrNull(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortLevelExtension.getExistingAttachOrNull(self(), type);
+        return getExistingDataOrNull(type.get());
     }
 
     default <T> @Nullable T setData(PortAttachmentType<T> type, T data) {
-        return PortLevelExtension.setAttach(self(), type, data);
+        return ((CPortAttachmentHolder) this).setAttach(type, data);
     }
 
     default <T> @Nullable T setData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type, T data) {
-        return PortLevelExtension.setAttach(self(), type, data);
+        return setData(type.get(), data);
     }
 
     default <T> @Nullable T removeData(PortAttachmentType<T> type) {
-        return PortLevelExtension.removeAttach(self(), type);
+        return ((CPortAttachmentHolder) this).removeAttach(type);
     }
 
     default <T> @Nullable T removeData(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
-        return PortLevelExtension.removeAttach(self(), type);
+        return removeData(type.get());
     }
 
     default void syncData(PortAttachmentType<?> type) {
-        PortLevelExtension.syncAttach(self(), type);
+        ((CPortAttachmentHolder) this).syncAttach(type);
     }
 
     default void syncData(Supplier<PortAttachmentType<?>> type) {
-        PortLevelExtension.syncAttach(self(), type);
+        syncData(type.get());
     }
 
     static IPortLevelExtension of(Level level) {

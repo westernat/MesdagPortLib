@@ -10,7 +10,6 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.mixin.BlockEntityTypeAccessor;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -19,23 +18,23 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class PortBlockEntityTypeAddBlocksEvent extends Event implements IModBusEvent {
-    private final Function<BlockEntityType<?>, ? extends Class<?>> memoizedCommonSuperClass = Util.memoize((BlockEntityType<?> blockEntityType) -> getCommonSuperClassForExistingValidBlocks(((BlockEntityTypeAccessor) blockEntityType).getValidBlocks()));
+    private final Function<BlockEntityType<?>, ? extends Class<?>> memoizedCommonSuperClass = Util.memoize(type -> getCommonSuperClassForExistingValidBlocks(type.validBlocks));
 
     @Diff
     public PortBlockEntityTypeAddBlocksEvent() {}
 
-    public void modify(BlockEntityType<?> blockEntityType, Block... blocksToAdd) {
+    public void modify(BlockEntityType<?> type, Block... blocksToAdd) {
         if (blocksToAdd.length == 0) {
             return;
         }
 
-        Set<Block> currentValidBlocks = new HashSet<>(((BlockEntityTypeAccessor) blockEntityType).getValidBlocks());
+        Set<Block> currentValidBlocks = new HashSet<>(type.validBlocks);
 
         for (Block block : blocksToAdd) {
-            addValidBlock(block, memoizedCommonSuperClass.apply(blockEntityType), currentValidBlocks);
+            addValidBlock(block, memoizedCommonSuperClass.apply(type), currentValidBlocks);
         }
 
-        ((BlockEntityTypeAccessor) blockEntityType).setValidBlocks(currentValidBlocks);
+        type.validBlocks = currentValidBlocks;
     }
 
     public void modify(ResourceKey<BlockEntityType<?>> blockEntityTypeKey, Block... blocksToAdd) {

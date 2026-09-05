@@ -90,8 +90,8 @@ public class PortDataMapLoader implements PreparableReloadListener {
             }
         });
         PortEventHandler.addListener((OnDatapackSyncEvent event) -> {
+            ServerPlayer player = event.getPlayer();
             for (Map.Entry<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> entry : getDataMaps().entrySet()) {
-                ServerPlayer player = event.getPlayer();
                 if (player == null) {
                     for (ServerPlayer serverPlayer : event.getPlayers()) {
                         handleSync(serverPlayer, (ResourceKey) entry.getKey());
