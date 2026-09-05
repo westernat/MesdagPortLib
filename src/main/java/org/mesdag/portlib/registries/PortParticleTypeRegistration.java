@@ -1,7 +1,7 @@
 package org.mesdag.portlib.registries;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
@@ -44,7 +44,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
 
                 @Override
                 public T fromNetwork(ParticleType<T> type, FriendlyByteBuf buffer) {
-                    return streamCodec.decode(PortFriendlyByteBufExtension.wrap(buffer));
+                    return streamCodec.decode(IPortFriendlyByteBufExtension.of(buffer).wrap());
                 }
             });
             this.codec = codec;
@@ -57,7 +57,7 @@ public class PortParticleTypeRegistration extends PortRegistration<ParticleType<
         }
 
         public void writeToNetwork(T option, FriendlyByteBuf buffer) {
-            streamCodec.encode(PortFriendlyByteBufExtension.wrap(buffer), option);
+            streamCodec.encode(IPortFriendlyByteBufExtension.of(buffer).wrap(), option);
         }
 
         public String writeToString(T option) {

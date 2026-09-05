@@ -3,7 +3,7 @@ package org.mesdag.portlib.wrapper.world.item.crafting;
 import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
 import PortLib.extensions.java.util.List.PortListExtension;
-import PortLib.extensions.net.minecraft.world.item.crafting.Ingredient.PortIngredientExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortIngredientExtension;
 import com.google.common.annotations.VisibleForTesting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -210,7 +210,7 @@ public final class PortShapedRecipePattern {
         buffer.writeVarInt(height);
 
         for (Ingredient ingredient : ingredients) {
-            PortIngredientExtension.contentsStreamCodec().encode(buffer, ingredient);
+            IPortIngredientExtension.CONTENTS_STREAM_CODEC.encode(buffer, ingredient);
         }
     }
 
@@ -218,7 +218,7 @@ public final class PortShapedRecipePattern {
         int width = buffer.readVarInt();
         int height = buffer.readVarInt();
         NonNullList<Ingredient> nonnulllist = NonNullList.withSize(width * height, Ingredient.EMPTY);
-        nonnulllist.replaceAll(ingredient -> PortIngredientExtension.contentsStreamCodec().decode(buffer));
+        nonnulllist.replaceAll(ingredient -> IPortIngredientExtension.CONTENTS_STREAM_CODEC.decode(buffer));
         return new PortShapedRecipePattern(width, height, nonnulllist, Optional.empty());
     }
 
@@ -259,7 +259,7 @@ public final class PortShapedRecipePattern {
             return " ".equals(symbol) ? DataResult.error(() -> "Invalid key entry: ' ' is a reserved symbol.") : DataResult.success(symbol.charAt(0));
         }, String::valueOf);
         public static final MapCodec<PortShapedRecipePattern.Data> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                PortCodecExtension.strictUnboundedMap(SYMBOL_CODEC, PortIngredientExtension.codecNonempty()).fieldOf("key").forGetter(data -> data.key),
+                PortCodecExtension.strictUnboundedMap(SYMBOL_CODEC, IPortIngredientExtension.CODEC_NONEMPTY).fieldOf("key").forGetter(data -> data.key),
                 PATTERN_CODEC.fieldOf("pattern").forGetter(data -> data.pattern)
         ).apply(instance, PortShapedRecipePattern.Data::new));
     }

@@ -1,8 +1,8 @@
 package org.mesdag.portlib.diff.datamap;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
-import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -48,18 +48,18 @@ public record PortRegistryDataMapSyncPayload<T>(
 
     public static <T> PortRegistryDataMapSyncPayload<T> decode(PortRegistryFriendlyByteBuf buf) {
         final ResourceKey<Registry<T>> registryKey = (ResourceKey<Registry<T>>) (Object) /* <- don't delete */ PortFriendlyByteBuf.readRegistryKey(buf);
-        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = PortFriendlyByteBufExtension.readMap(buf, PortResourceLocationExtension.streamCodec(), (b1, key) -> {
+        final Map<ResourceLocation, Map<ResourceKey<T>, ?>> attach = IPortFriendlyByteBufExtension.of(buf).readMap(IPortResourceLocationExtension.STREAM_CODEC, (b1, key) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            return PortFriendlyByteBufExtension.readMap(b1, (FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
+            return IPortFriendlyByteBufExtension.of(b1).readMap((FriendlyByteBuf bf) -> bf.readResourceKey(registryKey), (FriendlyByteBuf bf, ResourceKey<T> k) -> readJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, dataMap.networkCodec()));
         });
         return new PortRegistryDataMapSyncPayload<>(registryKey, attach);
     }
 
     public void write(PortRegistryFriendlyByteBuf buf) {
         buf.writeResourceKey(registryKey);
-        PortFriendlyByteBufExtension.writeMap(buf, dataMaps, PortResourceLocationExtension.streamCodec(), (b1, key, attach) -> {
+        IPortFriendlyByteBufExtension.of(buf).writeMap(dataMaps, IPortResourceLocationExtension.STREAM_CODEC, (b1, key, attach) -> {
             final PortDataMapType<T, ?> dataMap = PortDataMapLoader.getDataMap(registryKey, key);
-            PortFriendlyByteBufExtension.writeMap(b1, (Map) attach, FriendlyByteBuf::writeResourceKey, (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
+            IPortFriendlyByteBufExtension.of(b1).writeMap((Map) attach, FriendlyByteBuf::writeResourceKey, (FriendlyByteBuf bf, ResourceKey<T> k, Object value) -> writeJsonWithRegistryCodec((PortRegistryFriendlyByteBuf) bf, (Codec) dataMap.networkCodec(), value));
         });
     }
 

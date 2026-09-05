@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -33,6 +32,7 @@ import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectInstanceExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -339,33 +339,33 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     /// 深海探索者时效率仍会生效，0 到 1 的小数值也不会因整数截断而丢失。
     @ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0), name = "f6")
     private float applyWaterMovementEfficiency(float f6) {
-        float efficiency = (float) getAttributeValue(PortAttributesExtension.waterMovementEfficiency());
+        float efficiency = (float) getAttributeValue(IPortAttributesExtension.waterMovementEfficiency());
         return Math.max(f6, efficiency * 3.0F);
     }
 
     @ModifyReturnValue(method = "getBlockSpeedFactor", at = @At("RETURN"))
     private float applyMovementEfficiency(float original) {
-        return Mth.lerp((float) getAttributeValue(PortAttributesExtension.movementEfficiency()), original, 1.0F);
+        return Mth.lerp((float) getAttributeValue(IPortAttributesExtension.movementEfficiency()), original, 1.0F);
     }
 
     @ModifyArg(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
     private float applyFallDamageMultiplier(float damage) {
-        return (float) (damage * getAttributeValue(PortAttributesExtension.fallDamageMultiplier()));
+        return (float) (damage * getAttributeValue(IPortAttributesExtension.fallDamageMultiplier()));
     }
 
     @ModifyExpressionValue(method = "calculateFallDamage", at = @At(value = "CONSTANT", args = "floatValue=3.0"))
     private float applySafeFallDistance(float original) {
-        return (float) getAttributeValue(PortAttributesExtension.safeFallDistance());
+        return (float) getAttributeValue(IPortAttributesExtension.safeFallDistance());
     }
 
     @ModifyReturnValue(method = "increaseAirSupply", at = @At("RETURN"))
     private int applyOxygenBonus(int original) {
-        return Math.min(original + (int) getAttributeValue(PortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
+        return Math.min(original + (int) getAttributeValue(IPortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
     }
 
     @ModifyVariable(method = "setAbsorptionAmount", at = @At("HEAD"), argsOnly = true)
     private float capAbsorption(float amount) {
-        float max = (float) getAttributeValue(PortAttributesExtension.maxAbsorption());
+        float max = (float) getAttributeValue(IPortAttributesExtension.maxAbsorption());
         return max > 0 ? Math.min(amount, max) : amount;
     }
 
@@ -373,14 +373,14 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     private float applyScale(float original) {
         @Nullable AttributeMap attributes = getAttributes();
         if (attributes != null) { // maybe happens in super()
-            return (float) (original * attributes.getValue(PortAttributesExtension.scale().value()));
+            return (float) (original * attributes.getValue(IPortAttributesExtension.scale().value()));
         }
         return original;
     }
 
     @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
     private float applyJumpStrength(float original) {
-        return (float) getAttributeValue(PortAttributesExtension.jumpStrength());
+        return (float) getAttributeValue(IPortAttributesExtension.jumpStrength());
     }
 
     // endregion attributes

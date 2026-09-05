@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -14,6 +13,8 @@ import net.minecraft.world.phys.Vec3;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortExplosionKnockbackEvent;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortExplosionExtension;
 import org.mesdag.portlib.wrapper.world.level.PortExplosionDamageCalculator;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(Explosion.class)
-public abstract class ExplosionMixin implements PortSelfGetter<Explosion> {
+public abstract class ExplosionMixin implements PortSelfGetter<Explosion>, IPortExplosionExtension {
     @Shadow
     @Final
     private Level level;
@@ -38,7 +39,7 @@ public abstract class ExplosionMixin implements PortSelfGetter<Explosion> {
         PortEventHandler.postEvent(event);
         Vec3 result = event.getKnockbackVelocity();
         if (entity instanceof LivingEntity living) {
-            double resistance = living.getAttributeValue(PortAttributesExtension.explosionKnockbackResistance());
+            double resistance = living.getAttributeValue(IPortAttributesExtension.explosionKnockbackResistance());
             if (resistance > 0) {
                 result = result.scale(1.0 - resistance);
             }

@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.attachment;
 
-import PortLib.extensions.net.minecraft.server.level.ChunkMap.PortChunkMapExtension;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
@@ -29,6 +28,7 @@ import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
+import org.mesdag.portlib.wrapper.common.extensions.IPortChunkMapExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +134,7 @@ public final class PortAttachmentSync {
         if (type.syncHandler == null || !(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        var players = PortChunkMapExtension.getPlayersWatching(serverLevel.getChunkSource().chunkMap, entity);
+        var players = IPortChunkMapExtension.of(serverLevel.getChunkSource().chunkMap).getPlayersWatching(entity);
         if (entity instanceof ServerPlayer serverPlayer) {
             var newPlayers = new ArrayList<ServerPlayer>(players.size() + 1);
             newPlayers.addAll(players);

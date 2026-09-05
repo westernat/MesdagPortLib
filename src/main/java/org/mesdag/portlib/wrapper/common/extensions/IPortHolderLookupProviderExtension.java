@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.common.extensions;
 
-import PortLib.extensions.net.minecraft.resources.ResourceKey.PortResourceKeyExtension;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -20,11 +19,11 @@ public interface IPortHolderLookupProviderExtension {
     }
 
     default <T> Holder<T> holderOrThrow(ResourceKey<T> key) {
-        return self().lookupOrThrow(PortResourceKeyExtension.registryKey(key)).getOrThrow(key);
+        return self().lookupOrThrow(IPortResourceKeyExtension.of(key).registryKey()).getOrThrow(key);
     }
 
     default <T> Optional<Holder.Reference<T>> holder(ResourceKey<T> key) {
-        Optional<HolderLookup.RegistryLookup<T>> registry = self().lookup(PortResourceKeyExtension.registryKey(key));
+        Optional<HolderLookup.RegistryLookup<T>> registry = self().lookup(IPortResourceKeyExtension.of(key).registryKey());
         return registry.flatMap(tRegistryLookup -> tRegistryLookup.get(key));
     }
 

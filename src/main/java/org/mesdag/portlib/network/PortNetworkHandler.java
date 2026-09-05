@@ -1,6 +1,6 @@
 package org.mesdag.portlib.network;
 
-import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -171,7 +171,7 @@ public class PortNetworkHandler {
     private <P extends IPortPacket> void register(ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
         channel.registerMessage(
                 packetId++, (Class<P>) packetClass,
-                (v, b) -> codec.encode(PortFriendlyByteBufExtension.wrap(b), v), b -> codec.decode(PortFriendlyByteBufExtension.wrap(b)),
+                (v, b) -> codec.encode(IPortFriendlyByteBufExtension.of(b).wrap(), v), b -> codec.decode(IPortFriendlyByteBufExtension.of(b).wrap()),
                 handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
         codecMap.put(identifier, codec);
     }

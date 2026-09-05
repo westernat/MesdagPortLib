@@ -1,6 +1,6 @@
 package org.mesdag.portlib.diff;
 
-import PortLib.extensions.net.minecraft.core.particles.ParticleOptions.PortParticleOptionsExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortParticleOptionsExtension;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ public record PortSyncEffectParticlesS2C(
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("sync_effect_particles");
     public static final PortStreamCodec<PortRegistryFriendlyByteBuf, PortSyncEffectParticlesS2C> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.VAR_INT, PortSyncEffectParticlesS2C::entityId,
-            PortParticleOptionsExtension.streamCodec().apply(PortByteBufCodecs.list(MAX_EFFECT_PARTICLES)), PortSyncEffectParticlesS2C::list,
+            IPortParticleOptionsExtension.STREAM_CODEC.apply(PortByteBufCodecs.list(MAX_EFFECT_PARTICLES)), PortSyncEffectParticlesS2C::list,
             PortSyncEffectParticlesS2C::new
     );
 

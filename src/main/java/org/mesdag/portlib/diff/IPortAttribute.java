@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -8,6 +7,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.TooltipFlag;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeModifierExtension;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 
 @Diff
@@ -23,7 +23,7 @@ public interface IPortAttribute extends PortSelfGetter<Attribute>, IPortAttribut
     static <E> E fromElement(E element, Attribute attribute, AttributeModifier modifier, TooltipFlag flag) {
         MutableComponent component;
         if (attribute instanceof IPortAttributeExtension extension) {
-            component = extension.toComponent(PortAttributeModifierExtension.wrap(modifier), flag);
+            component = extension.toComponent(IPortAttributeModifierExtension.of(modifier).wrap(), flag);
         } else if (element instanceof MutableComponent c) {
             component = c;
         } else if (element instanceof Component c) {

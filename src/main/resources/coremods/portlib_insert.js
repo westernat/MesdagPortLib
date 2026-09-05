@@ -135,9 +135,9 @@ function initializeCoreMod() {
                         // float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
                         newCode.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            'PortLib/extensions/net/minecraft/world/entity/ai/attributes/Attributes/PortAttributesExtension',
+                            'org/mesdag/portlib/wrapper/common/extensions/IPortAttributesExtension',
                             'submergedMiningSpeed',
-                            '()Lnet/minecraft/core/Holder;', false));
+                            '()Lnet/minecraft/core/Holder;', true));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                             'net/minecraft/world/entity/LivingEntity',
                             ASMAPI.mapMethod('m_246858_'), // getAttributeValue

@@ -1,7 +1,5 @@
 package org.mesdag.portlib.wrapper.world.item.component;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -20,8 +18,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeModifierExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
@@ -109,7 +110,7 @@ public class PortItemAttributeModifiers {
                 if (attribute == null) continue;
                 AttributeModifier modifier = AttributeModifier.load(tag);
                 if (modifier != null && modifier.getId().getLeastSignificantBits() != 0L && modifier.getId().getMostSignificantBits() != 0L) {
-                    action.accept(PortAttributeExtension.wrap(attribute), PortAttributeModifierExtension.wrap(modifier));
+                    action.accept(IPortAttribute.of(attribute).wrap(), IPortAttributeModifierExtension.of(modifier).wrap());
                 }
             }
         }
@@ -177,8 +178,8 @@ public class PortItemAttributeModifiers {
                             ? PortEquipmentSlotGroup.fromSlot(EquipmentSlot.byName(tag.getString("Slot")))
                             : PortEquipmentSlotGroup.ANY;
                     builder.add(new Entry(
-                            PortAttributeExtension.wrap(attribute),
-                            PortAttributeModifierExtension.wrap(modifier),
+                            IPortAttribute.of(attribute).wrap(),
+                            IPortAttributeModifierExtension.of(modifier).wrap(),
                             group
                     ));
                 }
@@ -224,12 +225,12 @@ public class PortItemAttributeModifiers {
             PortEquipmentSlotGroup slot
     ) {
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                PortAttributeExtension.codec().fieldOf("type").forGetter(Entry::attribute),
+                IPortAttributeExtension.CODEC.fieldOf("type").forGetter(Entry::attribute),
                 PortAttributeModifier.MAP_CODEC.forGetter(Entry::modifier),
                 PortEquipmentSlotGroup.CODEC.optionalFieldOf("slot", PortEquipmentSlotGroup.ANY).forGetter(Entry::slot)
         ).apply(instance, Entry::new));
         public static final PortStreamCodec<PortRegistryFriendlyByteBuf, Entry> STREAM_CODEC = PortStreamCodec.composite(
-                PortAttributeExtension.streamCodec(), Entry::attribute,
+                IPortAttributeExtension.STREAM_CODEC, Entry::attribute,
                 PortAttributeModifier.STREAM_CODEC, Entry::modifier,
                 PortEquipmentSlotGroup.STREAM_CODEC, Entry::slot,
                 Entry::new

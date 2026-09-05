@@ -142,5 +142,92 @@
     ],
     "net/minecraft/world/level/block/entity/BlockEntityType": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortBlockEntityTypeExtension"
+    ],
+    "net/minecraft/advancements/AdvancementProgress": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAdvancementProgressExtension"
+    ],
+    "net/minecraft/advancements/critereon/EntityPredicate": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEntityPredicateExtension"
+    ],
+    "net/minecraft/advancements/critereon/ItemPredicate": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortItemPredicateExtension"
+    ],
+    "net/minecraft/advancements/critereon/NbtPredicate": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortNbtPredicateExtension"
+    ],
+    "net/minecraft/advancements/critereon/StatePropertiesPredicate": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortStatePropertiesPredicateExtension"
+    ],
+    "net/minecraft/client/gui/screens/inventory/InventoryScreen": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortInventoryScreenExtension"
+    ],
+    "net/minecraft/client/resources/model/ModelResourceLocation": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortModelResourceLocationExtension"
+    ],
+    "net/minecraft/client/searchtree/SearchTree": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortSearchTreeExtension"
+    ],
+    "net/minecraft/client/Timer": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortTimerExtension"
+    ],
+    "net/minecraft/core/HolderSet": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortHolderSetExtension"
+    ],
+    "net/minecraft/core/particles/ParticleOptions": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortParticleOptionsExtension"
+    ],
+    "net/minecraft/core/particles/ParticleTypes": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortParticleTypesExtension"
+    ],
+    "net/minecraft/data/DataProvider": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortDataProviderExtension"
+    ],
+    "net/minecraft/nbt/TagParser": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortTagParserExtension"
+    ],
+    "net/minecraft/resources/ResourceLocation": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortResourceLocationExtension"
+    ],
+    "net/minecraft/server/level/ChunkMap": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortChunkMapExtension"
+    ],
+    "net/minecraft/util/datafix/DataFixTypes": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortDataFixTypesExtension"
+    ],
+    "net/minecraft/util/ParticleUtils": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortParticleUtilsExtension"
+    ],
+    "net/minecraft/util/StringRepresentable": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortStringRepresentableExtension"
+    ],
+    "net/minecraft/util/Unit": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortUnitExtension"
+    ],
+    "net/minecraft/world/containers/Containers": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortContainersExtension"
+    ],
+    "net/minecraft/world/entity/ai/attributes/AttributeModifier": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAttributeModifierExtension"
+    ],
+    "net/minecraft/world/entity/ai/attributes/Attributes": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortAttributesExtension"
+    ],
+    "net/minecraft/world/entity/projectile/ProjectileUtil": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortProjectileUtilExtension"
+    ],
+    "net/minecraft/world/item/crafting/Recipe": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortRecipeExtension"
+    ],
+    "net/minecraft/world/item/enchantment/EnchantmentHelper": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortEnchantmentHelperExtension"
+    ],
+    "net/minecraft/world/level/block/SoundType": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortSoundTypeExtension"
+    ],
+    "net/minecraft/world/level/block/state/properties/BlockSetType": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockSetTypeExtension"
+    ],
+    "net/minecraft/world/level/Explosion": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortExplosionExtension"
     ]
 }

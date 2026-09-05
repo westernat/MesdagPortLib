@@ -1,7 +1,7 @@
 package org.mesdag.portlib.network.codec;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 import PortLib.extensions.net.minecraftforge.registries.ForgeRegistry.PortForgeRegistryExtension;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
@@ -488,7 +488,7 @@ public interface PortByteBufCodecs {
                 }
                 if (i == -1) {
                     Registry<T> registry = buffer.registryAccess().registryOrThrow(registryKey);
-                    return registry.getTag(TagKey.create(registryKey, PortResourceLocationExtension.streamCodec().decode(buffer))).orElseThrow();
+                    return registry.getTag(TagKey.create(registryKey, IPortResourceLocationExtension.STREAM_CODEC.decode(buffer))).orElseThrow();
                 }
                 List<Holder<T>> list = new ArrayList<>(Math.min(i, 65536));
 
@@ -509,7 +509,7 @@ public interface PortByteBufCodecs {
                 Optional<TagKey<T>> optional = value.unwrapKey();
                 if (optional.isPresent()) {
                     PortVarInt.write(buffer, 0);
-                    PortResourceLocationExtension.streamCodec().encode(buffer, optional.get().location());
+                    IPortResourceLocationExtension.STREAM_CODEC.encode(buffer, optional.get().location());
                     return;
                 }
                 PortVarInt.write(buffer, value.size() + 1);

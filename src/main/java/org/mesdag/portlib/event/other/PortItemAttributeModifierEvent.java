@@ -1,7 +1,5 @@
 package org.mesdag.portlib.event.other;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.AttributeModifier.PortAttributeModifierExtension;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -10,8 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeModifierExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
@@ -92,9 +92,9 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
         PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
         for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
             Attribute attribute = entry.getKey();
-            Holder<Attribute> holder = PortAttributeExtension.wrap(attribute);
+            Holder<Attribute> holder = IPortAttribute.of(attribute).wrap();
             for (AttributeModifier modifier : entry.getValue()) {
-                PortItemAttributeModifiers.Entry portEntry = new PortItemAttributeModifiers.Entry(holder, PortAttributeModifierExtension.wrap(modifier), group);
+                PortItemAttributeModifiers.Entry portEntry = new PortItemAttributeModifiers.Entry(holder, IPortAttributeModifierExtension.of(modifier).wrap(), group);
                 if (condition.test(portEntry)) {
                     if (e.removeModifier(attribute, modifier)) {
                         this.changed = true;
@@ -126,9 +126,9 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
             PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
             List<PortItemAttributeModifiers.Entry> list = new LinkedList<>();
             for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
-                Holder<Attribute> attribute = PortAttributeExtension.wrap(entry.getKey());
+                Holder<Attribute> attribute = IPortAttribute.of(entry.getKey()).wrap();
                 for (AttributeModifier modifier : entry.getValue()) {
-                    list.add(new PortItemAttributeModifiers.Entry(attribute, PortAttributeModifierExtension.wrap(modifier), group));
+                    list.add(new PortItemAttributeModifiers.Entry(attribute, IPortAttributeModifierExtension.of(modifier).wrap(), group));
                 }
             }
             this.entries = list;

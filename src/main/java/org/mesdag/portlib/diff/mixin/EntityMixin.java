@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -22,6 +21,7 @@ import org.mesdag.portlib.event.entity.PortEntityInvulnerabilityCheckEvent;
 import org.mesdag.portlib.event.tick.PortEntityTickEvent;
 import org.mesdag.portlib.util.Final;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEntityAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -97,7 +97,7 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
     @ModifyVariable(method = "setRemainingFireTicks", at = @At("HEAD"), argsOnly = true)
     private int applyBurningTime(int ticks) {
         if (portlib$self() instanceof LivingEntity living) {
-            return (int) (ticks * living.getAttributeValue(PortAttributesExtension.burningTime()));
+            return (int) (ticks * living.getAttributeValue(IPortAttributesExtension.burningTime()));
         }
         return ticks;
     }

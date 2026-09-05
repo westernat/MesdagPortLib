@@ -1,7 +1,5 @@
 package org.mesdag.portlib.diff.mixin;
 
-import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
-import PortLib.extensions.net.minecraft.world.entity.player.Player.PortPlayerExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -29,7 +27,9 @@ import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortPlayerExtension;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -84,7 +84,7 @@ public abstract class PlayerMixin implements IPortPlayer {
         FoodProperties foodProperties = foodPropertiesRef.get();
         if (foodProperties != null) {
             ItemStack stack = IPortFoodProperties.of(foodProperties).portlib$getUsingConvertsTo();
-            if (stack != null && !PortPlayerExtension.hasInfiniteMaterials(portlib$self())) {
+            if (stack != null && !IPortPlayerExtension.of(portlib$self()).hasInfiniteMaterials()) {
                 if (original.isEmpty()) {
                     return stack.copy();
                 }
@@ -200,27 +200,27 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getBlockEfficiency(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "f")
     private float miningEfficiency(float f) {
-        return f + (float) portlib$self().getAttributeValue(PortAttributesExtension.miningEfficiency());
+        return f + (float) portlib$self().getAttributeValue(IPortAttributesExtension.miningEfficiency());
     }
 
     @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"), name = "f")
     private float blockBreakSpeed(float f) {
-        return f * (float) portlib$self().getAttributeValue(PortAttributesExtension.blockBreakSpeed());
+        return f * (float) portlib$self().getAttributeValue(IPortAttributesExtension.blockBreakSpeed());
     }
 
     @ModifyExpressionValue(method = "travel", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;flying:Z", opcode = Opcodes.GETFIELD))
     private boolean allowCreativeFlight(boolean original) {
-        return original || portlib$self().getAttributeValue(PortAttributesExtension.creativeFlight()) > 0;
+        return original || portlib$self().getAttributeValue(IPortAttributesExtension.creativeFlight()) > 0;
     }
 
     @ModifyReturnValue(method = "getFlyingSpeed", at = @At("RETURN"))
     private float applyFlyingSpeed(float original) {
-        return (float) (original * portlib$self().getAttributeValue(PortAttributesExtension.flyingSpeed()));
+        return (float) (original * portlib$self().getAttributeValue(IPortAttributesExtension.flyingSpeed()));
     }
 
     @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getSweepingDamageRatio(Lnet/minecraft/world/entity/LivingEntity;)F"))
     private float applySweepingDamageRatio(float original) {
-        return (float) (original + portlib$self().getAttributeValue(PortAttributesExtension.sweepingDamageRatio()));
+        return (float) (original + portlib$self().getAttributeValue(IPortAttributesExtension.sweepingDamageRatio()));
     }
 
     // endregion attributes

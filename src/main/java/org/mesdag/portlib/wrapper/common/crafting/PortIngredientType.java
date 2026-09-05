@@ -1,7 +1,7 @@
 package org.mesdag.portlib.wrapper.common.crafting;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import PortLib.extensions.net.minecraft.network.FriendlyByteBuf.PortFriendlyByteBufExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
@@ -23,7 +23,7 @@ public final class PortIngredientType<T extends PortCustomIngredient> {
         this.serializer = new IIngredientSerializer<>() {
             @Override
             public T parse(FriendlyByteBuf buffer) {
-                return streamCodec.decode(PortFriendlyByteBufExtension.wrap(buffer));
+                return streamCodec.decode(IPortFriendlyByteBufExtension.of(buffer).wrap());
             }
 
             @Override
@@ -33,7 +33,7 @@ public final class PortIngredientType<T extends PortCustomIngredient> {
 
             @Override
             public void write(FriendlyByteBuf buffer, T ingredient) {
-                streamCodec.encode(PortFriendlyByteBufExtension.wrap(buffer), ingredient);
+                streamCodec.encode(IPortFriendlyByteBufExtension.of(buffer).wrap(), ingredient);
             }
         };
     }

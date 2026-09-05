@@ -7,7 +7,13 @@ function initializeCoreMod() {
         'registry_access': transformer('net/minecraft/core/RegistryAccess', 'IPortRegistryAccessExtension'),
         'holder_lookup_provider': transformer('net/minecraft/core/HolderLookup$Provider', 'IPortHolderLookupProviderExtension'),
         'registry': transformer('net/minecraft/core/Registry', 'IPortRegistryExtension'),
-        'i_forge_registry': transformer('net/minecraftforge/registries/IForgeRegistry', 'IPortForgeRegistryExtension')
+        'i_forge_registry': transformer('net/minecraftforge/registries/IForgeRegistry', 'IPortForgeRegistryExtension'),
+        'search_tree': transformer('net/minecraft/client/searchtree/SearchTree', 'IPortSearchTreeExtension'),
+        'holder_set': transformer('net/minecraft/core/HolderSet', 'IPortHolderSetExtension'),
+        'particle_options': transformer('net/minecraft/core/particles/ParticleOptions', 'IPortParticleOptionsExtension'),
+        'data_provider': transformer('net/minecraft/data/DataProvider', 'IPortDataProviderExtension'),
+        'string_representable': transformer('net/minecraft/util/StringRepresentable', 'IPortStringRepresentableExtension'),
+        'recipe': transformer('net/minecraft/world/item/crafting/Recipe', 'IPortRecipeExtension')
     };
 }
 

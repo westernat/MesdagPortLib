@@ -1,6 +1,5 @@
 package org.mesdag.portlib.wrapper.world.entity.ai.attributes;
 
-import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public record PortAttributeModifier(ResourceLocation id, double amount, Operatio
     ).apply(instance, PortAttributeModifier::new));
     public static final Codec<PortAttributeModifier> CODEC = MAP_CODEC.codec();
     public static final PortStreamCodec<ByteBuf, PortAttributeModifier> STREAM_CODEC = PortStreamCodec.composite(
-            PortResourceLocationExtension.streamCodec(), PortAttributeModifier::id,
+            IPortResourceLocationExtension.STREAM_CODEC, PortAttributeModifier::id,
             PortByteBufCodecs.DOUBLE, PortAttributeModifier::amount,
             Operation.STREAM_CODEC, PortAttributeModifier::operation,
             PortAttributeModifier::new
