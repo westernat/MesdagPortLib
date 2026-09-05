@@ -33,7 +33,7 @@
         "org/mesdag/portlib/wrapper/common/extensions/IPortItemStackExtension"
     ],
     "net/minecraft/client/renderer/blockentity/BlockEntityRenderer": [
-        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockRendererExtension<T>"
+        "org/mesdag/portlib/wrapper/common/extensions/IPortBlockEntityRendererExtension<T>"
     ],
     "net/minecraft/world/entity/player/Player": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortPlayerExtension"

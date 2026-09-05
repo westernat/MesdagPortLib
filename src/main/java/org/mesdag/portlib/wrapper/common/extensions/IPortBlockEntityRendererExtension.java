@@ -8,7 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("all")
-public interface IPortBlockRendererExtension<T extends BlockEntity> {
+public interface IPortBlockEntityRendererExtension<T extends BlockEntity> {
     default AABB getRenderBoundingBox(T blockEntity) {
         return blockEntity.getRenderBoundingBox();
     }
@@ -22,7 +22,7 @@ public interface IPortBlockRendererExtension<T extends BlockEntity> {
         return null;
     }
 
-    static <T extends BlockEntity> IPortBlockRendererExtension<T> of(Object renderer) {
-        return (IPortBlockRendererExtension<T>) renderer;
+    static <T extends BlockEntity> IPortBlockEntityRendererExtension<T> of(Object renderer) {
+        return (IPortBlockEntityRendererExtension<T>) renderer;
     }
 }

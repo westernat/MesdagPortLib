@@ -30,6 +30,7 @@
         "ContainersMixin",
         "CriterionProgressAccessor",
         "CrossBowItemMixin",
+        "DamageSourceMixin",
         "DataFixTypesMixin",
         "DataPackRegistriesHooksAccessor",
         "DoorBlockMixin",
@@ -121,6 +122,7 @@
         "RenderBuffersMixin",
         "RenderRegionCacheMixin",
         "SpriteSourcesMixin",
+        "TextureAtlasMixin",
         "TimerMixin"
     ],
     "minVersion": "0.8"

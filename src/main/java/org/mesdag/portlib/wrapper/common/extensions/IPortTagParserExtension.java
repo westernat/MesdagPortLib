@@ -18,6 +18,4 @@ public interface IPortTagParserExtension {
         }
     }, CompoundTag::toString);
     Codec<CompoundTag> LENIENT_CODEC = PortCodecExtension.withAlternative(AS_CODEC, CompoundTag.CODEC);
-
-
 }

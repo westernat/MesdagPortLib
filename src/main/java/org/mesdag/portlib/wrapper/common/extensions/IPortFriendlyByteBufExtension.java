@@ -14,7 +14,6 @@ import java.util.function.BiFunction;
 
 @SuppressWarnings("all")
 public interface IPortFriendlyByteBufExtension {
-
     private FriendlyByteBuf self() {
         return (FriendlyByteBuf) this;
     }

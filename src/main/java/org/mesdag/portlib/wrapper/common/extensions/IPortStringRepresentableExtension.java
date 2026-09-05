@@ -39,7 +39,7 @@ public interface IPortStringRepresentableExtension {
         };
     }
 
-    public static class StringRepresentableCodec<S extends StringRepresentable> implements Codec<S> {
+    class StringRepresentableCodec<S extends StringRepresentable> implements Codec<S> {
         private final Codec<S> codec;
 
         public StringRepresentableCodec(S[] values, Function<String, S> nameLookup, ToIntFunction<S> indexLookup) {

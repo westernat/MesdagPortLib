@@ -11,6 +11,4 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 public interface IPortItemPredicateExtension {
     Codec<ItemPredicate> CODEC = PortCodecExtension.json(ItemPredicate::serializeToJson, ItemPredicate::fromJson);
     PortStreamCodec<FriendlyByteBuf, ItemPredicate> STREAM_CODEC = PortByteBufCodecs.json(ItemPredicate.ANY, ItemPredicate::serializeToJson, ItemPredicate::fromJson);
-
-
 }

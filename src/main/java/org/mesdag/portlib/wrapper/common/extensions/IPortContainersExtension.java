@@ -11,12 +11,10 @@ public interface IPortContainersExtension {
     static void dropContentsOnDestroy(BlockState state, BlockState newState, Level level, BlockPos pos) {
         if (!state.is(newState.getBlock())) {
             BlockEntity var5 = level.getBlockEntity(pos);
-            if (var5 instanceof Container) {
-                Container container = (Container) var5;
+            if (var5 instanceof Container container) {
                 Containers.dropContents(level, pos, container);
                 level.updateNeighbourForOutputSignal(pos, state.getBlock());
             }
         }
-
     }
 }

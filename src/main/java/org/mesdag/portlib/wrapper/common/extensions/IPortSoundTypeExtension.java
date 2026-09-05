@@ -14,5 +14,4 @@ public interface IPortSoundTypeExtension {
             PortSoundEvents.TUFF_BRICKS_HIT,
             PortSoundEvents.TUFF_BRICKS_FALL
     );
-
 }

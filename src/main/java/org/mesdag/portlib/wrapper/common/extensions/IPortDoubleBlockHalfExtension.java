@@ -5,7 +5,6 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 @SuppressWarnings("all")
 public interface IPortDoubleBlockHalfExtension {
-
     private DoubleBlockHalf self() {
         return (DoubleBlockHalf) (Object) this;
     }

@@ -13,7 +13,8 @@ function initializeCoreMod() {
         'particle_options': transformer('net/minecraft/core/particles/ParticleOptions', 'IPortParticleOptionsExtension'),
         'data_provider': transformer('net/minecraft/data/DataProvider', 'IPortDataProviderExtension'),
         'string_representable': transformer('net/minecraft/util/StringRepresentable', 'IPortStringRepresentableExtension'),
-        'recipe': transformer('net/minecraft/world/item/crafting/Recipe', 'IPortRecipeExtension')
+        'recipe': transformer('net/minecraft/world/item/crafting/Recipe', 'IPortRecipeExtension'),
+        'block_entity_renderer': transformer('net/minecraft/client/renderer/blockentity/BlockEntityRenderer', 'IPortBlockEntityRendererExtension')
     };
 }
 

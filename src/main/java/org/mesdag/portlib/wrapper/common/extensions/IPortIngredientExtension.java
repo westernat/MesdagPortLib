@@ -53,12 +53,6 @@ public interface IPortIngredientExtension {
         return false;
     }
 
-
-
-
-
-
-
     private static Codec<Ingredient> makeIngredientCodec(boolean allowEmpty) {
         var listCodec = PortCodecExtension.lazyInitialized(() -> allowEmpty ? LIST_CODEC : LIST_CODEC_NONEMPTY);
         return Codec.either(listCodec, makeIngredientMapCodec().codec()).xmap(

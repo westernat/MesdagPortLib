@@ -17,9 +17,6 @@ public interface IPortParticleTypesExtension {
         }
 
         @Override
-        public void encode(FriendlyByteBuf buffer, ParticleOptions value) {
-
-        }
+        public void encode(FriendlyByteBuf buffer, ParticleOptions value) {}
     };
-
 }

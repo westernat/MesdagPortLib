@@ -28,9 +28,6 @@ public interface IPortAttributeModifierExtension {
             AttributeModifier::new
     );
 
-
-
-
     default PortAttributeModifier wrap() {
         return new PortAttributeModifier(PortAttributeModifier.uuid2rl(((AttributeModifier) (Object) this).getId()), ((AttributeModifier) (Object) this).getAmount(), Operation.wrap(((AttributeModifier) (Object) this).getOperation()));
     }
@@ -42,8 +39,6 @@ public interface IPortAttributeModifierExtension {
     interface Operation {
         Codec<AttributeModifier.Operation> CODEC = PortAttributeModifier.Operation.CODEC.xmap(PortAttributeModifier.Operation::unwrap, IPortAttributeModifierExtension.Operation::wrap);
         PortStreamCodec<ByteBuf, AttributeModifier.Operation> STREAM_CODEC = PortAttributeModifier.Operation.STREAM_CODEC.map(PortAttributeModifier.Operation::unwrap, IPortAttributeModifierExtension.Operation::wrap);
-
-
 
         static PortAttributeModifier.Operation wrap(AttributeModifier.Operation thiz) {
             if (thiz == AttributeModifier.Operation.MULTIPLY_BASE) {

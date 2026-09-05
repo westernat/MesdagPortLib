@@ -43,10 +43,6 @@ public interface IPortMobEffectExtension {
         return (MobEffect) this;
     }
 
-
-
-
-
     static IPortMobEffectExtension of(MobEffect effect) {
         return (IPortMobEffectExtension) effect;
     }

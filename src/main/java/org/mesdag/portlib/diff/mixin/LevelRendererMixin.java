@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-import org.mesdag.portlib.wrapper.common.extensions.IPortBlockRendererExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortBlockEntityRendererExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,7 +20,7 @@ public abstract class LevelRendererMixin {
 
     @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getRenderBoundingBox()Lnet/minecraft/world/phys/AABB;", remap = false))
     private AABB wrap(BlockEntity instance, Operation<AABB> original) {
-        AABB aabb = IPortBlockRendererExtension.getRenderBoundingBoxNeo(blockEntityRenderDispatcher, instance);
+        AABB aabb = IPortBlockEntityRendererExtension.getRenderBoundingBoxNeo(blockEntityRenderDispatcher, instance);
         if (aabb != null) return aabb;
         return original.call(instance);
     }

@@ -5,5 +5,4 @@ import net.minecraft.util.Unit;
 
 public interface IPortUnitExtension {
     Codec<Unit> CODEC = Codec.unit(Unit.INSTANCE);
-
 }

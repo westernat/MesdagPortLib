@@ -72,8 +72,6 @@ public interface IPortMobEffectInstanceExtension {
         IPortMobEffectExtension.of(self().getEffect()).onEffectAdded(living, self().getAmplifier());
     }
 
-
-
     static IPortMobEffectInstanceExtension of(MobEffectInstance instance) {
         return (IPortMobEffectInstanceExtension) instance;
     }

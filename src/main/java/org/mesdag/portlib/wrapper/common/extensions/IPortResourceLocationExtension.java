@@ -8,5 +8,4 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 public interface IPortResourceLocationExtension {
     PortStreamCodec<ByteBuf, ResourceLocation> STREAM_CODEC = PortByteBufCodecs.STRING_UTF8
             .map(ResourceLocation::parse, ResourceLocation::toString);
-
 }

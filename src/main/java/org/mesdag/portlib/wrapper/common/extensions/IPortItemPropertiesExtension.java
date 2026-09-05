@@ -11,7 +11,6 @@ import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifier
 
 @SuppressWarnings("all")
 public interface IPortItemPropertiesExtension {
-
     private Item.Properties self() {
         return (Item.Properties) this;
     }
