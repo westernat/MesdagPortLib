@@ -13,32 +13,25 @@ import org.mesdag.portlib.network.codec.PortStreamCodec;
 /// 服务端把原消息按字节切成多段，逐段包在 [PortConfigurationFragmentPayload] 里发送；
 /// 客户端收到 `last` 段后按 [PortConfigurationManager] 记录的原始目标类型重组并解码，
 /// 再以与正常收包一致的方式调用原消息的 `handle(...)`。
-public class PortConfigurationFragmentPayload implements IPortPacket.S2C {
+public record PortConfigurationFragmentPayload(
+        boolean first,
+        boolean last,
+        ResourceLocation target,
+        byte[] data
+) implements IPortPacket.S2C {
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("configuration_fragment");
     public static final PortStreamCodec<FriendlyByteBuf, PortConfigurationFragmentPayload> STREAM_CODEC = PortStreamCodec.ofMember(
             PortConfigurationFragmentPayload::write,
             PortConfigurationFragmentPayload::decode
     );
 
-    private final boolean first;
-    private final boolean last;
-    private final ResourceLocation target;
-    private final byte[] data;
-
-    public PortConfigurationFragmentPayload(boolean first, boolean last, ResourceLocation target, byte[] data) {
-        this.first = first;
-        this.last = last;
-        this.target = target;
-        this.data = data;
-    }
-
-    private static void write(FriendlyByteBuf buf, PortConfigurationFragmentPayload value) {
-        buf.writeBoolean(value.first);
-        buf.writeBoolean(value.last);
-        if (value.first) {
-            buf.writeResourceLocation(value.target);
+    private void write(FriendlyByteBuf buf) {
+        buf.writeBoolean(first);
+        buf.writeBoolean(last);
+        if (first) {
+            buf.writeResourceLocation(target);
         }
-        buf.writeByteArray(value.data);
+        buf.writeByteArray(data);
     }
 
     private static PortConfigurationFragmentPayload decode(FriendlyByteBuf buf) {
@@ -47,22 +40,6 @@ public class PortConfigurationFragmentPayload implements IPortPacket.S2C {
         ResourceLocation target = first ? buf.readResourceLocation() : null;
         byte[] data = buf.readByteArray();
         return new PortConfigurationFragmentPayload(first, last, target, data);
-    }
-
-    public boolean first() {
-        return first;
-    }
-
-    public boolean last() {
-        return last;
-    }
-
-    public ResourceLocation target() {
-        return target;
-    }
-
-    public byte[] data() {
-        return data;
     }
 
     @Override

@@ -71,6 +71,9 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.network.data_maps.failed", "Failed to handle registry data map sync for registry %s: %s", "处理注册表数据映射同步失败 %s: %s");
         add("portlib.network.data_maps.missing_our", "Cannot connect to server as it is missing mandatory registry data maps present on the client: %s", "无法连接至服务器，因为客户端缺少必要的注册表数据映射：%s");
         add("portlib.network.data_maps.missing_their", "Cannot connect to server as it has mandatory registry data maps not present on the client: %s", "无法连接至服务器，因为客户端上不存在必要的注册表数据映射：%s");
+        add("portlib.network.configuration.fragment_failed", "Failed to process a PortLib configuration fragment.", "处理 PortLib 配置分片失败。");
+        add("portlib.network.configuration.fragment_out_of_order", "PortLib configuration fragment received out of order.", "收到乱序的 PortLib 配置分片。");
+        add("portlib.network.configuration.timeout", "PortLib configuration phase timed out. The server may run an incompatible PortLib version.", "PortLib 配置阶段超时。服务器可能运行着不兼容的 PortLib 版本。");
     }
 
     @Override

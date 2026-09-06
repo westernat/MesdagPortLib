@@ -75,13 +75,7 @@ public class PortRegistryDataMapNegotiation implements IPortCustomConfigurationT
         PortLib.NETWORK_HANDLER.registerLoginC2S(
                 PortKnownRegistryDataMapsReplyPayload.class,
                 PortKnownRegistryDataMapsReplyPayload.IDENTIFIER,
-                PortKnownRegistryDataMapsReplyPayload.STREAM_CODEC,
-                (p, ctx) -> {
-                    // 先把客户端的“已知 data map”清单写入本连接属性（内容同步依赖它），
-                    // 再声明协商任务完成，让配置阶段推进到下一个任务。
-                    p.handle(ctx);
-                    PortConfigurationManager.finishCurrentTask(ctx.connection(), KNOWN_TASK_TYPE);
-                }
+                PortKnownRegistryDataMapsReplyPayload.STREAM_CODEC
         );
         // 按连接注册协商任务（每个新连接触发 PortRegisterConfigurationTasksEvent 时都会执行）。
         PortEventHandler.addListener((PortRegisterConfigurationTasksEvent event) -> event.register(INSTANCE));

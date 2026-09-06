@@ -113,7 +113,7 @@ public class PortNetworkHandler {
             throw new IllegalStateException("Login packet has no data: " + packet.getClass());
         }
         FriendlyByteBuf envelope = new FriendlyByteBuf(Unpooled.buffer());
-        envelope.writeResourceLocation(channelName);
+        envelope.writeResourceLocation(channelName());
         envelope.writeVarInt(data.readableBytes());
         envelope.writeBytes(data, data.readerIndex(), data.readableBytes());
         manager.send(NetworkDirection.LOGIN_TO_CLIENT.buildPacket(Pair.of(envelope, sequence), LoginWrapper.WRAPPER).getThis());

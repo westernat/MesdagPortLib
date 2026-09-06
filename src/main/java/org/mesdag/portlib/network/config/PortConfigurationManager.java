@@ -211,7 +211,6 @@ public final class PortConfigurationManager {
         }
 
         /// 发送任务负载：超过单包上限时自动分片，否则走单条信封。
-        @SuppressWarnings({"unchecked", "rawtypes"})
         private void sendLogin(IPortPacket.S2C payload) {
             byte[] fields = serialize(payload);
             if (fields == null || fields.length <= MAX_SINGLE_LOGIN_PAYLOAD_BYTES) {
@@ -263,9 +262,7 @@ public final class PortConfigurationManager {
         }
 
         private void clear() {
-            if (connection.channel() != null) {
-                connection.channel().attr(SERVER_STAGE).set(null);
-            }
+            connection.channel().attr(SERVER_STAGE).set(null);
         }
     }
 
@@ -278,10 +275,7 @@ public final class PortConfigurationManager {
         connection.channel().eventLoop().schedule(() -> {
             if (connection.channel().attr(CLIENT_CONTINUATION).get() != null && connection.isConnected()) {
                 PortLib.LOGGER.warn("PortLib configuration phase timed out on the client; disconnecting.");
-                connection.disconnect(Component.translatableWithFallback(
-                        "portlib.network.configuration.timeout",
-                        "PortLib configuration phase timed out. The server may run an incompatible PortLib version."
-                ));
+                connection.disconnect(Component.translatable("portlib.network.configuration.timeout"));
             }
         }, CLIENT_CONFIGURATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     }

@@ -14,13 +14,14 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.network.login.PortLoginPacket;
 import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements IPortPacket.S2C {
+public record PortKnownRegistryDataMapsPayload(
+        Map<ResourceKey<? extends Registry<?>>, List<KnownDataMap>> dataMaps
+) implements IPortPacket.S2C {
     public static final ResourceLocation IDENTIFIER = PortLib.asResource("known_registry_data_maps");
     public static final PortStreamCodec<FriendlyByteBuf, PortKnownRegistryDataMapsPayload> STREAM_CODEC = PortStreamCodec.composite(
             PortByteBufCodecs.map(
@@ -29,16 +30,6 @@ public class PortKnownRegistryDataMapsPayload extends PortLoginPacket implements
             ), PortKnownRegistryDataMapsPayload::dataMaps,
             PortKnownRegistryDataMapsPayload::new
     );
-
-    private final Map<ResourceKey<? extends Registry<?>>, List<KnownDataMap>> dataMaps;
-
-    public PortKnownRegistryDataMapsPayload(Map<ResourceKey<? extends Registry<?>>, List<KnownDataMap>> dataMaps) {
-        this.dataMaps = dataMaps;
-    }
-
-    public Map<ResourceKey<? extends Registry<?>>, List<KnownDataMap>> dataMaps() {
-        return dataMaps;
-    }
 
     @Override
     public void handle(Context context) {
