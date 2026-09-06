@@ -3,7 +3,6 @@ package org.mesdag.portlib.wrapper.world.item.crafting;
 import PortLib.extensions.com.mojang.serialization.Codec.PortCodecExtension;
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
 import PortLib.extensions.java.util.List.PortListExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortIngredientExtension;
 import com.google.common.annotations.VisibleForTesting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -19,6 +18,7 @@ import org.mesdag.portlib.diff.mixin.ShapedRecipeAccessor;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortUtil;
+import org.mesdag.portlib.wrapper.common.extensions.IPortIngredientExtension;
 
 import java.util.List;
 import java.util.Map;

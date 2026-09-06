@@ -16,7 +16,6 @@ import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.text.DecimalFormat;
@@ -50,10 +49,6 @@ public interface IPortAttributeExtension {
         };
     }
 
-    default AttributeHolder wrap() {
-        return new AttributeHolder(self());
-    }
-
     default MutableComponent toValueComponent(@Nullable PortAttributeModifier.Operation op, double value, TooltipFlag flag) {
         if (isNullOrAddition(op)) {
             return Component.translatable("portlib.value.flat", FORMAT.format(value));
@@ -72,10 +67,6 @@ public interface IPortAttributeExtension {
 
         return Component.translatable(key, valueComp, attrDesc).withStyle(color);
     }
-
-
-
-
 
     static boolean isNullOrAddition(@Nullable PortAttributeModifier.Operation op) {
         return op == null || op == PortAttributeModifier.Operation.ADD_VALUE;

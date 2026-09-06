@@ -97,7 +97,7 @@ public abstract class EntityMixin implements IPortEntity, PortSelfGetter<Entity>
     @ModifyVariable(method = "setRemainingFireTicks", at = @At("HEAD"), argsOnly = true)
     private int applyBurningTime(int ticks) {
         if (portlib$self() instanceof LivingEntity living) {
-            return (int) (ticks * living.getAttributeValue(IPortAttributesExtension.burningTime()));
+            return (int) (ticks * living.getAttributeValue(IPortAttributesExtension.BURNING_TIME));
         }
         return ticks;
     }

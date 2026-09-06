@@ -1,8 +1,6 @@
 package org.mesdag.portlib.diff.datamap;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -31,7 +29,9 @@ import org.mesdag.portlib.network.PortFriendlyByteBuf;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 
 import java.util.Collections;
 import java.util.Map;
@@ -88,7 +88,7 @@ public record PortRegistryDataMapSyncPayload<T>(
                 if (Registries.ITEM.equals(registryKey)) {
                     PortCompostable.doFill((Map) innerMap.get(PortLib.COMPOSTABLES));
                 }
-                PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(regAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.CLIENT_SYNC));
+                PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(regAccess, registry, PortDataMapsUpdatedEvent.UpdateCause.CLIENT_SYNC));
             } catch (Throwable t) {
                 PortLib.LOGGER.error("Failed to handle registry data map sync: ", t);
                 context.disconnect(Component.translatable("portlib.network.data_maps.failed", registryKey.location().toString(), t.toString()));

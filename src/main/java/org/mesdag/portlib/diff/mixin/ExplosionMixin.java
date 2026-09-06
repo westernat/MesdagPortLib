@@ -39,7 +39,7 @@ public abstract class ExplosionMixin implements PortSelfGetter<Explosion>, IPort
         PortEventHandler.postEvent(event);
         Vec3 result = event.getKnockbackVelocity();
         if (entity instanceof LivingEntity living) {
-            double resistance = living.getAttributeValue(IPortAttributesExtension.explosionKnockbackResistance());
+            double resistance = living.getAttributeValue(IPortAttributesExtension.EXPLOSION_KNOCKBACK_RESISTANCE);
             if (resistance > 0) {
                 result = result.scale(1.0 - resistance);
             }

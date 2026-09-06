@@ -1,7 +1,6 @@
 package org.mesdag.portlib.wrapper.core.particles;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
 public class PortParticleOptions implements ParticleOptions {
     private final ParticleType<PortParticleOptions> type;

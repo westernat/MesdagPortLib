@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class LocalPlayerMixin implements PortSelfGetter<LocalPlayer> {
     @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getSneakingSpeedBonus(Lnet/minecraft/world/entity/LivingEntity;)F"))
     private float withAttribute(float original) {
-        return original - 0.3F + (float) portlib$self().getAttributeValue(IPortAttributesExtension.sneakingSpeed());
+        return original - 0.3F + (float) portlib$self().getAttributeValue(IPortAttributesExtension.SNEAKING_SPEED);
     }
 }

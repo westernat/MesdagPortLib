@@ -149,7 +149,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         if (Registries.ITEM.equals(registryKey)) {
             PortCompostable.doFill(getInnerMap(Registries.ITEM).get(PortLib.COMPOSTABLES));
         }
-        PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.PortUpdateCause.SERVER_RELOAD));
+        PortEventHandler.postEvent(new PortDataMapsUpdatedEvent(registryAccess, registry, PortDataMapsUpdatedEvent.UpdateCause.SERVER_RELOAD));
     }
 
     private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<PortDataMapFile<T, R>> entries) {

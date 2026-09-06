@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff.datamap;
 
-import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
@@ -16,6 +15,7 @@ import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.network.login.PortLoginPacket;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -55,7 +55,7 @@ public class PortRegistryDataMapNegotiation {
                 PortKnownRegistryDataMapsReplyPayload.STREAM_CODEC,
                 PortKnownRegistryDataMapsReplyPayload::handle
         );
-        PortEventHandler.addListener((OnDatapackSyncEvent event) -> {
+        PortEventHandler.addListener((OnDatapackSyncEvent event) -> { // todo task
             ServerPlayer player = event.getPlayer();
             if (player == null) return;
             final Map<ResourceKey<? extends Registry<?>>, List<PortKnownRegistryDataMapsPayload.KnownDataMap>> dataMaps = new HashMap<>();

@@ -18,7 +18,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
@@ -110,7 +109,7 @@ public class PortItemAttributeModifiers {
                 if (attribute == null) continue;
                 AttributeModifier modifier = AttributeModifier.load(tag);
                 if (modifier != null && modifier.getId().getLeastSignificantBits() != 0L && modifier.getId().getMostSignificantBits() != 0L) {
-                    action.accept(IPortAttribute.of(attribute).wrap(), IPortAttributeModifierExtension.of(modifier).wrap());
+                    action.accept(AttributeHolder.wrap(attribute), IPortAttributeModifierExtension.of(modifier).wrap());
                 }
             }
         }
@@ -178,7 +177,7 @@ public class PortItemAttributeModifiers {
                             ? PortEquipmentSlotGroup.fromSlot(EquipmentSlot.byName(tag.getString("Slot")))
                             : PortEquipmentSlotGroup.ANY;
                     builder.add(new Entry(
-                            IPortAttribute.of(attribute).wrap(),
+                            AttributeHolder.wrap(attribute),
                             IPortAttributeModifierExtension.of(modifier).wrap(),
                             group
                     ));

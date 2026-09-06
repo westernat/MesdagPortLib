@@ -339,33 +339,33 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     /// 深海探索者时效率仍会生效，0 到 1 的小数值也不会因整数截断而丢失。
     @ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0), name = "f6")
     private float applyWaterMovementEfficiency(float f6) {
-        float efficiency = (float) getAttributeValue(IPortAttributesExtension.waterMovementEfficiency());
+        float efficiency = (float) getAttributeValue(IPortAttributesExtension.WATER_MOVEMENT_EFFICIENCY);
         return Math.max(f6, efficiency * 3.0F);
     }
 
     @ModifyReturnValue(method = "getBlockSpeedFactor", at = @At("RETURN"))
     private float applyMovementEfficiency(float original) {
-        return Mth.lerp((float) getAttributeValue(IPortAttributesExtension.movementEfficiency()), original, 1.0F);
+        return Mth.lerp((float) getAttributeValue(IPortAttributesExtension.MOVEMENT_EFFICIENCY), original, 1.0F);
     }
 
     @ModifyArg(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
     private float applyFallDamageMultiplier(float damage) {
-        return (float) (damage * getAttributeValue(IPortAttributesExtension.fallDamageMultiplier()));
+        return (float) (damage * getAttributeValue(IPortAttributesExtension.FALL_DAMAGE_MULTIPLIER));
     }
 
     @ModifyExpressionValue(method = "calculateFallDamage", at = @At(value = "CONSTANT", args = "floatValue=3.0"))
     private float applySafeFallDistance(float original) {
-        return (float) getAttributeValue(IPortAttributesExtension.safeFallDistance());
+        return (float) getAttributeValue(IPortAttributesExtension.SAFE_FALL_DISTANCE);
     }
 
     @ModifyReturnValue(method = "increaseAirSupply", at = @At("RETURN"))
     private int applyOxygenBonus(int original) {
-        return Math.min(original + (int) getAttributeValue(IPortAttributesExtension.oxygenBonus()), portlib$self().getMaxAirSupply());
+        return Math.min(original + (int) getAttributeValue(IPortAttributesExtension.OXYGEN_BONUS), portlib$self().getMaxAirSupply());
     }
 
     @ModifyVariable(method = "setAbsorptionAmount", at = @At("HEAD"), argsOnly = true)
     private float capAbsorption(float amount) {
-        float max = (float) getAttributeValue(IPortAttributesExtension.maxAbsorption());
+        float max = (float) getAttributeValue(IPortAttributesExtension.MAX_ABSORPTION);
         return max > 0 ? Math.min(amount, max) : amount;
     }
 
@@ -373,14 +373,14 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     private float applyScale(float original) {
         @Nullable AttributeMap attributes = getAttributes();
         if (attributes != null) { // maybe happens in super()
-            return (float) (original * attributes.getValue(IPortAttributesExtension.scale().value()));
+            return (float) (original * attributes.getValue(IPortAttributesExtension.SCALE.value()));
         }
         return original;
     }
 
     @ModifyExpressionValue(method = "getJumpPower", at = @At(value = "CONSTANT", args = "floatValue=0.42"))
     private float applyJumpStrength(float original) {
-        return (float) getAttributeValue(IPortAttributesExtension.jumpStrength());
+        return (float) getAttributeValue(IPortAttributesExtension.JUMP_STRENGTH);
     }
 
     // endregion attributes

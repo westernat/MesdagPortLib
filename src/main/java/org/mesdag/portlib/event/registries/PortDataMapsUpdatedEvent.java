@@ -14,10 +14,10 @@ import java.util.function.Consumer;
 public class PortDataMapsUpdatedEvent extends Event {
     private final RegistryAccess registryAccess;
     private final PortRegistry<?> registry;
-    private final PortUpdateCause cause;
+    private final UpdateCause cause;
 
     @Diff
-    public PortDataMapsUpdatedEvent(RegistryAccess registryAccess, IForgeRegistry<?> registry, PortUpdateCause cause) {
+    public PortDataMapsUpdatedEvent(RegistryAccess registryAccess, IForgeRegistry<?> registry, UpdateCause cause) {
         this.registryAccess = registryAccess;
         this.registry = PortIForgeRegistryExtension.wrap(registry);
         this.cause = cause;
@@ -42,11 +42,11 @@ public class PortDataMapsUpdatedEvent extends Event {
         }
     }
 
-    public PortUpdateCause getCause() {
+    public UpdateCause getCause() {
         return cause;
     }
 
-    public enum PortUpdateCause {
+    public enum UpdateCause {
         CLIENT_SYNC,
         SERVER_RELOAD
     }

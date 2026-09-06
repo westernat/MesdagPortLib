@@ -1,6 +1,5 @@
 package org.mesdag.portlib.network;
 
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
 import java.util.HashMap;
 import java.util.Map;

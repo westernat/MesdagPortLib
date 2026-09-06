@@ -51,7 +51,7 @@ function initializeCoreMod() {
                 //   if (this.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(this)) { f /= 5.0F; }
                 // into:
                 //   if (this.isEyeInFluid(FluidTags.WATER)) {
-                //       float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
+                //       float speed = (float) this.getAttributeValue(Attributes.SUBMERGED_MINING_SPEED);
                 //       if (EnchantmentHelper.hasAquaAffinity(this)) { speed = Math.min(speed * 5.0F, 1.0F); }
                 //       f *= speed;
                 //   }
@@ -132,12 +132,12 @@ function initializeCoreMod() {
 
                         var newCode = new InsnList();
 
-                        // float speed = (float) this.getAttributeValue(PortAttributesExtension.submergedMiningSpeed());
+                        // float speed = (float) this.getAttributeValue(Attributes.SUBMERGED_MINING_SPEED);
                         newCode.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                        newCode.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            'org/mesdag/portlib/wrapper/common/extensions/IPortAttributesExtension',
-                            'submergedMiningSpeed',
-                            '()Lnet/minecraft/core/Holder;', true));
+                        newCode.add(new FieldInsnNode(Opcodes.GETSTATIC,
+                            'net/minecraft/world/entity/ai/attributes/Attributes',
+                            'SUBMERGED_MINING_SPEED',
+                            'Lnet/minecraft/core/Holder;'));
                         newCode.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                             'net/minecraft/world/entity/LivingEntity',
                             ASMAPI.mapMethod('m_246858_'), // getAttributeValue

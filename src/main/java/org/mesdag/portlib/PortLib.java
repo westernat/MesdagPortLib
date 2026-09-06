@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -71,11 +72,6 @@ public class PortLib {
             "generic.fall_damage_multiplier",
             () -> new RangedAttribute("attribute.name.generic.fall_damage_multiplier", 1.0, 0.0, 100.0),
             maker -> maker.setSyncable(true).setSentiment(PortAttribute.PortSentiment.NEGATIVE)
-    );
-    public static final PortRegistryEntry<Attribute, RangedAttribute> FLYING_SPEED = ATTRIBUTES.register(
-            "generic.flying_speed",
-            () -> new RangedAttribute("attribute.name.generic.flying_speed", 0.4, 0.0, 1024.0),
-            maker -> maker.setSyncable(true)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> JUMP_STRENGTH = ATTRIBUTES.register(
             "generic.jump_strength",
@@ -183,7 +179,7 @@ public class PortLib {
             for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
                 event.add(EntityType.PLAYER, entry.value());
             }
-            event.add(EntityType.PLAYER, FLYING_SPEED.value(), 1.0);
+            event.add(EntityType.PLAYER, Attributes.FLYING_SPEED, 1.0);
         });
 
         PortEventHandler.addListener((PortRegisterDataMapTypesEvent event) -> {

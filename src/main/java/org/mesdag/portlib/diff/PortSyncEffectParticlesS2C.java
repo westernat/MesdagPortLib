@@ -1,6 +1,5 @@
 package org.mesdag.portlib.diff;
 
-import org.mesdag.portlib.wrapper.common.extensions.IPortParticleOptionsExtension;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +8,7 @@ import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortParticleOptionsExtension;
 
 import java.util.List;
 

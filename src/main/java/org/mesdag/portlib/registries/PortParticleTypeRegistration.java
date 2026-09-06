@@ -1,7 +1,6 @@
 package org.mesdag.portlib.registries;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
@@ -17,6 +16,7 @@ import net.minecraft.resources.RegistryOps;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortEnvironment;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
 public class PortParticleTypeRegistration extends PortRegistration<ParticleType<?>> {
     PortParticleTypeRegistration(String namespace) {

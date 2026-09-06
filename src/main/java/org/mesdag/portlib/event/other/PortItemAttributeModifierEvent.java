@@ -8,12 +8,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeModifierExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.AttributeHolder;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
@@ -92,7 +92,7 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
         PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
         for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
             Attribute attribute = entry.getKey();
-            Holder<Attribute> holder = IPortAttribute.of(attribute).wrap();
+            Holder<Attribute> holder = AttributeHolder.wrap(attribute);
             for (AttributeModifier modifier : entry.getValue()) {
                 PortItemAttributeModifiers.Entry portEntry = new PortItemAttributeModifiers.Entry(holder, IPortAttributeModifierExtension.of(modifier).wrap(), group);
                 if (condition.test(portEntry)) {
@@ -126,7 +126,7 @@ public class PortItemAttributeModifierEvent extends PortEvent<ItemAttributeModif
             PortEquipmentSlotGroup group = PortEquipmentSlotGroup.fromSlot(e.getSlotType());
             List<PortItemAttributeModifiers.Entry> list = new LinkedList<>();
             for (Map.Entry<Attribute, Collection<AttributeModifier>> entry : e.getModifiers().asMap().entrySet()) {
-                Holder<Attribute> attribute = IPortAttribute.of(entry.getKey()).wrap();
+                Holder<Attribute> attribute = AttributeHolder.wrap(entry.getKey());
                 for (AttributeModifier modifier : entry.getValue()) {
                     list.add(new PortItemAttributeModifiers.Entry(attribute, IPortAttributeModifierExtension.of(modifier).wrap(), group));
                 }

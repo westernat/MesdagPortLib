@@ -1,7 +1,6 @@
 package org.mesdag.portlib.network.codec;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 import PortLib.extensions.net.minecraftforge.registries.ForgeRegistry.PortForgeRegistryExtension;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
@@ -27,6 +26,7 @@ import org.mesdag.portlib.diff.PortRegistryManager;
 import org.mesdag.portlib.network.*;
 import org.mesdag.portlib.wrapper.common.extensions.IPortHolderLookupProviderExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortIdMapExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortResourceLocationExtension;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

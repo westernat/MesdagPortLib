@@ -1,7 +1,6 @@
 package org.mesdag.portlib.wrapper.common.crafting;
 
 import PortLib.extensions.com.mojang.serialization.DataResult.PortDataResultExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
@@ -11,6 +10,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
 public final class PortIngredientType<T extends PortCustomIngredient> {
     private final MapCodec<T> codec;
