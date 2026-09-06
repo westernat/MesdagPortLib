@@ -9,12 +9,16 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
+import org.jetbrains.annotations.NotNull;
 import org.mesdag.portlib.wrapper.common.PortTranslatableEnum;
 import org.mesdag.portlib.wrapper.common.extensions.IPortConfigValueExtension;
 
@@ -157,7 +161,10 @@ public class PortConfigurationScreen extends Screen {
                 unsupported.active = false;
                 widget = unsupported;
             }
-            applyTooltip(widget, translatedTooltip(mod.getModId(), key, valueSpec.getTranslationKey(), valueSpec.getComment()), valueSpec.needsWorldRestart());
+            Component description = translatedTooltip(mod.getModId(), key, valueSpec.getTranslationKey(), valueSpec.getComment());
+            Component tooltip = label.copy().withStyle(ChatFormatting.BOLD);
+            if (description != null) tooltip = tooltip.copy().append("\n\n").append(description);
+            applyTooltip(widget, tooltip, valueSpec.needsWorldRestart());
             return new ConfigRow(label, widget, false);
         }
 
@@ -278,12 +285,25 @@ public class PortConfigurationScreen extends Screen {
     }
 
     private static final class ConfigRow extends ContainerObjectSelectionList.Entry<ConfigRow> {
-        private final Component label;
+        private final StringWidget label;
         private final AbstractWidget widget;
         private final boolean fullWidth;
 
         private ConfigRow(Component label, AbstractWidget widget, boolean fullWidth) {
-            this.label = label;
+            this.label = new StringWidget(0, 20, label, Minecraft.getInstance().font) {
+                @Override
+                public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+                    Component message = getMessage();
+                    var font = getFont();
+                    FormattedCharSequence text = message.getVisualOrderText();
+                    if (font.width(message) > getWidth()) {
+                        FormattedText clipped = font.substrByWidth(message, Math.max(0, getWidth() - font.width(CommonComponents.ELLIPSIS)));
+                        text = Language.getInstance().getVisualOrder(FormattedText.composite(clipped, CommonComponents.ELLIPSIS));
+                    }
+                    graphics.drawString(font, text, getX(), getY() + (getHeight() - 9) / 2, 0xFFFFFF);
+                }
+            }.alignLeft();
+            this.label.setTooltip(widget.getTooltip() != null ? widget.getTooltip() : Tooltip.create(label));
             this.widget = widget;
             this.fullWidth = fullWidth;
         }
@@ -302,20 +322,23 @@ public class PortConfigurationScreen extends Screen {
                 int middle = left + rowWidth / 2;
                 widget.setX(middle + 2);
                 widget.setWidth(rowWidth / 2 - 6);
-                graphics.drawString(Minecraft.getInstance().font, label, left + 6, top + 6, 0xFFFFFF);
+                label.setX(left + 6);
+                label.setY(top + 1);
+                label.setWidth(Math.max(0, rowWidth / 2 - 12));
+                label.render(graphics, mouseX, mouseY, partialTick);
             }
             widget.setY(top + 1);
             widget.render(graphics, mouseX, mouseY, partialTick);
         }
 
         @Override
-        public List<? extends GuiEventListener> children() {
-            return List.of(widget);
+        public @NotNull List<? extends GuiEventListener> children() {
+            return fullWidth ? List.of(widget) : List.of(label, widget);
         }
 
         @Override
-        public List<? extends NarratableEntry> narratables() {
-            return List.of(widget);
+        public @NotNull List<? extends NarratableEntry> narratables() {
+            return fullWidth ? List.of(widget) : List.of(label, widget);
         }
     }
 
