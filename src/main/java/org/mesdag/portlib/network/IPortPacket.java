@@ -77,6 +77,10 @@ public interface IPortPacket {
             return player;
         }
 
+        public Connection connection() {
+            return connection;
+        }
+
         public ChannelHandlerContext channelHandlerContext() {
             return connection.channel().pipeline().lastContext();
         }

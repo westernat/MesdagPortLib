@@ -1,6 +1,8 @@
 package org.mesdag.portlib.network;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -14,12 +16,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.*;
 import net.minecraftforge.network.simple.SimpleChannel;
-import org.jetbrains.annotations.ApiStatus;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
@@ -34,16 +33,16 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class PortNetworkHandler {
-    //    private static final List<PortNetworkHandler> handlers = new ArrayList<>();
+    private final ResourceLocation channelName;
     private final SimpleChannel channel;
     private static final Map<ResourceLocation, PortStreamCodec<?, ?>> codecMap = new HashMap<>();
     private int packetId;
-//    private final List<Consumer<IPortCustomLoginTask>> tasks = new ArrayList<>();
 
     /// 务必在类初始化时创建
     public PortNetworkHandler(String namespace, String version) {
+        this.channelName = ResourceLocation.fromNamespaceAndPath(namespace, "main");
         this.channel = NetworkRegistry.newSimpleChannel(
-                ResourceLocation.fromNamespaceAndPath(namespace, "main"),
+                channelName,
                 () -> version,
                 version::equals,
                 version::equals
@@ -55,8 +54,6 @@ public class PortNetworkHandler {
                 case PLAY_TO_SERVER, LOGIN_TO_SERVER -> c2s(p, s, PortBundledPacket::handle);
             }
         }, PortBundledPacket.class, null);
-
-//        handlers.add(this);
     }
 
     public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
@@ -75,13 +72,52 @@ public class PortNetworkHandler {
         registerInGameC2S(clazz, identifier, codec, IPortPacket.C2S::handle);
     }
 
-//    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-//        register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_CLIENT);
-//    }
-//
-//    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-//        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
-//    }
+    /// 登录期（LOGIN 协议内、进世界之前）方向：与 registerLoginS2C/registerLoginC2S 配套的是
+    /// {@link #sendLoginToClient(Connection, int, IPortPacket)} 走 fml:loginwrapper 信封发送。
+    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_CLIENT);
+    }
+
+    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
+        registerLoginS2C(clazz, identifier, codec, IPortPacket.S2C::handle);
+    }
+
+    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
+        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
+    }
+
+    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
+        registerLoginC2S(clazz, identifier, codec, IPortPacket.C2S::handle);
+    }
+
+    public ResourceLocation channelName() {
+        return channelName;
+    }
+
+    /// 在 LOGIN 阶段向对端发送一个 PortLib 消息。
+    ///
+    /// 1.20.1 的登录协议只有 vanilla 的 custom query（transactionId 回执）而没有“频道回执”，
+    /// Forge 的做法是把所有登录期消息装进 `fml:loginwrapper` 信封（内层 = \[目标频道\]\[长度\]\[载荷\]），
+    /// 由 [net.minecraftforge.network.LoginWrapper] 在收包侧拆开并按内层频道分发。这里复刻同一格式。
+    ///
+    /// @param manager  目标连接（处于 LOGIN 协议状态）
+    /// @param sequence 自增序号（写入 vanilla transactionId）
+    /// @param packet   要发送的 PortLib 消息
+    public void sendLoginToClient(Connection manager, int sequence, IPortPacket packet) {
+        Packet<?> direct = channel.toVanillaPacket(packet, NetworkDirection.LOGIN_TO_CLIENT);
+        if (!(direct instanceof ICustomPacket<?> custom)) {
+            throw new IllegalStateException("Message is not wrapped into a login custom query: " + packet.getClass());
+        }
+        FriendlyByteBuf data = custom.getInternalData();
+        if (data == null) {
+            throw new IllegalStateException("Login packet has no data: " + packet.getClass());
+        }
+        FriendlyByteBuf envelope = new FriendlyByteBuf(Unpooled.buffer());
+        envelope.writeResourceLocation(channelName);
+        envelope.writeVarInt(data.readableBytes());
+        envelope.writeBytes(data, data.readerIndex(), data.readableBytes());
+        manager.send(NetworkDirection.LOGIN_TO_CLIENT.buildPacket(Pair.of(envelope, sequence), LoginWrapper.WRAPPER).getThis());
+    }
 
     public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
         register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> {
@@ -96,59 +132,6 @@ public class PortNetworkHandler {
     public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
         registerInGameBidirectional(clazz, identifier, codec, IPortPacket::handle);
     }
-
-//    public <S2C extends PortLoginPacket & IPortPacket, C2S extends PortLoginPacket & IPortPacket> void addLoginTask(
-//            ResourceLocation identifier,
-//            Consumer<IPortCustomLoginTask> consumer,
-//            ResourceLocation s2cIdentifier,
-//            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
-//            BiConsumer<S2C, IPortPacket.Context> s2cHandler,
-//            @Nullable ResourceLocation c2sIdentifier,
-//            @Nullable PortStreamCodec<? super FriendlyByteBuf, C2S> c2sCodec,
-//            @Nullable BiConsumer<C2S, IPortPacket.Context> c2sHandler
-//    ) {
-//        boolean noC2S = c2sIdentifier == null;
-//        if (noC2S != (c2sHandler == null) || noC2S != (c2sCodec == null)) {
-//            throw new IllegalArgumentException("c2sIdentifier, c2sCodec and c2sHandler must be either all null or all non-null");
-//        }
-//        Class<?> s2cClazz = TypeResolver.resolveRawArguments(BiConsumer.class, s2cHandler.getClass())[0];
-//        if (s2cClazz == TypeResolver.Unknown.class) {
-//            throw new IllegalStateException("Cannot get class from s2cCodec");
-//        } else {
-//            SimpleChannel.MessageBuilder<S2C> s2cBuilder = channel.messageBuilder((Class<S2C>) s2cClazz, packetId++, PortNetworkDirection.LOGIN_TO_CLIENT.unwrap());
-//            if (noC2S) {
-//                s2cBuilder.noResponse();
-//            } else {
-//                Class<?> c2sClazz = TypeResolver.resolveRawArguments(BiConsumer.class, c2sHandler.getClass())[0];
-//                if (c2sClazz == TypeResolver.Unknown.class) {
-//                    throw new IllegalStateException("Cannot get class from c2sCodec");
-//                } else {
-//                    channel.messageBuilder((Class<C2S>) c2sClazz, packetId++, PortNetworkDirection.LOGIN_TO_SERVER.unwrap())
-//                            .loginIndex(PortLoginPacket::getLoginIndex, PortLoginPacket::setLoginIndex)
-//                            .decoder(c2sCodec::decode).encoder(c2sCodec::reversedEncode)
-//                            .consumerNetworkThread((p, s) -> {c2s(p, s, c2sHandler);})
-//                            .add();
-//                    codecMap.put(c2sIdentifier, c2sCodec);
-//                }
-//            }
-//            s2cBuilder.loginIndex(PortLoginPacket::getLoginIndex, PortLoginPacket::setLoginIndex)
-//                    .decoder(s2cCodec::decode).encoder(s2cCodec::reversedEncode)
-//                    .consumerNetworkThread((p, s) -> {s2c(p, s, s2cHandler);})
-//                    .add();
-//            codecMap.put(s2cIdentifier, s2cCodec);
-//            tasks.add(consumer);
-//        }
-//    }
-//
-//    public <S2C extends PortLoginPacket & IPortPacket.S2C> void addLoginTask(
-//            ResourceLocation identifier,
-//            Consumer<IPortCustomLoginTask> consumer,
-//            ResourceLocation s2cIdentifier,
-//            PortStreamCodec<? super FriendlyByteBuf, S2C> s2cCodec,
-//            BiConsumer<S2C, IPortPacket.Context> s2cHandler
-//    ) {
-//        addLoginTask(identifier, consumer, s2cIdentifier, s2cCodec, s2cHandler, null, null, null);
-//    }
 
     private <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> C.handle(p, s, handler, channel));
@@ -234,28 +217,5 @@ public class PortNetworkHandler {
             throw new IllegalStateException("Packet not registered: " + identifier);
         }
         return codec;
-    }
-
-    @ApiStatus.Internal
-    public static void init() {
-//        PortEventHandler.addListener((PlayerNegotiationEvent event) -> {
-//            for (PortNetworkHandler handler : handlers) {
-//                if (handler.tasks.isEmpty()) continue;
-//                IPortCustomLoginTask loginTask = new IPortCustomLoginTask() {
-//                    @Override
-//                    public Consumer<IPortPacket> sender() {
-//                        return p2 -> handler.channel.sendTo(p2, event.getConnection(), NetworkDirection.LOGIN_TO_CLIENT);
-//                    }
-//
-//                    @Override
-//                    public void disconnect(Component reason) {
-//                        event.getConnection().disconnect(reason);
-//                    }
-//                };
-//                for (Consumer<IPortCustomLoginTask> task : handler.tasks) {
-//                    task.accept(loginTask);
-//                }
-//            }
-//        });
     }
 }

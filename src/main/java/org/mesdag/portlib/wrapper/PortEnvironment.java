@@ -2,6 +2,7 @@ package org.mesdag.portlib.wrapper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -42,6 +43,7 @@ public class PortEnvironment {
                 if (connection != null) {
                     return connection.registryAccess();
                 }
+                return ClientRegistryLayer.createRegistryAccess().compositeAccess();
             }
         }
         return server == null ? RegistryAccess.EMPTY : server.registryAccess();

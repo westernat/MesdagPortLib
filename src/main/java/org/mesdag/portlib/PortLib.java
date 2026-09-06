@@ -34,6 +34,7 @@ import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
+import org.mesdag.portlib.network.config.PortConfigurationManager;
 import org.mesdag.portlib.registries.PortAttributeRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.registries.PortRegistryEntry;
@@ -154,7 +155,7 @@ public class PortLib {
         PortEventHooks.init();
         PortAttachmentInternals.init();
         PortDataMapLoader.init();
-        PortNetworkHandler.init();
+        PortConfigurationManager.init();
         IPortLivingEntity.init();
         IPortEntityExtension.init();
         IEventBus eventBus = context.getModEventBus();
