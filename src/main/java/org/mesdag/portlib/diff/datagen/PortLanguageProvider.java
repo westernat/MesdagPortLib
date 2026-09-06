@@ -58,6 +58,15 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.modifier.take", "%s %s");
         add("portlib.modifier.bool", "%s %s");
 
+        add("portlib.configuration.title", "%s Configuration", "%s配置");
+        add("portlib.configuration.type.client", "%s Client Configuration", "%s客户端配置");
+        add("portlib.configuration.type.common", "%s Common Configuration", "%s通用配置");
+        add("portlib.configuration.type.server", "%s Server Configuration", "%s服务端配置");
+        add("portlib.configuration.not_loaded", "This configuration is not loaded in the current context.", "此配置在当前环境中尚未加载。");
+        add("portlib.configuration.requires_world_restart", "Changes to this option require re-entering the world.", "修改此项后需要重新进入世界。");
+        add("portlib.configuration.undo", "Undo", "撤销");
+        add("portlib.configuration.reset", "Reset", "重置");
+
         add("portlib.network.advanced_add_entity.failed", "Failed to process advanced entity spawn data: %s", "处理高级实体生成数据失败：%s");
         add("portlib.network.data_maps.failed", "Failed to handle registry data map sync for registry %s: %s", "处理注册表数据映射同步失败 %s: %s");
         add("portlib.network.data_maps.missing_our", "Cannot connect to server as it is missing mandatory registry data maps present on the client: %s", "无法连接至服务器，因为客户端缺少必要的注册表数据映射：%s");
