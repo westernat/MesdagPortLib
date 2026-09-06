@@ -43,18 +43,17 @@ public abstract class PortDataMapProvider implements DataProvider {
         return lookupProvider.thenCompose(provider -> {
             gather(provider);
 
-            DynamicOps<JsonElement> dynamicOps = IPortHolderLookupProviderExtension.of(provider).createSerializationContext(JsonOps.INSTANCE);
-
             return CompletableFuture.allOf(this.builders.entrySet().stream().map(entry -> {
                 PortDataMapType<?, ?> type = entry.getKey();
                 Path path = this.pathProvider.json(type.id().withPrefix(PortDataMapLoader.getFolderLocation(type.registryKey().location()) + "/"));
-                return generate(path, cache, entry.getValue(), dynamicOps);
+                return generate(path, cache, entry.getValue(), provider);
             }).toArray(CompletableFuture[]::new));
         });
     }
 
-    private <T, R> CompletableFuture<?> generate(Path out, CachedOutput cache, Builder<T, R> builder, DynamicOps<JsonElement> ops) {
+    private <T, R> CompletableFuture<?> generate(Path out, CachedOutput cache, Builder<T, R> builder, HolderLookup.Provider provider) {
         return CompletableFuture.supplyAsync(() -> {
+            DynamicOps<JsonElement> ops = IPortHolderLookupProviderExtension.of(provider).createSerializationContext(JsonOps.INSTANCE);
             Codec<Optional<PortWithConditions<PortDataMapFile<T, R>>>> withConditionsCodec = PortConditionalOps.createConditionalCodecWithConditions(PortDataMapFile.codec(builder.registryKey, builder.type));
             return PortDataResultExtension.getOrThrow(withConditionsCodec.encodeStart(ops, Optional.of(builder.build())), msg -> new RuntimeException("Failed to encode %s: %s".formatted(out, msg)));
         }).thenComposeAsync(encoded -> DataProvider.saveStable(cache, encoded, out));

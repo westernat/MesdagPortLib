@@ -128,6 +128,9 @@
     "net/minecraftforge/registries/IForgeRegistry": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortForgeRegistryExtension<V>"
     ],
+    "net/minecraftforge/common/ForgeConfigSpec$ConfigValue": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortConfigValueExtension<T>"
+    ],
     "net/minecraft/server/level/ServerPlayer": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortServerPlayerExtension"
     ],

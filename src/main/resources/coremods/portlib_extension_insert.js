@@ -8,6 +8,7 @@ function initializeCoreMod() {
         'holder_lookup_provider': transformer('net/minecraft/core/HolderLookup$Provider', 'IPortHolderLookupProviderExtension'),
         'registry': transformer('net/minecraft/core/Registry', 'IPortRegistryExtension'),
         'i_forge_registry': transformer('net/minecraftforge/registries/IForgeRegistry', 'IPortForgeRegistryExtension'),
+        'config_value': transformer('net/minecraftforge/common/ForgeConfigSpec$ConfigValue', 'IPortConfigValueExtension'),
         'search_tree': transformer('net/minecraft/client/searchtree/SearchTree', 'IPortSearchTreeExtension'),
         'holder_set': transformer('net/minecraft/core/HolderSet', 'IPortHolderSetExtension'),
         'particle_options': transformer('net/minecraft/core/particles/ParticleOptions', 'IPortParticleOptionsExtension'),

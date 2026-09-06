@@ -1,6 +1,5 @@
 package org.mesdag.portlib.network;
 
-import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortBundledPacket;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -220,7 +220,11 @@ public class PortNetworkHandler {
     }
 
     public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket packet, IPortPacket... packets) {
-        channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(pos.x, pos.z)), PortBundledPacket.makePacket(packet, packets));
+        // 世界生成线程可能在区块尚未完成时同步数据；这里若调用 getChunk 会等待当前生成任务，
+        // 形成工作线程等待自身的死锁。直接读取跟踪者列表不会加载区块，也符合该方法的语义。
+        for (ServerPlayer player : level.getChunkSource().chunkMap.getPlayers(pos, false)) {
+            sendToPlayer(player, packet, packets);
+        }
     }
 
     @Diff
