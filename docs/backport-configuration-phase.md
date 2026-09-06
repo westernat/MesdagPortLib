@@ -2,7 +2,8 @@
 
 > 范围：本仓库（`MesdagPortLib+neoforge1.21.1 to forge1.20.1`，ModDevGradle `legacyforge` 2.0.141 /
 > Forge 47.4.20 / MC 1.20.1）。
-> 状态：方案 C 骨架 + data map 协商迁移（首次加入即可协商）已实现，待编译联调（见文末 TODO）。
+> 状态：方案 C 已实现并通过运行验证（含断线加固、注册表兜底）；增强项（按连接任务事件 /
+> LOGIN 大包分片 / 客户端看门狗）已落地，见文末 TODO。
 
 ---
 
@@ -103,6 +104,7 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
 |-----------------------------------------|-----|--------------------------------------------|---------------|
 | `PortKnownRegistryDataMapsPayload`      | S2C | 服务器已知 data map 清单（registry → KnownDataMap） | 阶段任务 1        |
 | `PortKnownRegistryDataMapsReplyPayload` | C2S | 客户端已知清单（写入服务端连接 attr）                      | 客户端处理 Known 后 |
+| `PortConfigurationFragmentPayload`      | S2C | 大负载分片（首/尾标记 + 数据块 + 目标类型）                  | 单包超限时替代单条消息   |
 | `PortConfigurationFinishedPayload`      | S2C | 无负载“配置结束”标记                                | 阶段任务队列排空后     |
 
 ### 2.4 窗口内消息的“注册表可用性”约束（重要）
@@ -132,10 +134,15 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
 - `src/main/java/org/mesdag/portlib/network/config/PortConfigurationContext.java`
   —— 任务执行上下文：`send(...)` / `finish()` / `connection()` / `disconnect(...)`；
 - `src/main/java/org/mesdag/portlib/network/config/PortConfigurationManager.java`
-  —— 通用任务队列执行器（服务端 `ServerStage`：按注册顺序逐任务执行，经
-  `finishCurrentTask(type)` 推进）、能力判定、客户端 continuation 存取；
+  —— 通用任务队列执行器：每次连接触发 `PortRegisterConfigurationTasksEvent` 收集任务；
+  `ServerStage` 逐任务执行并经 `finishCurrentTask(type)` 推进；LOGIN 大包自动分片/重组；
+  客户端等待 `configuration_finished` 的看门狗；能力判定与 continuation 存取；
 - `src/main/java/org/mesdag/portlib/network/config/PortConfigurationFinishedPayload.java`
   —— 配置结束标记；
+- `src/main/java/org/mesdag/portlib/network/config/PortConfigurationFragmentPayload.java`
+  —— LOGIN 大负载分片消息（`first/last` 标记 + 目标类型 + 数据块）；
+- `src/main/java/org/mesdag/portlib/event/network/PortRegisterConfigurationTasksEvent.java`
+  —— 按连接的任务注册事件（对齐 1.21 `RegisterConfigurationTasksEvent`）；
 - `src/main/java/org/mesdag/portlib/diff/mixin/ServerLoginPacketListenerImplMixin.java`
   —— tick 驱动阶段；`placeNewPlayer` HEAD 拦截推迟进世界；`@Invoker placeNewPlayer` 恢复；
 - `src/main/java/org/mesdag/portlib/diff/mixin/ClientHandshakePacketListenerImplMixin.java`
@@ -150,7 +157,8 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
   —— `Context` 增加 `connection()` 访问器；
 - `src/main/java/org/mesdag/portlib/diff/datamap/PortRegistryDataMapNegotiation.java`
   —— Known/Reply 改注册为 LOGIN 方向；删除 join 时 `OnDatapackSyncEvent` 发 Known 的旧路径；
-  以 `IPortCustomConfigurationTask`（`KNOWN_TASK_TYPE`）注册进配置阶段；Reply 到达后调用
+  类本身**直接实现 `IPortCustomConfigurationTask`**（类型 `KNOWN_TASK_TYPE`，单例 `INSTANCE`），
+  经 `PortRegisterConfigurationTasksEvent` 按连接注册；Reply 到达后调用
   `PortConfigurationManager.finishCurrentTask(conn, KNOWN_TASK_TYPE)` 推进；
 - `src/main/java/org/mesdag/portlib/PortLib.java` —— 构造器调用 `PortConfigurationManager.init()`；
 - `src/main/resources/portlib.mixins.json` —— 服务端表加 `ServerLoginPacketListenerImplMixin`、
@@ -174,12 +182,16 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
   被推迟的收尾同样在网络线程执行——与 1.20.1 原版行为一致。
 - 超时：单个任务存活 > `MAX_TASK_TICKS`(200) 按 `multiplayer.disconnect.slow_login` 断开；
   服务端原登录超时（600 tick）继续兜底。
+- 客户端看门狗：推迟收尾时会调度一次性断线（`CLIENT_CONFIGURATION_TIMEOUT_MILLIS` = 20s），
+  收不到 `configuration_finished`（老服务端 / 中间代理）时给出友好提示断开，不再依赖裸 read-timeout。
+- 大负载：单条登录负载 > `MAX_SINGLE_LOGIN_PAYLOAD_BYTES`(512 KiB) 时自动切成
+  `PortConfigurationFragmentPayload`（每片 ≤ 64 KiB），客户端重组后按原类型解码分发；
+  重组/解码失败会给出友好断线提示。
 - 边界与兼容：
     - vanilla 客户端 / Forge 无 PortLib / 单机内存连接：判定 false，完全原版路径；
     - 服务器有 datamap、客户端没有（异常 mod 组合）：客户端仍会应答 Reply，服务端据此正常完成；
       mandatory 不一致由 `PortKnownRegistryDataMapsPayload.handle` 断开（沿用旧逻辑）；
-    - 老版本 PortLib 服务端（无本阶段）连新客户端：客户端推迟等 Finished 会拿不到 →
-      依赖连接 read-timeout 断开，属版本不匹配场景（文档记录，见 TODO 优化）；
+    - 老版本 PortLib 服务端（无本阶段）连新客户端：客户端 20s 看门狗友好断线（版本不匹配场景）；
     - 同 UUID 顶号：服务端 DELAY_ACCEPT 路径最终也会经过 `placeNewPlayer` 拦截点，同样先配置后进世界。
 
 ---
@@ -191,7 +203,8 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
 | CONFIGURATION 协议状态（新 wire）                      | 不新增状态；窗口位于 LOGIN 协议内（profile 后、LoginPacket 前）                                          |
 | `ServerConfigurationPacketListenerImpl` 任务队列    | `PortConfigurationManager.ServerStage`（挂在登录监听器 tick 上）                                 |
 | `ConfigurationTask` / `finishCurrentTask(Type)` | `IPortCustomConfigurationTask` 队列 + `PortConfigurationManager.finishCurrentTask(type)` |
-| `RegisterConfigurationTasksEvent`（IModBus）      | 目前经 `PortConfigurationManager.registerConfigurationTask` 静态注册（datamap 任务）；可扩展为按连接事件    |
+| `RegisterConfigurationTasksEvent`（IModBus）      | `PortRegisterConfigurationTasksEvent`（event/network，每次连接、启动阶段前经                        
+ `PortEventHandler` 触发）；datamap 任务即通过该事件注册       |
 | `JoinWorldTask` → FinishConfiguration → ack     | `PortConfigurationFinishedPayload`（S2C）作为窗口结束信号                                        |
 | `ConnectionType` / `hasChannel`                 | Forge 握手交换的 `ConnectionData` 频道清单（`portlib:main` 有无）                                   |
 | `SyncRegistries`（frozen registry）               | 1.20.1 无对等物（注册表在 LoginPacket 内），不搬                                                     |
@@ -199,17 +212,21 @@ transactionId 用阶段内自增 `seq`。收包侧由 Forge `LoginWrapper` 拆�
 
 ---
 
-## 6. TODO / 下一步（联调前必看）
+## 6. 状态 / TODO / 下一步
 
-1. 编译：`gradlew :compileJava`（本仓库是 ModDevGradle legacyforge 项目，在用户机器上执行）。
-2. 由于设计目标是“两端同版本 PortLib”，把客户端 mixin 与 `Finished` 超时兜底补强：
-    - 客户端若长时间收不到 `configuration_finished`（老服务端/中间代理），给出友好断线而非挂死
-      （可在 `ClientHandshakePacketListenerImpl` 用一次性 scheduled disconnect 兜底，或依赖
-      read-timeout）。
-3. 大 payload：登录信封单包上限 ~1MB（1.20.1 无登录期分包器），datamap 清单异常庞大时需分片
-   （参照 `VanillaPacketSplitter` 的 PLAY 思路补一个 LOGIN 期分片，或在信封外加“段序号”）。
-4. 任务注册事件化：把“静态注册任务”升级为与 1.21 `RegisterConfigurationTasksEvent` 对应的
-   每次连接的注册事件（提供 listener/connection 供任务按需跳过）；后续可把配置文件同步、
-   frozen 校验等作为新 `IPortCustomConfigurationTask` 加入队列。
-5. 联调矩阵：单机（不触发）→ 局域网 PortLib↔PortLib（触发）→ vanilla↔PortLib → Forge↔PortLib；
-   验证“新玩家首次加入即收到 datamap 内容”（此前必漏），并回归 `/reload` 路径。
+已完成：
+
+1. 方案 C 核心（窗口/队列/双端 mixin）与 datamap 协商入窗（首次加入即协商、内容同步不再漏）；
+2. 断线加固（阶段随 `onDisconnect` 清理、关闭连接不驱动、防二次 accept）；
+3. 注册表兜底（客户端登录期 `PortEnvironment.registryAccess()` 退回本地静态层）；
+4. 三项增强：客户端看门狗（20s 友好断线）、LOGIN 大包自动分片重组、按连接任务事件
+   `PortRegisterConfigurationTasksEvent`。
+
+下一步（联调 / 扩展建议）：
+
+1. 回归联调矩阵：单机（不触发）→ 局域网 PortLib↔PortLib（触发）→ vanilla↔PortLib → Forge↔PortLib；
+   并新增大负载构造（如上千 datamap 清单）验证分片路径、老服务端/代理验证看门狗提示。
+2. 配置/语言键：`portlib.network.configuration.timeout` 等转义键目前用
+   `translatableWithFallback` 兜底；如需本地化文案可加入 `src/generated/resources/assets/.../lang`。
+3. 作为新 `IPortCustomConfigurationTask` 加入队列的后续候选：配置文件同步、frozen 校验等
+   （现可直接通过 `PortRegisterConfigurationTasksEvent` 按连接注册）。

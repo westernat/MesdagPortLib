@@ -1,20 +1,24 @@
 package org.mesdag.portlib.network.config;
 
+import io.netty.buffer.Unpooled;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.ConnectionData;
 import net.minecraftforge.network.NetworkHooks;
 import org.mesdag.portlib.PortLib;
+import org.mesdag.portlib.event.PortEventHandler;
+import org.mesdag.portlib.event.network.PortRegisterConfigurationTasksEvent;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortNetworkHandler;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.wrapper.common.extensions.IPortFriendlyByteBufExtension;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
 /// 1.20.1 上“配置阶段（CONFIGURATION）”的仿真实现（详见仓库 `docs/backport-configuration-phase.md`）。
 ///
@@ -23,8 +27,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /// 本类把“发完 GameProfile 之后、放行进世界之前”的一段窗口变成可跨 tick 等待回执的任务队列，
 /// 语义对齐 1.21.1 的 `ConfigurationTask` 队列：
 ///
-/// 1. 任务实现 [IPortCustomConfigurationTask]，经 [#registerConfigurationTask] 注册；
-/// 2. 服务端 [ServerStage] 按注册顺序逐任务执行：一个任务结束（任务在 `start` 内同步
+/// 1. 每个连接启动阶段前触发 [PortRegisterConfigurationTasksEvent]（对齐 1.21 的
+///    `RegisterConfigurationTasksEvent`），监听器按连接注册任务（注册顺序即执行顺序）；
+/// 2. 服务端 [ServerStage] 逐任务执行：一个任务结束（任务在 `start` 内同步
 ///    [PortConfigurationContext#finish]，或客户端回执触发 [#finishCurrentTask]）才启动下一个；
 /// 3. 队列清空后发出“配置结束”信号（[PortConfigurationFinishedPayload]），
 ///    客户端才执行被推迟的“切 PLAY / 建 ClientPacketListener”收尾，服务端随后恢复进世界。
@@ -33,6 +38,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /// Forge 用 `fml:loginwrapper` 信封承载内层频道消息；因此这里经
 /// [PortNetworkHandler#sendLoginToClient] 以同样信封格式发送，收包侧由 Forge 的
 /// [net.minecraftforge.network.LoginWrapper] 拆封后按 `portlib:main` 分发。
+/// 超过单包上限的负载会按 [PortConfigurationFragmentPayload] 自动分片（[#FRAGMENT_CHUNK_BYTES]）。
 ///
 /// 能力协商：是否进入配置阶段，取决于“对端是否具备 PortLib” —— Forge 握手结束时
 /// 双方已经把频道清单写入 [ConnectionData]（[#getConnectionData]），因此不新增任何探测包。
@@ -41,22 +47,30 @@ public final class PortConfigurationManager {
     public static final ResourceLocation PORTLIB_CHANNEL =
             ResourceLocation.fromNamespaceAndPath(PortLib.MODID, "main");
 
+    /// 单个任务最长存活 tick 数；超时按“慢登录”处理断开。
+    public static final int MAX_TASK_TICKS = 200;
+
+    /// 客户端等待 `configuration_finished` 的最长毫秒数（版本不匹配/中间代理兜底，到点友好断线）。
+    public static final long CLIENT_CONFIGURATION_TIMEOUT_MILLIS = 20_000L;
+
+    /// 单条登录消息负载超过该字节数时启用分片（留出信封/压缩余量，避免触碰帧上限）。
+    public static final int MAX_SINGLE_LOGIN_PAYLOAD_BYTES = 512 * 1024;
+
+    /// 分片数据块大小。
+    public static final int FRAGMENT_CHUNK_BYTES = 64 * 1024;
+
     private static final AttributeKey<Runnable> CLIENT_CONTINUATION =
             AttributeKey.valueOf("portlib:client_configuration_continuation");
     private static final AttributeKey<ServerStage> SERVER_STAGE =
             AttributeKey.valueOf("portlib:server_configuration_stage");
-
-    /// 单个任务最长存活 tick 数；超时按“慢登录”处理断开。
-    public static final int MAX_TASK_TICKS = 200;
-
-    /// 全部已注册的配置阶段任务（服务端按注册顺序执行）。任务实例应无状态、可跨连接复用。
-    private static final List<IPortCustomConfigurationTask> CONFIGURATION_TASKS = new ArrayList<>();
+    private static final AttributeKey<FragmentAccumulator> FRAGMENT_BUFFER =
+            AttributeKey.valueOf("portlib:configuration_fragment_buffer");
 
     private static boolean registered = false;
 
     private PortConfigurationManager() {}
 
-    /// 注册配置阶段消息（目前只有“完成”标记）与框架自身初始化。
+    /// 注册配置阶段消息（“完成”标记 + 分片消息）与框架自身初始化。
     /// 须在 mod 构造阶段调用一次（`PortLib` 构造器、`PortNetworkHandler.init()` 之后）。
     public static void init() {
         if (registered) return;
@@ -67,12 +81,11 @@ public final class PortConfigurationManager {
                 PortConfigurationFinishedPayload.IDENTIFIER,
                 PortConfigurationFinishedPayload.STREAM_CODEC
         );
-    }
-
-    /// 注册一个配置阶段任务。模块在自身 init 时调用（例如 datamap 模块注册 Known 协商任务）。
-    /// 注册顺序即执行顺序。
-    public static void registerConfigurationTask(IPortCustomConfigurationTask task) {
-        CONFIGURATION_TASKS.add(task);
+        networkHandler.registerLoginS2C(
+                PortConfigurationFragmentPayload.class,
+                PortConfigurationFragmentPayload.IDENTIFIER,
+                PortConfigurationFragmentPayload.STREAM_CODEC
+        );
     }
 
     /// 对端是否是 PortLib（两边都登记了 `portlib:main` 频道）。
@@ -95,6 +108,8 @@ public final class PortConfigurationManager {
     /// 在“原版将放行玩家进世界”的瞬间创建配置阶段并开始执行任务队列。
     /// 由 `ServerLoginPacketListenerImplMixin#placeNewPlayer` 拦截时调用；
     /// 队列完成后执行 `resumePlacement` 恢复原版的进世界流程。
+    ///
+    /// 任务来源：触发 [PortRegisterConfigurationTasksEvent]（服务端主线程），按连接收集。
     public static void startServerStage(Connection connection, Runnable resumePlacement) {
         connection.channel().attr(SERVER_STAGE).set(new ServerStage(connection, resumePlacement));
     }
@@ -147,7 +162,10 @@ public final class PortConfigurationManager {
         ServerStage(Connection connection, Runnable resumePlacement) {
             this.connection = connection;
             this.resumePlacement = resumePlacement;
-            this.pending = new ArrayDeque<>(CONFIGURATION_TASKS);
+            // 按连接收集任务：对齐 1.21 的 RegisterConfigurationTasksEvent。
+            PortRegisterConfigurationTasksEvent event = new PortRegisterConfigurationTasksEvent(connection);
+            PortEventHandler.postEvent(event);
+            this.pending = new ArrayDeque<>(event.getTasks());
         }
 
         void tick() {
@@ -192,8 +210,44 @@ public final class PortConfigurationManager {
             }
         }
 
+        /// 发送任务负载：超过单包上限时自动分片，否则走单条信封。
+        @SuppressWarnings({"unchecked", "rawtypes"})
         private void sendLogin(IPortPacket.S2C payload) {
-            PortLib.NETWORK_HANDLER.sendLoginToClient(connection, seq++, payload);
+            byte[] fields = serialize(payload);
+            if (fields == null || fields.length <= MAX_SINGLE_LOGIN_PAYLOAD_BYTES) {
+                PortLib.NETWORK_HANDLER.sendLoginToClient(connection, seq++, payload);
+                return;
+            }
+
+            int partCount = (fields.length + FRAGMENT_CHUNK_BYTES - 1) / FRAGMENT_CHUNK_BYTES;
+            for (int i = 0; i < partCount; i++) {
+                int from = i * FRAGMENT_CHUNK_BYTES;
+                int to = Math.min(fields.length, from + FRAGMENT_CHUNK_BYTES);
+                boolean first = i == 0;
+                boolean last = i == partCount - 1;
+                PortConfigurationFragmentPayload part = new PortConfigurationFragmentPayload(
+                        first, last, payload.identifier(),
+                        Arrays.copyOfRange(fields, from, to)
+                );
+                PortLib.NETWORK_HANDLER.sendLoginToClient(connection, seq++, part);
+            }
+        }
+
+        /// 用该负载注册时的 codec 序列化为“字段字节”（不含 SimpleChannel 的 codec-index 前缀）。
+        /// 失败时返回 null（回退单条发送路径）。
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        private byte[] serialize(IPortPacket.S2C payload) {
+            try {
+                PortStreamCodec codec = PortNetworkHandler.getPacketCodec(payload.identifier());
+                FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+                codec.encode(buffer, payload);
+                byte[] data = new byte[buffer.readableBytes()];
+                buffer.readBytes(data);
+                return data;
+            } catch (Throwable t) {
+                PortLib.LOGGER.warn("Failed to serialize configuration task payload '{}', fall back to single send", payload.identifier(), t);
+                return null;
+            }
         }
 
         private void finish() {
@@ -217,9 +271,19 @@ public final class PortConfigurationManager {
 
     // ============================ 客户端（登录监听器侧） ============================
 
-    /// 客户端 mixin 推迟原版收尾时，把“恢复收尾”的延续存到连接上。
+    /// 客户端 mixin 推迟原版收尾时，把“恢复收尾”的延续存到连接上，
+    /// 并安排看门狗：若长时间收不到“配置结束”（老服务端 / 中间代理），给出友好断线而非干等。
     public static void storeClientContinuation(Connection connection, Runnable continuation) {
         connection.channel().attr(CLIENT_CONTINUATION).set(continuation);
+        connection.channel().eventLoop().schedule(() -> {
+            if (connection.channel().attr(CLIENT_CONTINUATION).get() != null && connection.isConnected()) {
+                PortLib.LOGGER.warn("PortLib configuration phase timed out on the client; disconnecting.");
+                connection.disconnect(Component.translatableWithFallback(
+                        "portlib.network.configuration.timeout",
+                        "PortLib configuration phase timed out. The server may run an incompatible PortLib version."
+                ));
+            }
+        }, CLIENT_CONFIGURATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     }
 
     /// 清除客户端延期收尾（连接断开时调用，避免在失效连接上执行）。
@@ -233,6 +297,67 @@ public final class PortConfigurationManager {
         Runnable continuation = connection.channel().attr(CLIENT_CONTINUATION).getAndSet(null);
         if (continuation != null) {
             continuation.run();
+        }
+    }
+
+    // ============================ 客户端：分片重组 ============================
+
+    /// 收到一个分片：缓存数据；收到 `last` 段后按目标类型解码并像正常收包一样调用其 `handle`。
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void handleFragment(IPortPacket.Context context, PortConfigurationFragmentPayload fragment) {
+        Connection connection = context.connection();
+        FragmentAccumulator accumulator = connection.channel().attr(FRAGMENT_BUFFER).get();
+        if (fragment.first()) {
+            accumulator = new FragmentAccumulator(fragment.target());
+            connection.channel().attr(FRAGMENT_BUFFER).set(accumulator);
+        }
+        if (accumulator == null) {
+            context.disconnect(Component.translatableWithFallback(
+                    "portlib.network.configuration.fragment_out_of_order",
+                    "PortLib configuration fragment received out of order."
+            ));
+            return;
+        }
+        accumulator.parts.add(fragment.data());
+        if (!fragment.last()) {
+            return;
+        }
+        connection.channel().attr(FRAGMENT_BUFFER).set(null);
+        try {
+            byte[] full = accumulator.concat();
+            FriendlyByteBuf raw = new FriendlyByteBuf(Unpooled.wrappedBuffer(full));
+            PortStreamCodec codec = PortNetworkHandler.getPacketCodec(accumulator.target);
+            IPortPacket payload = (IPortPacket) codec.decode(IPortFriendlyByteBufExtension.of(raw).wrap());
+            payload.handle(context);
+        } catch (Throwable t) {
+            PortLib.LOGGER.error("Failed to decode reassembled configuration payload '{}'", accumulator.target, t);
+            context.disconnect(Component.translatableWithFallback(
+                    "portlib.network.configuration.fragment_failed",
+                    "Failed to process a PortLib configuration fragment."
+            ));
+        }
+    }
+
+    private static final class FragmentAccumulator {
+        private final ResourceLocation target;
+        private final List<byte[]> parts = new ArrayList<>();
+
+        FragmentAccumulator(ResourceLocation target) {
+            this.target = target;
+        }
+
+        byte[] concat() {
+            int length = 0;
+            for (byte[] part : parts) {
+                length += part.length;
+            }
+            byte[] result = new byte[length];
+            int offset = 0;
+            for (byte[] part : parts) {
+                System.arraycopy(part, 0, result, offset, part.length);
+                offset += part.length;
+            }
+            return result;
         }
     }
 }

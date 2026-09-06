@@ -65,13 +65,13 @@ public abstract class ServerLoginPacketListenerImplMixin {
     }
 
     @Inject(method = "placeNewPlayer", at = @At("HEAD"), cancellable = true)
-    private void portlib$delayPlaceNewPlayer(ServerPlayer player, CallbackInfo ci) {
+    private void portlib$delayPlaceNewPlayer(ServerPlayer p_143700_, CallbackInfo ci) {
         if (portlib$resuming) return;
         if (!PortConfigurationManager.shouldUseConfigurationStage(this.connection)) return;
         PortConfigurationManager.startServerStage(this.connection, () -> {
             portlib$resuming = true;
             try {
-                placeNewPlayer(player);
+                placeNewPlayer(p_143700_);
                 portlib$placed = true;
             } finally {
                 portlib$resuming = false;
