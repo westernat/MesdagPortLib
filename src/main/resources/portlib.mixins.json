@@ -46,6 +46,7 @@
         "FluidTypeMixin",
         "FluidTypeMixin$PropertiesMixin",
         "FoodPropertiesMixin",
+        "ForgeHooksMixin",
         "ForgeModelBlockRendererAccessor",
         "ForgeRegistryAccessor",
         "FriendlyByteBufMixin",

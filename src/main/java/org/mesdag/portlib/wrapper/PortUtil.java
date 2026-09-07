@@ -10,8 +10,10 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.DelegatingOps;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("all")
@@ -53,5 +55,21 @@ public class PortUtil {
             return DataResult.success((T) element);
         }
         return DataResult.success(JsonOps.INSTANCE.convertTo(ops, element));
+    }
+
+    public static <E> Iterator<E> peek(Iterator<E> original, Consumer<E> consumer) {
+        return new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                return original.hasNext();
+            }
+
+            @Override
+            public E next() {
+                E next = original.next();
+                consumer.accept(next);
+                return next;
+            }
+        };
     }
 }
