@@ -25,6 +25,10 @@ public abstract class PortCustomIngredient extends AbstractIngredient {
     @Override
     public abstract boolean isSimple();
 
+    @Diff
+    @Override
+    public abstract boolean isEmpty();
+
     @Contract(pure = true)
     public abstract PortIngredientType<? extends PortCustomIngredient> getIngredientType();
 

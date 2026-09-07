@@ -171,7 +171,7 @@ public final class PortShapedRecipePattern {
     public boolean matches(PortCraftingInput input) {
         if (input.ingredientCount() == ingredientCount) {
             if (input.width() == width && input.height() == height) {
-                if (!symmetrical && matches(input, true)) {
+                if (!symmetrical && matches(input, !nonSymmetricalMatching)) {
                     return true;
                 }
 
@@ -183,9 +183,6 @@ public final class PortShapedRecipePattern {
     }
 
     private boolean matches(PortCraftingInput input, boolean symmetrical) {
-        if (nonSymmetricalMatching) {
-            symmetrical = false;
-        }
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Ingredient ingredient;
