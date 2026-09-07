@@ -138,7 +138,7 @@ public interface IPortEntityExtension {
         return self().getFeetBlockState();
     }
 
-    default RandomSource getRandom() {
+    default RandomSource getRandom1211() {
         return self().random;
     }
 
