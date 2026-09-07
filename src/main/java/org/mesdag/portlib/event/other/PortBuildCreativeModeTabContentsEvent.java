@@ -78,8 +78,26 @@ public final class PortBuildCreativeModeTabContentsEvent extends PortEvent<Build
     }
 
     public void remove(ItemStack existingEntry, CreativeModeTab.TabVisibility visibility) {
-        assertTargetExists(e.getEntries(), existingEntry);
-        e.getEntries().remove(existingEntry);
+        CreativeModeTab.TabVisibility original = e.getEntries().get(existingEntry);
+        if (original == null) {
+            throw new IllegalArgumentException("Itemstack " + existingEntry + " does not exist in tab's list");
+        }
+        int state = toState(original) & ~toState(visibility);
+        if (state == 0b01) {
+            e.getEntries().put(existingEntry, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+        } else if (state == 0b10) {
+            e.getEntries().put(existingEntry, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+        } else {
+            e.getEntries().remove(existingEntry);
+        }
+    }
+
+    private static int toState(CreativeModeTab.TabVisibility visibility) {
+        return switch (visibility) {
+            case PARENT_AND_SEARCH_TABS -> 0b11;
+            case PARENT_TAB_ONLY -> 0b01;
+            case SEARCH_TAB_ONLY -> 0b10;
+        };
     }
 
     @Diff
