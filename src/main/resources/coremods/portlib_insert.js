@@ -346,7 +346,7 @@ function initializeCoreMod() {
                 list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                     'org/mesdag/portlib/diff/IPortItem',
                     'isCorrectToolForDrops',
-                    '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Lorg/mesdag/portlib/wrapper/common/util/PortTriState;', false));
+                    '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Lorg/mesdag/portlib/wrapper/common/util/PortTriState;', true));
                 list.add(new VarInsnNode(Opcodes.ASTORE, triStateVar));
                 // if (triState.isDefault()) -> run original body
                 list.add(new VarInsnNode(Opcodes.ALOAD, triStateVar));

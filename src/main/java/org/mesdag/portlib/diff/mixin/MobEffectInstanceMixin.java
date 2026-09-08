@@ -3,6 +3,8 @@ package org.mesdag.portlib.diff.mixin;
 import com.google.common.collect.Sets;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.nbt.CompoundTag;
@@ -77,6 +79,14 @@ public abstract class MobEffectInstanceMixin implements IPortMobEffectInstance {
         }
         tag.put("portlib:cures", list);
         return tag;
+    }
+
+    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;isDurationEffectTick(II)Z"))
+    private boolean wrap(MobEffect instance, int duration, int amplifier, Operation<Boolean> original) {
+        if (instance instanceof PortMobEffect port) {
+            return port.shouldApplyEffectTickThisTick(duration, amplifier);
+        }
+        return original.call(instance, duration, amplifier);
     }
 
     @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;applyEffect(Lnet/minecraft/world/entity/LivingEntity;)V"))
