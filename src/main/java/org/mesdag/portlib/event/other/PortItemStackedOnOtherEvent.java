@@ -11,7 +11,7 @@ import org.mesdag.portlib.event.IPortCancellableEvent;
 import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
-
+/// 修复了forge的一个bug：carried与stackedOn搞反了
 public class PortItemStackedOnOtherEvent extends PortEvent<ItemStackedOnOtherEvent> implements IPortCancellableEvent {
     @Diff
     public PortItemStackedOnOtherEvent(ItemStackedOnOtherEvent e) {
@@ -19,11 +19,11 @@ public class PortItemStackedOnOtherEvent extends PortEvent<ItemStackedOnOtherEve
     }
 
     public ItemStack getCarriedItem() {
-        return e.getCarriedItem();
+        return e.getStackedOnItem(); // 修复
     }
 
     public ItemStack getStackedOnItem() {
-        return e.getStackedOnItem();
+        return e.getCarriedItem(); // 修复
     }
 
     public Slot getSlot() {
