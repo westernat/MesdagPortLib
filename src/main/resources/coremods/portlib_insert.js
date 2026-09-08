@@ -183,6 +183,18 @@ function initializeCoreMod() {
                 'methodDesc': '(Lnet/minecraft/world/damagesource/DamageSource;F)F'
             },
             'transformer': function (node) {
+                var insns = node.instructions
+
+                // Skip if this method has already been modified.
+                for (var j = 0; j < insns.size(); j++) {
+                    var insn = insns.get(j)
+                    if (insn instanceof MethodInsnNode && insn.getOpcode() == Opcodes.INVOKEVIRTUAL &&
+                        insn.owner === 'org/mesdag/portlib/wrapper/common/damagesource/PortDamageContainer' &&
+                        insn.name === 'setReduction') {
+                        return node
+                    }
+                }
+
                 var last = null
                 for (i = 0; i < node.instructions.size(); i++) {
                     var current = node.instructions.get(i)
@@ -214,26 +226,71 @@ function initializeCoreMod() {
                 'methodDesc': '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z'
             },
             'transformer': function (node) {
-                // return ForgeHooks.isCorrectToolForDrops(state, player);
-                if (node.instructions.size() == 7) {
-                    var L0 = node.instructions.get(0)
-                    var IRETURN = node.instructions.get(5);
-                    var L1 = node.instructions.get(6)
-                    if (L0 instanceof LabelNode && (IRETURN instanceof InsnNode && IRETURN.getOpcode() == Opcodes.IRETURN) && L1 instanceof LabelNode) {
-                        var list = new InsnList()
-                        // boolean success = ForgeHooks.isCorrectToolForDrops(state, player);
-                        list.add(new VarInsnNode(Opcodes.ISTORE, 5))
-                        // return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(player, state, level, pos, ForgeHooks.isCorrectToolForDrops(state, player));
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 4))
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 2))
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 3))
-                        list.add(new VarInsnNode(Opcodes.ILOAD, 5))
-                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/mesdag/portlib/event/entity/player/PortPlayerEvent$HarvestCheck", "doPlayerHarvestCheck", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Z)Z", false));
-                        node.instructions.insertBefore(IRETURN, list)
-                        node.visitLocalVariable('success', 'Z', null, L0.getLabel(), L1.getLabel(), 5)
-                        node.visitMaxs(5, 6)
+                var insns = node.instructions
+
+                // Skip if this method has already been modified.
+                for (var i = 0; i < insns.size(); i++) {
+                    var insn = insns.get(i)
+                    if (insn instanceof MethodInsnNode && insn.getOpcode() == Opcodes.INVOKESTATIC &&
+                        insn.owner === 'org/mesdag/portlib/event/entity/player/PortPlayerEvent$HarvestCheck' &&
+                        insn.name === 'doPlayerHarvestCheck') {
+                        return node
                     }
+                }
+
+                function prevReal(from) {
+                    for (var j = from - 1; j >= 0; j--) {
+                        if (insns.get(j).getOpcode() >= 0) return j
+                    }
+                    return -1
+                }
+
+                // Transform:
+                //   return ForgeHooks.isCorrectToolForDrops(state, player);
+                // Into:
+                //   boolean success = /* original return value */;
+                //   return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(player, state, level, pos, success);
+                //
+                // Locate the pattern IRETURN <- INVOKESTATIC ForgeHooks.isCorrectToolForDrops <-
+                // ALOAD player(4) <- ALOAD state(1) instead of relying on a fixed instruction count.
+                for (var k = 0; k < insns.size(); k++) {
+                    var iret = insns.get(k)
+                    if (!(iret instanceof InsnNode && iret.getOpcode() == Opcodes.IRETURN)) continue
+
+                    var r1 = prevReal(k)
+                    if (r1 < 0) continue
+                    var call = insns.get(r1)
+                    if (!(call instanceof MethodInsnNode && call.getOpcode() == Opcodes.INVOKESTATIC &&
+                        call.owner === 'net/minecraftforge/common/ForgeHooks' &&
+                        call.name === 'isCorrectToolForDrops' &&
+                        call.desc === '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/player/Player;)Z')) continue
+
+                    var r2 = prevReal(r1)
+                    if (r2 < 0) continue
+                    var aloadPlayer = insns.get(r2)
+                    if (!(aloadPlayer instanceof VarInsnNode && aloadPlayer.getOpcode() == Opcodes.ALOAD && aloadPlayer.var == 4)) continue
+
+                    var r3 = prevReal(r2)
+                    if (r3 < 0) continue
+                    var aloadState = insns.get(r3)
+                    if (!(aloadState instanceof VarInsnNode && aloadState.getOpcode() == Opcodes.ALOAD && aloadState.var == 1)) continue
+
+                    var successVar = node.maxLocals
+                    node.maxLocals = successVar + 1
+                    if (node.maxStack < 5) node.maxStack = 5
+
+                    var list = new InsnList()
+                    // boolean success = /* original return value */;
+                    list.add(new VarInsnNode(Opcodes.ISTORE, successVar))
+                    // return PortPlayerEvent.HarvestCheck.doPlayerHarvestCheck(player, state, level, pos, success);
+                    list.add(new VarInsnNode(Opcodes.ALOAD, 4)) // player
+                    list.add(new VarInsnNode(Opcodes.ALOAD, 1)) // state
+                    list.add(new VarInsnNode(Opcodes.ALOAD, 2)) // level
+                    list.add(new VarInsnNode(Opcodes.ALOAD, 3)) // pos
+                    list.add(new VarInsnNode(Opcodes.ILOAD, successVar)) // success
+                    list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'org/mesdag/portlib/event/entity/player/PortPlayerEvent$HarvestCheck', 'doPlayerHarvestCheck', '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Z)Z', false))
+                    node.instructions.insertBefore(iret, list)
+                    break
                 }
                 return node
             }
@@ -253,6 +310,57 @@ function initializeCoreMod() {
                 node.instructions.add(new InsnNode(Opcodes.IRETURN));
                 node.maxStack = 2;
                 node.maxLocals = 2;
+                return node;
+            }
+        },
+        'with_tool': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net/minecraftforge/common/extensions/IForgeItem',
+                'methodName': 'isCorrectToolForDrops',
+                'methodDesc': '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z'
+            },
+            'transformer': function (node) {
+                // Make sure we only apply this once.
+                var insns = node.instructions;
+                for (var i = 0; i < insns.size(); i++) {
+                    var check = insns.get(i);
+                    if (check instanceof MethodInsnNode && check.getOpcode() == Opcodes.INVOKESTATIC &&
+                        check.owner === 'org/mesdag/portlib/diff/IPortItem' && check.name === 'isCorrectToolForDrops') {
+                        return node;
+                    }
+                }
+
+                // Insert at the head of the method:
+                //   PortTriState triState = IPortItem.isCorrectToolForDrops(stack, state);
+                //   if (!triState.isDefault()) return triState.isTrue();
+                if (insns.size() == 0) return node;
+                var triStateVar = node.maxLocals;
+                node.maxLocals = triStateVar + 1;
+
+                var originalBody = new LabelNode();
+                var list = new InsnList();
+                // triState = IPortItem.isCorrectToolForDrops(stack, state);
+                list.add(new VarInsnNode(Opcodes.ALOAD, 1)); // stack
+                list.add(new VarInsnNode(Opcodes.ALOAD, 2)); // state
+                list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    'org/mesdag/portlib/diff/IPortItem',
+                    'isCorrectToolForDrops',
+                    '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Lorg/mesdag/portlib/wrapper/common/util/PortTriState;', false));
+                list.add(new VarInsnNode(Opcodes.ASTORE, triStateVar));
+                // if (triState.isDefault()) -> run original body
+                list.add(new VarInsnNode(Opcodes.ALOAD, triStateVar));
+                list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                    'org/mesdag/portlib/wrapper/common/util/PortTriState', 'isDefault', '()Z', false));
+                list.add(new JumpInsnNode(Opcodes.IFNE, originalBody));
+                // return triState.isTrue();
+                list.add(new VarInsnNode(Opcodes.ALOAD, triStateVar));
+                list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                    'org/mesdag/portlib/wrapper/common/util/PortTriState', 'isTrue', '()Z', false));
+                list.add(new InsnNode(Opcodes.IRETURN));
+                list.add(originalBody);
+
+                node.instructions.insertBefore(node.instructions.getFirst(), list);
                 return node;
             }
         }

@@ -33,6 +33,7 @@
         "DamageSourceMixin",
         "DataFixTypesMixin",
         "DataPackRegistriesHooksAccessor",
+        "DiggerItemMixin",
         "DoorBlockMixin",
         "DoubleBlockHalfMixin",
         "EnchantmentHelperMixin",

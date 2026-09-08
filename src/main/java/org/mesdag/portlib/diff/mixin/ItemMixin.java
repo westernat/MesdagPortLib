@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,13 +16,17 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.component.PortDataComponentMap;
 import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortItem;
 import org.mesdag.portlib.wrapper.common.extensions.IPortItemPropertiesExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortItemStackExtension;
 import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
+import org.mesdag.portlib.wrapper.world.item.component.PortTool;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -104,6 +109,32 @@ public abstract class ItemMixin implements IPortItem {
     private Multimap<Attribute, AttributeModifier> modify(Multimap<Attribute, AttributeModifier> original, @Local(argsOnly = true) EquipmentSlot slot) {
         if (original.isEmpty()) {
             return portlib$defaultAttributeModifiers().getAttributeModifiers(slot);
+        }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
+    private float useToolMiningSpeed(float original, ItemStack stack, BlockState state) {
+        PortTool tool = IPortItemStackExtension.of(stack).getTool();
+        if (tool != null) {
+            return tool.getMiningSpeed(state);
+        }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "mineBlock", at = @At("RETURN"))
+    private boolean useToolDurability(
+            boolean original,
+            ItemStack stack,
+            Level level,
+            BlockState state,
+            BlockPos pos,
+            LivingEntity miningEntity
+    ) {
+        PortTool tool = IPortItemStackExtension.of(stack).getTool();
+        if (tool != null && !level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F && tool.damagePerBlock() > 0) {
+            IPortItemStackExtension.of(stack).hurtAndBreak(tool.damagePerBlock(), miningEntity, EquipmentSlot.MAINHAND);
+            return true;
         }
         return original;
     }

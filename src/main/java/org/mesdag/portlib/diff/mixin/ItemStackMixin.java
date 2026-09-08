@@ -7,12 +7,10 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,10 +18,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.diff.IPortItem;
@@ -173,55 +172,10 @@ public abstract class ItemStackMixin implements IPortItemStack {
         }
     }
 
-    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shouldShowInTooltip(ILnet/minecraft/world/item/ItemStack$TooltipPart;)Z", ordinal = 2))
-    private void hideStoredEnchantmentsTooltip(Player player, TooltipFlag isAdvanced, CallbackInfoReturnable<List<Component>> cir, @Local(name = "list") List<Component> list) {
-        if (getShowStoredEnchantmentsTooltip()) {
-            ItemStack.appendEnchantmentNames(list, EnchantedBookItem.getEnchantments(portlib$self()));
-        }
-    }
-
     @Inject(method = "hasFoil", at = @At("HEAD"), cancellable = true)
     private void override(CallbackInfoReturnable<Boolean> cir) {
         if (hasEnchantmentGlintOverride()) {
             cir.setReturnValue(getEnchantmentGlintOverride());
-        }
-    }
-
-    @Inject(method = "getDestroySpeed", at = @At("HEAD"), cancellable = true)
-    private void portlib$useToolMiningSpeed(BlockState state, CallbackInfoReturnable<Float> cir) {
-        PortTool tool = getTool();
-        if (tool != null) {
-            cir.setReturnValue(tool.getMiningSpeed(state));
-        }
-    }
-
-    @Inject(method = "mineBlock", at = @At("HEAD"), cancellable = true)
-    private void portlib$useToolDurability(
-            Level level,
-            BlockState state,
-            BlockPos pos,
-            Player player,
-            CallbackInfo ci
-    ) {
-        PortTool tool = getTool();
-        if (tool == null) {
-            return;
-        }
-        if (!level.isClientSide &&
-                state.getDestroySpeed(level, pos) != 0.0F &&
-                tool.damagePerBlock() > 0
-        ) {
-            hurtAndBreak(tool.damagePerBlock(), player, EquipmentSlot.MAINHAND);
-        }
-        player.awardStat(Stats.ITEM_USED.get(getItem()));
-        ci.cancel();
-    }
-
-    @Inject(method = "isCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
-    private void portlib$useToolDropRule(BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        PortTool tool = getTool();
-        if (tool != null) {
-            cir.setReturnValue(tool.isCorrectForDrops(state));
         }
     }
 
