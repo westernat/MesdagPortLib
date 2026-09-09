@@ -4,6 +4,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.IPortMappedRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,11 +42,22 @@ public abstract class MappedRegistryMixin<T> implements IPortMappedRegistry<T> {
     }
 
     @Override
+    public Map<ResourceLocation, ResourceLocation> portlib$getAlias() {
+        return confluence$aliases;
+    }
+
+    @Override
     public ResourceLocation portlib$resolve(ResourceLocation name) {
-        if (containsKey(name)) return name;
-        ResourceLocation alias = confluence$aliases.get(name);
-        if (alias == null) return name;
-        return portlib$resolve(alias);
+        while (true) {
+            if (containsKey(name)) {
+                return name;
+            }
+            ResourceLocation alias = portlib$getAlias().get(name);
+            if (alias == null) {
+                return name;
+            }
+            name = alias;
+        }
     }
 
     @Override

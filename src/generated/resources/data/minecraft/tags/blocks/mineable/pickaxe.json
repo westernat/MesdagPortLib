@@ -1,0 +1,17 @@
+{
+  "values": [
+    "portlib:tuff_slab",
+    "portlib:tuff_stairs",
+    "portlib:tuff_wall",
+    "portlib:chiseled_tuff",
+    "portlib:polished_tuff",
+    "portlib:polished_tuff_slab",
+    "portlib:polished_tuff_stairs",
+    "portlib:polished_tuff_wall",
+    "portlib:tuff_bricks",
+    "portlib:tuff_brick_slab",
+    "portlib:tuff_brick_stairs",
+    "portlib:tuff_brick_wall",
+    "portlib:chiseled_tuff_bricks"
+  ]
+}

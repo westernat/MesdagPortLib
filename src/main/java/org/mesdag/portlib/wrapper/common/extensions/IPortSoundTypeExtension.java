@@ -14,4 +14,13 @@ public interface IPortSoundTypeExtension {
             PortSoundEvents.TUFF_BRICKS_HIT,
             PortSoundEvents.TUFF_BRICKS_FALL
     );
+    SoundType POLISHED_TUFF = new ForgeSoundType(
+            1.0F,
+            1.0F,
+            PortSoundEvents.POLISHED_TUFF_BREAK,
+            PortSoundEvents.POLISHED_TUFF_STEP,
+            PortSoundEvents.POLISHED_TUFF_PLACE,
+            PortSoundEvents.POLISHED_TUFF_HIT,
+            PortSoundEvents.POLISHED_TUFF_FALL
+    );
 }

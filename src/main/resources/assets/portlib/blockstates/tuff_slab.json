@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "portlib:block/tuff_slab"
+    },
+    "type=double": {
+      "model": "block/tuff"
+    },
+    "type=top": {
+      "model": "portlib:block/tuff_slab_top"
+    }
+  }
+}

@@ -1,31 +1,20 @@
 package org.mesdag.portlib.diff.datagen;
 
-import com.google.gson.JsonObject;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.common.data.LanguageProvider;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.registries.PortRegistryEntry;
 
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class PortLanguageProvider extends LanguageProvider {
-    private final Map<String, String> enData = new TreeMap<>();
-    private final Map<String, String> zhData = new TreeMap<>();
-    private final PackOutput output;
-    private final String locale;
+    private final boolean isEn;
 
-    public PortLanguageProvider(PackOutput output, String locale) {
-        super(output, PortLib.MODID, locale);
-        this.output = output;
-        this.locale = locale;
+    public PortLanguageProvider(PackOutput output, boolean isEn) {
+        super(output, PortLib.MODID, isEn ? "en_us" : "zh_cn");
+        this.isEn = isEn;
     }
 
     @Override
@@ -74,11 +63,20 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.network.configuration.fragment_failed", "Failed to process a PortLib configuration fragment.", "处理 PortLib 配置分片失败。");
         add("portlib.network.configuration.fragment_out_of_order", "PortLib configuration fragment received out of order.", "收到乱序的 PortLib 配置分片。");
         add("portlib.network.configuration.timeout", "PortLib configuration phase timed out. The server may run an incompatible PortLib version.", "PortLib 配置阶段超时。服务器可能运行着不兼容的 PortLib 版本。");
-    }
 
-    @Override
-    public void add(String key, String value) {
-        add(key, value, value);
+        add(PortLib.TUFF_SLAB.get().getDescriptionId(), "Tuff Slab", "凝灰岩台阶");
+        add(PortLib.TUFF_STAIRS.get().getDescriptionId(), "Tuff Stairs", "凝灰岩楼梯");
+        add(PortLib.TUFF_WALL.get().getDescriptionId(), "Tuff Wall", "凝灰岩墙");
+        add(PortLib.POLISHED_TUFF.get().getDescriptionId(), "Polished Tuff", "磨制凝灰岩");
+        add(PortLib.POLISHED_TUFF_SLAB.get().getDescriptionId(), "Polished Tuff Slab", "磨制凝灰岩台阶");
+        add(PortLib.POLISHED_TUFF_STAIRS.get().getDescriptionId(), "Polished Tuff Stairs", "磨制凝灰岩楼梯");
+        add(PortLib.POLISHED_TUFF_WALL.get().getDescriptionId(), "Polished Tuff Wall", "磨制凝灰岩墙");
+        add(PortLib.CHISELED_TUFF.get().getDescriptionId(), "Chiseled Tuff", "錾制凝灰岩");
+        add(PortLib.TUFF_BRICKS.get().getDescriptionId(), "Tuff Bricks", "凝灰岩砖");
+        add(PortLib.TUFF_BRICK_SLAB.get().getDescriptionId(), "Tuff Brick Slab", "凝灰岩砖台阶");
+        add(PortLib.TUFF_BRICK_STAIRS.get().getDescriptionId(), "Tuff Brick Stairs", "凝灰岩砖楼梯");
+        add(PortLib.TUFF_BRICK_WALL.get().getDescriptionId(), "Tuff Brick Wall", "凝灰岩砖墙");
+        add(PortLib.CHISELED_TUFF_BRICKS.get().getDescriptionId(), "Chiseled Tuff Bricks", "錾制凝灰岩砖");
     }
 
     private void addAttribute(PortRegistryEntry<Attribute, ?> entry, String en, String zh) {
@@ -91,30 +89,7 @@ public class PortLanguageProvider extends LanguageProvider {
                 .collect(Collectors.joining(" "));
     }
 
-    @Override
-    public CompletableFuture<?> run(CachedOutput cache) {
-        addTranslations();
-        Path path = output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(PortLib.MODID).resolve("lang");
-        if (locale.equals("en_us") && !enData.isEmpty()) {
-            return save(enData, cache, path.resolve("en_us.json"));
-        }
-        if (locale.equals("zh_cn") && !zhData.isEmpty()) {
-            return save(zhData, cache, path.resolve("zh_cn.json"));
-        }
-        return CompletableFuture.allOf();
-    }
-
-    private CompletableFuture<?> save(Map<String, String> data, CachedOutput cache, Path target) {
-        JsonObject json = new JsonObject();
-        data.forEach(json::addProperty);
-        return DataProvider.saveStable(cache, json, target);
-    }
-
     private void add(String key, String en, String zh) {
-        if (locale.equals("en_us")) {
-            enData.put(key, en);
-        } else if (locale.equals("zh_cn")) {
-            zhData.put(key, zh);
-        }
+        add(key, isEn ? en : zh);
     }
 }

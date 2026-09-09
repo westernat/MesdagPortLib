@@ -42,6 +42,37 @@ public class PortBlockTagsProvider extends BlockTagsProvider {
     @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
+                PortLib.TUFF_SLAB.get(),
+                PortLib.TUFF_STAIRS.get(),
+                PortLib.TUFF_WALL.get(),
+                PortLib.CHISELED_TUFF.get(),
+                PortLib.POLISHED_TUFF.get(),
+                PortLib.POLISHED_TUFF_SLAB.get(),
+                PortLib.POLISHED_TUFF_STAIRS.get(),
+                PortLib.POLISHED_TUFF_WALL.get(),
+                PortLib.TUFF_BRICKS.get(),
+                PortLib.TUFF_BRICK_SLAB.get(),
+                PortLib.TUFF_BRICK_STAIRS.get(),
+                PortLib.TUFF_BRICK_WALL.get(),
+                PortLib.CHISELED_TUFF_BRICKS.get()
+        );
+        tag(BlockTags.WALLS).add(
+                PortLib.TUFF_WALL.get(),
+                PortLib.POLISHED_TUFF_WALL.get(),
+                PortLib.TUFF_BRICK_WALL.get()
+        );
+        tag(BlockTags.SLABS).add(
+                PortLib.TUFF_SLAB.get(),
+                PortLib.POLISHED_TUFF_SLAB.get(),
+                PortLib.TUFF_BRICK_SLAB.get()
+        );
+        tag(BlockTags.STAIRS).add(
+                PortLib.TUFF_STAIRS.get(),
+                PortLib.POLISHED_TUFF_STAIRS.get(),
+                PortLib.TUFF_BRICK_STAIRS.get()
+        );
+
         tag(Tags.Blocks.FENCE_GATES, PortTags.Blocks.FENCE_GATES).addTags(PortTags.Blocks.FENCE_GATES_WOODEN);
         tag(Tags.Blocks.FENCE_GATES_WOODEN, PortTags.Blocks.FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE, Blocks.MANGROVE_FENCE_GATE, Blocks.BAMBOO_FENCE_GATE, Blocks.CHERRY_FENCE_GATE);
         tag(Tags.Blocks.FENCES, PortTags.Blocks.FENCES).addTags(PortTags.Blocks.FENCES_NETHER_BRICK, PortTags.Blocks.FENCES_WOODEN);

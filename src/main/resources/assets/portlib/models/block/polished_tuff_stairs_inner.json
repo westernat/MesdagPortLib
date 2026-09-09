@@ -1,0 +1,8 @@
+{
+  "parent": "block/inner_stairs",
+  "textures": {
+    "bottom": "portlib:block/polished_tuff",
+    "side": "portlib:block/polished_tuff",
+    "top": "portlib:block/polished_tuff"
+  }
+}

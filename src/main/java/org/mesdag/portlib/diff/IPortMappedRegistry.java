@@ -4,8 +4,12 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Map;
+
 public interface IPortMappedRegistry<T> {
     void portlib$addAlias(ResourceLocation from, ResourceLocation to);
+
+    Map<ResourceLocation, ResourceLocation> portlib$getAlias();
 
     ResourceLocation portlib$resolve(ResourceLocation name);
 

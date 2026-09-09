@@ -68,6 +68,7 @@
         "MobEffectMixin",
         "MobMixin",
         "MutableComponentMixin",
+        "NamespacedWrapperMixin",
         "NbtPredicateMixin",
         "ParticleTypesMixin",
         "ParticleUtilsMixin",

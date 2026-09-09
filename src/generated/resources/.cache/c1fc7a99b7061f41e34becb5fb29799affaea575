@@ -1,4 +1,4 @@
-// 1.20.1	2026-07-04T15:35:05.7721767	Tags for minecraft:block mod id portlib
+// 1.20.1	2026-09-09T23:46:15.422354	Tags for minecraft:block mod id portlib
 46ddbfcf19ad3c1ea3ca9ef7a061a0fc160bd4d7 data/c/tags/blocks/buds.json
 97243c59b4e4f673bb58890bb041834f86cb72a0 data/c/tags/blocks/chains.json
 15be65f2c600503818a3002004ecd593cd1fb0a0 data/c/tags/blocks/chests.json
@@ -138,3 +138,7 @@ bdc2057d4138dfb73758a4ab809d877dd942abf1 data/forge/tags/blocks/storage_blocks/n
 349a60bc36d23b23283317a4b1f086b55af8f605 data/forge/tags/blocks/storage_blocks/raw_gold.json
 3d58daeaf99d3a2f8b147e2844585ee97a876502 data/forge/tags/blocks/storage_blocks/raw_iron.json
 ab62b41355409d6fc4c51df5055b663acd7560f7 data/forge/tags/blocks/storage_blocks/redstone.json
+1ace8c7e60c19106171267f22caf9c39ce833c5d data/minecraft/tags/blocks/mineable/pickaxe.json
+8b67391d94e7e68c16c231f7c3f30bf2ab5c6183 data/minecraft/tags/blocks/slabs.json
+d81c83ddebf45be4658e62c14a3459fa675f157d data/minecraft/tags/blocks/stairs.json
+fc80097f7c6af732d15f9517887b65a1f066530f data/minecraft/tags/blocks/walls.json

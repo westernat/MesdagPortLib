@@ -4,11 +4,13 @@ import com.google.common.base.Supplier;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
+import org.mesdag.portlib.diff.IPortMappedRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,6 @@ public class PortRegistration<R> {
     final String namespace;
     final ResourceKey<? extends Registry<R>> registryKey;
     final List<PortRegistryEntry<?, ?>> entries;
-
-    private ForgeRegistry<R> registry;
 
     PortRegistration(String namespace, ResourceKey<? extends Registry<R>> registryKey, boolean registerEntries) {
         this.namespace = namespace;
@@ -64,13 +64,16 @@ public class PortRegistration<R> {
     }
 
     public void addAlias(ResourceLocation from, ResourceLocation to) {
-        if (registry == null) {
-            this.registry = RegistryManager.ACTIVE.getRegistry(registryKey);
+        ForgeRegistry<R> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryKey);
+        boolean locked = forgeRegistry.isLocked();
+        if (locked) forgeRegistry.unfreeze();
+        forgeRegistry.addAlias(from, to);
+        if (locked) forgeRegistry.freeze();
+
+        Registry<?> vanillaRegistry = BuiltInRegistries.REGISTRY.get(registryKey.location());
+        if (vanillaRegistry instanceof IPortMappedRegistry<?> port) {
+            port.portlib$addAlias(from, to);
         }
-        boolean locked = registry.isLocked();
-        if (locked) registry.unfreeze();
-        registry.addAlias(from, to);
-        if (locked) registry.freeze();
     }
 
     @SuppressWarnings("unchecked")

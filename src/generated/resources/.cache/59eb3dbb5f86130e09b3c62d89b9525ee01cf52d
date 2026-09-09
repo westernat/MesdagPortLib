@@ -1,0 +1,14 @@
+// 1.20.1	2026-09-09T23:46:15.4203432	Loot Tables
+7add0b67aa1c9f5f1ae6bbcb7112a2e1c6070ac5 data/portlib/loot_tables/blocks/chiseled_tuff.json
+e42dc7ba536040d17ce6dd41681063e8a9b16c2c data/portlib/loot_tables/blocks/chiseled_tuff_bricks.json
+d60d934d804f768da772a33def295dd3ecd52eed data/portlib/loot_tables/blocks/polished_tuff.json
+721c4286614d3b6c035383ca6923510f62efa5b0 data/portlib/loot_tables/blocks/polished_tuff_slab.json
+73fecd2151532c5aeac5e4358f5cb87326975c7d data/portlib/loot_tables/blocks/polished_tuff_stairs.json
+9a331a0beca946d9318017a4624353c871038dd9 data/portlib/loot_tables/blocks/polished_tuff_wall.json
+447f2cbaf1a8e7b155ad25712fde148056bacd80 data/portlib/loot_tables/blocks/tuff_bricks.json
+497325f34a8d86657fb7da5581d59539bdb45eea data/portlib/loot_tables/blocks/tuff_brick_slab.json
+050a289318b0a0a5c3ab3a5b7bcc8c7b739c1b57 data/portlib/loot_tables/blocks/tuff_brick_stairs.json
+2daa004445540456dc38b8577c8b02294e5a6484 data/portlib/loot_tables/blocks/tuff_brick_wall.json
+4482edbca08bc36f6c7c183d4af70daba95d2454 data/portlib/loot_tables/blocks/tuff_slab.json
+58e44bd53501908f1b35413eab2609cc2468bdc0 data/portlib/loot_tables/blocks/tuff_stairs.json
+cd1c94139887a3a3bac5f68cfec9be0ff0969176 data/portlib/loot_tables/blocks/tuff_wall.json

@@ -17,6 +17,12 @@ public class PortSoundEvents {
     public static final RegistryObject<SoundEvent> TUFF_BRICKS_PLACE = register("block.tuff_bricks.place");
     public static final RegistryObject<SoundEvent> TUFF_BRICKS_STEP = register("block.tuff_bricks.step");
 
+    public static final RegistryObject<SoundEvent> POLISHED_TUFF_BREAK = register("block.polished_tuff.break");
+    public static final RegistryObject<SoundEvent> POLISHED_TUFF_FALL = register("block.polished_tuff.fall");
+    public static final RegistryObject<SoundEvent> POLISHED_TUFF_HIT = register("block.polished_tuff.hit");
+    public static final RegistryObject<SoundEvent> POLISHED_TUFF_PLACE = register("block.polished_tuff.place");
+    public static final RegistryObject<SoundEvent> POLISHED_TUFF_STEP = register("block.polished_tuff.step");
+
     public static final RegistryObject<SoundEvent> WET_SPONGE_BREAK = register("block.wet_sponge.break");
     public static final RegistryObject<SoundEvent> WET_SPONGE_DRIES = register("block.wet_sponge.dries");
     public static final RegistryObject<SoundEvent> WET_SPONGE_FALL = register("block.wet_sponge.fall");

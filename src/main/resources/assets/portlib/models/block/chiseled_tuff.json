@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "portlib:block/chiseled_tuff_top",
+    "side": "portlib:block/chiseled_tuff"
+  }
+}

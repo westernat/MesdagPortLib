@@ -1,5 +1,6 @@
 package org.mesdag.portlib;
 
+import com.google.common.base.Supplier;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -8,10 +9,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +24,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
@@ -35,11 +41,10 @@ import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.config.PortConfigurationManager;
-import org.mesdag.portlib.registries.PortAttributeRegistration;
-import org.mesdag.portlib.registries.PortRegisterHandler;
-import org.mesdag.portlib.registries.PortRegistryEntry;
+import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
+import org.mesdag.portlib.wrapper.common.extensions.IPortSoundTypeExtension;
 import org.mesdag.portlib.wrapper.common.world.PortAddCarversBiomeModifier;
 import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
@@ -148,6 +153,29 @@ public class PortLib {
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<Codec<PortAddCarversBiomeModifier>> ADD_CARVERS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_carvers", () -> PortAddCarversBiomeModifier.CODEC);
 
+    @ApiStatus.Internal
+    public static final PortBlockRegistration BLOCKS = PortRegisterHandler.block(MODID);
+    private static final PortItemRegistration ITEMS = PortRegisterHandler.item(MODID);
+    public static final PortDeferredBlock<SlabBlock> TUFF_SLAB = registerBlock("tuff_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.TUFF)));
+    public static final PortDeferredBlock<StairBlock> TUFF_STAIRS = registerBlock("tuff_stairs", () -> new StairBlock(Blocks.TUFF::defaultBlockState, BlockBehaviour.Properties.copy(Blocks.TUFF)));
+    public static final PortDeferredBlock<WallBlock> TUFF_WALL = registerBlock("tuff_wall", () -> new WallBlock(BlockBehaviour.Properties.copy(Blocks.TUFF).forceSolidOn()));
+    public static final PortDeferredBlock<Block> POLISHED_TUFF = registerBlock("polished_tuff", () -> new Block(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.POLISHED_TUFF)));
+    public static final PortDeferredBlock<SlabBlock> POLISHED_TUFF_SLAB = registerBlock("polished_tuff_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.POLISHED_TUFF)));
+    public static final PortDeferredBlock<StairBlock> POLISHED_TUFF_STAIRS = registerBlock("polished_tuff_stairs", () -> new StairBlock(() -> POLISHED_TUFF.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.POLISHED_TUFF)));
+    public static final PortDeferredBlock<WallBlock> POLISHED_TUFF_WALL = registerBlock("polished_tuff_wall", () -> new WallBlock(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.POLISHED_TUFF).forceSolidOn()));
+    public static final PortDeferredBlock<Block> CHISELED_TUFF = registerBlock("chiseled_tuff", () -> new Block(BlockBehaviour.Properties.copy(Blocks.TUFF)));
+    public static final PortDeferredBlock<Block> TUFF_BRICKS = registerBlock("tuff_bricks", () -> new Block(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.TUFF_BRICKS)));
+    public static final PortDeferredBlock<SlabBlock> TUFF_BRICK_SLAB = registerBlock("tuff_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.TUFF_BRICKS)));
+    public static final PortDeferredBlock<StairBlock> TUFF_BRICK_STAIRS = registerBlock("tuff_brick_stairs", () -> new StairBlock(() -> TUFF_BRICKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.TUFF_BRICKS)));
+    public static final PortDeferredBlock<WallBlock> TUFF_BRICK_WALL = registerBlock("tuff_brick_wall", () -> new WallBlock(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.TUFF_BRICKS).forceSolidOn()));
+    public static final PortDeferredBlock<Block> CHISELED_TUFF_BRICKS = registerBlock("chiseled_tuff_bricks", () -> new Block(BlockBehaviour.Properties.copy(Blocks.TUFF).sound(IPortSoundTypeExtension.TUFF_BRICKS)));
+
+    private static <B extends Block> PortDeferredBlock<B> registerBlock(String name, Supplier<B> sup) {
+        PortDeferredBlock<B> block = BLOCKS.register(name, sup);
+        ITEMS.registerSimpleBlockItem(block);
+        return block;
+    }
+
     public PortLib(FMLJavaModLoadingContext context) {
         PortRegisterHandler.init(context.getModEventBus());
         PortRegistries.init();
@@ -162,6 +190,8 @@ public class PortLib {
         PortSoundEvents.register(eventBus);
         GLOBAL_LOOT_MODIFIERS.register(eventBus);
         BIOME_MODIFIER_SERIALIZERS.register(eventBus);
+        BLOCKS.getEntries().forEach(block -> BLOCKS.addAlias(ResourceLocation.withDefaultNamespace(block.getId().getPath()), block.getId()));
+        ITEMS.getEntries().forEach(item -> ITEMS.addAlias(ResourceLocation.withDefaultNamespace(item.getId().getPath()), item.getId()));
         PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
 //            ForcedChunkManager
             PortDataMapLoader.initDataMaps();
@@ -186,6 +216,12 @@ public class PortLib {
         PortEventHandler.addListener((PortRegisterDataMapTypesEvent event) -> {
             event.register(COMPOSTABLES);
             event.register(FURNACE_FUELS);
+        });
+
+        PortEventHandler.addListener((BuildCreativeModeTabContentsEvent event) -> {
+            if (CreativeModeTabs.BUILDING_BLOCKS.equals(event.getTabKey())) {
+                ITEMS.getEntries().forEach(event::accept);
+            }
         });
     }
 

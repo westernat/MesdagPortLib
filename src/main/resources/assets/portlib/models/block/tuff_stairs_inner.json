@@ -1,0 +1,8 @@
+{
+  "parent": "block/inner_stairs",
+  "textures": {
+    "bottom": "block/tuff",
+    "side": "block/tuff",
+    "top": "block/tuff"
+  }
+}

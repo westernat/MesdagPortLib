@@ -3,6 +3,8 @@ package org.mesdag.portlib.diff.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,6 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Diff
@@ -29,9 +33,11 @@ public final class PortDataGenerator {
         generator.addProvider(server, new PortBiomeTagsProvider(output, provider, helper));
         generator.addProvider(server, new PortEntityTypeTagsProvider(output, provider, helper));
         generator.addProvider(server, new PortFluidTagsProvider(output, provider, helper));
+        generator.addProvider(server, new PortRecipeProvider(output));
+        generator.addProvider(server, new LootTableProvider(output, Set.of(), List.of(new LootTableProvider.SubProviderEntry(PortBlockLootSubProvider::new, LootContextParamSets.BLOCK))));
 
         boolean client = event.includeClient();
-        generator.addProvider(client, new PortLanguageProvider(output, "en_us"));
-        generator.addProvider(client, new PortLanguageProvider(output, "zh_cn"));
+        generator.addProvider(client, new PortLanguageProvider(output, true));
+        generator.addProvider(client, new PortLanguageProvider(output, false));
     }
 }
