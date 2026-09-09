@@ -20,23 +20,59 @@ function initializeCoreMod() {
                 'methodDesc': '(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I'
             },
             'transformer': function (node) {
-                if (node.instructions.size() == 2) {
-                    var iconst = node.instructions.get(0);
-                    var iret = node.instructions.get(1);
-                    if (iconst.getOpcode() == Opcodes.ICONST_M1 && iret.getOpcode() == Opcodes.IRETURN) {
-                        var list = new InsnList();
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        list.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            'PortLib/extensions/net/minecraft/world/item/Item/PortItemExtension',
-                            'getBurnTime',
-                            '(Lnet/minecraft/world/item/Item;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I', false));
-                        node.instructions.remove(iconst);
-                        node.instructions.insertBefore(iret, list);
+                var insns = node.instructions
+
+                // Skip if this method has already been modified.
+                for (var i = 0; i < insns.size(); i++) {
+                    var insn = insns.get(i)
+                    if (insn instanceof MethodInsnNode && insn.getOpcode() == Opcodes.INVOKESTATIC &&
+                        insn.owner === 'org/mesdag/portlib/wrapper/common/extensions/IPortItemExtension' &&
+                        insn.name === 'getBurnTime') {
+                        return node
                     }
                 }
-                return node;
+
+                // Transform:
+                //   return <original value>;           // e.g. the stub "return -1;"
+                // Into:
+                //   int burnTime = <original value>;
+                //   if (burnTime == -1) return IPortItemExtension.getBurnTime(self());
+                //   return burnTime;
+                for (var j = 0; j < insns.size(); j++) {
+                    var iret = insns.get(j)
+                    if (!(iret instanceof InsnNode && iret.getOpcode() == Opcodes.IRETURN)) continue
+
+                    var burnTimeVar = node.maxLocals
+                    node.maxLocals = burnTimeVar + 1
+                    if (node.maxStack < 2) node.maxStack = 2
+
+                    var keepOriginal = new LabelNode()
+                    var list = new InsnList()
+                    // burnTime = <original return value>;
+                    list.add(new VarInsnNode(Opcodes.ISTORE, burnTimeVar))
+                    // if (burnTime != -1) -> return the original value
+                    list.add(new VarInsnNode(Opcodes.ILOAD, burnTimeVar))
+                    list.add(new InsnNode(Opcodes.ICONST_M1))
+                    list.add(new JumpInsnNode(Opcodes.IF_ICMPNE, keepOriginal))
+                    // return IPortItemExtension.getBurnTime(self());
+                    list.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    list.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE,
+                        'net/minecraftforge/common/extensions/IForgeItem',
+                        'self',
+                        '()Lnet/minecraft/world/item/Item;', true))
+                    list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        'org/mesdag/portlib/wrapper/common/extensions/IPortItemExtension',
+                        'getBurnTime',
+                        '(Lnet/minecraft/world/item/Item;)I', true))
+                    list.add(new InsnNode(Opcodes.IRETURN))
+                    // keepOriginal: return burnTime;
+                    list.add(keepOriginal)
+                    list.add(new VarInsnNode(Opcodes.ILOAD, burnTimeVar))
+
+                    node.instructions.insertBefore(iret, list)
+                    break
+                }
+                return node
             }
         },
         'port_submerged_mining_speed': {

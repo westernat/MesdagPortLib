@@ -805,6 +805,7 @@ public interface IPortItemStackExtension {
         }
     }
 
+    // todo not replace vanilla yet
     default int getUseDuration(LivingEntity living) {
         return IPortItemExtension.of(self().getItem()).getUseDuration(self(), living);
     }
