@@ -17,8 +17,8 @@ import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.client.PortRegisterMenuScreensEvent;
 import org.mesdag.portlib.event.client.extensions.common.PortRegisterClientExtensionsEvent;
+import org.mesdag.portlib.event.entity.PortRegisterSpawnPlacementsEvent;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
-import org.mesdag.portlib.event.other.PortBlockEntityTypeAddBlocksEvent;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 
@@ -39,7 +39,7 @@ public class PortEventHooks {
     @Diff
     public static void init() {
         PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
-        PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
+        PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, PortRegisterSpawnPlacementsEvent::new);
         PortEventHandler.addListener((RegisterClientReloadListenersEvent event) -> {
             PortEventHandler.postEvent(new PortRegisterClientExtensionsEvent());
             PortEventHandler.postEvent(new PortRegisterMenuScreensEvent());
