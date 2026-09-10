@@ -40,7 +40,7 @@ public abstract class NamespacedWrapperMixin<T> implements IPortMappedRegistry<T
         return portlib$resolve(location);
     }
 
-    @ModifyVariable(method = "getOrCreateHolderOrThrow", at = @At("HEAD"), argsOnly = true, remap = false)
+    @ModifyVariable(method = "getOrCreateHolderOrThrow", at = @At("HEAD"), argsOnly = true, remap = true)
     private ResourceKey<T> resolveKey3(ResourceKey<T> key) {
         return portlib$resolve(key);
     }

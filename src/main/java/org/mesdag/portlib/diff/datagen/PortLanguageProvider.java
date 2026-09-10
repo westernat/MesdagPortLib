@@ -23,7 +23,7 @@ public class PortLanguageProvider extends LanguageProvider {
         addAttribute(PortLib.BURNING_TIME, "Burning Time", "燃烧时间");
         addAttribute(PortLib.EXPLOSION_KNOCKBACK_RESISTANCE, "Explosion Knockback Resistance", "爆炸击退抗性");
         addAttribute(PortLib.FALL_DAMAGE_MULTIPLIER, "Fall Damage Multiplier", "摔落伤害倍率");
-        addAttribute(PortLib.JUMP_STRENGTH, "Jump Strength", "跳跃力度");
+        addAttribute(PortLib.JUMP_STRENGTH_1211, "Jump Strength", "跳跃力度");
         addAttribute(PortLib.MAX_ABSORPTION, "Max Absorption", "最大伤害吸收");
         addAttribute(PortLib.MINING_EFFICIENCY, "Mining Efficiency", "挖掘效率");
         addAttribute(PortLib.MOVEMENT_EFFICIENCY, "Movement Efficiency", "移动效率");

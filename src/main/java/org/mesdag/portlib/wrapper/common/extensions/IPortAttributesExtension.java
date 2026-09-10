@@ -14,7 +14,7 @@ public interface IPortAttributesExtension {
     Holder<Attribute> EXPLOSION_KNOCKBACK_RESISTANCE = AttributeHolder.lazy(() -> PortLib.EXPLOSION_KNOCKBACK_RESISTANCE, false);
     Holder<Attribute> ENTITY_INTERACTION_RANGE = AttributeHolder.lazy(() -> new PortRegistryEntry<>(ForgeMod.ENTITY_REACH), true);
     Holder<Attribute> FALL_DAMAGE_MULTIPLIER = AttributeHolder.lazy(() -> PortLib.FALL_DAMAGE_MULTIPLIER, false);
-    Holder<Attribute> JUMP_STRENGTH = AttributeHolder.lazy(() -> PortLib.JUMP_STRENGTH, false);
+    Holder<Attribute> JUMP_STRENGTH_1211 = AttributeHolder.lazy(() -> PortLib.JUMP_STRENGTH_1211, false);
     Holder<Attribute> GRAVITY = AttributeHolder.lazy(() -> new PortRegistryEntry<>(ForgeMod.ENTITY_GRAVITY), true);
     Holder<Attribute> MAX_ABSORPTION = AttributeHolder.lazy(() -> PortLib.MAX_ABSORPTION, false);
     Holder<Attribute> MINING_EFFICIENCY = AttributeHolder.lazy(() -> PortLib.MINING_EFFICIENCY, false);

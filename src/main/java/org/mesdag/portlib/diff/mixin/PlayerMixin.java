@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.IPortFoodProperties;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.IPortPlayer;
@@ -28,7 +29,6 @@ import org.mesdag.portlib.event.entity.living.PortLivingDamageEvent;
 import org.mesdag.portlib.event.entity.player.PortCanContinueSleepingEvent;
 import org.mesdag.portlib.event.entity.player.PortSweepAttackEvent;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
-import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortPlayerExtension;
 import org.objectweb.asm.Opcodes;
@@ -201,17 +201,17 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getBlockEfficiency(Lnet/minecraft/world/entity/LivingEntity;)I"), name = "f")
     private float miningEfficiency(float f) {
-        return f + (float) portlib$self().getAttributeValue(IPortAttributesExtension.MINING_EFFICIENCY);
+        return f + (float) portlib$self().getAttributeValue(PortLib.MINING_EFFICIENCY);
     }
 
     @ModifyVariable(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"), name = "f")
     private float blockBreakSpeed(float f) {
-        return f * (float) portlib$self().getAttributeValue(IPortAttributesExtension.BLOCK_BREAK_SPEED);
+        return f * (float) portlib$self().getAttributeValue(PortLib.BLOCK_BREAK_SPEED);
     }
 
     @ModifyExpressionValue(method = "travel", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;flying:Z", opcode = Opcodes.GETFIELD))
     private boolean allowCreativeFlight(boolean original) {
-        return original || portlib$self().getAttributeValue(IPortAttributesExtension.CREATIVE_FLIGHT) > 0;
+        return original || portlib$self().getAttributeValue(PortLib.CREATIVE_FLIGHT) > 0;
     }
 
     @ModifyReturnValue(method = "getFlyingSpeed", at = @At("RETURN"))
@@ -221,7 +221,7 @@ public abstract class PlayerMixin implements IPortPlayer {
 
     @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getSweepingDamageRatio(Lnet/minecraft/world/entity/LivingEntity;)F"))
     private float applySweepingDamageRatio(float original) {
-        return (float) (original + portlib$self().getAttributeValue(IPortAttributesExtension.SWEEPING_DAMAGE_RATIO));
+        return (float) (original + portlib$self().getAttributeValue(PortLib.SWEEPING_DAMAGE_RATIO));
     }
 
     // endregion attributes

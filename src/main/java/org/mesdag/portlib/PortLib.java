@@ -79,7 +79,7 @@ public class PortLib {
             () -> new RangedAttribute("attribute.name.generic.fall_damage_multiplier", 1.0, 0.0, 100.0),
             maker -> maker.setSyncable(true).setSentiment(PortAttribute.PortSentiment.NEGATIVE)
     );
-    public static final PortRegistryEntry<Attribute, RangedAttribute> JUMP_STRENGTH = ATTRIBUTES.register(
+    public static final PortRegistryEntry<Attribute, RangedAttribute> JUMP_STRENGTH_1211 = ATTRIBUTES.register(
             "generic.jump_strength",
             () -> new RangedAttribute("attribute.name.generic.jump_strength", 0.42F, 0.0, 32.0),
             maker -> maker.setSyncable(true)

@@ -10,10 +10,10 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortExplosionKnockbackEvent;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
-import org.mesdag.portlib.wrapper.common.extensions.IPortAttributesExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortExplosionExtension;
 import org.mesdag.portlib.wrapper.world.level.PortExplosionDamageCalculator;
 import org.spongepowered.asm.mixin.Final;
@@ -39,7 +39,7 @@ public abstract class ExplosionMixin implements PortSelfGetter<Explosion>, IPort
         PortEventHandler.postEvent(event);
         Vec3 result = event.getKnockbackVelocity();
         if (entity instanceof LivingEntity living) {
-            double resistance = living.getAttributeValue(IPortAttributesExtension.EXPLOSION_KNOCKBACK_RESISTANCE);
+            double resistance = living.getAttributeValue(PortLib.EXPLOSION_KNOCKBACK_RESISTANCE);
             if (resistance > 0) {
                 result = result.scale(1.0 - resistance);
             }
