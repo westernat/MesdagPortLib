@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
@@ -55,7 +56,7 @@ public interface IPortLivingEntityExtension extends IPortEntityExtension {
     }
 
     @Override
-    default ItemStack getWeaponItem() {
+    default @NotNull ItemStack getWeaponItem() {
         return self().getMainHandItem();
     }
 
