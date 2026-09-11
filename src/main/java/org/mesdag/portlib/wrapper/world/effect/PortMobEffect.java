@@ -29,12 +29,12 @@ public class PortMobEffect extends MobEffect implements IPortMobEffectExtension 
     private @Nullable Object2ObjectMap<UUID, Int2DoubleFunction> curves;
     private Optional<SoundEvent> soundOnAdded = Optional.empty();
 
-    public PortMobEffect(MobEffectCategory category, int color, ParticleOptions particle) {
+    protected PortMobEffect(MobEffectCategory category, int color, ParticleOptions particle) {
         super(category, color);
         this.particleFactory = instance -> particle;
     }
 
-    public PortMobEffect(MobEffectCategory category, int color) {
+    protected PortMobEffect(MobEffectCategory category, int color) {
         super(category, color);
         this.particleFactory = instance -> instance.isAmbient() ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
     }

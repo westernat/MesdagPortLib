@@ -146,7 +146,7 @@ public interface IPortItemStackExtension {
     }
 
     static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
-        return ItemStack.isSameItemSameTags(stack, other) && Objects.equals(IPortItemStack.of(stack).portlib$patch(), IPortItemStack.of(other).portlib$patch());
+        return ItemStack.isSameItemSameTags(stack, other);
     }
 
     static int hashStackList(List<ItemStack> list) {

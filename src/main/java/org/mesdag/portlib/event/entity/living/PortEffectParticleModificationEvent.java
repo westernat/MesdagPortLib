@@ -7,7 +7,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectInstanceExtension;
-import org.mesdag.portlib.wrapper.world.effect.PortMobEffect;
 
 import java.util.Objects;
 
@@ -52,6 +51,6 @@ public class PortEffectParticleModificationEvent extends LivingEvent {
 
     @Diff
     public boolean isCustomParticle() {
-        return isVisible() && (effect.getEffect() instanceof PortMobEffect || !Objects.equals(originalOptions, options));
+        return isVisible() && !Objects.equals(originalOptions, options);
     }
 }
