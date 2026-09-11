@@ -407,4 +407,11 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
     }
 
     // endregion
+
+    @Inject(method = "remove", at = @At("HEAD"))
+    private void callTriggerOnDeathMobEffects(Entity.RemovalReason reason, CallbackInfo ci) {
+        if (reason == Entity.RemovalReason.KILLED || reason == Entity.RemovalReason.DISCARDED) {
+            triggerOnDeathMobEffects(reason);
+        }
+    }
 }

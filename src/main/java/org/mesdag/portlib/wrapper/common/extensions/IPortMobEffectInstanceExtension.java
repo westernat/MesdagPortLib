@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
@@ -70,6 +71,10 @@ public interface IPortMobEffectInstanceExtension {
 
     default void onEffectAdded(LivingEntity living) {
         IPortMobEffectExtension.of(self().getEffect()).onEffectAdded(living, self().getAmplifier());
+    }
+
+    default void onMobRemoved(LivingEntity living, Entity.RemovalReason reason) {
+        IPortMobEffectExtension.of(self().getEffect()).onMobRemoved(living, self().getAmplifier(), reason);
     }
 
     static IPortMobEffectInstanceExtension of(MobEffectInstance instance) {

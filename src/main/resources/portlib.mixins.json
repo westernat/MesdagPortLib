@@ -28,6 +28,7 @@
         "ChunkMapMixin",
         "ChunkSerializerMixin",
         "ContainersMixin",
+        "CreeperMixin",
         "CriterionProgressAccessor",
         "CrossBowItemMixin",
         "DamageSourceMixin",

@@ -4,18 +4,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortMobEffectInstance;
 import org.mesdag.portlib.diff.mixin.LivingEntityAccessor;
 import org.mesdag.portlib.event.entity.living.PortMobEffectEvent;
+import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 
@@ -54,7 +55,7 @@ public interface IPortLivingEntityExtension extends IPortEntityExtension {
     }
 
     @Override
-    default @NotNull ItemStack getWeaponItem() {
+    default ItemStack getWeaponItem() {
         return self().getMainHandItem();
     }
 
@@ -70,6 +71,14 @@ public interface IPortLivingEntityExtension extends IPortEntityExtension {
     @Diff
     default boolean removeEffect(RegistryObject<? extends MobEffect> effect) {
         return self().removeEffect(effect.get());
+    }
+
+    @Protected
+    default void triggerOnDeathMobEffects(Entity.RemovalReason reason) {
+        for (MobEffectInstance instance : self().getActiveEffects()) {
+            IPortMobEffectInstance.of(instance).onMobRemoved(self(), reason);
+        }
+        // self().getActiveEffectsMap().clear(); 保持1.20.1中不清除所有效果的特性
     }
 
     static EquipmentSlot getSlotForHand(InteractionHand hand) {

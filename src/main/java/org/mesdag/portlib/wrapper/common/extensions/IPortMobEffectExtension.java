@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
@@ -27,6 +28,8 @@ public interface IPortMobEffectExtension {
     default void onEffectStarted(LivingEntity living, int amplifier) {}
 
     default void onEffectAdded(LivingEntity living, int amplifier) {}
+
+    default void onMobRemoved(LivingEntity livingEntity, int amplifier, Entity.RemovalReason reason) {}
 
     default void fillPortEffectCures(Set<PortEffectCure> cures, MobEffectInstance effectInstance) {
         MobEffect thiz = self();
