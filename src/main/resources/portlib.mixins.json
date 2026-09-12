@@ -23,6 +23,7 @@
         "BlockSnapshotAccessor",
         "BlockStateMixin",
         "BowItemMixin",
+        "CapabilityProviderAccessor",
         "CauldronBlockMixin",
         "ChunkAccessMixin",
         "ChunkMapMixin",

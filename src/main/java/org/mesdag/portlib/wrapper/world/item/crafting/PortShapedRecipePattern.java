@@ -8,18 +8,24 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
 import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.objects.Object2CharMap;
+import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.mixin.ShapedRecipeAccessor;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 import org.mesdag.portlib.wrapper.PortUtil;
 import org.mesdag.portlib.wrapper.common.extensions.IPortIngredientExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,6 +89,35 @@ public final class PortShapedRecipePattern {
     public static PortShapedRecipePattern of(Map<Character, Ingredient> key, List<String> pattern) {
         PortShapedRecipePattern.Data shapedrecipepattern$data = new PortShapedRecipePattern.Data(key, pattern);
         return PortDataResultExtension.getOrThrow(unpack(shapedrecipepattern$data));
+    }
+
+    private static final String CHARS = "!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+
+    @Diff
+    public static PortShapedRecipePattern pattern(ShapedRecipe recipe) {
+        Char2ObjectMap<Ingredient> key = new Char2ObjectOpenHashMap<>();
+        Object2CharMap<Ingredient> reKey = new Object2CharOpenHashMap<>();
+        List<String> pattern = new ArrayList<>();
+        int usedChar = 0;
+
+        for (int i = 0; i < recipe.getHeight(); i++) {
+            StringBuilder line = new StringBuilder();
+            for (int j = 0; j < recipe.getWidth(); j++) {
+                Ingredient ingredient = recipe.getIngredients().get(j + i * recipe.getWidth());
+                if (ingredient == Ingredient.EMPTY) {
+                    line.append(' ');
+                } else {
+                    char c = reKey.getOrDefault(ingredient, ' ');
+                    if (c == ' ') {
+                        reKey.put(ingredient, c = CHARS.charAt(usedChar++));
+                    }
+                    line.append(c);
+                    key.put(c, ingredient);
+                }
+            }
+            pattern.add(line.toString());
+        }
+        return new PortShapedRecipePattern(recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), Optional.of(new Data(key, pattern)));
     }
 
     private static DataResult<PortShapedRecipePattern> unpack(PortShapedRecipePattern.Data data) {
@@ -229,6 +264,10 @@ public final class PortShapedRecipePattern {
 
     public NonNullList<Ingredient> ingredients() {
         return ingredients;
+    }
+
+    public boolean symmetrical() {
+        return symmetrical;
     }
 
     public record Data(Map<Character, Ingredient> key, List<String> pattern) {

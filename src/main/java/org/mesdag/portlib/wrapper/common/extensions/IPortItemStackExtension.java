@@ -36,6 +36,7 @@ import org.mesdag.portlib.component.PortDataComponentType;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.IPortItemStack;
 import org.mesdag.portlib.diff.IPortLivingEntity;
+import org.mesdag.portlib.diff.mixin.CapabilityProviderAccessor;
 import org.mesdag.portlib.event.enchanting.PortGetEnchantmentLevelEvent;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
@@ -784,8 +785,7 @@ public interface IPortItemStackExtension {
         if (self().isEmpty()) return ItemStack.EMPTY;
         CompoundTag tag = self().getTag();
         CompoundTag serialized = self().save(new CompoundTag());
-        CompoundTag capabilityData = serialized.contains("ForgeCaps", Tag.TAG_COMPOUND)
-                ? serialized.getCompound("ForgeCaps") : null;
+        CompoundTag capabilityData = ((CapabilityProviderAccessor) (Object) self()).callSerializeCaps();
         ItemStack converted = new ItemStack(item, count, capabilityData);
         if (tag != null) {
             converted.setTag(tag.copy());

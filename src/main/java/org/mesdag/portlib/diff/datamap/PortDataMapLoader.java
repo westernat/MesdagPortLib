@@ -282,7 +282,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
         return (A) map1.get(key);
     }
 
-    public <T, A> Map<ResourceKey<T>, A> getDataMap(ResourceKey<Registry<T>> registryKey, PortDataMapType<T, A> type) {
+    public <T, A> Map<ResourceKey<T>, A> getDataMap(ResourceKey<? extends Registry<T>> registryKey, PortDataMapType<T, A> type) {
         Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> innerMap = getInnerMap(registryKey);
         return (Map<ResourceKey<T>, A>) innerMap.getOrDefault(type, Map.of());
     }
