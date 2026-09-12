@@ -121,6 +121,7 @@ public class PortCodecExtension {
         return Codec.unboundedMap(codec, Codec.BOOL).xmap(Object2BooleanOpenHashMap::new, Object2ObjectOpenHashMap::new);
     }
 
+    // todo修复NPE
     @Diff
     public static <A> Codec<A> json(Function<A, ? extends JsonElement> encoder, Function<? super JsonElement, A> decoder) {
         return new Codec<>() {

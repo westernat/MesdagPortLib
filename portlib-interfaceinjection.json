@@ -152,9 +152,6 @@
     "net/minecraft/advancements/critereon/EntityPredicate": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortEntityPredicateExtension"
     ],
-    "net/minecraft/advancements/critereon/ItemPredicate": [
-        "org/mesdag/portlib/wrapper/common/extensions/IPortItemPredicateExtension"
-    ],
     "net/minecraft/advancements/critereon/NbtPredicate": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortNbtPredicateExtension"
     ],

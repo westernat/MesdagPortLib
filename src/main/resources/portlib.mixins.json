@@ -59,7 +59,6 @@
         "ItemEntityMixin",
         "ItemMixin",
         "ItemMixin$PropertiesMixin",
-        "ItemPredicateMixin",
         "ItemStackMixin",
         "LevelChunkMixin",
         "LevelMixin",
