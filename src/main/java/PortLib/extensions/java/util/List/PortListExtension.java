@@ -1,14 +1,14 @@
 package PortLib.extensions.java.util.List;
 
-
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@SuppressWarnings("all")
 public class PortListExtension {
     public static <E> E getFirst(List<E> thiz) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            return linkedList.getFirst();
+        if (thiz instanceof Deque<?> deque) {
+            return (E) deque.getFirst();
         }
         if (thiz.isEmpty()) {
             throw new NoSuchElementException();
@@ -17,8 +17,8 @@ public class PortListExtension {
     }
 
     public static <E> E getLast(List<E> thiz) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            return linkedList.getLast();
+        if (thiz instanceof Deque<?> deque) {
+            return (E) deque.getLast();
         }
         if (thiz.isEmpty()) {
             throw new NoSuchElementException();
@@ -27,24 +27,24 @@ public class PortListExtension {
     }
 
     public static <E> void addFirst(List<E> thiz, E e) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            linkedList.addFirst(e);
+        if (thiz instanceof Deque deque) {
+            deque.addFirst(e);
         } else {
             thiz.add(0, e);
         }
     }
 
     public static <E> void addLast(List<E> thiz, E e) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            linkedList.addLast(e);
+        if (thiz instanceof Deque deque) {
+            deque.addLast(e);
         } else {
             thiz.add(e);
         }
     }
 
     public static <E> E removeFirst(List<E> thiz) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            return linkedList.removeFirst();
+        if (thiz instanceof Deque<?> deque) {
+            return (E) deque.removeFirst();
         }
         if (thiz.isEmpty()) {
             throw new NoSuchElementException();
@@ -53,8 +53,8 @@ public class PortListExtension {
     }
 
     public static <E> E removeLast(List<E> thiz) {
-        if (thiz instanceof LinkedList<E> linkedList) {
-            return linkedList.removeLast();
+        if (thiz instanceof Deque<?> deque) {
+            return (E) deque.removeLast();
         }
         if (thiz.isEmpty()) {
             throw new NoSuchElementException();
