@@ -43,11 +43,11 @@ import org.mesdag.portlib.network.PortNetworkHandler;
 import org.mesdag.portlib.network.config.PortConfigurationManager;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortSoundTypeExtension;
 import org.mesdag.portlib.wrapper.common.world.PortAddCarversBiomeModifier;
 import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class PortLib {
     public static final PortRegistryEntry<Attribute, RangedAttribute> BURNING_TIME = ATTRIBUTES.register(
             "generic.burning_time",
             () -> new RangedAttribute("attribute.name.generic.burning_time", 1.0, 0.0, 1024.0),
-            maker -> maker.setSyncable(true).setSentiment(PortAttribute.PortSentiment.NEGATIVE)
+            maker -> maker.setSyncable(true).setSentiment(IPortAttributeExtension.Sentiment.NEGATIVE)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> EXPLOSION_KNOCKBACK_RESISTANCE = ATTRIBUTES.register(
             "generic.explosion_knockback_resistance",
@@ -77,7 +77,7 @@ public class PortLib {
     public static final PortRegistryEntry<Attribute, RangedAttribute> FALL_DAMAGE_MULTIPLIER = ATTRIBUTES.register(
             "generic.fall_damage_multiplier",
             () -> new RangedAttribute("attribute.name.generic.fall_damage_multiplier", 1.0, 0.0, 100.0),
-            maker -> maker.setSyncable(true).setSentiment(PortAttribute.PortSentiment.NEGATIVE)
+            maker -> maker.setSyncable(true).setSentiment(IPortAttributeExtension.Sentiment.NEGATIVE)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> JUMP_STRENGTH_1211 = ATTRIBUTES.register(
             "generic.jump_strength",
@@ -112,7 +112,7 @@ public class PortLib {
     public static final PortRegistryEntry<Attribute, RangedAttribute> SCALE = ATTRIBUTES.register(
             "generic.scale",
             () -> new RangedAttribute("attribute.name.generic.scale", 1.0, 0.0625, 16.0),
-            maker -> maker.setSyncable(true).setSentiment(PortAttribute.PortSentiment.NEUTRAL)
+            maker -> maker.setSyncable(true).setSentiment(IPortAttributeExtension.Sentiment.NEUTRAL)
     );
     public static final PortRegistryEntry<Attribute, RangedAttribute> SNEAKING_SPEED = ATTRIBUTES.register(
             "player.sneaking_speed",

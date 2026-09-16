@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.mesdag.portlib.diff.IPortAttribute;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
+import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
 
 import java.util.function.Consumer;
 
@@ -33,7 +33,7 @@ public class PortAttributeRegistration extends PortRegistration<Attribute> {
             return this;
         }
 
-        public AttributeMaker setSentiment(PortAttribute.PortSentiment sentiment) {
+        public AttributeMaker setSentiment(IPortAttributeExtension.Sentiment sentiment) {
             IPortAttribute.of(delegate).portlib$setSentiment(sentiment);
             return this;
         }

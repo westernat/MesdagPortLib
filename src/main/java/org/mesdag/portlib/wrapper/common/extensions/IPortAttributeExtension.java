@@ -16,6 +16,7 @@ import org.mesdag.portlib.diff.IPortAttribute;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.network.codec.PortByteBufCodecs;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
+import org.mesdag.portlib.util.Private;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
 import java.text.DecimalFormat;
@@ -38,10 +39,14 @@ public interface IPortAttributeExtension {
         return IPortAttribute.of(self()).portlib$getSentiment().getStyle(isPositive);
     }
 
+    @Private
+    TextColor mergedRed = TextColor.fromRgb(0xF93131);
+    @Private
+    TextColor mergedBlue = TextColor.fromRgb(0x7A7AF9);
+    @Private
+    TextColor mergedGray = TextColor.fromRgb(0xCCCCCC);
+
     default TextColor getMergedStyle(boolean isPositive) {
-        TextColor mergedRed = TextColor.fromRgb(0xF93131);
-        TextColor mergedBlue = TextColor.fromRgb(0x7A7AF9);
-        TextColor mergedGray = TextColor.fromRgb(0xCCCCCC);
         return switch (IPortAttribute.of(self()).portlib$getSentiment()) {
             case POSITIVE -> isPositive ? mergedBlue : mergedRed;
             case NEGATIVE -> isPositive ? mergedRed : mergedBlue;
@@ -70,5 +75,19 @@ public interface IPortAttributeExtension {
 
     static boolean isNullOrAddition(@Nullable PortAttributeModifier.Operation op) {
         return op == null || op == PortAttributeModifier.Operation.ADD_VALUE;
+    }
+
+    enum Sentiment {
+        POSITIVE,
+        NEUTRAL,
+        NEGATIVE;
+
+        public ChatFormatting getStyle(boolean isPositive) {
+            return switch (this) {
+                case POSITIVE -> isPositive ? ChatFormatting.BLUE : ChatFormatting.RED;
+                case NEUTRAL -> ChatFormatting.GRAY;
+                case NEGATIVE -> isPositive ? ChatFormatting.RED : ChatFormatting.BLUE;
+            };
+        }
     }
 }

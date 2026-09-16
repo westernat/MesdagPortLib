@@ -5,21 +5,22 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.TooltipFlag;
+import org.jetbrains.annotations.NotNull;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeModifierExtension;
-import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttribute;
 
 @Diff
 public interface IPortAttribute extends PortSelfGetter<Attribute>, IPortAttributeExtension {
-    void portlib$setSentiment(PortAttribute.PortSentiment sentiment);
+    void portlib$setSentiment(Sentiment sentiment);
 
-    PortAttribute.PortSentiment portlib$getSentiment();
+    Sentiment portlib$getSentiment();
 
-    static IPortAttribute of(Attribute attribute) {
+    static @NotNull IPortAttribute of(Attribute attribute) {
         return (IPortAttribute) attribute;
     }
 
+    @SuppressWarnings("unchecked")
     static <E> E fromElement(E element, Attribute attribute, AttributeModifier modifier, TooltipFlag flag) {
         MutableComponent component;
         if (attribute instanceof IPortAttributeExtension extension) {
@@ -31,8 +32,8 @@ public interface IPortAttribute extends PortSelfGetter<Attribute>, IPortAttribut
         } else {
             return element;
         }
-        PortAttribute.PortSentiment sentiment = of(attribute).portlib$getSentiment();
-        if (sentiment != PortAttribute.PortSentiment.POSITIVE) {
+        Sentiment sentiment = of(attribute).portlib$getSentiment();
+        if (sentiment != IPortAttributeExtension.Sentiment.POSITIVE) {
             component.withStyle(sentiment.getStyle(modifier.getAmount() > 0));
         }
         return (E) component;
