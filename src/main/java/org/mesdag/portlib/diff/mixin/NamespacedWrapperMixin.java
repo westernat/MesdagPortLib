@@ -22,7 +22,7 @@ public abstract class NamespacedWrapperMixin<T> implements IPortMappedRegistry<T
             if (holdersByName.containsKey(name)) {
                 return name;
             }
-            ResourceLocation alias = portlib$getAlias().get(name);
+            ResourceLocation alias = portlib$getAliaes().get(name);
             if (alias == null) {
                 return name;
             }
