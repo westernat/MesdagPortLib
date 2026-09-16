@@ -5,10 +5,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.wrapper.PortSelfGetter;
+import org.mesdag.portlib.wrapper.common.extensions.IPortMappedRegistryExtension;
 
 import java.util.Map;
 
-public interface IPortMappedRegistry<T> extends PortSelfGetter<MappedRegistry<T>> {
+public interface IPortMappedRegistry<T> extends IPortMappedRegistryExtension<T>, PortSelfGetter<MappedRegistry<T>> {
     void portlib$addAlias(ResourceLocation from, ResourceLocation to);
 
     Map<ResourceLocation, ResourceLocation> portlib$getAliaes();
@@ -17,7 +18,7 @@ public interface IPortMappedRegistry<T> extends PortSelfGetter<MappedRegistry<T>
 
     ResourceKey<T> portlib$resolve(ResourceKey<T> key);
 
-    void onAdd(PortAddCallback.Vanilla<T> callback);
+    void confluence$onAdd(PortAddCallback.Vanilla<T> callback);
 
     @SuppressWarnings("unchecked")
     static <T> IPortMappedRegistry<T> of(MappedRegistry<T> registry) {

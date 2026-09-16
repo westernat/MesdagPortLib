@@ -229,5 +229,8 @@
     ],
     "net/minecraft/world/level/Explosion": [
         "org/mesdag/portlib/wrapper/common/extensions/IPortExplosionExtension"
+    ],
+    "net/minecraft/core/MappedRegistry": [
+        "org/mesdag/portlib/wrapper/common/extensions/IPortMappedRegistryExtension<T>"
     ]
 }

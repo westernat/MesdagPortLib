@@ -101,7 +101,7 @@ public abstract class MappedRegistryMixin<T> implements IPortMappedRegistry<T> {
     private List<PortAddCallback.Vanilla<T>> portlib$add;
 
     @Override
-    public void onAdd(PortAddCallback.Vanilla<T> callback) {
+    public void confluence$onAdd(PortAddCallback.Vanilla<T> callback) {
         if (portlib$add == null) {
             portlib$add = new ArrayList<>();
         }
