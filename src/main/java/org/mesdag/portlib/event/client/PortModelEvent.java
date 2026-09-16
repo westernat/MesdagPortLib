@@ -95,6 +95,10 @@ public abstract class PortModelEvent<E extends ModelEvent> extends PortEvent<E> 
             e.register(model);
         }
 
+        public void register(ResourceLocation model) {
+            e.register(model);
+        }
+
         static {
             PortEventHooks.register();
         }
