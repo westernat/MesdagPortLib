@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.event.PortBus;
 import org.mesdag.portlib.registries.callback.PortRegistryCallback;
@@ -36,12 +37,11 @@ public class PortCustomRegistration<R> extends PortRegistration<R> {
     }
 
     public void register(ResourceLocation key, R value) {
-        if (registry.get() instanceof ForgeRegistry<R> registry1) {
-            boolean locked = registry1.isLocked();
-            if (locked) registry1.unfreeze();
-            registry1.register(key, value);
-            if (locked) registry1.freeze();
-        }
+        ForgeRegistry<R> forgeRegistry = (ForgeRegistry<R>) registry.get();
+        boolean locked = forgeRegistry.isLocked();
+        if (locked) forgeRegistry.unfreeze();
+        forgeRegistry.register(key, value);
+        if (locked) forgeRegistry.freeze();
     }
 
     public @Nullable ResourceLocation getKey(R value) {
@@ -83,5 +83,10 @@ public class PortCustomRegistration<R> extends PortRegistration<R> {
 
     public Codec<R> byNameCodec() {
         return ResourceLocation.CODEC.xmap(this::get, this::getKey);
+    }
+
+    @ApiStatus.Internal
+    public void registerToRootRegistry() {
+        maker.registerToRootRegistry();
     }
 }

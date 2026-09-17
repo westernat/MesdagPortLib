@@ -26,6 +26,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("unchecked")
 @Diff
 public interface CPortAttachmentHolder extends IPortAttachmentHolder {
     String ATTACHMENTS_NBT_KEY = "portlib:attachments";

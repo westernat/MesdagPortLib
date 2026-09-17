@@ -37,8 +37,8 @@ public class PortEventHandler {
     }
 
     @Diff
-    public static <F extends Event, T extends Event> void wrapEvent(boolean receiveCancelled, Class<F> from, Function<F, T> to) {
-        addListener(PortEventPriority.LOWEST, receiveCancelled, from, f -> postEvent(to.apply(f)));
+    public static <F extends Event, T extends Event> void wrapEvent(PortEventPriority priority, Class<F> from, Function<F, T> to) {
+        addListener(priority, false, from, f -> postEvent(to.apply(f)));
     }
 
     public static <E extends Event> void postEvent(E event) {

@@ -4,6 +4,7 @@ import PortLib.extensions.net.minecraftforge.registries.IForgeRegistry.PortIForg
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.registries.callback.PortAddCallback;
 import org.mesdag.portlib.registries.callback.PortBakeCallback;
@@ -71,5 +72,10 @@ public class PortRegistryMaker<T> {
             builder.disableSync();
         }
         return builder;
+    }
+
+    @ApiStatus.Internal
+    public void registerToRootRegistry() {
+        builder.hasTags();
     }
 }

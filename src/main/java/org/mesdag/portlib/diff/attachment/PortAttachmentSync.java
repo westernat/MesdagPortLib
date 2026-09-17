@@ -40,9 +40,10 @@ public final class PortAttachmentSync {
             PortLib.MODID,
             ResourceKey.createRegistryKey(PortLib.asResource("synced_attachment_types")),
             maker -> maker.sync(true).onAdd((owner, id, key, value) -> {
-                if (!PortRegistries.ATTACHMENT_TYPES.containsKey(key.location())
-                        || !PortRegistries.ATTACHMENT_TYPES.containsValue(value)
-                        || PortRegistries.ATTACHMENT_TYPES.get(key.location()) != value) {
+                if (!PortRegistries.ATTACHMENT_TYPES.containsKey(key.location()) ||
+                        !PortRegistries.ATTACHMENT_TYPES.containsValue(value) ||
+                        PortRegistries.ATTACHMENT_TYPES.get(key.location()) != value
+                ) {
                     throw new IllegalStateException("Cannot add entries to the SYNCED_ATTACHMENT_TYPES registry directly.");
                 }
             })

@@ -5,7 +5,6 @@ import org.mesdag.portlib.registries.PortRegistryEntry;
 import org.mesdag.portlib.util.Final;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public interface IPortAttachmentHolder {
     boolean hasAttaches();
@@ -60,14 +59,16 @@ public interface IPortAttachmentHolder {
         return removeAttach(type.get());
     }
 
-    void portlib$syncAttach(PortAttachmentType<?> type);
+    default void portlib$syncAttach(PortAttachmentType<?> type) {
+        // Do nothing by default, implementers should override this method if needed.
+    }
 
     @Final
     default void syncAttach(PortAttachmentType<?> type) {
         portlib$syncAttach(type);
     }
 
-    default void syncAttach(Supplier<? extends PortAttachmentType<?>> type) {
+    default <T> void syncAttach(PortRegistryEntry<PortAttachmentType<?>, PortAttachmentType<T>> type) {
         syncAttach(type.get());
     }
 }

@@ -12,6 +12,7 @@ import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
@@ -20,6 +21,7 @@ import org.mesdag.portlib.event.client.extensions.common.PortRegisterClientExten
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
 import org.mesdag.portlib.event.other.PortBlockEntityTypeAddBlocksEvent;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
+import org.mesdag.portlib.event.registries.PortNewRegistryEvent;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 
 import java.lang.invoke.*;
@@ -39,12 +41,13 @@ public class PortEventHooks {
     @Diff
     public static void init() {
         // 以下是在相似阶段发布forge没有的事件，不是没有对应上事件！！！
-        PortEventHandler.wrapEvent(false, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
-        PortEventHandler.wrapEvent(false, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
+        PortEventHandler.wrapEvent(PortEventPriority.LOWEST, RegisterCapabilitiesEvent.class, e -> new PortModifyRegistriesEvent());
+        PortEventHandler.wrapEvent(PortEventPriority.LOWEST, SpawnPlacementRegisterEvent.class, e -> new PortBlockEntityTypeAddBlocksEvent());
         PortEventHandler.addListener((RegisterClientReloadListenersEvent event) -> {
             PortEventHandler.postEvent(new PortRegisterClientExtensionsEvent());
             PortEventHandler.postEvent(new PortRegisterMenuScreensEvent());
         });
+        PortEventHandler.wrapEvent(PortEventPriority.HIGHEST, NewRegistryEvent.class, PortNewRegistryEvent::new);
     }
 
     private static void validateIfAbstract(Class<? extends Event> clazz) {

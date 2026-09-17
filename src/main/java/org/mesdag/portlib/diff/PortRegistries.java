@@ -11,6 +11,7 @@ import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventPriority;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
+import org.mesdag.portlib.event.registries.PortNewRegistryEvent;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
 import org.mesdag.portlib.wrapper.common.crafting.PortIngredientType;
@@ -24,6 +25,12 @@ public class PortRegistries {
     @ApiStatus.Internal
     public static void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
+        PortEventHandler.addListener((PortNewRegistryEvent event) -> {
+            event.register(PortRegistries.ATTACHMENT_TYPES);
+            event.register(PortRegistries.DATA_COMPONENTS); // vanilla
+            event.register(PortRegistries.INGREDIENT_TYPES);
+            event.register(PortAttachmentSync.SYNCED_ATTACHMENT_TYPES);
+        });
     }
 
     public static final class Keys {
