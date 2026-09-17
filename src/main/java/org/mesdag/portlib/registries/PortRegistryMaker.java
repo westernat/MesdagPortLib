@@ -76,6 +76,6 @@ public class PortRegistryMaker<T> {
 
     @ApiStatus.Internal
     public void registerToRootRegistry() {
-        builder.hasTags();
+        builder.hasTags(); // 将会自动注册到根注册表
     }
 }
