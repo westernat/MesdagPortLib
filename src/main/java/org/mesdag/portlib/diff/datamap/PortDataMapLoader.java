@@ -42,6 +42,7 @@ import org.mesdag.portlib.diff.PortDataPackRegistriesHooks;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.registries.PortDataMapsUpdatedEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
+import org.mesdag.portlib.network.PortPacketDistributor;
 import org.mesdag.portlib.wrapper.common.conditions.PortConditionalOps;
 import org.mesdag.portlib.wrapper.common.extensions.IPortHolderExtension;
 import org.mesdag.portlib.wrapper.core.PortHolder;
@@ -73,13 +74,6 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
     @ApiStatus.Internal
     public static void init() {
-        PortRegistryDataMapNegotiation.init();
-        PortLib.NETWORK_HANDLER.registerInGameS2C(
-                (Class) PortRegistryDataMapSyncPayload.class,
-                PortRegistryDataMapSyncPayload.IDENTIFIER,
-                PortRegistryDataMapSyncPayload.STREAM_CODEC,
-                PortRegistryDataMapSyncPayload::handle
-        );
         PortEventHandler.addListener((AddReloadListenerEvent event) -> {
             INSTANCE = new PortDataMapLoader(event.getConditionContext(), event.getRegistryAccess());
             event.addListener(INSTANCE);
@@ -118,7 +112,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
             att.put(key, INSTANCE.getDataMap(registryKey, attach));
         });
         if (!att.isEmpty()) {
-            PortLib.NETWORK_HANDLER.sendToPlayer(player, new PortRegistryDataMapSyncPayload(registryKey, att));
+            PortPacketDistributor.sendToPlayer(player, new PortRegistryDataMapSyncPayload(registryKey, att));
         }
     }
 

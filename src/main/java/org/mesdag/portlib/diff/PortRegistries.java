@@ -3,7 +3,6 @@ package org.mesdag.portlib.diff;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ArmorMaterial;
-import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.component.PortDataComponentType;
@@ -22,7 +21,6 @@ public class PortRegistries {
     public static final PortCustomRegistration<PortDataComponentType<?>> DATA_COMPONENTS = PortRegisterHandler.custom(PortLib.MODID, Keys.DATA_COMPONENTS, maker -> {});
     public static final PortCustomRegistration<PortIngredientType<?>> INGREDIENT_TYPES = PortRegisterHandler.custom(PortLib.MODID, Keys.INGREDIENT_TYPES, maker -> maker.sync(true));
 
-    @ApiStatus.Internal
     public static void init() {
         PortEventHandler.addListener(PortEventPriority.LOWEST, (PortModifyRegistriesEvent event) -> ATTACHMENT_TYPES.addCallback(PortAttachmentSync.ATTACHMENT_TYPE_ADD_CALLBACK));
         PortEventHandler.addListener((PortNewRegistryEvent event) -> {

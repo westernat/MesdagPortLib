@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
-import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.IPortLivingEntity;
 import org.mesdag.portlib.diff.PortSyncEffectParticlesS2C;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
@@ -45,7 +44,7 @@ public abstract class ServerEntityMixin {
 
         if (entity instanceof IPortLivingEntity living && living.portlib$isDirty()) {
             living.portlib$setDirty(false);
-            consumer.accept(PortLib.NETWORK_HANDLER.toVanillaClientbound(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles())));
+            consumer.accept(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles()).toVanillaClientbound());
         }
     }
 
@@ -54,13 +53,13 @@ public abstract class ServerEntityMixin {
         if (entity instanceof IPortLivingEntity living && living.portlib$isDirty() && tickCount % updateInterval == 0) {
             if (entity instanceof ServerPlayer player) {
                 living.portlib$setDirty(false);
-                player.connection.send(PortLib.NETWORK_HANDLER.toVanillaClientbound(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles())));
+                player.connection.send(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles()).toVanillaClientbound());
             }
             ChunkMap.TrackedEntity trackedEntity = level.getChunkSource().chunkMap.entityMap.get(entity.getId());
             if (trackedEntity != null && (!trackedEntity.seenBy.isEmpty())) {
                 living.portlib$setDirty(false);
                 for (ServerPlayerConnection connection : trackedEntity.seenBy) {
-                    connection.send(PortLib.NETWORK_HANDLER.toVanillaClientbound(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles())));
+                    connection.send(new PortSyncEffectParticlesS2C(entity.getId(), living.portlib$getEffectParticles()).toVanillaClientbound());
                 }
             }
         }

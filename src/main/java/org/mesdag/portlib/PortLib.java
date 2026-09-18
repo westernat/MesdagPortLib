@@ -29,22 +29,25 @@ import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
 import org.mesdag.portlib.diff.Diff;
-import org.mesdag.portlib.diff.IPortLivingEntity;
+import org.mesdag.portlib.diff.PortAdvancedAddEntityPayload;
 import org.mesdag.portlib.diff.PortRegistries;
+import org.mesdag.portlib.diff.PortSyncEffectParticlesS2C;
 import org.mesdag.portlib.diff.attachment.PortAttachmentInternals;
 import org.mesdag.portlib.diff.attachment.PortAttachmentSync;
+import org.mesdag.portlib.diff.attachment.PortSyncAttachmentsPayload;
 import org.mesdag.portlib.diff.datamap.PortDataMapLoader;
 import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.PortEventHooks;
+import org.mesdag.portlib.event.network.PortRegisterPayloadHandlersEvent;
 import org.mesdag.portlib.event.other.PortModifyDefaultComponentsEvent;
 import org.mesdag.portlib.event.registries.PortRegisterDataMapTypesEvent;
 import org.mesdag.portlib.loot.PortAddTableLootModifier;
 import org.mesdag.portlib.network.PortNetworkHandler;
-import org.mesdag.portlib.network.config.PortConfigurationManager;
+import org.mesdag.portlib.network.config.PortConfigurationFinishedPayload;
+import org.mesdag.portlib.network.config.PortConfigurationFragmentPayload;
 import org.mesdag.portlib.registries.*;
 import org.mesdag.portlib.wrapper.common.PortBooleanAttribute;
 import org.mesdag.portlib.wrapper.common.extensions.IPortAttributeExtension;
-import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortSoundTypeExtension;
 import org.mesdag.portlib.wrapper.common.world.PortAddCarversBiomeModifier;
 import org.mesdag.portlib.wrapper.sounds.PortSoundEvents;
@@ -56,7 +59,7 @@ public class PortLib {
     public static final String MODID = "portlib";
     public static final Logger LOGGER = LoggerFactory.getLogger("PortLib");
     @Diff
-    public static final PortNetworkHandler NETWORK_HANDLER = new PortNetworkHandler(MODID, "1");
+    private static PortNetworkHandler NETWORK_HANDLER;
 
     private static final PortAttributeRegistration ATTRIBUTES = PortRegisterHandler.attribute(MODID);
     public static final PortRegistryEntry<Attribute, RangedAttribute> BLOCK_BREAK_SPEED = ATTRIBUTES.register(
@@ -183,9 +186,6 @@ public class PortLib {
         PortEventHooks.init();
         PortAttachmentInternals.init();
         PortDataMapLoader.init();
-        PortConfigurationManager.init();
-        IPortLivingEntity.init();
-        IPortEntityExtension.init();
         IEventBus eventBus = context.getModEventBus();
         PortSoundEvents.register(eventBus);
         GLOBAL_LOOT_MODIFIERS.register(eventBus);
@@ -223,6 +223,22 @@ public class PortLib {
                 ITEMS.getEntries().forEach(event::accept);
             }
         });
+
+        PortEventHandler.addListener((PortRegisterPayloadHandlersEvent event) -> {
+            NETWORK_HANDLER = event.registrar("1")
+                    .registerInGameS2C(PortSyncEffectParticlesS2C.class, PortSyncEffectParticlesS2C.IDENTIFIER, PortSyncEffectParticlesS2C.STREAM_CODEC)
+                    .registerInGameS2C(PortAdvancedAddEntityPayload.class, PortAdvancedAddEntityPayload.ID, PortAdvancedAddEntityPayload.STREAM_CODEC, PortAdvancedAddEntityPayload::handle)
+                    .registerInGameS2C(PortSyncAttachmentsPayload.class, PortSyncAttachmentsPayload.IDENTIFIER, PortSyncAttachmentsPayload.STREAM_CODEC)
+
+                    .registerLoginS2C(PortConfigurationFinishedPayload.class, PortConfigurationFinishedPayload.IDENTIFIER, PortConfigurationFinishedPayload.STREAM_CODEC)
+                    .registerLoginS2C(PortConfigurationFragmentPayload.class, PortConfigurationFragmentPayload.IDENTIFIER, PortConfigurationFragmentPayload.STREAM_CODEC)
+
+                    .getDelegate();
+        });
+    }
+
+    public static PortNetworkHandler getNetworkHandler() {
+        return NETWORK_HANDLER;
     }
 
     public static ResourceLocation asResource(String path) {

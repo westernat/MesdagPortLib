@@ -5,9 +5,11 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.mesdag.portlib.PortLib;
 
 public class PortEnvironment {
     public static boolean isPhysicalClient() {
@@ -52,5 +54,14 @@ public class PortEnvironment {
     /// 可于游戏加载早期阶段判断
     public static boolean isModLoaded(String modid) {
         return LoadingModList.get().getModFileById(modid) != null;
+    }
+
+    @SuppressWarnings("removal")
+    public static String getCallerModId() {
+        try {
+            return ModLoadingContext.get().getContainer().getModId();
+        } catch (Exception e) {
+            return PortLib.MODID;
+        }
     }
 }

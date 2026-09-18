@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.ApiStatus;
-import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.IPortAttachmentCopyHandler;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.Diff;
@@ -47,12 +46,6 @@ public final class PortAttachmentInternals {
 
     @ApiStatus.Internal
     public static void init() {
-        PortLib.NETWORK_HANDLER.registerInGameS2C(
-                PortSyncAttachmentsPayload.class,
-                PortSyncAttachmentsPayload.IDENTIFIER,
-                PortSyncAttachmentsPayload.STREAM_CODEC,
-                PortSyncAttachmentsPayload::handle
-        );
         PortEventHandler.addListener(PortEventPriority.LOWEST, (PlayerEvent.Clone event) -> IPortEntityExtension.of(event.getEntity()).copyAttachmentsFrom(event.getOriginal(), event.isWasDeath()));
         PortEventHandler.addListener(PortEventPriority.LOWEST, (LivingConversionEvent.Post event) -> IPortEntityExtension.of(event.getOutcome()).copyAttachmentsFrom(event.getEntity(), true));
     }

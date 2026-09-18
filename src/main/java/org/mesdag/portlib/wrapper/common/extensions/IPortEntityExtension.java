@@ -12,10 +12,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
-import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentType;
 import org.mesdag.portlib.diff.IPortEntity;
 import org.mesdag.portlib.diff.IPortEntityDimensions;
@@ -169,7 +167,7 @@ public interface IPortEntityExtension {
 
     default void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> bundleBuilder) {
         if (this instanceof IPortEntityWithComplexSpawn) {
-            bundleBuilder.accept(PortLib.NETWORK_HANDLER.toVanillaClientbound(new PortAdvancedAddEntityPayload(self())));
+            bundleBuilder.accept(new PortAdvancedAddEntityPayload(self()).toVanillaClientbound());
         }
     }
 
@@ -210,15 +208,5 @@ public interface IPortEntityExtension {
 
     static IPortEntityExtension of(Entity entity) {
         return (IPortEntityExtension) entity;
-    }
-
-    @ApiStatus.Internal
-    static void init() {
-        PortLib.NETWORK_HANDLER.registerInGameS2C(
-                PortAdvancedAddEntityPayload.class,
-                PortAdvancedAddEntityPayload.ID,
-                PortAdvancedAddEntityPayload.STREAM_CODEC,
-                PortAdvancedAddEntityPayload::handle
-        );
     }
 }

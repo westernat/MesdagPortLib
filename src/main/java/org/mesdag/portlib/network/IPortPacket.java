@@ -3,6 +3,9 @@ package org.mesdag.portlib.network;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +13,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.diff.Diff;
+import org.mesdag.portlib.util.Final;
 
 import java.util.function.Consumer;
 
@@ -19,12 +23,28 @@ public interface IPortPacket {
 
     ResourceLocation identifier();
 
+    @Final
+    default Packet<ClientGamePacketListener> toVanillaClientbound() {
+        return PortPacketDistributor.distribute(this).toVanillaClientbound(this);
+    }
+
+    @Final
+    default Packet<ServerGamePacketListener> toVanillaServerbound() {
+        return PortPacketDistributor.distribute(this).toVanillaServerbound(this);
+    }
+
     interface C2S extends IPortPacket {
         @Override
         default void handle(Context context) {
             if (context.player instanceof ServerPlayer player) {
                 context.enqueueWork(() -> work(player));
             }
+        }
+
+        @Final
+        @Override
+        default Packet<ClientGamePacketListener> toVanillaClientbound() {
+            throw new UnsupportedOperationException();
         }
 
         void work(ServerPlayer player);
@@ -36,6 +56,12 @@ public interface IPortPacket {
             if (context.player != null) {
                 context.enqueueWork(() -> work(context.player));
             }
+        }
+
+        @Final
+        @Override
+        default Packet<ServerGamePacketListener> toVanillaServerbound() {
+            throw new UnsupportedOperationException();
         }
 
         void work(Player player);

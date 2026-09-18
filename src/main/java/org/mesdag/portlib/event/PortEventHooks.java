@@ -10,15 +10,16 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.registries.NewRegistryEvent;
-import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.client.PortRegisterMenuScreensEvent;
 import org.mesdag.portlib.event.client.extensions.common.PortRegisterClientExtensionsEvent;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
+import org.mesdag.portlib.event.network.PortRegisterPayloadHandlersEvent;
 import org.mesdag.portlib.event.other.PortBlockEntityTypeAddBlocksEvent;
 import org.mesdag.portlib.event.registries.PortModifyRegistriesEvent;
 import org.mesdag.portlib.event.registries.PortNewRegistryEvent;
@@ -37,7 +38,8 @@ public class PortEventHooks {
     private static final Map<Class<? extends PortEvent<?>>, Class<? extends Event>> rawGetter = new Reference2ObjectOpenHashMap<>();
     private static final Table<Class<? extends Event>, Class<? extends PortEvent<?>>, Predicate<? extends Event>> predicates = HashBasedTable.create();
 
-    @ApiStatus.Internal
+    private static boolean setup;
+
     @Diff
     public static void init() {
         // 以下是在相似阶段发布forge没有的事件，不是没有对应上事件！！！
@@ -48,6 +50,14 @@ public class PortEventHooks {
             PortEventHandler.postEvent(new PortRegisterMenuScreensEvent());
         });
         PortEventHandler.wrapEvent(PortEventPriority.HIGHEST, NewRegistryEvent.class, PortNewRegistryEvent::new);
+        PortEventHandler.addListener((FMLLoadCompleteEvent event) -> event.enqueueWork(() -> {
+            if (setup) {
+                throw new IllegalStateException("The network registry can only be setup once.");
+            }
+            // 为了能够正确获得PortEnvironment.getCallerModId()
+            ModLoader.get().postEventWrapContainerInModOrder(new PortRegisterPayloadHandlersEvent());
+            setup = true;
+        }));
     }
 
     private static void validateIfAbstract(Class<? extends Event> clazz) {
@@ -156,7 +166,7 @@ public class PortEventHooks {
                 } else {
                     PortBus bus = IModBusEvent.class.isAssignableFrom(rawFrom) ? PortBus.MOD : PortBus.GAME;
                     Predicate<F> predicate = (Predicate<F>) predicates.get(rawFrom, from);
-                    bus.unwrap(getCallerModId()).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
+                    bus.unwrap(PortEnvironment.getCallerModId()).addListener(priority.unwrap(), receiveCancelled, rawFrom, raw -> {
                         if (predicate == null || predicate.test(raw)) {
                             consumer.accept((F) wrapper.apply(raw));
                         }
@@ -165,21 +175,12 @@ public class PortEventHooks {
             }
         } else {
             PortBus bus = IModBusEvent.class.isAssignableFrom(from) ? PortBus.MOD : PortBus.GAME;
-            bus.unwrap(getCallerModId()).addListener(priority.unwrap(), receiveCancelled, from, consumer);
+            bus.unwrap(PortEnvironment.getCallerModId()).addListener(priority.unwrap(), receiveCancelled, from, consumer);
         }
     }
 
     @Diff
     public static void fireChunkSent(ServerPlayer entity, LevelChunk chunk, ServerLevel level) {
         PortEventHandler.postEvent(new PortChunkWatchEvent.Sent(entity, chunk, level));
-    }
-
-    @SuppressWarnings("removal")
-    private static String getCallerModId() {
-        try {
-            return ModLoadingContext.get().getContainer().getModId();
-        } catch (Exception e) {
-            return PortLib.MODID;
-        }
     }
 }

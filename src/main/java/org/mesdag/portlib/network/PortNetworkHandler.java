@@ -56,40 +56,6 @@ public class PortNetworkHandler {
         }, PortBundledPacket.class, null);
     }
 
-    public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_CLIENT);
-    }
-
-    public <P extends IPortPacket.S2C> void registerInGameS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
-        registerInGameS2C(clazz, identifier, codec, IPortPacket.S2C::handle);
-    }
-
-    public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.PLAY_TO_SERVER);
-    }
-
-    public <P extends IPortPacket.C2S> void registerInGameC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
-        registerInGameC2S(clazz, identifier, codec, IPortPacket.C2S::handle);
-    }
-
-    /// 登录期（LOGIN 协议内、进世界之前）方向：与 registerLoginS2C/registerLoginC2S 配套的是
-    /// {@link #sendLoginToClient(Connection, int, IPortPacket)} 走 fml:loginwrapper 信封发送。
-    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> s2c(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_CLIENT);
-    }
-
-    public <P extends IPortPacket.S2C> void registerLoginS2C(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
-        registerLoginS2C(clazz, identifier, codec, IPortPacket.S2C::handle);
-    }
-
-    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, codec, (p, s) -> c2s(p, s, handler), clazz, PortNetworkDirection.LOGIN_TO_SERVER);
-    }
-
-    public <P extends IPortPacket.C2S> void registerLoginC2S(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec) {
-        registerLoginC2S(clazz, identifier, codec, IPortPacket.C2S::handle);
-    }
-
     public ResourceLocation channelName() {
         return channelName;
     }
@@ -119,21 +85,7 @@ public class PortNetworkHandler {
         manager.send(NetworkDirection.LOGIN_TO_CLIENT.buildPacket(Pair.of(envelope, sequence), LoginWrapper.WRAPPER).getThis());
     }
 
-    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec, BiConsumer<P, IPortPacket.Context> handler) {
-        register(identifier, (PortStreamCodec<? super FriendlyByteBuf, P>) codec, (p, s) -> {
-            if (s.get().getDirection().getOriginationSide().isServer()) {
-                s2c(p, s, handler);
-            } else {
-                c2s(p, s, handler);
-            }
-        }, clazz, null);
-    }
-
-    public <P extends IPortPacket> void registerInGameBidirectional(Class<P> clazz, ResourceLocation identifier, PortStreamCodec<? super PortRegistryFriendlyByteBuf, P> codec) {
-        registerInGameBidirectional(clazz, identifier, codec, IPortPacket::handle);
-    }
-
-    private <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
+    <P extends IPortPacket> void s2c(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> C.handle(p, s, handler, channel));
     }
 
@@ -145,18 +97,21 @@ public class PortNetworkHandler {
         }
     }
 
-    private <P extends IPortPacket> void c2s(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
+    <P extends IPortPacket> void c2s(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
         NetworkEvent.Context context = s.get();
         handler.accept(p, IPortPacket.Context.wrap(context.getSender(), context, channel));
         context.setPacketHandled(true);
     }
 
-    private <P extends IPortPacket> void register(ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
+    <P extends IPortPacket> void register(ResourceLocation identifier, PortStreamCodec<? super FriendlyByteBuf, P> codec, BiConsumer<P, Supplier<NetworkEvent.Context>> handler, Class<?> packetClass, @Nullable PortNetworkDirection direction) {
         channel.registerMessage(
                 packetId++, (Class<P>) packetClass,
                 (v, b) -> codec.encode(IPortFriendlyByteBufExtension.of(b).wrap(), v), b -> codec.decode(IPortFriendlyByteBufExtension.of(b).wrap()),
                 handler, direction == null ? Optional.empty() : Optional.of(direction.unwrap()));
-        codecMap.put(identifier, codec);
+        if (packetClass != PortBundledPacket.class) {
+            codecMap.put(identifier, codec);
+            PortPacketDistributor.PACKET_OWNER.put(identifier, this);
+        }
     }
 
     /// s2c
@@ -203,8 +158,6 @@ public class PortNetworkHandler {
     }
 
     public void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos pos, IPortPacket packet, IPortPacket... packets) {
-        // 世界生成线程可能在区块尚未完成时同步数据；这里若调用 getChunk 会等待当前生成任务，
-        // 形成工作线程等待自身的死锁。直接读取跟踪者列表不会加载区块，也符合该方法的语义。
         for (ServerPlayer player : level.getChunkSource().chunkMap.getPlayers(pos, false)) {
             sendToPlayer(player, packet, packets);
         }

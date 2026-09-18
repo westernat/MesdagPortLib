@@ -12,7 +12,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.mesdag.portlib.PortLib;
 import org.mesdag.portlib.attachment.PortAttachmentSyncHandler;
@@ -24,6 +23,7 @@ import org.mesdag.portlib.event.PortEventHandler;
 import org.mesdag.portlib.event.level.PortChunkWatchEvent;
 import org.mesdag.portlib.network.IPortPacket;
 import org.mesdag.portlib.network.PortConnectionType;
+import org.mesdag.portlib.network.PortPacketDistributor;
 import org.mesdag.portlib.network.PortRegistryFriendlyByteBuf;
 import org.mesdag.portlib.registries.PortCustomRegistration;
 import org.mesdag.portlib.registries.PortRegisterHandler;
@@ -55,7 +55,6 @@ public final class PortAttachmentSync {
         }
     };
 
-    @ApiStatus.Internal
     @Diff
     public static void init() {
         PortEventHandler.addListener((PortChunkWatchEvent.Sent event) -> {
@@ -71,7 +70,7 @@ public final class PortAttachmentSync {
                 }
             }
             if (!packets.isEmpty()) {
-                PortLib.NETWORK_HANDLER.sendToPlayer(event.getPlayer(), PortBundledPacket.makePacket(packets));
+                PortPacketDistributor.sendToPlayer(event.getPlayer(), PortBundledPacket.makePacket(packets));
             }
         });
     }
@@ -112,7 +111,7 @@ public final class PortAttachmentSync {
         var packet = new PortSyncAttachmentsPayload(syncTarget(holder), List.of(type), data);
         for (var player : players) {
             if (type.syncHandler.sendToPlayer(holder.getExposedHolder(), player)) {
-                PortLib.NETWORK_HANDLER.sendToPlayer(player, packet);
+                PortPacketDistributor.sendToPlayer(player, packet);
             }
         }
     }
@@ -189,21 +188,21 @@ public final class PortAttachmentSync {
     public static void syncInitialEntityAttachments(Entity entity, ServerPlayer to, Consumer<Packet<ClientGamePacketListener>> packetConsumer) {
         var packet = syncInitialAttachments(CPortAttachmentHolder.of(entity), to);
         if (packet != null) {
-            packetConsumer.accept(PortLib.NETWORK_HANDLER.toVanillaClientbound(packet));
+            packetConsumer.accept(packet.toVanillaClientbound());
         }
     }
 
     public static void syncInitialPlayerAttachments(ServerPlayer player) {
         var packet = syncInitialAttachments(CPortAttachmentHolder.of(player), player);
         if (packet != null) {
-            PortLib.NETWORK_HANDLER.sendToPlayer(player, packet);
+            PortPacketDistributor.sendToPlayer(player, packet);
         }
     }
 
     public static void syncInitialLevelAttachments(ServerLevel level, ServerPlayer to) {
         var packet = syncInitialAttachments(CPortAttachmentHolder.of(level), to);
         if (packet != null) {
-            PortLib.NETWORK_HANDLER.sendToPlayer(to, packet);
+            PortPacketDistributor.sendToPlayer(to, packet);
         }
     }
 

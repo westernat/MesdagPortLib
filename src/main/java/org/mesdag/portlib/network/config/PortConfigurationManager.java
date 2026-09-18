@@ -59,34 +59,11 @@ public final class PortConfigurationManager {
     /// 分片数据块大小。
     public static final int FRAGMENT_CHUNK_BYTES = 64 * 1024;
 
-    private static final AttributeKey<Runnable> CLIENT_CONTINUATION =
-            AttributeKey.valueOf("portlib:client_configuration_continuation");
-    private static final AttributeKey<ServerStage> SERVER_STAGE =
-            AttributeKey.valueOf("portlib:server_configuration_stage");
-    private static final AttributeKey<FragmentAccumulator> FRAGMENT_BUFFER =
-            AttributeKey.valueOf("portlib:configuration_fragment_buffer");
-
-    private static boolean registered = false;
+    private static final AttributeKey<Runnable> CLIENT_CONTINUATION = AttributeKey.valueOf("portlib:client_configuration_continuation");
+    private static final AttributeKey<ServerStage> SERVER_STAGE = AttributeKey.valueOf("portlib:server_configuration_stage");
+    private static final AttributeKey<FragmentAccumulator> FRAGMENT_BUFFER = AttributeKey.valueOf("portlib:configuration_fragment_buffer");
 
     private PortConfigurationManager() {}
-
-    /// 注册配置阶段消息（“完成”标记 + 分片消息）与框架自身初始化。
-    /// 须在 mod 构造阶段调用一次（`PortLib` 构造器、`PortNetworkHandler.init()` 之后）。
-    public static void init() {
-        if (registered) return;
-        registered = true;
-        PortNetworkHandler networkHandler = PortLib.NETWORK_HANDLER;
-        networkHandler.registerLoginS2C(
-                PortConfigurationFinishedPayload.class,
-                PortConfigurationFinishedPayload.IDENTIFIER,
-                PortConfigurationFinishedPayload.STREAM_CODEC
-        );
-        networkHandler.registerLoginS2C(
-                PortConfigurationFragmentPayload.class,
-                PortConfigurationFragmentPayload.IDENTIFIER,
-                PortConfigurationFragmentPayload.STREAM_CODEC
-        );
-    }
 
     /// 对端是否是 PortLib（两边都登记了 `portlib:main` 频道）。
     ///
@@ -214,7 +191,7 @@ public final class PortConfigurationManager {
         private void sendLogin(IPortPacket.S2C payload) {
             byte[] fields = serialize(payload);
             if (fields == null || fields.length <= MAX_SINGLE_LOGIN_PAYLOAD_BYTES) {
-                PortLib.NETWORK_HANDLER.sendLoginToClient(connection, seq++, payload);
+                PortLib.getNetworkHandler().sendLoginToClient(connection, seq++, payload);
                 return;
             }
 
@@ -228,7 +205,7 @@ public final class PortConfigurationManager {
                         first, last, payload.identifier(),
                         Arrays.copyOfRange(fields, from, to)
                 );
-                PortLib.NETWORK_HANDLER.sendLoginToClient(connection, seq++, part);
+                PortLib.getNetworkHandler().sendLoginToClient(connection, seq++, part);
             }
         }
 
