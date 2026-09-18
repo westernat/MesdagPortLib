@@ -28,7 +28,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.mesdag.portlib.datamap.PortDataMapType;
 import org.mesdag.portlib.datamap.builtin.PortCompostable;
 import org.mesdag.portlib.datamap.builtin.PortFurnaceFuel;
-import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.diff.PortAdvancedAddEntityPayload;
 import org.mesdag.portlib.diff.PortRegistries;
 import org.mesdag.portlib.diff.PortSyncEffectParticlesS2C;
@@ -58,7 +57,6 @@ import org.slf4j.LoggerFactory;
 public class PortLib {
     public static final String MODID = "portlib";
     public static final Logger LOGGER = LoggerFactory.getLogger("PortLib");
-    @Diff
     private static PortNetworkHandler NETWORK_HANDLER;
 
     private static final PortAttributeRegistration ATTRIBUTES = PortRegisterHandler.attribute(MODID);
