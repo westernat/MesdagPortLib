@@ -36,6 +36,7 @@ public abstract class PortItemEntityPickupEvent<E extends PlayerEvent> extends P
 
         public void setCanPickup(PortTriState state) {
             e.setResult(state.unwrapResult());
+            e.setCanceled(state == PortTriState.FALSE);
         }
 
         public PortTriState canPickup() {
