@@ -542,13 +542,11 @@ public interface PortByteBufCodecs {
     static <V> PortStreamCodec<ByteBuf, V> idMapper(IntFunction<V> idLookup, ToIntFunction<V> idGetter) {
         return new PortStreamCodec<>() {
             public V decode(ByteBuf buffer) {
-                int i = PortVarInt.read(buffer);
-                return idLookup.apply(i);
+                return idLookup.apply(PortVarInt.read(buffer));
             }
 
             public void encode(ByteBuf buffer, V value) {
-                int i = idGetter.applyAsInt(value);
-                PortVarInt.write(buffer, i);
+                PortVarInt.write(buffer, idGetter.applyAsInt(value));
             }
         };
     }
