@@ -35,6 +35,7 @@ import org.mesdag.portlib.wrapper.common.PortEffectCures;
 import org.mesdag.portlib.wrapper.common.damagesource.PortDamageContainer;
 import org.mesdag.portlib.wrapper.common.extensions.IPortLivingEntityExtension;
 import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectInstanceExtension;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -150,7 +151,7 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return portlib$ev.get().shieldDamage();
     }
 
-    @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;setSpeed(F)V"))
+    @Inject(method = "hurt", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;walkAnimation:Lnet/minecraft/world/entity/WalkAnimationState;", opcode = Opcodes.GETFIELD))
     private void updateContainer(CallbackInfoReturnable<Boolean> cir, @Local(argsOnly = true) float amount) {
         portlib$damageContainers.peek().setNewDamage(amount);
     }
