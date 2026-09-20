@@ -91,7 +91,7 @@ public class PortEntityAttachments {
 
             for (PortEntityAttachment attachment : PortEntityAttachment.values()) {
                 List<Vec3> list = this.attachments.get(attachment);
-                map.put(attachment, list != null ? List.copyOf(list) : attachment.createFallbackPoints(width, height));
+                map.put(attachment, list != null ? list : attachment.createFallbackPoints(width, height));
             }
 
             return new PortEntityAttachments(map);

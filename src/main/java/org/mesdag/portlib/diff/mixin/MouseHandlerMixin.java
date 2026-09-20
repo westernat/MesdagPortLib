@@ -40,14 +40,14 @@ public abstract class MouseHandlerMixin {
             CallbackInfo ci,
             @Local(argsOnly = true, ordinal = 0) double xOffset,
             @Local(argsOnly = true, ordinal = 1) double yOffset,
-            @Local(name = "d0") double scrollDelta
+            @Local(name = "d0") double d0
     ) {
         PortMouseHandler.xOffset = xOffset;
         PortMouseHandler.yOffset = yOffset;
         if (Minecraft.ON_OSX && yOffset == 0) {
-            PortMouseHandler.scrollDeltaX = scrollDelta;
+            PortMouseHandler.scrollDeltaX = d0;
         } else {
-            PortMouseHandler.scrollDeltaY = scrollDelta;
+            PortMouseHandler.scrollDeltaY = d0;
         }
     }
 }

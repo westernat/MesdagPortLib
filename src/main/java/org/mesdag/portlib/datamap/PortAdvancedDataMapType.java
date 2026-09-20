@@ -6,16 +6,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public final class PortAdvancedDataMapType<R, T, VR extends PortDataMapValueRemover<R, T>> extends PortDataMapType<R, T> {
     private final Codec<VR> remover;
     private final PortDataMapValueMerger<R, T> merger;
 
     private PortAdvancedDataMapType(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec, @Nullable Codec<T> networkCodec, boolean mandatorySync, Codec<VR> remover, PortDataMapValueMerger<R, T> merger) {
         super(registryKey, id, codec, networkCodec, mandatorySync);
-        this.remover = Objects.requireNonNull(remover, "remover must not be null");
-        this.merger = Objects.requireNonNull(merger, "merger must not be null");
+        this.remover = remover;
+        this.merger = merger;
     }
 
     public Codec<VR> remover() {

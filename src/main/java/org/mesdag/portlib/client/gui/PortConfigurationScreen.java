@@ -413,7 +413,7 @@ public class PortConfigurationScreen extends Screen {
         List<String> result = new ArrayList<>(path.size() + 1);
         result.addAll(path);
         result.add(key);
-        return List.copyOf(result);
+        return result;
     }
 
     private static String humanize(String value) {
@@ -480,7 +480,7 @@ public class PortConfigurationScreen extends Screen {
                 throw new IllegalArgumentException("Invalid list value");
             result.add(parsed);
         }
-        return List.copyOf(result);
+        return result;
     }
 
     private static boolean hasNonDefault(UnmodifiableConfig values) {

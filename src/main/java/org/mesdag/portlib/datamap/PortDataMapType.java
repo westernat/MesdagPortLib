@@ -7,8 +7,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
     private final ResourceKey<Registry<R>> registryKey;
     private final ResourceLocation id;
@@ -19,9 +17,9 @@ public sealed class PortDataMapType<R, T> permits PortAdvancedDataMapType {
     PortDataMapType(ResourceKey<Registry<R>> registryKey, ResourceLocation id, Codec<T> codec, @Nullable Codec<T> networkCodec, boolean mandatorySync) {
         Preconditions.checkArgument(networkCodec != null || !mandatorySync, "Mandatory sync cannot be enabled when the attachment isn't synchronized");
 
-        this.registryKey = Objects.requireNonNull(registryKey, "registryKey must not be null");
-        this.id = Objects.requireNonNull(id, "id must not be null");
-        this.codec = Objects.requireNonNull(codec, "codec must not be null");
+        this.registryKey = registryKey;
+        this.id = id;
+        this.codec = codec;
         this.networkCodec = networkCodec;
         this.mandatorySync = mandatorySync;
     }
