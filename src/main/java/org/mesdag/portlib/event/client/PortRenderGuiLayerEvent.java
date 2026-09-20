@@ -12,7 +12,6 @@ import org.mesdag.portlib.event.PortEvent;
 import org.mesdag.portlib.event.PortEventHooks;
 
 public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> extends PortEvent<E> {
-    private ResourceLocation identifier;
     private PortGuiLayer layer;
 
     @Diff
@@ -29,10 +28,7 @@ public abstract class PortRenderGuiLayerEvent<E extends RenderGuiOverlayEvent> e
     }
 
     public ResourceLocation getName() {
-        if (identifier == null) {
-            this.identifier = e.getOverlay().id();
-        }
-        return identifier;
+        return e.getOverlay().id();
     }
 
     public PortGuiLayer getLayer() {

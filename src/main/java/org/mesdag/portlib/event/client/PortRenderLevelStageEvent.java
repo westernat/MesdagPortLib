@@ -77,6 +77,7 @@ public class PortRenderLevelStageEvent extends PortEvent<RenderLevelStageEvent> 
         }
     }
 
+    /// 出于某些原因只能用equals而不是==
     public static class Stage {
         public static final Stage AFTER_SKY = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SKY);
         public static final Stage AFTER_SOLID_BLOCKS = PortRenderLevelStageEventExtension.Stage.wrap(RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
