@@ -92,14 +92,14 @@ public class PortNetworkHandler {
     private static class C {
         private static <P extends IPortPacket> void handle(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler, SimpleChannel channel) {
             NetworkEvent.Context context = s.get();
-            handler.accept(p, IPortPacket.Context.wrap(Minecraft.getInstance().player, context, channel));
+            handler.accept(p, IPortPacket.Context.wrap(() -> Minecraft.getInstance().player, context, channel));
             context.setPacketHandled(true);
         }
     }
 
     <P extends IPortPacket> void c2s(P p, Supplier<NetworkEvent.Context> s, BiConsumer<P, IPortPacket.Context> handler) {
         NetworkEvent.Context context = s.get();
-        handler.accept(p, IPortPacket.Context.wrap(context.getSender(), context, channel));
+        handler.accept(p, IPortPacket.Context.wrap(context::getSender, context, channel));
         context.setPacketHandled(true);
     }
 

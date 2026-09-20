@@ -16,6 +16,7 @@ import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.util.Final;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @SuppressWarnings("all")
 public interface IPortPacket {
@@ -36,7 +37,7 @@ public interface IPortPacket {
     interface C2S extends IPortPacket {
         @Override
         default void handle(Context context) {
-            if (context.player instanceof ServerPlayer player) {
+            if (context.player() instanceof ServerPlayer player) {
                 context.enqueueWork(() -> work(player));
             }
         }
@@ -53,9 +54,12 @@ public interface IPortPacket {
     interface S2C extends IPortPacket {
         @Override
         default void handle(Context context) {
-            if (context.player != null) {
-                context.enqueueWork(() -> work(context.player));
-            }
+            context.enqueueWork(() -> {
+                Player player = context.player();
+                if (player != null) {
+                    work(player);
+                }
+            });
         }
 
         @Final
@@ -68,14 +72,14 @@ public interface IPortPacket {
     }
 
     class Context {
-        private final @Nullable Player player;
+        private final Supplier<@Nullable Player> player;
         private final Connection connection;
         private final Consumer<Runnable> executor;
         private final Consumer<IPortPacket> reply;
         private final Consumer<Component> disconnect;
 
         Context(
-                @Nullable Player player,
+                Supplier<@Nullable Player> player,
                 Connection connection,
                 Consumer<Runnable> executor,
                 Consumer<IPortPacket> reply,
@@ -89,7 +93,7 @@ public interface IPortPacket {
         }
 
         @Diff
-        static Context wrap(@Nullable Player player, NetworkEvent.Context context, SimpleChannel channel) {
+        static Context wrap(Supplier<@Nullable Player> player, NetworkEvent.Context context, SimpleChannel channel) {
             return new Context(
                     player,
                     context.getNetworkManager(),
@@ -100,7 +104,7 @@ public interface IPortPacket {
         }
 
         public @Nullable Player player() {
-            return player;
+            return player.get();
         }
 
         public Connection connection() {
