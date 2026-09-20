@@ -148,7 +148,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
 
     private <T, R> Map<ResourceKey<R>, T> buildDataMap(IForgeRegistry<R> registry, PortDataMapType<R, T> attachment, List<PortDataMapFile<T, R>> entries) {
         record WithSource<T, R>(T attachment, Either<TagKey<R>, ResourceKey<R>> source) {}
-        Map<ResourceKey<R>, WithSource<T, R>> result = new IdentityHashMap<>();
+        Map<ResourceKey<R>, WithSource<T, R>> result = new Reference2ObjectOpenHashMap<>();
         PortDataMapValueMerger<R, T> merger = attachment instanceof PortAdvancedDataMapType<R, T, ?> adv ? adv.merger() : PortDataMapValueMerger.defaultMerger();
         entries.forEach(entry -> {
             if (entry.replace()) {
@@ -190,7 +190,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
                 }
             }
         });
-        Map<ResourceKey<R>, T> newMap = new IdentityHashMap<>();
+        Map<ResourceKey<R>, T> newMap = new Reference2ObjectOpenHashMap<>();
         result.forEach((key, val) -> newMap.put(key, val.attachment()));
 
         return newMap;
@@ -282,7 +282,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
     }
 
     <T> Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>> getInnerMap(ResourceKey<? extends Registry<?>> registryKey) {
-        return (Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>>) (Map) byRegistries.computeIfAbsent(registryKey, r -> new IdentityHashMap<>());
+        return (Map<PortDataMapType<T, ?>, Map<ResourceKey<T>, ?>>) (Map) byRegistries.computeIfAbsent(registryKey, r -> new Reference2ObjectOpenHashMap<>());
     }
 
     public static <R> @Nullable PortDataMapType<R, ?> getDataMap(ResourceKey<? extends Registry<R>> registry, ResourceLocation key) {
@@ -297,7 +297,7 @@ public class PortDataMapLoader implements PreparableReloadListener {
     public static void initDataMaps() {
         Map<ResourceKey<Registry<?>>, Map<ResourceLocation, PortDataMapType<?, ?>>> dataMapTypes = new HashMap<>();
         PortEventHandler.postEvent(new PortRegisterDataMapTypesEvent(dataMapTypes));
-        dataMaps = new IdentityHashMap<>();
+        dataMaps = new Reference2ObjectOpenHashMap<>();
         dataMapTypes.forEach((key, values) -> dataMaps.put(key, Collections.unmodifiableMap(values)));
         dataMaps = Collections.unmodifiableMap(dataMapTypes);
     }

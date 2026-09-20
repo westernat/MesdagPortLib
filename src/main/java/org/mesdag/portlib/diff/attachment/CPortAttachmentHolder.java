@@ -1,5 +1,6 @@
 package org.mesdag.portlib.diff.attachment;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -22,7 +23,6 @@ import org.mesdag.portlib.util.Private;
 import org.mesdag.portlib.util.Protected;
 import org.mesdag.portlib.wrapper.PortEnvironment;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,7 +52,7 @@ public interface CPortAttachmentHolder extends IPortAttachmentHolder {
     @Final
     default Map<PortAttachmentType<?>, Object> getAttachmentMap() {
         if (portlib$attachments() == null) {
-            portlib$attachments(new IdentityHashMap<>(4));
+            portlib$attachments(new Reference2ObjectOpenHashMap<>(4));
         }
         return portlib$attachments();
     }
