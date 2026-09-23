@@ -349,9 +349,9 @@ public abstract class LivingEntityMixin implements IPortLivingEntity, PortSelfGe
         return Mth.lerp((float) getAttributeValue(PortLib.MOVEMENT_EFFICIENCY), original, 1.0F);
     }
 
-    @ModifyArg(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), index = 1)
-    private float applyFallDamageMultiplier(float damage) {
-        return (float) (damage * getAttributeValue(PortLib.FALL_DAMAGE_MULTIPLIER));
+    @ModifyExpressionValue(method = "causeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;calculateFallDamage(FF)I"))
+    private int applyFallDamageMultiplier(int original) {
+        return Math.max(0, Mth.ceil(original * getAttributeValue(PortLib.FALL_DAMAGE_MULTIPLIER)));
     }
 
     @ModifyExpressionValue(method = "calculateFallDamage", at = @At(value = "CONSTANT", args = "floatValue=3.0"))
