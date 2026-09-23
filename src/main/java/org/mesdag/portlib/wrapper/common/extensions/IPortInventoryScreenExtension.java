@@ -13,6 +13,10 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 
 public interface IPortInventoryScreenExtension {
+    /// 1.21.1 的物品栏实体光源；1.20.1 原版主光的 Z 分量为 -1，会把正面照暗。
+    Vector3f INVENTORY_LIGHT_0 = new Vector3f(0.2F, -1.0F, 1.0F).normalize();
+    Vector3f INVENTORY_LIGHT_1 = new Vector3f(-0.2F, -1.0F, 0.0F).normalize();
+
     static void renderEntityInInventoryFollowsMouse(
             GuiGraphics guiGraphics,
             int x1,
@@ -87,7 +91,7 @@ public interface IPortInventoryScreenExtension {
         guiGraphics.pose().scale(scale, scale, -scale);
         guiGraphics.pose().translate(translate.x, translate.y, translate.z);
         guiGraphics.pose().mulPose(pose);
-        Lighting.setupForEntityInInventory();
+        RenderSystem.setShaderLights(INVENTORY_LIGHT_0, INVENTORY_LIGHT_1);
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         if (cameraOrientation != null) {
             dispatcher.overrideCameraOrientation(cameraOrientation.conjugate(new Quaternionf()).rotateY((float) Math.PI));
