@@ -1,8 +1,6 @@
 package org.mesdag.portlib.wrapper.world.effect;
 
 import it.unimi.dsi.fastutil.ints.Int2DoubleFunction;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,14 +17,13 @@ import org.mesdag.portlib.wrapper.common.PortEffectCure;
 import org.mesdag.portlib.wrapper.common.extensions.IPortMobEffectExtension;
 import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public class PortMobEffect extends MobEffect implements IPortMobEffectExtension {
     private final Function<MobEffectInstance, ParticleOptions> particleFactory;
-    private @Nullable Object2ObjectMap<UUID, Int2DoubleFunction> curves;
+    /// 不同属性允许共用修改器 ID，等级曲线必须绑定各自的修改器实例。
+    private @Nullable Map<AttributeModifier, Int2DoubleFunction> curves;
     private Optional<SoundEvent> soundOnAdded = Optional.empty();
 
     protected PortMobEffect(MobEffectCategory category, int color, ParticleOptions particle) {
@@ -58,7 +55,7 @@ public class PortMobEffect extends MobEffect implements IPortMobEffectExtension 
     @Override
     public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {
         if (curves != null) {
-            Int2DoubleFunction curve = curves.get(modifier.getId());
+            Int2DoubleFunction curve = curves.get(modifier);
             if (curve != null) {
                 return curve.get(amplifier);
             }
@@ -71,22 +68,29 @@ public class PortMobEffect extends MobEffect implements IPortMobEffectExtension 
     }
 
     public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, PortAttributeModifier.Operation operation) {
-        getAttributeModifiers().put(attribute, new AttributeModifier(PortAttributeModifier.rl2uuid(id), id.getPath(), amount, operation.unwrap()));
+        replaceModifier(attribute, new AttributeModifier(PortAttributeModifier.rl2uuid(id), id.getPath(), amount, operation.unwrap()));
         return this;
     }
 
     public PortMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, PortAttributeModifier.Operation operation, Int2DoubleFunction curve) {
         UUID uuid = PortAttributeModifier.rl2uuid(id);
-        getAttributeModifiers().put(attribute, new AttributeModifier(uuid, id.getPath(), 0, operation.unwrap()));
-        putCurve(uuid, curve);
+        AttributeModifier modifier = new AttributeModifier(uuid, id.getPath(), 0, operation.unwrap());
+        replaceModifier(attribute, modifier);
+        putCurve(modifier, curve);
         return this;
     }
 
-    private void putCurve(UUID uuid, Int2DoubleFunction curve) {
+    /// 重复登记同一属性时清理旧曲线，固定数值登记也不会继承旧曲线。
+    private void replaceModifier(Attribute attribute, AttributeModifier modifier) {
+        AttributeModifier previous = getAttributeModifiers().put(attribute, modifier);
+        if (curves != null && previous != null) curves.remove(previous);
+    }
+
+    private void putCurve(AttributeModifier modifier, Int2DoubleFunction curve) {
         if (curves == null) {
-            this.curves = new Object2ObjectOpenHashMap<>();
+            this.curves = new IdentityHashMap<>();
         }
-        curves.put(uuid, curve);
+        curves.put(modifier, curve);
     }
 
     public PortMobEffect addAttributeModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, PortAttributeModifier.Operation operation) {
@@ -98,8 +102,9 @@ public class PortMobEffect extends MobEffect implements IPortMobEffectExtension 
     }
 
     public PortMobEffect addAttributeModifier(Attribute attribute, UUID uuid, String name, AttributeModifier.Operation operation, Int2DoubleFunction curve) {
-        getAttributeModifiers().put(attribute, new AttributeModifier(uuid, name, 0, operation));
-        putCurve(uuid, curve);
+        AttributeModifier modifier = new AttributeModifier(uuid, name, 0, operation);
+        replaceModifier(attribute, modifier);
+        putCurve(modifier, curve);
         return this;
     }
 
