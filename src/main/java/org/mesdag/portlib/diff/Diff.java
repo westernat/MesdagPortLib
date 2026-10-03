@@ -23,4 +23,5 @@ import java.lang.annotation.*;
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface Diff {
+    String reason() default "";
 }
