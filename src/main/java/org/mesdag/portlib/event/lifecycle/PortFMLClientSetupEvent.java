@@ -4,9 +4,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.event.PortEventHooks;
 
-public class PortFMLClientSetupEventPort extends PortParallelDispatchEvent<FMLClientSetupEvent> {
+public class PortFMLClientSetupEvent extends PortParallelDispatchEvent<FMLClientSetupEvent> {
     @Diff
-    public PortFMLClientSetupEventPort(FMLClientSetupEvent e) {
+    public PortFMLClientSetupEvent(FMLClientSetupEvent e) {
         super(e);
     }
 

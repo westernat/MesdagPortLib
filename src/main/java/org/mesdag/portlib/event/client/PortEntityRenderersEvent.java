@@ -71,16 +71,17 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
             super(e);
         }
 
-        public Set<PortModel> getSkins() {
+        public Set<Model> getSkins() {
             return PortSets.immutableTransform(e.getSkins(), name -> {
                 if (name.equals("slim")) {
-                    return PortModel.SLIM;
+                    return Model.SLIM;
                 }
-                return PortModel.WIDE;
+                return Model.WIDE;
             });
         }
 
-        public <R extends EntityRenderer<? extends Player>> @Nullable R getSkin(PortModel skinModel) {
+        @SuppressWarnings({"unchecked", "deprecation"})
+        public <R extends EntityRenderer<? extends Player>> @Nullable R getSkin(Model skinModel) {
             return (R) e.getSkin(skinModel.id);
         }
 
@@ -104,13 +105,13 @@ public abstract class PortEntityRenderersEvent<E extends EntityRenderersEvent> e
             PortEventHooks.register();
         }
 
-        public enum PortModel {
+        public enum Model {
             SLIM("slim"),
             WIDE("default");
 
             private final String id;
 
-            PortModel(String id) {
+            Model(String id) {
                 this.id = id;
             }
         }
