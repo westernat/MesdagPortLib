@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,17 +36,21 @@ public abstract class InventoryMixin {
     @Final
     public NonNullList<ItemStack> armor;
 
-    @Inject(method = "hurtArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;get(I)Ljava/lang/Object;"))
-    private void preCollect(
-            CallbackInfo ci,
-            @Local(name = "i") int i,
+    @WrapOperation(method = "hurtArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;get(I)Ljava/lang/Object;"))
+    private <E> E preCollect(
+            NonNullList<E> instance,
+            int index,
+            Operation<E> original,
+            @Share("localI") LocalIntRef i,
             @Share("actions") LocalRef<ItemStack$hurtAndBreakAction[]> actions
     ) {
+        i.set(index);
         ItemStack$hurtAndBreakAction[] arr = actions.get();
         if (arr == null) {
             actions.set(arr = new ItemStack$hurtAndBreakAction[armor.size()]);
         }
-        arr[i] = new ItemStack$hurtAndBreakAction();
+        arr[index] = new ItemStack$hurtAndBreakAction();
+        return original.call(instance, index);
     }
 
     @WrapOperation(method = "hurtArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hurtAndBreak(ILnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
@@ -55,13 +60,13 @@ public abstract class InventoryMixin {
             T entity,
             Consumer<T> onBroken,
             Operation<Void> original,
-            @Local(name = "i") int i,
+            @Share("localI") LocalIntRef i,
             @Share("actions") LocalRef<ItemStack$hurtAndBreakAction[]> actions
     ) {
         if (instance.isEmpty()) return;
         ItemStack$hurtAndBreakAction[] arr = actions.get();
         if (arr == null) return;
-        arr[i].prepare(instance, amount, entity, onBroken, original);
+        arr[i.get()].prepare(instance, amount, entity, onBroken, original);
     }
 
     @Inject(method = "hurtArmor", at = @At("TAIL"))
