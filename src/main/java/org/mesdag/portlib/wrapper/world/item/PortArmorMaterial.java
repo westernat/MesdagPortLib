@@ -93,21 +93,10 @@ public class PortArmorMaterial implements ArmorMaterial {
 
     @Override
     public String getName() {
-        // Forge 1.20.1 builds the armor texture path from this value in
-        // HumanoidArmorLayer#getArmorResource:
-        //   "%s:textures/models/armor/%s_layer_%d%s.png" % (domain, texture, ...)
-        // where domain/texture come from splitting the value on ':'.  Without a ':' the domain
-        // defaults to "minecraft", so a bare "diving" asks for
-        // minecraft:textures/models/armor/diving_layer_1.png and the armor renders invisible.
-        // Return the namespaced form (the same namespace the Layer assetName already carries,
-        // which is what 1.21.1 uses directly) so it resolves under the owning mod's namespace.
-        String raw = name != null ? name : (layers.isEmpty() ? "empty" : layers.get(0).suffix);
-        if (name != null && !raw.isEmpty() && raw.indexOf(':') == -1) {
-            ResourceLocation asset = layers.isEmpty() ? null : layers.get(0).assetName;
-            String namespace = asset != null ? asset.getNamespace() : ResourceLocation.DEFAULT_NAMESPACE;
-            return namespace + ":" + raw;
+        if (name != null) {
+            return name;
         }
-        return raw;
+        return layers.isEmpty() ? "empty" : layers.get(0).suffix;
     }
 
     // todo
