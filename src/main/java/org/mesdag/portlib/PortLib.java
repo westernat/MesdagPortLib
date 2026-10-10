@@ -13,7 +13,6 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -190,14 +189,13 @@ public class PortLib {
         BIOME_MODIFIER_SERIALIZERS.register(eventBus);
         BLOCKS.getEntries().forEach(block -> BLOCKS.addAlias(ResourceLocation.withDefaultNamespace(block.getId().getPath()), block.getId()));
         ITEMS.getEntries().forEach(item -> ITEMS.addAlias(ResourceLocation.withDefaultNamespace(item.getId().getPath()), item.getId()));
-        PortEventHandler.addListener((RegisterCapabilitiesEvent event) -> {
+
+        PortEventHandler.addListener((EntityAttributeModificationEvent event) -> {
 //            ForcedChunkManager
             PortDataMapLoader.initDataMaps();
             PortModifyDefaultComponentsEvent.modifyComponents();
 //            extendPoiTypes
-        });
 
-        PortEventHandler.addListener((EntityAttributeModificationEvent event) -> {
             for (EntityType<? extends LivingEntity> type : event.getTypes()) {
                 if (type == EntityType.PLAYER) continue;
                 for (PortRegistryEntry<Attribute, Attribute> entry : ATTRIBUTES.getEntries()) {
