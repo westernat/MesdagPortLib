@@ -98,7 +98,8 @@
         "UnitMixin",
         "WitchMixin",
         "WitherBossMixin",
-        "WorkAtComposterAccessor"
+        "WorkAtComposterAccessor",
+        "compat.neobackports.RegistryLookupWrapperMixin"
     ],
     "injectors": {
         "defaultRequire": 1
