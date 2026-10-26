@@ -17,7 +17,7 @@ public abstract class RegistryLookupWrapperMixin<T> {
 
     @Dynamic
     @SuppressWarnings("EqualsBetweenInconvertibleTypes")
-    @ModifyReturnValue(method = "canSerializeIn", at = @At(value = "RETURN", ordinal = 1))
+    @ModifyReturnValue(method = "canSerializeIn", at = @At(value = "RETURN", ordinal = 1)) // remap in build.gradle
     private boolean useEquals(boolean original, HolderOwner<T> owner) {
         return owner.equals(this);
     }

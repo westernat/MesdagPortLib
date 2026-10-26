@@ -3,6 +3,7 @@ package org.mesdag.portlib.network;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import org.mesdag.portlib.diff.Diff;
 import org.mesdag.portlib.network.codec.PortStreamCodec;
 
 import java.util.function.BiConsumer;
@@ -16,6 +17,7 @@ public class PortPayloadHandler {
         this.delegate = new PortNetworkHandler(namespace, version);
     }
 
+    @Diff
     public PortNetworkHandler getDelegate() {
         return delegate;
     }
