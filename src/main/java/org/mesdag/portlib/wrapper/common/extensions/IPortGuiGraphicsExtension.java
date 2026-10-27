@@ -10,9 +10,6 @@ import org.mesdag.portlib.diff.PortModelManager;
 
 @SuppressWarnings("all")
 public interface IPortGuiGraphicsExtension {
-    String GUI_SPRITE_DIRECTORY = "textures/gui/sprites/";
-    String PNG_SUFFIX = ".png";
-
     private GuiGraphics self() {
         return (GuiGraphics) this;
     }
@@ -22,13 +19,13 @@ public interface IPortGuiGraphicsExtension {
     }
 
     default void blitSprite(ResourceLocation sprite, int x, int y, int width, int height, int textureWidth, int textureHeight) {
-        if (sprite.getPath().endsWith(PNG_SUFFIX)) {
-            if (!sprite.getPath().startsWith(GUI_SPRITE_DIRECTORY)) {
+        if (sprite.getPath().endsWith(".png")) {
+            if (!sprite.getPath().startsWith("textures/gui/sprites/")) {
                 self().blit(sprite, x, y, width, height, 0.0F, 0.0F, textureWidth, textureHeight, textureWidth, textureHeight);
                 return;
             }
 
-            sprite = sprite.withPath(path -> path.substring(GUI_SPRITE_DIRECTORY.length(), path.length() - PNG_SUFFIX.length()));
+            sprite = sprite.withPath(path -> path.substring("textures/gui/sprites/".length(), path.length() - ".png".length()));
         }
 
         blitSprite(sprite, x, y, width, height);
@@ -51,13 +48,13 @@ public interface IPortGuiGraphicsExtension {
     }
 
     default void blitSprite(ResourceLocation sprite, int textureWidth, int textureHeight, int uPosition, int vPosition, int x, int y, int uWidth, int vHeight) {
-        if (sprite.getPath().endsWith(PNG_SUFFIX)) {
-            if (!sprite.getPath().startsWith(GUI_SPRITE_DIRECTORY)) {
+        if (sprite.getPath().endsWith(".png")) {
+            if (!sprite.getPath().startsWith("textures/gui/sprites/")) {
                 self().blit(sprite, x, y, uPosition, vPosition, uWidth, vHeight, textureWidth, textureHeight);
                 return;
             }
 
-            sprite = sprite.withPath(path -> path.substring(GUI_SPRITE_DIRECTORY.length(), path.length() - PNG_SUFFIX.length()));
+            sprite = sprite.withPath(path -> path.substring("textures/gui/sprites/".length(), path.length() - ".png".length()));
         }
 
         blitSprite(sprite, textureWidth, textureHeight, uPosition, vPosition, x, y, 0, uWidth, vHeight);
