@@ -38,6 +38,8 @@ public final class PortConfigSpec {
 
     // ==================== Core ====================
 
+    private static final Map<String, Map<String, PortConfigSpec>> REGISTRY = new LinkedHashMap<>();
+
     private final String modId;
     private final String fileName;
     private final ConfigSpec spec;
@@ -82,6 +84,9 @@ public final class PortConfigSpec {
         }
         fileConfig.save();
         loaded = true;
+        synchronized (REGISTRY) {
+            REGISTRY.computeIfAbsent(modId, ignored -> new LinkedHashMap<>()).put(fileName, this);
+        }
         PortLib.LOGGER.debug("PortConfigSpec [{}/{}] loaded", modId, fileName);
     }
 
@@ -89,10 +94,28 @@ public final class PortConfigSpec {
         if (fileConfig != null) fileConfig.save();
     }
 
+    /// 获取指定模组已加载的启动配置，按注册顺序展示。
+    public static List<PortConfigSpec> getLoadedConfigs(String modId) {
+        synchronized (REGISTRY) {
+            return List.copyOf(REGISTRY.getOrDefault(modId, Map.of()).values());
+        }
+    }
+
+    String comment(String path) {return comments.get(path);}
+
+    public String fileName() {return fileName;}
+
+    public List<ConfigValue<?>> values() {return List.copyOf(values);}
+
+    /// 界面使用与文件加载相同的配置规范校验值。
+    public boolean test(ConfigValue<?> value, Object candidate) {
+        return candidate != null && spec.isCorrect(value.getPath(), candidate);
+    }
+
     public boolean isLoaded() {return loaded;}
 
     public Path configPath() {
-        return PortPaths.configdir().resolve(modId).resolve(fileName);
+        return PortPaths.configdir().resolve(fileName);
     }
 
     // ==================== Builder ====================
@@ -158,7 +181,7 @@ public final class PortConfigSpec {
         public IntValue defineInRange(String path, int defaultValue, int min, int max, String comment) {
             String full = resolve(path);
             spec.defineInRange(full, defaultValue, min, max);
-            IntValue v = new IntValue(full, defaultValue);
+            IntValue v = new IntValue(full, defaultValue, min, max);
             values.add(v);
             if (comment != null) comments.put(full, comment);
             return v;
@@ -224,11 +247,21 @@ public final class PortConfigSpec {
         }
 
         public <T> ListValue<T> defineList(String path, List<T> defaultValue, Predicate<Object> elementValidator) {
+            return defineList(path, defaultValue, null, elementValidator);
+        }
+
+        /// 新元素供应器提供编辑初值，最终仍须通过元素校验。
+        public <T> ListValue<T> defineList(String path, List<T> defaultValue, Supplier<T> newElementSupplier, Predicate<Object> elementValidator) {
             String full = resolve(path);
             spec.defineList(full, defaultValue, elementValidator);
-            ListValue<T> v = new ListValue<>(full, defaultValue);
+            ListValue<T> v = new ListValue<>(full, defaultValue, newElementSupplier, elementValidator);
             values.add(v);
             return v;
+        }
+
+        /// 允许空列表，并为配置界面提供新元素初值。
+        public <T> ListValue<T> defineListAllowEmpty(String path, List<T> defaultValue, Supplier<T> newElementSupplier, Predicate<Object> elementValidator) {
+            return defineList(path, defaultValue, newElementSupplier, elementValidator);
         }
 
         public PortConfigSpec build() {
@@ -242,6 +275,7 @@ public final class PortConfigSpec {
         protected final String path;
         protected final T defaultValue;
         protected volatile CommentedFileConfig config;
+        private T startupValue;
 
         ConfigValue(String path, T defaultValue) {
             this.path = path;
@@ -250,10 +284,16 @@ public final class PortConfigSpec {
 
         void resolve(CommentedFileConfig config) {
             this.config = config;
+            this.startupValue = getRaw();
         }
 
+        /// 启动配置在游戏运行期间保持启动时的值；界面读取尚未生效的原始值。
         @Override
         public T get() {
+            return config != null ? startupValue : defaultValue;
+        }
+
+        public T getRaw() {
             return config != null ? config.getOrElse(path, defaultValue) : defaultValue;
         }
 
@@ -265,6 +305,8 @@ public final class PortConfigSpec {
         }
 
         public String getPath() {return path;}
+
+        public T getDefault() {return defaultValue;}
     }
 
     public static final class BooleanValue extends ConfigValue<Boolean> {
@@ -296,8 +338,13 @@ public final class PortConfigSpec {
     }
 
     public static final class IntValue extends NumberValue<Integer> {
-        IntValue(String path, int defaultValue) {
+        final int min;
+        final int max;
+
+        IntValue(String path, int defaultValue, int min, int max) {
             super(path, defaultValue);
+            this.min = min;
+            this.max = max;
         }
     }
 
@@ -326,13 +373,24 @@ public final class PortConfigSpec {
     }
 
     public static final class ListValue<T> extends ConfigValue<List<T>> {
-        ListValue(String path, List<T> defaultValue) {
-            super(path, defaultValue);
+        private final Supplier<T> newElementSupplier;
+        private final Predicate<Object> elementValidator;
+
+        ListValue(String path, List<T> defaultValue, Supplier<T> newElementSupplier, Predicate<Object> elementValidator) {
+            super(path, List.copyOf(defaultValue));
+            this.newElementSupplier = newElementSupplier;
+            this.elementValidator = elementValidator;
         }
+
+        public Supplier<T> getNewElementSupplier() {return newElementSupplier;}
+
+        public boolean testElement(Object value) {return elementValidator.test(value);}
+
+        public boolean test(List<?> values) {return values.stream().allMatch(elementValidator);}
 
         @SuppressWarnings("unchecked")
         @Override
-        public List<T> get() {
+        public List<T> getRaw() {
             if (config == null) return defaultValue;
             List<?> raw = config.getOrElse(path, Collections.emptyList());
             if (raw.isEmpty()) return Collections.emptyList();

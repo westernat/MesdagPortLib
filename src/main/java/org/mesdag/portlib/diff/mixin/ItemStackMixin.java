@@ -90,7 +90,7 @@ public abstract class ItemStackMixin implements IPortItemStack {
 
     @Inject(method = "forgeInit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;gatherCapabilities(Ljava/util/function/Supplier;)V"), remap = false)
     private void init(CallbackInfo ci) {
-        assert delegate != null;
+        if (delegate == null) return;
         this.portlib$patch = new PortPatchedDataComponentMap(delegate.value());
         CompoundTag tag = IPortItem.of(getItem()).portlib$defaultTag();
         if (tag != null) {

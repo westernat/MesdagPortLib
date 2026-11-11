@@ -50,10 +50,17 @@ public class PortLanguageProvider extends LanguageProvider {
         add("portlib.configuration.title", "%s Configuration", "%s配置");
         add("portlib.configuration.type.client", "%s Client Configuration", "%s客户端配置");
         add("portlib.configuration.type.common", "%s Common Configuration", "%s通用配置");
+        add("portlib.configuration.type.startup", "%s Startup Configuration", "%s启动配置");
         add("portlib.configuration.type.server", "%s Server Configuration", "%s服务端配置");
         add("portlib.configuration.not_loaded", "This configuration is not loaded in the current context.", "此配置在当前环境中尚未加载。");
         add("portlib.configuration.requires_world_restart", "Changes to this option require re-entering the world.", "修改此项后需要重新进入世界。");
         add("portlib.configuration.undo", "Undo", "撤销");
+        add("portlib.configuration.group.client", "Client Options", "客户端选项");
+        add("portlib.configuration.group.common", "Common Options", "通用选项");
+        add("portlib.configuration.group.server", "Server Options", "服务端选项");
+        add("portlib.configuration.group.startup", "Startup Options", "启动时选项");
+        add("portlib.configuration.requires_game_restart", "Changes to this option require restarting the game.", "更改此选项需要重启游戏。");
+        add("portlib.configuration.edit", "Edit", "编辑");
         add("portlib.configuration.reset", "Reset", "重置");
 
         add("portlib.network.advanced_add_entity.failed", "Failed to process advanced entity spawn data: %s", "处理高级实体生成数据失败：%s");
