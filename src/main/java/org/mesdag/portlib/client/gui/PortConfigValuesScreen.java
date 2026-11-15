@@ -26,6 +26,7 @@ final class PortConfigValuesScreen extends Screen {
     private final PortConfigView config;
     private final List<String> path;
     private final History history;
+    private Button resetButton;
 
     PortConfigValuesScreen(Screen parent, ModContainer mod, PortConfigView config) {
         this(parent, mod, config, List.of(), new History());
@@ -60,10 +61,10 @@ final class PortConfigValuesScreen extends Screen {
             history.restore(hasShiftDown());
             rebuildWidgets();
         }).bounds(width / 2 - 154, height - 27, 100, 20).build());
-        addRenderableWidget(Button.builder(Component.translatable("portlib.configuration.reset"), b -> {
+        resetButton = addRenderableWidget(Button.builder(Component.translatable("portlib.configuration.reset"), b -> {
             Map<PortConfigView.Entry, Object> previous = new LinkedHashMap<>();
             for (PortConfigView.Entry entry : config.entries()) {
-                if (entry.path().size() < path.size() || !entry.path().subList(0, path.size()).equals(path))
+                if (entry.path().size() != path.size() + 1 || !entry.path().subList(0, path.size()).equals(path) || entry.get() instanceof List<?>)
                     continue;
                 Object defaults = entry.getDefault();
                 Object current = entry.get();
@@ -76,6 +77,19 @@ final class PortConfigValuesScreen extends Screen {
             rebuildWidgets();
         }).bounds(width / 2 - 50, height - 27, 100, 20).build());
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, b -> onClose()).bounds(width / 2 + 54, height - 27, 100, 20).build());
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (resetButton != null) {
+            resetButton.active = config.entries().stream().anyMatch(entry ->
+                    entry.path().size() == path.size() + 1
+                            && !(entry.get() instanceof List<?>)
+                            && entry.path().subList(0, path.size()).equals(path)
+                            && !Objects.equals(entry.get(), entry.getDefault())
+            );
+        }
     }
 
     private Row valueRow(PortConfigView.Entry entry, String key) {
@@ -238,6 +252,7 @@ final class PortConfigValuesScreen extends Screen {
 
     /// 列表在独立页面中编辑副本；只有通过完整校验后才写回配置。
     private static final class ListScreen extends Screen {
+        private Button resetButton;
         private final Screen parent;
         private final PortConfigView.Entry entry;
         private final History history;
@@ -270,7 +285,7 @@ final class PortConfigValuesScreen extends Screen {
                 values.addAll(source.pop());
                 refreshRows(rows);
             }).bounds(width / 2 - 154, height - 27, 100, 20).build());
-            addRenderableWidget(Button.builder(Component.translatable("portlib.configuration.reset"), b -> {
+            resetButton = addRenderableWidget(Button.builder(Component.translatable("portlib.configuration.reset"), b -> {
                 if (entry.getDefault() instanceof List<?> defaults) {
                     saveUndo();
                     values.clear();
@@ -279,6 +294,15 @@ final class PortConfigValuesScreen extends Screen {
                 }
             }).bounds(width / 2 - 50, height - 27, 100, 20).build());
             done = addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, b -> onClose()).bounds(width / 2 + 54, height - 27, 100, 20).build());
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            if (resetButton != null) {
+                Object defaults = entry.getDefault();
+                resetButton.active = defaults instanceof List<?> && !values.equals(defaults) && entry.test(defaults);
+            }
         }
 
         private void refreshRows(Rows rows) {
